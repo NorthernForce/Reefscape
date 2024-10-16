@@ -147,15 +147,7 @@ gversion {
 project.compileJava.dependsOn(spotlessApply)
 spotless {
     java {
-        target fileTree(".") {
-            include "**/*.java"
-            exclude "**/build/**", "**/build-*/**"
-        }
-        toggleOffOn()
-        googleJavaFormat()
-        removeUnusedImports()
-        trimTrailingWhitespace()
-        endWithNewline()
+        eclipse().configFile('.vscode/java-formatter.xml')
     }
     groovyGradle {
         target fileTree(".") {
