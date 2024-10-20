@@ -24,7 +24,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import frc.subsystems.VisionSystem;
+import frc.robot.subsystems.VisionSystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
