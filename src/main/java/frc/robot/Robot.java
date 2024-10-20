@@ -13,6 +13,8 @@
 
 package frc.robot;
 
+import java.util.Map;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -20,6 +22,11 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import org.northernforce.util.NFRRobotChooser;
+import org.northernforce.util.NFRRobotContainer;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.robots.CrabbyContainer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -30,10 +37,9 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  */
 public class Robot extends LoggedRobot
 {
-	private static final String defaultAuto = "Default";
-	private static final String customAuto = "My Auto";
-	private String autoSelected;
-	private final LoggedDashboardChooser<String> chooser = new LoggedDashboardChooser<>("Auto Choices");
+	private Command autoSelected = null;
+	private final LoggedDashboardChooser<Command> autoChooser = new LoggedDashboardChooser<>("Auto Choices");
+	private NFRRobotContainer container = null;
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -60,6 +66,10 @@ public class Robot extends LoggedRobot
 			Logger.recordMetadata("GitDirty", "Unknown");
 			break;
 		}
+
+		final NFRRobotChooser chooser = new NFRRobotChooser(() -> new CrabbyContainer(),
+				Map.of("Crabby", () -> new CrabbyContainer()));
+		container = chooser.getNFRRobotContainer();
 
 		// Set up data receivers & replay source
 		switch (Constants.kCurrentMode)
@@ -91,50 +101,53 @@ public class Robot extends LoggedRobot
 		Logger.start();
 
 		// Initialize auto chooser
-		chooser.addDefaultOption("Default Auto", defaultAuto);
-		chooser.addOption("My Auto", customAuto);
+		final var defaultAuto = container.getDefaultAutonomous();
+		autoChooser.addDefaultOption(defaultAuto.getFirst(), defaultAuto.getSecond());
+		container.getAutonomousOptions().forEach(autoChooser::addOption);
+
 	}
 
 	/** This function is called periodically during all modes. */
 	@Override
 	public void robotPeriodic()
 	{
+		container.periodic();
 	}
 
 	/** This function is called once when autonomous is enabled. */
 	@Override
 	public void autonomousInit()
 	{
-		autoSelected = chooser.get();
-		System.out.println("Auto selected: " + autoSelected);
+		autoSelected = autoChooser.get();
+		if (autoChooser != null)
+		{
+			System.out.println("Auto selected: " + autoSelected.getName());
+			autoSelected.schedule();
+		}
 	}
 
 	/** This function is called periodically during autonomous. */
 	@Override
 	public void autonomousPeriodic()
 	{
-		switch (autoSelected)
-		{
-		case customAuto:
-			// Put custom auto code here
-			break;
-		case defaultAuto:
-		default:
-			// Put default auto code here
-			break;
-		}
+		container.autonomousPeriodic();
 	}
 
 	/** This function is called once when teleop is enabled. */
 	@Override
 	public void teleopInit()
 	{
+		if (autoSelected != null && autoSelected.isScheduled())
+		{
+			autoSelected.cancel();
+		}
 	}
 
 	/** This function is called periodically during operator control. */
 	@Override
 	public void teleopPeriodic()
 	{
+		container.teleopPeroidic();
 	}
 
 	/** This function is called once when the robot is disabled. */
