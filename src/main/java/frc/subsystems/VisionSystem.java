@@ -11,20 +11,21 @@ import edu.wpi.first.apriltag.AprilTagFields;
 
 public class VisionSystem extends SubsystemBase
 {
-    private final PhotonCamera photonCamera;
-    private final PhotonPoseEstimator photonPoseEstimator;
-    private final AprilTagFieldLayout aprilTagFieldLayout;
+	private final PhotonCamera photonCamera;
+	private final PhotonPoseEstimator photonPoseEstimator;
+	private final AprilTagFieldLayout aprilTagFieldLayout;
 
-    public VisionSystem(Transform3d robotToCam)
-    {
-        aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-        photonCamera = new PhotonCamera("photonvision");
-        photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, photonCamera, robotToCam);
-    }
+	public VisionSystem(Transform3d robotToCam)
+	{
+		aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+		photonCamera = new PhotonCamera("photonvision");
+		photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
+				photonCamera, robotToCam);
+	}
 
-    public Pose2d getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose)
-    {
-        photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-        return photonPoseEstimator.update().get().estimatedPose.toPose2d();
-    }
+	public Pose2d getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose)
+	{
+		photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+		return photonPoseEstimator.update().get().estimatedPose.toPose2d();
+	}
 }

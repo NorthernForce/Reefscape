@@ -35,152 +35,152 @@ import frc.subsystems.VisionSystem;
  */
 public class Robot extends LoggedRobot
 {
-    private static final String defaultAuto = "Default";
-    private static final String customAuto = "My Auto";
-    private String autoSelected;
-    private final LoggedDashboardChooser<String> chooser = new LoggedDashboardChooser<>("Auto Choices");
-    private VisionSystem photonvision;
+	private static final String defaultAuto = "Default";
+	private static final String customAuto = "My Auto";
+	private String autoSelected;
+	private final LoggedDashboardChooser<String> chooser = new LoggedDashboardChooser<>("Auto Choices");
+	private VisionSystem photonvision;
 
-    /**
-     * This function is run when the robot is first started up and should be used
-     * for any initialization code.
-     */
-    @Override
-    public void robotInit()
-    {
-        // Record metadata
-        Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
-        Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
-        Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-        Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
-        Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
-        switch (BuildConstants.DIRTY)
-        {
-        case 0:
-            Logger.recordMetadata("GitDirty", "All changes committed");
-            break;
-        case 1:
-            Logger.recordMetadata("GitDirty", "Uncomitted changes");
-            break;
-        default:
-            Logger.recordMetadata("GitDirty", "Unknown");
-            break;
-        }
+	/**
+	 * This function is run when the robot is first started up and should be used
+	 * for any initialization code.
+	 */
+	@Override
+	public void robotInit()
+	{
+		// Record metadata
+		Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+		Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+		Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+		Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
+		Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+		switch (BuildConstants.DIRTY)
+		{
+		case 0:
+			Logger.recordMetadata("GitDirty", "All changes committed");
+			break;
+		case 1:
+			Logger.recordMetadata("GitDirty", "Uncomitted changes");
+			break;
+		default:
+			Logger.recordMetadata("GitDirty", "Unknown");
+			break;
+		}
 
-        // Set up data receivers & replay source
-        switch (Constants.kCurrentMode)
-        {
-        case REAL:
-            // Running on a real robot, log to a USB stick ("/U/logs")
-            Logger.addDataReceiver(new WPILOGWriter());
-            Logger.addDataReceiver(new NT4Publisher());
-            break;
+		// Set up data receivers & replay source
+		switch (Constants.kCurrentMode)
+		{
+		case REAL:
+			// Running on a real robot, log to a USB stick ("/U/logs")
+			Logger.addDataReceiver(new WPILOGWriter());
+			Logger.addDataReceiver(new NT4Publisher());
+			break;
 
-        case SIM:
-            // Running a physics simulator, log to NT
-            Logger.addDataReceiver(new NT4Publisher());
-            break;
+		case SIM:
+			// Running a physics simulator, log to NT
+			Logger.addDataReceiver(new NT4Publisher());
+			break;
 
-        case REPLAY:
-            // Replaying a log, set up replay source
-            setUseTiming(false); // Run as fast as possible
-            String logPath = LogFileUtil.findReplayLog();
-            Logger.setReplaySource(new WPILOGReader(logPath));
-            Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
-            break;
-        }
+		case REPLAY:
+			// Replaying a log, set up replay source
+			setUseTiming(false); // Run as fast as possible
+			String logPath = LogFileUtil.findReplayLog();
+			Logger.setReplaySource(new WPILOGReader(logPath));
+			Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+			break;
+		}
 
-        // See http://bit.ly/3YIzFZ6 for more information on timestamps in AdvantageKit.
-        // Logger.disableDeterministicTimestamps()
+		// See http://bit.ly/3YIzFZ6 for more information on timestamps in AdvantageKit.
+		// Logger.disableDeterministicTimestamps()
 
-        // Start AdvantageKit logger
-        Logger.start();
+		// Start AdvantageKit logger
+		Logger.start();
 
-        // Initialize auto chooser
-        chooser.addDefaultOption("Default Auto", defaultAuto);
-        chooser.addOption("My Auto", customAuto);
+		// Initialize auto chooser
+		chooser.addDefaultOption("Default Auto", defaultAuto);
+		chooser.addOption("My Auto", customAuto);
 
-        //TODO: Find Camera Transform
-        photonvision = new VisionSystem(
-                new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0)));
-    }
+		// TODO: Find Camera Transform
+		photonvision = new VisionSystem(
+				new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0)));
+	}
 
-    /** This function is called periodically during all modes. */
-    @Override
-    public void robotPeriodic()
-    {
-        
-    }
+	/** This function is called periodically during all modes. */
+	@Override
+	public void robotPeriodic()
+	{
 
-    /** This function is called once when autonomous is enabled. */
-    @Override
-    public void autonomousInit()
-    {
-        autoSelected = chooser.get();
-        System.out.println("Auto selected: " + autoSelected);
-    }
+	}
 
-    /** This function is called periodically during autonomous. */
-    @Override
-    public void autonomousPeriodic()
-    {
-        switch (autoSelected)
-        {
-        case customAuto:
-            // Put custom auto code here
-            break;
-        case defaultAuto:
-        default:
-            // Put default auto code here
-            break;
-        }
-    }
+	/** This function is called once when autonomous is enabled. */
+	@Override
+	public void autonomousInit()
+	{
+		autoSelected = chooser.get();
+		System.out.println("Auto selected: " + autoSelected);
+	}
 
-    /** This function is called once when teleop is enabled. */
-    @Override
-    public void teleopInit()
-    {
-    }
+	/** This function is called periodically during autonomous. */
+	@Override
+	public void autonomousPeriodic()
+	{
+		switch (autoSelected)
+		{
+		case customAuto:
+			// Put custom auto code here
+			break;
+		case defaultAuto:
+		default:
+			// Put default auto code here
+			break;
+		}
+	}
 
-    /** This function is called periodically during operator control. */
-    @Override
-    public void teleopPeriodic()
-    {
-    }
+	/** This function is called once when teleop is enabled. */
+	@Override
+	public void teleopInit()
+	{
+	}
 
-    /** This function is called once when the robot is disabled. */
-    @Override
-    public void disabledInit()
-    {
-    }
+	/** This function is called periodically during operator control. */
+	@Override
+	public void teleopPeriodic()
+	{
+	}
 
-    /** This function is called periodically when disabled. */
-    @Override
-    public void disabledPeriodic()
-    {
-    }
+	/** This function is called once when the robot is disabled. */
+	@Override
+	public void disabledInit()
+	{
+	}
 
-    /** This function is called once when test mode is enabled. */
-    @Override
-    public void testInit()
-    {
-    }
+	/** This function is called periodically when disabled. */
+	@Override
+	public void disabledPeriodic()
+	{
+	}
 
-    /** This function is called periodically during test mode. */
-    @Override
-    public void testPeriodic()
-    {
-    }
+	/** This function is called once when test mode is enabled. */
+	@Override
+	public void testInit()
+	{
+	}
 
-    /** This function is called once when the robot is first started up. */
-    @Override
-    public void simulationInit()
-    {
-    }
+	/** This function is called periodically during test mode. */
+	@Override
+	public void testPeriodic()
+	{
+	}
 
-    /** This function is called periodically whilst in simulation. */
-    @Override
-    public void simulationPeriodic()
-    {
-    }
+	/** This function is called once when the robot is first started up. */
+	@Override
+	public void simulationInit()
+	{
+	}
+
+	/** This function is called periodically whilst in simulation. */
+	@Override
+	public void simulationPeriodic()
+	{
+	}
 }
