@@ -32,14 +32,20 @@ public class NFRRobotChooser
 	}
 
 	/**
-	 * Gets the current robot container by reading the name from the specified file.
-	 *
-	 * @return the robot container using one of the suppliers.
+	 * Gets the Roborio ID
+	 * 
+	 * @return the id of the roborio (aka the serial number)
 	 */
 	public static String getRoborioID()
 	{
 		return RoboRioDataJNI.getSerialNumber();
 	}
+
+	/**
+	 * Gets the current robot container by reading the name from the specified file.
+	 *
+	 * @return the robot container using one of the suppliers.
+	 */
 
 	public NFRRobotContainer getNFRRobotContainer()
 	{
