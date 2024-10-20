@@ -13,6 +13,8 @@
 
 package frc.robot;
 
+import java.io.IOException;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -20,6 +22,11 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import frc.subsystems.VisionSystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -34,6 +41,7 @@ public class Robot extends LoggedRobot
 	private static final String customAuto = "My Auto";
 	private String autoSelected;
 	private final LoggedDashboardChooser<String> chooser = new LoggedDashboardChooser<>("Auto Choices");
+	private VisionSystem photonvision;
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -93,12 +101,23 @@ public class Robot extends LoggedRobot
 		// Initialize auto chooser
 		chooser.addDefaultOption("Default Auto", defaultAuto);
 		chooser.addOption("My Auto", customAuto);
+
+		try
+		{
+			photonvision = new VisionSystem(
+					new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0)));
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/** This function is called periodically during all modes. */
 	@Override
 	public void robotPeriodic()
 	{
+
 	}
 
 	/** This function is called once when autonomous is enabled. */

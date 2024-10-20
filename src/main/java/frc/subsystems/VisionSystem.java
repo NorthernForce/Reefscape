@@ -1,28 +1,30 @@
 package frc.subsystems;
-import java.io.IOException;
-import java.util.Optional;
 
-import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 
-public class VisionSystem {
-    private final PhotonCamera camera;
+public class VisionSystem extends SubsystemBase
+{
+    private final PhotonCamera photonCamera;
     private final PhotonPoseEstimator photonPoseEstimator;
     private final AprilTagFieldLayout aprilTagFieldLayout;
 
-    public VisionSystem(Transform3d robotToCam) throws IOException{
-        camera = new PhotonCamera("photonvision");
-        aprilTagFieldLayout = new AprilTagFieldLayout("");
-        photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camera, robotToCam);
+    public VisionSystem(Transform3d robotToCam)
+    {
+        aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+        photonCamera = new PhotonCamera("photonvision");
+        photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, photonCamera, robotToCam);
     }
 
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose){
+    public Pose2d getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose)
+    {
         photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-        return photonPoseEstimator.update();
+        return photonPoseEstimator.update().get().estimatedPose.toPose2d();
     }
 }
