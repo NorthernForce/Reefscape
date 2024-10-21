@@ -47,7 +47,7 @@ public class Module
 
 		// Switch constants based on mode (the physics simulator is treated as a
 		// separate robot with different tuning)
-		switch (Constants.currentMode)
+		switch (Constants.kCurrentMode)
 		{
 		case REAL:
 		case REPLAY:

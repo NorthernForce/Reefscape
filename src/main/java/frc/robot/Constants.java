@@ -25,6 +25,8 @@ package frc.robot;
  */
 public final class Constants
 {
+    public static final double DRIVE_GEAR_RATIO = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0);
+	public static final double TURN_GEAR_RATIO = 150.0 / 7.0;
 	public static final Mode kCurrentMode = Mode.REAL;
 
 	public static enum Mode
