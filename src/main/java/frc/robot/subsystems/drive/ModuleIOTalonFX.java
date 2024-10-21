@@ -25,9 +25,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Constants;
-
-import java.util.Queue;
 
 /**
  * Module IO implementation for Talon FX drive motor controller, Talon FX turn
@@ -50,17 +47,13 @@ public class ModuleIOTalonFX implements ModuleIO
 	private final TalonFX turnTalon;
 	private final CANcoder cancoder;
 
-	private final Queue<Double> timestampQueue;
-
 	private final StatusSignal<Double> drivePosition;
-	private final Queue<Double> drivePositionQueue;
 	private final StatusSignal<Double> driveVelocity;
 	private final StatusSignal<Double> driveAppliedVolts;
 	private final StatusSignal<Double> driveCurrent;
 
 	private final StatusSignal<Double> turnAbsolutePosition;
 	private final StatusSignal<Double> turnPosition;
-	private final Queue<Double> turnPositionQueue;
 	private final StatusSignal<Double> turnVelocity;
 	private final StatusSignal<Double> turnAppliedVolts;
 	private final StatusSignal<Double> turnCurrent;
@@ -69,10 +62,13 @@ public class ModuleIOTalonFX implements ModuleIO
 
 	private final boolean isTurnMotorInverted = true;
 	private final Rotation2d absoluteEncoderOffset;
+    private final double DRIVE_GEAR_RATIO;
+    private final double TURN_GEAR_RATIO;
 
-	public ModuleIOTalonFX(int driveId, int turnId, int canId)
+	public ModuleIOTalonFX(int driveId, int turnId, int canId, double turnGearRatio, double driveGearRatio)
 	{
-
+        DRIVE_GEAR_RATIO = driveGearRatio;
+        TURN_GEAR_RATIO = turnGearRatio;
 		driveTalon = new TalonFX(driveId);
 		turnTalon = new TalonFX(turnId);
 		cancoder = new CANcoder(canId);
@@ -92,17 +88,14 @@ public class ModuleIOTalonFX implements ModuleIO
 
 		cancoder.getConfigurator().apply(new CANcoderConfiguration());
 
-		timestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
 
 		drivePosition = driveTalon.getPosition();
-		drivePositionQueue = PhoenixOdometryThread.getInstance().registerSignal(driveTalon, driveTalon.getPosition());
 		driveVelocity = driveTalon.getVelocity();
 		driveAppliedVolts = driveTalon.getMotorVoltage();
 		driveCurrent = driveTalon.getSupplyCurrent();
 
 		turnAbsolutePosition = cancoder.getAbsolutePosition();
 		turnPosition = turnTalon.getPosition();
-		turnPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(turnTalon, turnTalon.getPosition());
 		turnVelocity = turnTalon.getVelocity();
 		turnAppliedVolts = turnTalon.getMotorVoltage();
 		turnCurrent = turnTalon.getSupplyCurrent();
@@ -121,31 +114,22 @@ public class ModuleIOTalonFX implements ModuleIO
 				turnPosition, turnVelocity, turnAppliedVolts, turnCurrent);
 
 		inputs.drivePositionRad = Units.rotationsToRadians(drivePosition.getValueAsDouble())
-				/ Constants.DRIVE_GEAR_RATIO;
+				/ DRIVE_GEAR_RATIO;
 		inputs.driveVelocityRadPerSec = Units.rotationsToRadians(driveVelocity.getValueAsDouble())
-				/ Constants.DRIVE_GEAR_RATIO;
+				/ DRIVE_GEAR_RATIO;
 		inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
 		inputs.driveCurrentAmps = new double[]
 		{ driveCurrent.getValueAsDouble() };
 
 		inputs.turnAbsolutePosition = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble())
 				.minus(absoluteEncoderOffset);
-		inputs.turnPosition = Rotation2d.fromRotations(turnPosition.getValueAsDouble() / Constants.TURN_GEAR_RATIO);
+		inputs.turnPosition = Rotation2d.fromRotations(turnPosition.getValueAsDouble() / TURN_GEAR_RATIO);
 		inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble())
-				/ Constants.TURN_GEAR_RATIO;
+				/ TURN_GEAR_RATIO;
 		inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
 		inputs.turnCurrentAmps = new double[]
 		{ turnCurrent.getValueAsDouble() };
 
-		inputs.odometryTimestamps = timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
-		inputs.odometryDrivePositionsRad = drivePositionQueue.stream()
-				.mapToDouble((Double value) -> Units.rotationsToRadians(value) / Constants.DRIVE_GEAR_RATIO).toArray();
-		inputs.odometryTurnPositions = turnPositionQueue.stream()
-				.map((Double value) -> Rotation2d.fromRotations(value / Constants.TURN_GEAR_RATIO))
-				.toArray(Rotation2d[]::new);
-		timestampQueue.clear();
-		drivePositionQueue.clear();
-		turnPositionQueue.clear();
 	}
 
 	@Override

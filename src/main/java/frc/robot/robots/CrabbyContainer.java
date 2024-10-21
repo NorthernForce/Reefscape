@@ -49,8 +49,8 @@ public class CrabbyContainer
 		{
 		case REAL:
 			// Real robot, instantiate hardware IO implementations
-			drive = new Drive(new GyroIOPigeon2(false), new ModuleIOSparkMax(0), new ModuleIOSparkMax(1),
-					new ModuleIOSparkMax(2), new ModuleIOSparkMax(3));
+			drive = new Drive(new GyroIOPigeon2(false), new ModuleIOSparkMax(0, 1, 2, Constants.TURN_GEAR_RATIO, Constants.DRIVE_GEAR_RATIO), new ModuleIOSparkMax(1, 2, 3, Constants.TURN_GEAR_RATIO, Constants.DRIVE_GEAR_RATIO),
+					new ModuleIOSparkMax(2, 3, 4, Constants.TURN_GEAR_RATIO, Constants.DRIVE_GEAR_RATIO), new ModuleIOSparkMax(3, 4, 5, Constants.TURN_GEAR_RATIO, Constants.DRIVE_GEAR_RATIO));
 			// drive = new Drive(
 			// new GyroIOPigeon2(true),
 			// new ModuleIOTalonFX(0),
