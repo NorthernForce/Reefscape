@@ -49,7 +49,9 @@ public class CrabbyContainer
 		{
 		case REAL:
 			// Real robot, instantiate hardware IO implementations
-			drive = new Drive(new GyroIOPigeon2(false),
+			drive = new Drive(new GyroIOPigeon2(false), Constants.MAX_LINEAR_SPEED, Constants.MAX_ANGULAR_SPEED,
+					Constants.DRIVE_BASE_RADIUS, Constants.TRACK_WIDTH_X, Constants.TRACK_WIDTH_Y,
+					Constants.kCurrentMode,
 					new ModuleIOSparkMax(0, 1, 2, Constants.TURN_GEAR_RATIO, Constants.DRIVE_GEAR_RATIO),
 					new ModuleIOSparkMax(1, 2, 3, Constants.TURN_GEAR_RATIO, Constants.DRIVE_GEAR_RATIO),
 					new ModuleIOSparkMax(2, 3, 4, Constants.TURN_GEAR_RATIO, Constants.DRIVE_GEAR_RATIO),
@@ -67,22 +69,25 @@ public class CrabbyContainer
 			// Sim robot, instantiate physics sim IO implementations
 			drive = new Drive(new GyroIO()
 			{
-			}, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
+			}, Constants.MAX_LINEAR_SPEED, Constants.MAX_ANGULAR_SPEED, Constants.DRIVE_BASE_RADIUS,
+					Constants.TRACK_WIDTH_X, Constants.TRACK_WIDTH_Y, Constants.kCurrentMode, new ModuleIOSim(),
+					new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
 			break;
 
 		default:
 			// Replayed robot, disable IO implementations
 			drive = new Drive(new GyroIO()
 			{
-			}, new ModuleIO()
-			{
-			}, new ModuleIO()
-			{
-			}, new ModuleIO()
-			{
-			}, new ModuleIO()
-			{
-			});
+			}, Constants.MAX_LINEAR_SPEED, Constants.MAX_ANGULAR_SPEED, Constants.DRIVE_BASE_RADIUS,
+					Constants.TRACK_WIDTH_X, Constants.TRACK_WIDTH_Y, Constants.kCurrentMode, new ModuleIO()
+					{
+					}, new ModuleIO()
+					{
+					}, new ModuleIO()
+					{
+					}, new ModuleIO()
+					{
+					});
 		{
 		}
 			;

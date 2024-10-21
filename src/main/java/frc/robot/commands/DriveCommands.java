@@ -37,6 +37,12 @@ public class DriveCommands
 	/**
 	 * Field relative drive command using two joysticks (controlling linear and
 	 * angular velocities).
+	 * 
+	 * @param drive         the drive object instantiated with the motors.
+	 * @param xSupplier     controller axis x of joystick
+	 * @param ySupplier     controller axis y of joystick
+	 * @param omegaSupplier speed of drive
+	 * @return a runable command to drive el robo
 	 */
 	public static Command joystickDrive(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier,
 			DoubleSupplier omegaSupplier)

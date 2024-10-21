@@ -29,12 +29,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.Mode;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -43,12 +43,12 @@ import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase
 {
-	private static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
-	private static final double TRACK_WIDTH_X = Units.inchesToMeters(25.0);
-	private static final double TRACK_WIDTH_Y = Units.inchesToMeters(25.0);
-	private static final double DRIVE_BASE_RADIUS = Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
-	private static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
 
+	private final double MAX_LINEAR_SPEED;
+	private static double TRACK_WIDTH_X;
+	private static double TRACK_WIDTH_Y;
+	private final double DRIVE_BASE_RADIUS;
+	private final double MAX_ANGULAR_SPEED;
 	static final Lock odometryLock = new ReentrantLock();
 	private final GyroIO gyroIO;
 	private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
@@ -64,13 +64,27 @@ public class Drive extends SubsystemBase
 	private SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(kinematics, rawGyroRotation,
 			lastModulePositions, new Pose2d());
 
-	public Drive(GyroIO gyroIO, ModuleIO flModuleIO, ModuleIO frModuleIO, ModuleIO blModuleIO, ModuleIO brModuleIO)
+	/**
+	 * Creates a new Drive object to drive the flipping robot
+	 * 
+	 * @param gyroIO          the gyro to go by (not used yet I don't think)
+	 * @param maxLinearSpeed  the max speed the robot should travel
+	 * @param maxAngularSpeed the max speed the robot should turn
+	 * @param driveBaseRadius the radius of the base
+	 * @param trackWidthX     x delta movement
+	 * @param trackWidthY     y delta movement
+	 * @param moduleIOs       all the moduleIO for the drive motors. why the flip
+	 *                        would we have more than 4? idk ask connor >:(
+	 */
+	public Drive(GyroIO gyroIO, double maxLinearSpeed, double maxAngularSpeed, double driveBaseRadius,
+			double trackWidthX, double trackWidthY, Mode currentMode, ModuleIO... moduleIOs)
 	{
+		MAX_ANGULAR_SPEED = maxAngularSpeed;
+		MAX_LINEAR_SPEED = maxLinearSpeed;
+		TRACK_WIDTH_X = trackWidthX;
+		TRACK_WIDTH_Y = trackWidthY;
+		DRIVE_BASE_RADIUS = driveBaseRadius;
 		this.gyroIO = gyroIO;
-		modules[0] = new Module(flModuleIO, 0);
-		modules[1] = new Module(frModuleIO, 1);
-		modules[2] = new Module(blModuleIO, 2);
-		modules[3] = new Module(brModuleIO, 3);
 
 		// Start threads (no-op for each if no signals have been created)
 
@@ -96,13 +110,17 @@ public class Drive extends SubsystemBase
 						(state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
 				new SysIdRoutine.Mechanism((voltage) ->
 				{
-					for (int i = 0; i < 4; i++)
+					for (int i = 0; i < moduleIOs.length; i++)
 					{
+						modules[i] = new Module(moduleIOs[i], i, currentMode);
 						modules[i].runCharacterization(voltage.in(Volts));
 					}
 				}, null, this));
 	}
 
+	/**
+	 * periodic code to continuosly run
+	 */
 	public void periodic()
 	{
 		odometryLock.lock(); // Prevents odometry updates while reading data
@@ -282,7 +300,7 @@ public class Drive extends SubsystemBase
 	 * @param visionPose The pose of the robot as measured by the vision camera.
 	 * @param timestamp  The timestamp of the vision measurement in seconds.
 	 */
-	public void addVisionMeasurement(Pose2d visionPose, double timestamp)
+	public void addVisionMeasurement(Pose2d visionPose, double timestamp) // TODO: talk to zack
 	{
 		poseEstimator.addVisionMeasurement(visionPose, timestamp);
 	}

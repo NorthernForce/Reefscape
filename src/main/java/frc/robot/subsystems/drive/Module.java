@@ -19,7 +19,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Constants;
+import frc.robot.Constants.Mode;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Module
@@ -40,14 +41,14 @@ public class Module
 	private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[]
 	{};
 
-	public Module(ModuleIO io, int index)
+	public Module(ModuleIO io, int index, Mode mode)
 	{
 		this.io = io;
 		this.index = index;
 
 		// Switch constants based on mode (the physics simulator is treated as a
 		// separate robot with different tuning)
-		switch (Constants.kCurrentMode)
+		switch (mode)
 		{
 		case REAL:
 		case REPLAY:
