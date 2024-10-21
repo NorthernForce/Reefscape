@@ -48,20 +48,20 @@ public class ModuleIOSparkMax implements ModuleIO
 	private final RelativeEncoder driveEncoder;
 	private final RelativeEncoder turnRelativeEncoder;
 	private final AnalogInput turnAbsoluteEncoder;
-    private final double DRIVE_GEAR_RATIO;
-    private double TURN_GEAR_RATIO;
+	private final double DRIVE_GEAR_RATIO;
+	private double TURN_GEAR_RATIO;
 	private final boolean isTurnMotorInverted = true;
 	private final Rotation2d absoluteEncoderOffset;
 
-	public ModuleIOSparkMax(int driveId, int turnId, int turnEncoderId,double turnGearRatio, double driveGearRatio)
+	public ModuleIOSparkMax(int driveId, int turnId, int turnEncoderId, double turnGearRatio, double driveGearRatio)
 	{
-        DRIVE_GEAR_RATIO = driveGearRatio;
-        TURN_GEAR_RATIO = turnGearRatio;
+		DRIVE_GEAR_RATIO = driveGearRatio;
+		TURN_GEAR_RATIO = turnGearRatio;
 		driveSparkMax = new CANSparkMax(driveId, MotorType.kBrushless);
 		turnSparkMax = new CANSparkMax(turnId, MotorType.kBrushless);
 		turnAbsoluteEncoder = new AnalogInput(turnEncoderId);
 		absoluteEncoderOffset = new Rotation2d(0.0); // TODO: MUST BE CALIBRATED
-		
+
 		driveSparkMax.restoreFactoryDefaults();
 		turnSparkMax.restoreFactoryDefaults();
 

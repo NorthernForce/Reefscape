@@ -62,13 +62,13 @@ public class ModuleIOTalonFX implements ModuleIO
 
 	private final boolean isTurnMotorInverted = true;
 	private final Rotation2d absoluteEncoderOffset;
-    private final double DRIVE_GEAR_RATIO;
-    private final double TURN_GEAR_RATIO;
+	private final double DRIVE_GEAR_RATIO;
+	private final double TURN_GEAR_RATIO;
 
 	public ModuleIOTalonFX(int driveId, int turnId, int canId, double turnGearRatio, double driveGearRatio)
 	{
-        DRIVE_GEAR_RATIO = driveGearRatio;
-        TURN_GEAR_RATIO = turnGearRatio;
+		DRIVE_GEAR_RATIO = driveGearRatio;
+		TURN_GEAR_RATIO = turnGearRatio;
 		driveTalon = new TalonFX(driveId);
 		turnTalon = new TalonFX(turnId);
 		cancoder = new CANcoder(canId);
@@ -87,7 +87,6 @@ public class ModuleIOTalonFX implements ModuleIO
 		setTurnBrakeMode(true);
 
 		cancoder.getConfigurator().apply(new CANcoderConfiguration());
-
 
 		drivePosition = driveTalon.getPosition();
 		driveVelocity = driveTalon.getVelocity();
@@ -113,10 +112,8 @@ public class ModuleIOTalonFX implements ModuleIO
 		BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent, turnAbsolutePosition,
 				turnPosition, turnVelocity, turnAppliedVolts, turnCurrent);
 
-		inputs.drivePositionRad = Units.rotationsToRadians(drivePosition.getValueAsDouble())
-				/ DRIVE_GEAR_RATIO;
-		inputs.driveVelocityRadPerSec = Units.rotationsToRadians(driveVelocity.getValueAsDouble())
-				/ DRIVE_GEAR_RATIO;
+		inputs.drivePositionRad = Units.rotationsToRadians(drivePosition.getValueAsDouble()) / DRIVE_GEAR_RATIO;
+		inputs.driveVelocityRadPerSec = Units.rotationsToRadians(driveVelocity.getValueAsDouble()) / DRIVE_GEAR_RATIO;
 		inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
 		inputs.driveCurrentAmps = new double[]
 		{ driveCurrent.getValueAsDouble() };
@@ -124,8 +121,7 @@ public class ModuleIOTalonFX implements ModuleIO
 		inputs.turnAbsolutePosition = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble())
 				.minus(absoluteEncoderOffset);
 		inputs.turnPosition = Rotation2d.fromRotations(turnPosition.getValueAsDouble() / TURN_GEAR_RATIO);
-		inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble())
-				/ TURN_GEAR_RATIO;
+		inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble()) / TURN_GEAR_RATIO;
 		inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
 		inputs.turnCurrentAmps = new double[]
 		{ turnCurrent.getValueAsDouble() };
