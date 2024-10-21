@@ -45,7 +45,7 @@ public class CrabbyContainer
 	 */
 	public CrabbyContainer()
 	{
-		switch (Constants.currentMode)
+		switch (Constants.kCurrentMode)
 		{
 		case REAL:
 			// Real robot, instantiate hardware IO implementations
