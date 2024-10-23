@@ -6,7 +6,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class Dashboard
 {
-    private Dashboard dashboard = new Dashboard();
+	private Dashboard dashboard = new Dashboard();
+
 	public void testSend() throws InterruptedException
 	{
 		double pi = 3.14;
