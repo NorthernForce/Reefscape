@@ -3,7 +3,7 @@ package org.northernforce.util;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import edu.wpi.first.hal.simulation.RoboRioDataJNI;
+import edu.wpi.first.wpilibj.RobotController;
 
 /**
  * A robot chooser uses the id of the roborio to choose the correct container
@@ -38,7 +38,7 @@ public class NFRRobotChooser
 	 */
 	public static String getRoborioID()
 	{
-		return RoboRioDataJNI.getSerialNumber();
+		return RobotController.getSerialNumber();
 	}
 
 	/**
