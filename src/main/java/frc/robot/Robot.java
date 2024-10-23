@@ -168,7 +168,14 @@ public class Robot extends LoggedRobot
 	public void simulationInit()
 	{
 
-		dashboard.testSend();
+		try
+		{
+			dashboard.testSend();
+		} catch (InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/** This function is called periodically whilst in simulation. */

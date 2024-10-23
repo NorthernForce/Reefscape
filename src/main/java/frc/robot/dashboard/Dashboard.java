@@ -1,61 +1,50 @@
 package frc.robot.dashboard;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class Dashboard
 {
-	public void testSend()
+	public void testSend() throws InterruptedException
 	{
-		sendString("testing", "name", "Reefscape");
+		double pi = 3.14;
+		GenericEntry value = sendString("testing", "name", "Reefscape");
 		sendInt("testing", "everett IQ", 115);
-		sendFloat("testing", "pi", 3.14f);
+		sendFloat("testing", "pi", (float) pi);
 		sendDouble("testing", "e", 2.71);
 		sendBool("testing", "is everett zesty", true);
-		doomLoop();
+		Thread.sleep(10000);
+		System.out.println(value.getString("Everett3"));
 	}
 
-	public void sendString(String tab, String title, String value)
+	public GenericEntry sendString(String tab, String title, String value)
 	{
-		Shuffleboard.getTab(tab).add(title, value);
+		return Shuffleboard.getTab(tab).add(title, value).getEntry();
 	}
 
-	public void sendInt(String tab, String title, int value)
+	public GenericEntry sendInt(String tab, String title, int value)
 	{
-		Shuffleboard.getTab(tab).add(title, value);
+		return Shuffleboard.getTab(tab).add(title, value).getEntry();
 	}
 
-	public void sendDouble(String tab, String title, double value)
+	public GenericEntry sendDouble(String tab, String title, double value)
 	{
-		Shuffleboard.getTab(tab).add(title, value);
+		return Shuffleboard.getTab(tab).add(title, value).getEntry();
 	}
 
-	public void sendFloat(String tab, String title, float value)
+	public GenericEntry sendFloat(String tab, String title, float value)
 	{
-		Shuffleboard.getTab(tab).add(title, value);
+		return Shuffleboard.getTab(tab).add(title, value).getEntry();
 	}
 
-	public void sendBool(String tab, String title, boolean value)
+	public GenericEntry sendBool(String tab, String title, boolean value)
 	{
-		Shuffleboard.getTab(tab).add(title, value);
+		return Shuffleboard.getTab(tab).add(title, value).getEntry();
 	}
 
-	public void sendShort(String tab, String title, short value)
+	public GenericEntry sendShort(String tab, String title, short value)
 	{
-		Shuffleboard.getTab(tab).add(title, value);
-	}
-
-	// so it will remain connected
-	public void doomLoop()
-	{
-		while (true)
-		{
-			try
-			{
-				Thread.sleep(200);
-			} catch (InterruptedException e)
-			{
-				Thread.currentThread().interrupt();
-			}
-		}
+		return Shuffleboard.getTab(tab).add(title, value).getEntry();
 	}
 }
