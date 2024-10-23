@@ -106,8 +106,8 @@ public class Robot extends LoggedRobot
 
         // TODO: Find Camera Transform
         frontCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-                PoseStrategy.MULTI_TAG_PNP_ON_RIO,
-                new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0)));
+                new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0)),
+                PoseStrategy.MULTI_TAG_PNP_ON_RIO);
         visionSystem = new PhotonManager(frontCamera);
     }
 
