@@ -1,6 +1,7 @@
 package frc.robot.crabby;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.DriveCommands;
 import frc.robot.robots.CrabbyContainer;
 
 /**
@@ -14,8 +15,9 @@ public class CrabbyProgrammerOI implements CrabbyOI
 	{
 		final CommandXboxController driverController = new CommandXboxController(0);
 		final CommandXboxController manipulatorController = new CommandXboxController(0);
-		driverController.x(); // TO
-		manipulatorController.x();
+		container.drive.setDefaultCommand(DriveCommands.joystickDrive(container.drive,
+				() -> driverController.getLeftX(), () -> driverController.getLeftY(),
+				() -> Math.atan2(driverController.getRightY(), driverController.getRightX())));
 	}
 
 }

@@ -41,7 +41,7 @@ import org.northernforce.util.NFRRobotContainer;
 public class CrabbyContainer implements NFRRobotContainer
 {
 	// Subsystems
-	private final Drive drive;
+	public final Drive drive;
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
