@@ -19,7 +19,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Constants.Mode;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -41,32 +40,19 @@ public class Module
 	private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[]
 	{};
 
-	public Module(ModuleIO io, int index, Mode mode)
+	public Module(ModuleIO io, int index, double driveFeedforwardks, double driveFeedforwardkv, double driveFeedbackkp,
+			double driveFeedbackki, double driveFeedbackkd, double turnFeedbackkp, double turnFeedbackki,
+			double turnFeedbackkd)
 	{
 		this.io = io;
 		this.index = index;
 
 		// Switch constants based on mode (the physics simulator is treated as a
 		// separate robot with different tuning)
-		switch (mode)
-		{
-		case REAL:
-		case REPLAY:
-			driveFeedforward = new SimpleMotorFeedforward(0.1, 0.13);
-			driveFeedback = new PIDController(0.05, 0.0, 0.0);
-			turnFeedback = new PIDController(7.0, 0.0, 0.0);
-			break;
-		case SIM:
-			driveFeedforward = new SimpleMotorFeedforward(0.0, 0.13);
-			driveFeedback = new PIDController(0.1, 0.0, 0.0);
-			turnFeedback = new PIDController(10.0, 0.0, 0.0);
-			break;
-		default:
-			driveFeedforward = new SimpleMotorFeedforward(0.0, 0.0);
-			driveFeedback = new PIDController(0.0, 0.0, 0.0);
-			turnFeedback = new PIDController(0.0, 0.0, 0.0);
-			break;
-		}
+
+		driveFeedforward = new SimpleMotorFeedforward(driveFeedforwardks, driveFeedforwardkv);
+		driveFeedback = new PIDController(driveFeedbackkp, driveFeedbackki, driveFeedbackkd);
+		turnFeedback = new PIDController(turnFeedbackkp, turnFeedbackki, turnFeedbackkd);
 
 		turnFeedback.enableContinuousInput(-Math.PI, Math.PI);
 		setBrakeMode(true);

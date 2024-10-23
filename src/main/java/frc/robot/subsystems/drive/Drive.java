@@ -77,7 +77,9 @@ public class Drive extends SubsystemBase
 	 *                        would we have more than 4? idk ask connor >:(
 	 */
 	public Drive(GyroIO gyroIO, double maxLinearSpeed, double maxAngularSpeed, double driveBaseRadius,
-			double trackWidthX, double trackWidthY, Mode currentMode, ModuleIO... moduleIOs)
+			double trackWidthX, double trackWidthY, Mode currentMode, double driveFeedforwardks, double driveFeedforwardkv, double driveFeedbackkp,
+			double driveFeedbackki, double driveFeedbackkd, double turnFeedbackkp, double turnFeedbackki,
+			double turnFeedbackkd, ModuleIO... moduleIOs)
 	{
 		MAX_ANGULAR_SPEED = maxAngularSpeed;
 		MAX_LINEAR_SPEED = maxLinearSpeed;
@@ -112,7 +114,9 @@ public class Drive extends SubsystemBase
 				{
 					for (int i = 0; i < moduleIOs.length; i++)
 					{
-						modules[i] = new Module(moduleIOs[i], i, currentMode);
+						modules[i] = new Module(moduleIOs[i], i, driveFeedforwardks, driveFeedforwardkv,
+								driveFeedbackkp, driveFeedbackki, driveFeedbackkd, turnFeedbackkp, turnFeedbackki,
+								turnFeedbackkd);
 						modules[i].runCharacterization(voltage.in(Volts));
 					}
 				}, null, this));
