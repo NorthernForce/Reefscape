@@ -24,7 +24,8 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import frc.robot.subsystems.VisionSystem;
+import frc.robot.subsystems.PhotonManager;
+import frc.robot.subsystems.PhotonVisionCamera;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -39,7 +40,8 @@ public class Robot extends LoggedRobot
 	private static final String customAuto = "My Auto";
 	private String autoSelected;
 	private final LoggedDashboardChooser<String> chooser = new LoggedDashboardChooser<>("Auto Choices");
-	private VisionSystem photonvision;
+	private PhotonVisionCamera frontCamera;
+    private PhotonManager visionSystem;
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -101,8 +103,9 @@ public class Robot extends LoggedRobot
 		chooser.addOption("My Auto", customAuto);
 
 		// TODO: Find Camera Transform
-		photonvision = new VisionSystem(
+		frontCamera = new PhotonVisionCamera(
 				new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0)));
+        visionSystem = new PhotonManager(frontCamera);
 	}
 
 	/** This function is called periodically during all modes. */
