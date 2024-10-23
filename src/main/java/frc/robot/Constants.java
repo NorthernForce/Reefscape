@@ -27,7 +27,6 @@ public final class Constants
 {
 	public static final Mode kCurrentMode = Mode.REAL;
 
-
 	public static enum Mode
 	{
 		/** Running on a real robot. */

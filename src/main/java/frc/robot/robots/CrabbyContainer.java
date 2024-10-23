@@ -29,6 +29,8 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 
 import java.util.Map;
 
+import org.northernforce.util.NFRRobotContainer;
+
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -36,7 +38,7 @@ import java.util.Map;
  * scheduler calls). Instead, the structure of the robot (including subsystems,
  * commands, and button mappings) should be declared here.
  */
-public class CrabbyContainer
+public class CrabbyContainer implements NFRRobotContainer
 {
 	// Subsystems
 	private final Drive drive;
