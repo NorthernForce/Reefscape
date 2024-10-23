@@ -13,17 +13,21 @@
 
 package frc.robot.robots;
 
-import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+import java.util.Map;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -36,9 +40,6 @@ public class CrabbyContainer
 {
 	// Subsystems
 	private final Drive drive;
-
-	// Dashboard inputs
-	private final LoggedDashboardChooser<Command> autoChooser;
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -94,26 +95,30 @@ public class CrabbyContainer
 			break;
 		}
 
-		// Set up auto routines
-		autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+	}
 
-		// Set up SysId routines
-		autoChooser.addOption("Drive SysId (Quasistatic Forward)",
-				drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-		autoChooser.addOption("Drive SysId (Quasistatic Reverse)",
-				drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-		autoChooser.addOption("Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-		autoChooser.addOption("Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+	public Map<String, Command> getAutonomousOptions()
+	{
+		return Map.of();
+	}
+
+	public Map<String, Pose2d> getStartingLocations()
+	{
+		return Map.of();
+	}
+
+	public Pair<String, Command> getDefaultAutonomous()
+	{
+		return Pair.of("nothing", Commands.none());
+	}
+
+	public void setInitialPose(Pose2d pose)
+	{
 
 	}
 
-	/**
-	 * Use this to pass the autonomous command to the main {@link Robot} class.
-	 *
-	 * @return the command to run in autonomous
-	 */
-	public Command getAutonomousCommand()
+	public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
 	{
-		return autoChooser.get();
+
 	}
 }
