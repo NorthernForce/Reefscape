@@ -2,20 +2,26 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 
+import org.photonvision.EstimatedRobotPose;
+
 import edu.wpi.first.math.geometry.Pose2d;
 
 public class PhotonManager
 {
-    private final PhotonVisionCamera photonVisionCamera;
+    private final ArrayList<PhotonVisionCamera> photonVisionCameras;
 
     /**
      * Class to manage any number PhotonVisionCamera objects
      * 
      * @param photonVisionCamera The PhotonVisionCamera objects to be managed
      */
-    public PhotonManager(PhotonVisionCamera photonVisionCamera)
+    public PhotonManager(PhotonVisionCamera... photonVisionCameras)
     {
-        this.photonVisionCamera = photonVisionCamera;
+        this.photonVisionCameras = new ArrayList<>();
+        for (PhotonVisionCamera cam : photonVisionCameras)
+        {
+            this.photonVisionCameras.add(cam);
+        }
     }
 
     /**
@@ -23,10 +29,13 @@ public class PhotonManager
      * @param prevEstimatedRobotPose
      * @return
      */
-    public ArrayList<Pose2d> getEstimatedRobotPose(Pose2d prevEstimatedRobotPose)
+    public ArrayList<EstimatedRobotPose> getEstimatedRobotPoses(Pose2d prevEstimatedRobotPose)
     {
-        ArrayList<Pose2d> poses = new ArrayList<>();
-        poses.add(photonVisionCamera.getEstimatedRobotPose(prevEstimatedRobotPose).estimatedPose.toPose2d());
+        ArrayList<EstimatedRobotPose> poses = new ArrayList<>();
+        for (PhotonVisionCamera cam : photonVisionCameras)
+        {
+            poses.add(cam.getEstimatedRobotPose(prevEstimatedRobotPose));
+        }
         return poses;
     }
 }

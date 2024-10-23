@@ -22,8 +22,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import frc.robot.subsystems.PhotonManager;
-import frc.robot.subsystems.PhotonVisionCamera;
 import org.northernforce.util.NFRRobotChooser;
 import org.northernforce.util.NFRRobotContainer;
 
@@ -40,11 +38,9 @@ import frc.robot.robots.CrabbyContainer;
  */
 public class Robot extends LoggedRobot
 {
-    private PhotonVisionCamera frontCamera;
-    private PhotonManager visionSystem;
-	private Command autoSelected = null;
-	private final LoggedDashboardChooser<Command> autoChooser = new LoggedDashboardChooser<>("Auto Choices");
-	private NFRRobotContainer container = null;
+    private Command autoSelected = null;
+    private final LoggedDashboardChooser<Command> autoChooser = new LoggedDashboardChooser<>("Auto Choices");
+    private NFRRobotContainer container = null;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -72,18 +68,18 @@ public class Robot extends LoggedRobot
             break;
         }
 
-		final NFRRobotChooser chooser = new NFRRobotChooser(() -> new CrabbyContainer(),
-				Map.of("Crabby", () -> new CrabbyContainer()));
-		container = chooser.getNFRRobotContainer();
+        final NFRRobotChooser chooser = new NFRRobotChooser(() -> new CrabbyContainer(),
+                Map.of("Crabby", () -> new CrabbyContainer()));
+        container = chooser.getNFRRobotContainer();
 
-		// Set up data receivers & replay source
-		switch (Constants.kCurrentMode)
-		{
-		case REAL:
-			// Running on a real robot, log to a USB stick ("/U/logs")
-			Logger.addDataReceiver(new WPILOGWriter());
-			Logger.addDataReceiver(new NT4Publisher());
-			break;
+        // Set up data receivers & replay source
+        switch (Constants.kCurrentMode)
+        {
+        case REAL:
+            // Running on a real robot, log to a USB stick ("/U/logs")
+            Logger.addDataReceiver(new WPILOGWriter());
+            Logger.addDataReceiver(new NT4Publisher());
+            break;
 
         case SIM:
             // Running a physics simulator, log to NT
@@ -105,50 +101,50 @@ public class Robot extends LoggedRobot
         // Start AdvantageKit logger
         Logger.start();
 
-		// Initialize auto chooser
-		final var defaultAuto = container.getDefaultAutonomous();
-		autoChooser.addDefaultOption(defaultAuto.getFirst(), defaultAuto.getSecond());
-		container.getAutonomousOptions().forEach(autoChooser::addOption);
+        // Initialize auto chooser
+        final var defaultAuto = container.getDefaultAutonomous();
+        autoChooser.addDefaultOption(defaultAuto.getFirst(), defaultAuto.getSecond());
+        container.getAutonomousOptions().forEach(autoChooser::addOption);
 
-	}
+    }
 
-	/** This function is called periodically during all modes. */
-	@Override
-	public void robotPeriodic()
-	{
-		CommandScheduler.getInstance().run();
-		container.periodic();
-	}
+    /** This function is called periodically during all modes. */
+    @Override
+    public void robotPeriodic()
+    {
+        CommandScheduler.getInstance().run();
+        container.periodic();
+    }
 
-	/** This function is called once when autonomous is enabled. */
-	@Override
-	public void autonomousInit()
-	{
-		autoSelected = autoChooser.get();
-		if (autoChooser != null)
-		{
-			System.out.println("Auto selected: " + autoSelected.getName());
-			autoSelected.schedule();
-		}
-	}
+    /** This function is called once when autonomous is enabled. */
+    @Override
+    public void autonomousInit()
+    {
+        autoSelected = autoChooser.get();
+        if (autoChooser != null)
+        {
+            System.out.println("Auto selected: " + autoSelected.getName());
+            autoSelected.schedule();
+        }
+    }
 
-	/** This function is called periodically during autonomous. */
-	@Override
-	public void autonomousPeriodic()
-	{
-		container.autonomousPeriodic();
-	}
+    /** This function is called periodically during autonomous. */
+    @Override
+    public void autonomousPeriodic()
+    {
+        container.autonomousPeriodic();
+    }
 
-	/** This function is called once when teleop is enabled. */
-	@Override
-	public void teleopInit()
-	{
-		if (autoSelected != null && autoSelected.isScheduled())
-		{
-			autoSelected.cancel();
-		}
-	}
-    
+    /** This function is called once when teleop is enabled. */
+    @Override
+    public void teleopInit()
+    {
+        if (autoSelected != null && autoSelected.isScheduled())
+        {
+            autoSelected.cancel();
+        }
+    }
+
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic()

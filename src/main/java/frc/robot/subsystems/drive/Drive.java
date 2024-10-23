@@ -304,7 +304,7 @@ public class Drive extends SubsystemBase
 	 * @param visionPose The pose of the robot as measured by the vision camera.
 	 * @param timestamp  The timestamp of the vision measurement in seconds.
 	 */
-	public void addVisionMeasurement(Pose2d visionPose, double timestamp) // TODO: talk to zack
+	public void addVisionMeasurement(Pose2d visionPose, double timestamp)
 	{
 		poseEstimator.addVisionMeasurement(visionPose, timestamp);
 	}
