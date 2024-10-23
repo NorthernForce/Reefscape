@@ -9,10 +9,21 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.dashboard.Dashboard;
 
 public class CrabbyContainer implements NFRRobotContainer
 {
-
+    private Dashboard dashboard = new Dashboard();
+    public CrabbyContainer() {
+        try
+        {
+            dashboard.testSend();
+        } catch (InterruptedException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 	public Map<String, Command> getAutonomousOptions()
 	{
 		return Map.of();
@@ -37,5 +48,4 @@ public class CrabbyContainer implements NFRRobotContainer
 	{
 
 	}
-
 }

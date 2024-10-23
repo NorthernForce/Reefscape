@@ -20,7 +20,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import frc.robot.dashboard.Dashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -31,7 +30,6 @@ import frc.robot.dashboard.Dashboard;
  */
 public class Robot extends LoggedRobot
 {
-	private Dashboard dashboard = new Dashboard();
 	private static final String defaultAuto = "Default";
 	private static final String customAuto = "My Auto";
 	private String autoSelected;
@@ -167,15 +165,6 @@ public class Robot extends LoggedRobot
 	@Override
 	public void simulationInit()
 	{
-
-		try
-		{
-			dashboard.testSend();
-		} catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	/** This function is called periodically whilst in simulation. */
