@@ -13,6 +13,8 @@
 
 package frc.robot;
 
+import java.util.Map;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -20,14 +22,14 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.apriltag.AprilTagFields;
 import frc.robot.subsystems.PhotonManager;
 import frc.robot.subsystems.PhotonVisionCamera;
+import org.northernforce.util.NFRRobotChooser;
+import org.northernforce.util.NFRRobotContainer;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.robots.CrabbyContainer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -38,12 +40,11 @@ import frc.robot.subsystems.PhotonVisionCamera;
  */
 public class Robot extends LoggedRobot
 {
-    private static final String defaultAuto = "Default";
-    private static final String customAuto = "My Auto";
-    private String autoSelected;
-    private final LoggedDashboardChooser<String> chooser = new LoggedDashboardChooser<>("Auto Choices");
     private PhotonVisionCamera frontCamera;
     private PhotonManager visionSystem;
+	private Command autoSelected = null;
+	private final LoggedDashboardChooser<Command> autoChooser = new LoggedDashboardChooser<>("Auto Choices");
+	private NFRRobotContainer container = null;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -71,14 +72,18 @@ public class Robot extends LoggedRobot
             break;
         }
 
-        // Set up data receivers & replay source
-        switch (Constants.kCurrentMode)
-        {
-        case REAL:
-            // Running on a real robot, log to a USB stick ("/U/logs")
-            Logger.addDataReceiver(new WPILOGWriter());
-            Logger.addDataReceiver(new NT4Publisher());
-            break;
+		final NFRRobotChooser chooser = new NFRRobotChooser(() -> new CrabbyContainer(),
+				Map.of("Crabby", () -> new CrabbyContainer()));
+		container = chooser.getNFRRobotContainer();
+
+		// Set up data receivers & replay source
+		switch (Constants.kCurrentMode)
+		{
+		case REAL:
+			// Running on a real robot, log to a USB stick ("/U/logs")
+			Logger.addDataReceiver(new WPILOGWriter());
+			Logger.addDataReceiver(new NT4Publisher());
+			break;
 
         case SIM:
             // Running a physics simulator, log to NT
@@ -100,58 +105,55 @@ public class Robot extends LoggedRobot
         // Start AdvantageKit logger
         Logger.start();
 
-        // Initialize auto chooser
-        chooser.addDefaultOption("Default Auto", defaultAuto);
-        chooser.addOption("My Auto", customAuto);
+		// Initialize auto chooser
+		final var defaultAuto = container.getDefaultAutonomous();
+		autoChooser.addDefaultOption(defaultAuto.getFirst(), defaultAuto.getSecond());
+		container.getAutonomousOptions().forEach(autoChooser::addOption);
 
-        // TODO: Find Camera Transform
-        frontCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-                new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0)),
-                PoseStrategy.MULTI_TAG_PNP_ON_RIO);
-        visionSystem = new PhotonManager(frontCamera);
-    }
+	}
 
-    /** This function is called periodically during all modes. */
-    @Override
-    public void robotPeriodic()
-    {
+	/** This function is called periodically during all modes. */
+	@Override
+	public void robotPeriodic()
+	{
+		CommandScheduler.getInstance().run();
+		container.periodic();
+	}
 
-    }
+	/** This function is called once when autonomous is enabled. */
+	@Override
+	public void autonomousInit()
+	{
+		autoSelected = autoChooser.get();
+		if (autoChooser != null)
+		{
+			System.out.println("Auto selected: " + autoSelected.getName());
+			autoSelected.schedule();
+		}
+	}
 
-    /** This function is called once when autonomous is enabled. */
-    @Override
-    public void autonomousInit()
-    {
-        autoSelected = chooser.get();
-        System.out.println("Auto selected: " + autoSelected);
-    }
+	/** This function is called periodically during autonomous. */
+	@Override
+	public void autonomousPeriodic()
+	{
+		container.autonomousPeriodic();
+	}
 
-    /** This function is called periodically during autonomous. */
-    @Override
-    public void autonomousPeriodic()
-    {
-        switch (autoSelected)
-        {
-        case customAuto:
-            // Put custom auto code here
-            break;
-        case defaultAuto:
-        default:
-            // Put default auto code here
-            break;
-        }
-    }
-
-    /** This function is called once when teleop is enabled. */
-    @Override
-    public void teleopInit()
-    {
-    }
-
+	/** This function is called once when teleop is enabled. */
+	@Override
+	public void teleopInit()
+	{
+		if (autoSelected != null && autoSelected.isScheduled())
+		{
+			autoSelected.cancel();
+		}
+	}
+    
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic()
     {
+        container.teleopPeroidic();
     }
 
     /** This function is called once when the robot is disabled. */
