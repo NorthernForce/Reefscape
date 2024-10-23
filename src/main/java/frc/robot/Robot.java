@@ -26,6 +26,7 @@ import org.northernforce.util.NFRRobotChooser;
 import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.robots.CrabbyContainer;
 
 /**
@@ -111,6 +112,7 @@ public class Robot extends LoggedRobot
 	@Override
 	public void robotPeriodic()
 	{
+        CommandScheduler.getInstance().run();
 		container.periodic();
 	}
 
