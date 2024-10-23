@@ -26,7 +26,7 @@ package frc.robot;
 public final class Constants
 {
 	public static final Mode kCurrentMode = Mode.REAL;
-	public static final int CANdleID = 0;
+	
 
 	public static enum Mode
 	{

@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.robots.subsystem.CANdleSystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -42,6 +43,7 @@ public class CrabbyContainer implements NFRRobotContainer
 {
 	// Subsystems
 	private final Drive drive;
+    private final CANdleSystem candle;
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -117,6 +119,7 @@ public class CrabbyContainer implements NFRRobotContainer
 			;
 			break;
 		}
+        candle = new CANdleSystem(CrabbyConstants.LEDConstants.CANdleID);
 
 	}
 

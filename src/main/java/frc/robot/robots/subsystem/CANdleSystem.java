@@ -10,14 +10,10 @@ public class CANdleSystem
 
 	public CANdleSystem(int candleid)
 	{
-
+        m_candleSystem = new CANdleSystem(candleid);
 	}
 
-	public CANdleSystem()
-	{
-		// Initialize the CANdleSystem with the CANdle ID from Constants
-		m_candleSystem = new CANdleSystem(Constants.CANdleID);
-	}
+
 
 	public void setLEDColor()
 	{
@@ -26,10 +22,10 @@ public class CANdleSystem
 		m_candleSystem.setColor(redColor); // Set the color of the LEDs
 	}
 
-	private void setColor(Color redColor)
+	public void setColor(Color redColor)
 	{
 
-		throw new UnsupportedOperationException("Unimplemented method 'setColor'");
+		m_candleSystem.setColor(redColor);
 	}
 
 	// Other methods and logic for your robot...
