@@ -39,11 +39,10 @@ public final class Constants
 		REPLAY
 	}
 
-    public static enum OI
-    {
-        PROGRAMMER,
-        DRIVER
-    }
+	public static enum OI
+	{
+		PROGRAMMER, DRIVER
+	}
 
-    public static final OI kOI = OI.PROGRAMMER;
+	public static final OI kOI = OI.PROGRAMMER;
 }
