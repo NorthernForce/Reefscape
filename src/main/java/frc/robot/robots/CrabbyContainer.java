@@ -22,7 +22,7 @@ import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOSparkMax;
+import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -52,10 +52,10 @@ public class CrabbyContainer
 			drive = new Drive(new GyroIOPigeon2(false), Constants.MAX_LINEAR_SPEED, Constants.MAX_ANGULAR_SPEED,
 					Constants.DRIVE_BASE_RADIUS, Constants.TRACK_WIDTH_X, Constants.TRACK_WIDTH_Y,
 					Constants.kCurrentMode,
-					new ModuleIOSparkMax(0, 1, 2, Constants.TURN_GEAR_RATIO, Constants.DRIVE_GEAR_RATIO),
-					new ModuleIOSparkMax(1, 2, 3, Constants.TURN_GEAR_RATIO, Constants.DRIVE_GEAR_RATIO),
-					new ModuleIOSparkMax(2, 3, 4, Constants.TURN_GEAR_RATIO, Constants.DRIVE_GEAR_RATIO),
-					new ModuleIOSparkMax(3, 4, 5, Constants.TURN_GEAR_RATIO, Constants.DRIVE_GEAR_RATIO));
+					new ModuleIOTalonFX(0, 1, 2, Constants.TURN_GEAR_RATIO, Constants.DRIVE_GEAR_RATIO),
+					new ModuleIOTalonFX(1, 2, 3, Constants.TURN_GEAR_RATIO, Constants.DRIVE_GEAR_RATIO),
+					new ModuleIOTalonFX(2, 3, 4, Constants.TURN_GEAR_RATIO, Constants.DRIVE_GEAR_RATIO),
+					new ModuleIOTalonFX(3, 4, 5, Constants.TURN_GEAR_RATIO, Constants.DRIVE_GEAR_RATIO));
 			// drive = new Drive(
 			// new GyroIOPigeon2(true),
 			// new ModuleIOTalonFX(0),
