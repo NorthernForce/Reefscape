@@ -2,7 +2,6 @@ package org.northernforce.util;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.util.Map;
 
@@ -13,13 +12,9 @@ import java.util.Map;
 public interface NFRRobotContainer
 {
 	/**
-	 * Binds the commands from subsystems to the HID's. Check the actual
-	 * implementation to see which HID's are supported.
-	 *
-	 * @param driverHID      the driver controller.
-	 * @param manipulatorHID the manipulator controller.
+	 * Binds the commands from subsystems to the operator interfaces.
 	 */
-	public void bindOI(GenericHID driverHID, GenericHID manipulatorHID);
+	public void bindOI();
 
 	/** Runs periodically (every 20 ms) regardless of mode. */
 	public default void periodic()
