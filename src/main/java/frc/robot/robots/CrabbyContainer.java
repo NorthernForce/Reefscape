@@ -15,11 +15,13 @@ package frc.robot.robots;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.crabby.CrabbyDriverOI;
+import frc.robot.crabby.CrabbyOI;
+import frc.robot.crabby.CrabbyProgrammerOI;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -140,8 +142,19 @@ public class CrabbyContainer implements NFRRobotContainer
 
 	}
 
-	public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
+	public void bindOI()
 	{
-
+        CrabbyOI crabbyOI;
+        switch (Constants.kOI)
+        {
+        case PROGRAMMER:
+            crabbyOI = new CrabbyProgrammerOI();
+            break;
+        case DRIVER:
+        default:
+            crabbyOI = new CrabbyDriverOI();
+            break;
+        }
+        crabbyOI.bindOI(this);
 	}
 }
