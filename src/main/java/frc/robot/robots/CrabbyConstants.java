@@ -25,4 +25,13 @@ public class CrabbyConstants
 		public static final double TURN_GEAR_RATIO = 150.0 / 7.0;
 	}
 
+    public class VisionConstants
+    {
+        public static final double frontCameraTransformX = 0.0;
+        public static final double frontCameraTransformY = 0.0;
+        public static final double frontCameraTransformZ = 0.0;
+        public static final double frontCameraRotateX = 0.0;
+        public static final double frontCameraRotateY = 0.0;
+        public static final double frontCameraRotateZ = 0.0;
+    }
 }
