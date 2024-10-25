@@ -34,7 +34,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.Mode;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -77,9 +76,7 @@ public class Drive extends SubsystemBase
 	 *                        would we have more than 4? idk ask connor >:(
 	 */
 	public Drive(GyroIO gyroIO, double maxLinearSpeed, double maxAngularSpeed, double driveBaseRadius,
-			double trackWidthX, double trackWidthY, Mode currentMode, double driveFeedforwardks,
-			double driveFeedforwardkv, double driveFeedbackkp, double driveFeedbackki, double driveFeedbackkd,
-			double turnFeedbackkp, double turnFeedbackki, double turnFeedbackkd, ModuleIO... moduleIOs)
+			double trackWidthX, double trackWidthY, ModuleIO... moduleIOs)
 	{
 		MAX_ANGULAR_SPEED = maxAngularSpeed;
 		MAX_LINEAR_SPEED = maxLinearSpeed;
@@ -114,9 +111,7 @@ public class Drive extends SubsystemBase
 				{
 					for (int i = 0; i < moduleIOs.length; i++)
 					{
-						modules[i] = new Module(moduleIOs[i], i, driveFeedforwardks, driveFeedforwardkv,
-								driveFeedbackkp, driveFeedbackki, driveFeedbackkd, turnFeedbackkp, turnFeedbackki,
-								turnFeedbackkd);
+						modules[i] = new Module(moduleIOs[i], i);
 						modules[i].runCharacterization(voltage.in(Volts));
 					}
 				}, null, this));
