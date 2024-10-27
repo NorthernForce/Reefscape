@@ -16,9 +16,6 @@ package frc.robot.robots;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -51,6 +48,7 @@ public class CrabbyContainer implements NFRRobotContainer
     // Subsystems
     private final Drive drive;
     private final PhotonVisionCamera frontCamera;
+    private final PhotonVisionCamera backCamera;
     private final PhotonManager photonManager;
 
     /**
@@ -86,13 +84,9 @@ public class CrabbyContainer implements NFRRobotContainer
             // new ModuleIOTalonFX(3));
             // flywheel = new Flywheel(new FlywheelIOTalonFX());
             frontCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-                    new Transform3d(
-                            new Translation3d(CrabbyConstants.VisionConstants.frontCameraTransformX,
-                                    CrabbyConstants.VisionConstants.frontCameraTransformY,
-                                    CrabbyConstants.VisionConstants.frontCameraTransformZ),
-                            new Rotation3d(CrabbyConstants.VisionConstants.frontCameraRotateX,
-                                    CrabbyConstants.VisionConstants.frontCameraRotateY,
-                                    CrabbyConstants.VisionConstants.frontCameraRotateZ)));
+                    CrabbyConstants.VisionConstants.frontCameraTransform);
+            backCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+                    CrabbyConstants.VisionConstants.backCameraTransform);
             photonManager = new PhotonManager(frontCamera);
             break;
 
@@ -110,13 +104,9 @@ public class CrabbyContainer implements NFRRobotContainer
                     CrabbyConstants.DriveConstants.turnFeedbackkd, new ModuleIOSim(), new ModuleIOSim(),
                     new ModuleIOSim(), new ModuleIOSim());
             frontCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-                    new Transform3d(
-                            new Translation3d(CrabbyConstants.VisionConstants.frontCameraTransformX,
-                                    CrabbyConstants.VisionConstants.frontCameraTransformY,
-                                    CrabbyConstants.VisionConstants.frontCameraTransformZ),
-                            new Rotation3d(CrabbyConstants.VisionConstants.frontCameraRotateX,
-                                    CrabbyConstants.VisionConstants.frontCameraRotateY,
-                                    CrabbyConstants.VisionConstants.frontCameraRotateZ)));
+                    CrabbyConstants.VisionConstants.frontCameraTransform);
+            backCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+                    CrabbyConstants.VisionConstants.backCameraTransform);
             photonManager = new PhotonManager(frontCamera);
             break;
 
@@ -141,14 +131,10 @@ public class CrabbyContainer implements NFRRobotContainer
                     {
                     });
             frontCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-                    new Transform3d(
-                            new Translation3d(CrabbyConstants.VisionConstants.frontCameraTransformX,
-                                    CrabbyConstants.VisionConstants.frontCameraTransformY,
-                                    CrabbyConstants.VisionConstants.frontCameraTransformZ),
-                            new Rotation3d(CrabbyConstants.VisionConstants.frontCameraRotateX,
-                                    CrabbyConstants.VisionConstants.frontCameraRotateY,
-                                    CrabbyConstants.VisionConstants.frontCameraRotateZ)));
-            photonManager = new PhotonManager(frontCamera);
+                    CrabbyConstants.VisionConstants.frontCameraTransform);
+            backCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+                    CrabbyConstants.VisionConstants.backCameraTransform);
+            photonManager = new PhotonManager(frontCamera, backCamera);
         {
         }
             ;
