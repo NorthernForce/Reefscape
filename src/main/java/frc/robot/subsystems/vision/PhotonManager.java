@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.vision;
 
 import java.util.ArrayList;
 
@@ -27,7 +27,7 @@ public class PhotonManager
     /**
      * 
      * @param prevEstimatedRobotPose
-     * @return
+     * @return ArrayList of estimated poses from all the PhotonVisionCameras
      */
     public ArrayList<EstimatedRobotPose> getEstimatedRobotPoses(Pose2d prevEstimatedRobotPose)
     {
