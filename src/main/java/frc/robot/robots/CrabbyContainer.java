@@ -84,9 +84,9 @@ public class CrabbyContainer implements NFRRobotContainer
             // new ModuleIOTalonFX(3));
             // flywheel = new Flywheel(new FlywheelIOTalonFX());
             frontCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-                    CrabbyConstants.VisionConstants.frontCameraTransform);
+                    CrabbyConstants.VisionConstants.frontCameraTransform, 0);
             backCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-                    CrabbyConstants.VisionConstants.backCameraTransform);
+                    CrabbyConstants.VisionConstants.backCameraTransform, 1);
             photonManager = new PhotonManager(frontCamera);
             break;
 
@@ -104,9 +104,9 @@ public class CrabbyContainer implements NFRRobotContainer
                     CrabbyConstants.DriveConstants.turnFeedbackkd, new ModuleIOSim(), new ModuleIOSim(),
                     new ModuleIOSim(), new ModuleIOSim());
             frontCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-                    CrabbyConstants.VisionConstants.frontCameraTransform);
+                    CrabbyConstants.VisionConstants.frontCameraTransform, 0);
             backCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-                    CrabbyConstants.VisionConstants.backCameraTransform);
+                    CrabbyConstants.VisionConstants.backCameraTransform, 1);
             photonManager = new PhotonManager(frontCamera);
             break;
 
@@ -131,9 +131,9 @@ public class CrabbyContainer implements NFRRobotContainer
                     {
                     });
             frontCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-                    CrabbyConstants.VisionConstants.frontCameraTransform);
+                    CrabbyConstants.VisionConstants.frontCameraTransform, 0);
             backCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-                    CrabbyConstants.VisionConstants.backCameraTransform);
+                    CrabbyConstants.VisionConstants.backCameraTransform, 1);
             photonManager = new PhotonManager(frontCamera, backCamera);
         {
         }

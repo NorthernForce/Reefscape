@@ -22,10 +22,11 @@ public class PhotonVisionCamera extends SubsystemBase
      * 
      * @param aprilTagFieldLayout The layout of the apriltags on the field
      * @param robotToCam          Transform between the robot origin and the camera
+     * @param cameraNum           Used to give each camera a unique name
      */
-    public PhotonVisionCamera(AprilTagFieldLayout aprilTagFieldLayout, Transform3d robotToCam)
+    public PhotonVisionCamera(AprilTagFieldLayout aprilTagFieldLayout, Transform3d robotToCam, int cameraNum)
     {
-        photonCamera = new PhotonCamera("photonvision");
+        photonCamera = new PhotonCamera("photonVisionCamera" + cameraNum);
         photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_RIO,
                 photonCamera, robotToCam);
         photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
