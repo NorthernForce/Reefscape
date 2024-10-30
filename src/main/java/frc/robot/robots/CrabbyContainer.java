@@ -165,21 +165,21 @@ public class CrabbyContainer implements NFRRobotContainer
 
     }
 
-	public void bindOI()
-	{
-		CrabbyOI crabbyOI;
-		switch (Constants.kOI)
-		{
-		case PROGRAMMER:
-			crabbyOI = new CrabbyProgrammerOI();
-			break;
-		case DRIVER:
-		default:
-			crabbyOI = new CrabbyDriverOI();
-			break;
-		}
-		crabbyOI.bindOI(this);
-	}
+    public void bindOI()
+    {
+        CrabbyOI crabbyOI;
+        switch (Constants.kOI)
+        {
+        case PROGRAMMER:
+            crabbyOI = new CrabbyProgrammerOI();
+            break;
+        case DRIVER:
+        default:
+            crabbyOI = new CrabbyDriverOI();
+            break;
+        }
+        crabbyOI.bindOI(this);
+    }
 
     @Override
     public void periodic()
