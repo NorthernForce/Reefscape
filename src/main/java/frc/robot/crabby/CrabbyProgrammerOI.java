@@ -15,11 +15,12 @@ public class CrabbyProgrammerOI implements CrabbyOI
 	{
 		final CommandXboxController driverController = new CommandXboxController(0);
 		final CommandXboxController manipulatorController = new CommandXboxController(1);
-		container.drive.setDefaultCommand(DriveCommands.joystickDrive(container.drive,
-				() -> driverController.getLeftX(), () -> driverController.getLeftY(),
-				() -> Math.atan2(driverController.getRightY(), driverController.getRightX())));
-		driverController.x().onTrue(DriveCommands.xLock(container.drive));
-		driverController.b().onTrue(DriveCommands.resetOrientaion(container.drive));
+		container.getDrive()
+				.setDefaultCommand(DriveCommands.joystickDrive(container.getDrive(), () -> driverController.getLeftX(),
+						() -> driverController.getLeftY(),
+						() -> Math.atan2(driverController.getRightY(), driverController.getRightX())));
+		driverController.x().onTrue(DriveCommands.xLock(container.getDrive()));
+		driverController.b().onTrue(DriveCommands.resetOrientaion(container.getDrive()));
 	}
 
 }

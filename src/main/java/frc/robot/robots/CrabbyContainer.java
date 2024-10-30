@@ -41,7 +41,7 @@ import org.northernforce.util.NFRRobotContainer;
 public class CrabbyContainer implements NFRRobotContainer
 {
 	// Subsystems
-	public final Drive drive;
+	private final Drive drive;
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -143,5 +143,15 @@ public class CrabbyContainer implements NFRRobotContainer
 	public void bindOI(GenericHID driverHID, GenericHID manipulatorHID)
 	{
 
+	}
+
+	/**
+	 * get the drive
+	 * 
+	 * @return the drive
+	 */
+	public Drive getDrive()
+	{
+		return drive;
 	}
 }
