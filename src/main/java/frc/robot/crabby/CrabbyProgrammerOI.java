@@ -18,6 +18,7 @@ public class CrabbyProgrammerOI implements CrabbyOI
 		container.drive.setDefaultCommand(DriveCommands.joystickDrive(container.drive,
 				() -> driverController.getLeftX(), () -> driverController.getLeftY(),
 				() -> Math.atan2(driverController.getRightY(), driverController.getRightX())));
-	}
+        driverController.x().onTrue(DriveCommands.xLock(container.drive));
+	}   
 
 }
