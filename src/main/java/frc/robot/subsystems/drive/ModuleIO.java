@@ -40,8 +40,8 @@ public interface ModuleIO
 		public Rotation2d[] odometryTurnPositions = new Rotation2d[]
 		{};
 
-        public double driveTemperature = 0.0;
-        public double turnTemperature = 0.0;
+		public double driveTemperature = 0.0;
+		public double turnTemperature = 0.0;
 	}
 
 	/** Updates the set of loggable inputs. */

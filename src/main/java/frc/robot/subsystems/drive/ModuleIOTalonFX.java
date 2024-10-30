@@ -56,8 +56,8 @@ public class ModuleIOTalonFX implements ModuleIO
 	private final StatusSignal<Double> turnVelocity;
 	private final StatusSignal<Double> turnAppliedVolts;
 	private final StatusSignal<Double> turnCurrent;
-    private final StatusSignal<Double> driveTemperature;
-    private final StatusSignal<Double> turnTemperature;
+	private final StatusSignal<Double> driveTemperature;
+	private final StatusSignal<Double> turnTemperature;
 
 	private final double driveGearRatio;
 	private final double wheelCircumference;
@@ -110,9 +110,8 @@ public class ModuleIOTalonFX implements ModuleIO
 		turnAppliedVolts = turnTalon.getMotorVoltage();
 		turnCurrent = turnTalon.getSupplyCurrent();
 
-        driveTemperature = driveTalon.getDeviceTemp();
-        turnTemperature = turnTalon.getDeviceTemp();
-
+		driveTemperature = driveTalon.getDeviceTemp();
+		turnTemperature = turnTalon.getDeviceTemp();
 
 		BaseStatusSignal.setUpdateFrequencyForAll(odometryFrequency, drivePosition, turnPosition);
 		BaseStatusSignal.setUpdateFrequencyForAll(50.0, driveVelocity, driveAppliedVolts, driveCurrent, turnVelocity,
@@ -138,9 +137,9 @@ public class ModuleIOTalonFX implements ModuleIO
 		inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
 		inputs.turnCurrentAmps = new double[]
 		{ turnCurrent.getValueAsDouble() };
-        
-        inputs.driveTemperature = driveTemperature.getValueAsDouble();
-        inputs.turnTemperature = turnTemperature.getValueAsDouble();
+
+		inputs.driveTemperature = driveTemperature.getValueAsDouble();
+		inputs.turnTemperature = turnTemperature.getValueAsDouble();
 
 	}
 
