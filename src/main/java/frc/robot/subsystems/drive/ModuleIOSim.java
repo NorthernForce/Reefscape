@@ -44,23 +44,22 @@ public class ModuleIOSim implements ModuleIO
 		driveSim.update(LOOP_PERIOD_SECS);
 		turnSim.update(LOOP_PERIOD_SECS);
 
-		inputs.drivePositionRad = driveSim.getAngularPositionRad();
-		inputs.driveVelocityRadPerSec = driveSim.getAngularVelocityRadPerSec();
+		inputs.drivePositionMeters = driveSim.getAngularPositionRad();
+		inputs.driveVelocityMetersPerSecond = driveSim.getAngularVelocityRadPerSec();
 		inputs.driveAppliedVolts = driveAppliedVolts;
 		inputs.driveCurrentAmps = new double[]
 		{ Math.abs(driveSim.getCurrentDrawAmps()) };
 
-		inputs.turnAbsolutePosition = new Rotation2d(turnSim.getAngularPositionRad()).plus(turnAbsoluteInitPosition);
-		inputs.turnPosition = new Rotation2d(turnSim.getAngularPositionRad());
-		inputs.turnVelocityRadPerSec = turnSim.getAngularVelocityRadPerSec();
+		inputs.turnPosition = new Rotation2d(turnSim.getAngularPositionRad()).plus(turnAbsoluteInitPosition);
+		inputs.turnVelocityRotationsPerSecond = turnSim.getAngularVelocityRadPerSec();
 		inputs.turnAppliedVolts = turnAppliedVolts;
 		inputs.turnCurrentAmps = new double[]
 		{ Math.abs(turnSim.getCurrentDrawAmps()) };
 
 		inputs.odometryTimestamps = new double[]
 		{ Timer.getFPGATimestamp() };
-		inputs.odometryDrivePositionsRad = new double[]
-		{ inputs.drivePositionRad };
+		inputs.odometryDrivePositionsMeters = new double[]
+		{ inputs.drivePositionMeters };
 		inputs.odometryTurnPositions = new Rotation2d[]
 		{ inputs.turnPosition };
 	}
