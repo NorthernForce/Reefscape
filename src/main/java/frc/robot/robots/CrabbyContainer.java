@@ -57,26 +57,38 @@ public class CrabbyContainer implements NFRRobotContainer
 			drive = new Drive(new GyroIOPigeon2(false), CrabbyConstants.DriveConstants.MAX_LINEAR_SPEED,
 					CrabbyConstants.DriveConstants.MAX_ANGULAR_SPEED, CrabbyConstants.DriveConstants.DRIVE_BASE_RADIUS,
 					CrabbyConstants.DriveConstants.TRACK_WIDTH_X, CrabbyConstants.DriveConstants.TRACK_WIDTH_Y,
-					Constants.kCurrentMode, CrabbyConstants.DriveConstants.driveFeedforwardks,
-					CrabbyConstants.DriveConstants.driveFeedforwardkv, CrabbyConstants.DriveConstants.driveFeedbackkp,
-					CrabbyConstants.DriveConstants.driveFeedbackki, CrabbyConstants.DriveConstants.driveFeedbackkd,
-					CrabbyConstants.DriveConstants.turnFeedbackkp, CrabbyConstants.DriveConstants.turnFeedbackki,
-					CrabbyConstants.DriveConstants.turnFeedbackkd,
-					new ModuleIOTalonFX(0, 1, 2, CrabbyConstants.DriveConstants.TURN_GEAR_RATIO,
-							CrabbyConstants.DriveConstants.DRIVE_GEAR_RATIO),
-					new ModuleIOTalonFX(1, 2, 3, CrabbyConstants.DriveConstants.TURN_GEAR_RATIO,
-							CrabbyConstants.DriveConstants.DRIVE_GEAR_RATIO),
-					new ModuleIOTalonFX(2, 3, 4, CrabbyConstants.DriveConstants.TURN_GEAR_RATIO,
-							CrabbyConstants.DriveConstants.DRIVE_GEAR_RATIO),
-					new ModuleIOTalonFX(3, 4, 5, CrabbyConstants.DriveConstants.TURN_GEAR_RATIO,
-							CrabbyConstants.DriveConstants.DRIVE_GEAR_RATIO));
-			// drive = new Drive(
-			// new GyroIOPigeon2(true),
-			// new ModuleIOTalonFX(0),
-			// new ModuleIOTalonFX(1),
-			// new ModuleIOTalonFX(2),
-			// new ModuleIOTalonFX(3));
-			// flywheel = new Flywheel(new FlywheelIOTalonFX());
+					new ModuleIOTalonFX(1, 5, 9, CrabbyConstants.DriveConstants.TURN_GEAR_RATIO,
+							CrabbyConstants.DriveConstants.DRIVE_GEAR_RATIO, false, true,
+							CrabbyConstants.DriveConstants.DRIVE_CURRENT_LIMIT,
+							CrabbyConstants.DriveConstants.TURN_CURRENT_LIMIT,
+							CrabbyConstants.DriveConstants.ODOMETRY_FREQUENCY,
+							CrabbyConstants.DriveConstants.WHEEL_RADIUS, CrabbyConstants.DriveConstants.DRIVE_P,
+							CrabbyConstants.DriveConstants.DRIVE_I, CrabbyConstants.DriveConstants.DRIVE_V,
+							CrabbyConstants.DriveConstants.TURN_P, CrabbyConstants.DriveConstants.TURN_D),
+					new ModuleIOTalonFX(2, 6, 10, CrabbyConstants.DriveConstants.TURN_GEAR_RATIO,
+							CrabbyConstants.DriveConstants.DRIVE_GEAR_RATIO, false, true,
+							CrabbyConstants.DriveConstants.DRIVE_CURRENT_LIMIT,
+							CrabbyConstants.DriveConstants.TURN_CURRENT_LIMIT,
+							CrabbyConstants.DriveConstants.ODOMETRY_FREQUENCY,
+							CrabbyConstants.DriveConstants.WHEEL_RADIUS, CrabbyConstants.DriveConstants.DRIVE_P,
+							CrabbyConstants.DriveConstants.DRIVE_I, CrabbyConstants.DriveConstants.DRIVE_V,
+							CrabbyConstants.DriveConstants.TURN_P, CrabbyConstants.DriveConstants.TURN_D),
+					new ModuleIOTalonFX(3, 7, 11, CrabbyConstants.DriveConstants.TURN_GEAR_RATIO,
+							CrabbyConstants.DriveConstants.DRIVE_GEAR_RATIO, false, true,
+							CrabbyConstants.DriveConstants.DRIVE_CURRENT_LIMIT,
+							CrabbyConstants.DriveConstants.TURN_CURRENT_LIMIT,
+							CrabbyConstants.DriveConstants.ODOMETRY_FREQUENCY,
+							CrabbyConstants.DriveConstants.WHEEL_RADIUS, CrabbyConstants.DriveConstants.DRIVE_P,
+							CrabbyConstants.DriveConstants.DRIVE_I, CrabbyConstants.DriveConstants.DRIVE_V,
+							CrabbyConstants.DriveConstants.TURN_P, CrabbyConstants.DriveConstants.TURN_D),
+					new ModuleIOTalonFX(4, 8, 12, CrabbyConstants.DriveConstants.TURN_GEAR_RATIO,
+							CrabbyConstants.DriveConstants.DRIVE_GEAR_RATIO, false, true,
+							CrabbyConstants.DriveConstants.DRIVE_CURRENT_LIMIT,
+							CrabbyConstants.DriveConstants.TURN_CURRENT_LIMIT,
+							CrabbyConstants.DriveConstants.ODOMETRY_FREQUENCY,
+							CrabbyConstants.DriveConstants.WHEEL_RADIUS, CrabbyConstants.DriveConstants.DRIVE_P,
+							CrabbyConstants.DriveConstants.DRIVE_I, CrabbyConstants.DriveConstants.DRIVE_V,
+							CrabbyConstants.DriveConstants.TURN_P, CrabbyConstants.DriveConstants.TURN_D));
 			break;
 
 		case SIM:
@@ -85,12 +97,7 @@ public class CrabbyContainer implements NFRRobotContainer
 			{
 			}, CrabbyConstants.DriveConstants.MAX_LINEAR_SPEED, CrabbyConstants.DriveConstants.MAX_ANGULAR_SPEED,
 					CrabbyConstants.DriveConstants.DRIVE_BASE_RADIUS, CrabbyConstants.DriveConstants.TRACK_WIDTH_X,
-					CrabbyConstants.DriveConstants.TRACK_WIDTH_Y, Constants.kCurrentMode,
-					CrabbyConstants.DriveConstants.driveFeedforwardks,
-					CrabbyConstants.DriveConstants.driveFeedforwardkv, CrabbyConstants.DriveConstants.driveFeedbackkp,
-					CrabbyConstants.DriveConstants.driveFeedbackki, CrabbyConstants.DriveConstants.driveFeedbackkd,
-					CrabbyConstants.DriveConstants.turnFeedbackkp, CrabbyConstants.DriveConstants.turnFeedbackki,
-					CrabbyConstants.DriveConstants.turnFeedbackkd, new ModuleIOSim(), new ModuleIOSim(),
+					CrabbyConstants.DriveConstants.TRACK_WIDTH_Y, new ModuleIOSim(), new ModuleIOSim(),
 					new ModuleIOSim(), new ModuleIOSim());
 			break;
 
@@ -100,12 +107,7 @@ public class CrabbyContainer implements NFRRobotContainer
 			{
 			}, CrabbyConstants.DriveConstants.MAX_LINEAR_SPEED, CrabbyConstants.DriveConstants.MAX_ANGULAR_SPEED,
 					CrabbyConstants.DriveConstants.DRIVE_BASE_RADIUS, CrabbyConstants.DriveConstants.TRACK_WIDTH_X,
-					CrabbyConstants.DriveConstants.TRACK_WIDTH_Y, Constants.kCurrentMode,
-					CrabbyConstants.DriveConstants.driveFeedforwardks,
-					CrabbyConstants.DriveConstants.driveFeedforwardkv, CrabbyConstants.DriveConstants.driveFeedbackkp,
-					CrabbyConstants.DriveConstants.driveFeedbackki, CrabbyConstants.DriveConstants.driveFeedbackkd,
-					CrabbyConstants.DriveConstants.turnFeedbackkp, CrabbyConstants.DriveConstants.turnFeedbackki,
-					CrabbyConstants.DriveConstants.turnFeedbackkd, new ModuleIO()
+					CrabbyConstants.DriveConstants.TRACK_WIDTH_Y, new ModuleIO()
 					{
 					}, new ModuleIO()
 					{
