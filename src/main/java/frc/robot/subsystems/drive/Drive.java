@@ -331,13 +331,13 @@ public class Drive extends SubsystemBase
 				new Translation2d(-TRACK_WIDTH_X / 2.0, -TRACK_WIDTH_Y / 2.0) };
 	}
 
-    /**
-     * Stops the drive and turns the modules to an X arrangement to resist movement.
-     * The modules will return to their normal orientations the next time a nonzero
-     * velocity is requested.
-     */
-    public void xLock(Drive drive)
-    {
-        drive.stopWithX();
-    }
+	/**
+	 * Stops the drive and turns the modules to an X arrangement to resist movement.
+	 * The modules will return to their normal orientations the next time a nonzero
+	 * velocity is requested.
+	 */
+	public void xLock(Drive drive)
+	{
+		drive.stopWithX();
+	}
 }

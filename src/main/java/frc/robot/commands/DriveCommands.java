@@ -74,17 +74,19 @@ public class DriveCommands
 		}, drive);
 	}
 
-    /**
-     * Command to lock the robot's position and turns them inward, making it skid to a stop XD
-     * @param drive the drive object instantiated with the motors.
-     * @return a runable command to lock the robot's position
-     */
-    public static Command xLock(Drive drive)
-    {
-        return Commands.run(() ->
-        {
-            // Lock the robot's position and turns them inward, making it skid to a stop XD
-            drive.xLock(drive);
-        }, drive);
-    }
+	/**
+	 * Command to lock the robot's position and turns them inward, making it skid to
+	 * a stop XD
+	 * 
+	 * @param drive the drive object instantiated with the motors.
+	 * @return a runable command to lock the robot's position
+	 */
+	public static Command xLock(Drive drive)
+	{
+		return Commands.run(() ->
+		{
+			// Lock the robot's position and turns them inward, making it skid to a stop XD
+			drive.xLock(drive);
+		}, drive);
+	}
 }
