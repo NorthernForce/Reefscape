@@ -90,6 +90,12 @@ public class DriveCommands
 		}, drive);
 	}
 
+	/**
+	 * Command to reset the robot's orientation
+	 * 
+	 * @param drive
+	 * @return
+	 */
 	public static Command resetOrientaion(Drive drive)
 	{
 		return Commands.run(() ->
