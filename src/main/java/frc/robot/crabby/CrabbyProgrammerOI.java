@@ -14,7 +14,7 @@ public class CrabbyProgrammerOI implements CrabbyOI
 	public void bindOI(CrabbyContainer container)
 	{
 		final CommandXboxController driverController = new CommandXboxController(0);
-		final CommandXboxController manipulatorController = new CommandXboxController(0);
+		final CommandXboxController manipulatorController = new CommandXboxController(1);
 		container.drive.setDefaultCommand(DriveCommands.joystickDrive(container.drive,
 				() -> driverController.getLeftX(), () -> driverController.getLeftY(),
 				() -> Math.atan2(driverController.getRightY(), driverController.getRightX())));
