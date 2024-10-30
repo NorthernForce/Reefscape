@@ -340,4 +340,12 @@ public class Drive extends SubsystemBase
 	{
 		drive.stopWithX();
 	}
+
+	/**
+	 * Resets the robot's orientation to 0 degrees.
+	 */
+	public void resetOrientation()
+	{
+		poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), new Pose2d());
+	}
 }

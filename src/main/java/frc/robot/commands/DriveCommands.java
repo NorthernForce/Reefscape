@@ -89,4 +89,12 @@ public class DriveCommands
 			drive.xLock(drive);
 		}, drive);
 	}
+
+	public static Command resetOrientaion(Drive drive)
+	{
+		return Commands.run(() ->
+		{
+			drive.resetOrientation();
+		}, drive);
+	}
 }

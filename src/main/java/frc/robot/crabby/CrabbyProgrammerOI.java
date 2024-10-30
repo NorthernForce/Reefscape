@@ -19,6 +19,7 @@ public class CrabbyProgrammerOI implements CrabbyOI
 				() -> driverController.getLeftX(), () -> driverController.getLeftY(),
 				() -> Math.atan2(driverController.getRightY(), driverController.getRightX())));
 		driverController.x().onTrue(DriveCommands.xLock(container.drive));
+		driverController.y().onTrue(DriveCommands.resetOrientaion(container.drive));
 	}
 
 }
