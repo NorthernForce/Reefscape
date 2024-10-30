@@ -56,6 +56,8 @@ public class ModuleIOTalonFX implements ModuleIO
 	private final StatusSignal<Double> turnVelocity;
 	private final StatusSignal<Double> turnAppliedVolts;
 	private final StatusSignal<Double> turnCurrent;
+	private final StatusSignal<Double> driveTemperature;
+	private final StatusSignal<Double> turnTemperature;
 
 	private final double driveGearRatio;
 	private final double wheelCircumference;
@@ -108,9 +110,12 @@ public class ModuleIOTalonFX implements ModuleIO
 		turnAppliedVolts = turnTalon.getMotorVoltage();
 		turnCurrent = turnTalon.getSupplyCurrent();
 
+		driveTemperature = driveTalon.getDeviceTemp();
+		turnTemperature = turnTalon.getDeviceTemp();
+
 		BaseStatusSignal.setUpdateFrequencyForAll(odometryFrequency, drivePosition, turnPosition);
 		BaseStatusSignal.setUpdateFrequencyForAll(50.0, driveVelocity, driveAppliedVolts, driveCurrent, turnVelocity,
-				turnAppliedVolts, turnCurrent);
+				turnAppliedVolts, turnCurrent, driveTemperature, turnTemperature);
 		driveTalon.optimizeBusUtilization();
 		turnTalon.optimizeBusUtilization();
 	}
@@ -119,7 +124,7 @@ public class ModuleIOTalonFX implements ModuleIO
 	public void updateInputs(ModuleIOInputs inputs)
 	{
 		BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent, turnPosition,
-				turnVelocity, turnAppliedVolts, turnCurrent);
+				turnVelocity, turnAppliedVolts, turnCurrent, driveTemperature, turnTemperature);
 
 		inputs.drivePositionMeters = drivePosition.getValueAsDouble() / driveGearRatio * wheelCircumference;
 		inputs.driveVelocityMetersPerSecond = driveVelocity.getValueAsDouble() / driveGearRatio * wheelCircumference;
@@ -132,6 +137,9 @@ public class ModuleIOTalonFX implements ModuleIO
 		inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
 		inputs.turnCurrentAmps = new double[]
 		{ turnCurrent.getValueAsDouble() };
+
+		inputs.driveTemperature = driveTemperature.getValueAsDouble();
+		inputs.turnTemperature = turnTemperature.getValueAsDouble();
 
 	}
 
@@ -177,4 +185,5 @@ public class ModuleIOTalonFX implements ModuleIO
 		config.NeutralMode = enable ? NeutralModeValue.Brake : NeutralModeValue.Coast;
 		turnTalon.getConfigurator().apply(config);
 	}
+
 }
