@@ -17,11 +17,11 @@ public class CrabbyConstants
 		public static final double turnFeedbackkd = 0.0;
 
 		public static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
-		public static final double TRACK_WIDTH_X = Units.inchesToMeters(25.0);
-		public static final double TRACK_WIDTH_Y = Units.inchesToMeters(25.0);
+		public static final double TRACK_WIDTH_X = 0.45085;
+		public static final double TRACK_WIDTH_Y = 0.61595;
 		public static final double DRIVE_BASE_RADIUS = Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
 		public static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
-		public static final double DRIVE_GEAR_RATIO = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0);
+		public static final double DRIVE_GEAR_RATIO = 6.75;
 		public static final double TURN_GEAR_RATIO = 150.0 / 7.0;
 	}
 
