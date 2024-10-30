@@ -159,4 +159,14 @@ public class CrabbyContainer implements NFRRobotContainer
 		}
 		crabbyOI.bindOI(this);
 	}
+
+	/**
+	 * get the drive
+	 * 
+	 * @return the drive
+	 */
+	public Drive getDrive()
+	{
+		return drive;
+	}
 }
