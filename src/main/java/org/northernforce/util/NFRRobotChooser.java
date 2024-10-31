@@ -42,7 +42,7 @@ public class NFRRobotChooser
 	}
 
 	/**
-	 * Gets the current robot container with matching the roborio id.
+	 * Gets the current robot container with the matching roborio id.
 	 *
 	 * @return the robot container using one of the suppliers.
 	 */
