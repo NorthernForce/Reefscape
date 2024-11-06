@@ -2,6 +2,7 @@ package frc.robot.crabby;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ledsCommands;
 import frc.robot.robots.CrabbyContainer;
 
 /**
@@ -21,6 +22,7 @@ public class CrabbyProgrammerOI implements CrabbyOI
 						() -> Math.atan2(driverController.getRightY(), driverController.getRightX())));
 		driverController.x().onTrue(DriveCommands.xLock(container.getDrive()));
 		driverController.b().onTrue(DriveCommands.resetOrientaion(container.getDrive()));
+        driverController.a().onTrue(ledsCommands.getSetColour(container.getLeds(), 225, 0, 0));
 	}
 
 }
