@@ -102,10 +102,10 @@ public class Drive extends SubsystemBase
 		{
 			Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
 		});
-        for (int i = 0; i < moduleIOs.length; i++)
-        {
-            modules[i] = new Module(moduleIOs[i], i);
-        }
+		for (int i = 0; i < moduleIOs.length; i++)
+		{
+			modules[i] = new Module(moduleIOs[i], i);
+		}
 
 		// Configure SysId
 		sysId = new SysIdRoutine(
@@ -113,8 +113,8 @@ public class Drive extends SubsystemBase
 						(state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
 				new SysIdRoutine.Mechanism((voltage) ->
 				{
-                    for (int i = 0; i < moduleIOs.length; i++)
-                    {
+					for (int i = 0; i < moduleIOs.length; i++)
+					{
 						modules[i].runCharacterization(voltage.in(Volts));
 					}
 				}, null, this));
