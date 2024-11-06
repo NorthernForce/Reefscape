@@ -62,16 +62,16 @@ public class ModuleIOTalonFX implements ModuleIO
 	private final double driveGearRatio;
 	private final double wheelCircumference;
 
-	public ModuleIOTalonFX(int driveId, int turnId, int encoderId, double turnGearRatio, double driveGearRatio,
+	public ModuleIOTalonFX(int driveId, int turnId, int encoderId, String canbus, double turnGearRatio, double driveGearRatio,
 			boolean invertDriveMotor, boolean invertTurnMotor, double driveCurrentLimit, double turnCurrentLimit,
 			double odometryFrequency, double wheelRadius, double driveP, double driveI, double driveV, double turnP,
 			double turnD)
 	{
 		this.driveGearRatio = driveGearRatio;
 		this.wheelCircumference = wheelRadius * 2 * Math.PI;
-		driveTalon = new TalonFX(driveId);
-		turnTalon = new TalonFX(turnId);
-		cancoder = new CANcoder(encoderId);
+		driveTalon = new TalonFX(driveId, canbus);
+		turnTalon = new TalonFX(turnId, canbus);
+		cancoder = new CANcoder(encoderId, canbus);
 
 		var driveConfig = new TalonFXConfiguration();
 		driveConfig.CurrentLimits.SupplyCurrentLimit = driveCurrentLimit;

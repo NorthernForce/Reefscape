@@ -14,6 +14,8 @@ public class CrabbyConstants
 		public static final double DRIVE_GEAR_RATIO = 6.75;
 		public static final double TURN_GEAR_RATIO = 150.0 / 7.0;
 
+        public static final String DRIVE_CANBUS = "drive";
+
 		public static final double DRIVE_CURRENT_LIMIT = 40.0;
 		public static final double TURN_CURRENT_LIMIT = 40.0;
 
