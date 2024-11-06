@@ -12,12 +12,6 @@ public interface LedsIO
 		public double brightness;
 	}
 
-	/*
-	 * okay so correct me if I'm wrong Conner unlike Gyro I have seperate functions
-	 * because Gyro updates all of the data in one go but led's values don't need to
-	 * have all colour brightness and on or off all specified every time you change
-	 * one value right?????
-	 */
 	public default void setColours(int r, int g, int b)
 	{
 	}

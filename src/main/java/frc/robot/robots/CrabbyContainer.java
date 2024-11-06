@@ -28,6 +28,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.leds.LEDS;
+import frc.robot.subsystems.leds.LedsIO;
+import frc.robot.subsystems.leds.LedsIOCANdle;
 
 import java.util.Map;
 
@@ -44,6 +47,7 @@ public class CrabbyContainer implements NFRRobotContainer
 {
 	// Subsystems
 	private final Drive drive;
+    private final LEDS leds;
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -89,6 +93,7 @@ public class CrabbyContainer implements NFRRobotContainer
 							CrabbyConstants.DriveConstants.WHEEL_RADIUS, CrabbyConstants.DriveConstants.DRIVE_P,
 							CrabbyConstants.DriveConstants.DRIVE_I, CrabbyConstants.DriveConstants.DRIVE_V,
 							CrabbyConstants.DriveConstants.TURN_P, CrabbyConstants.DriveConstants.TURN_D));
+                            leds = new LEDS(new LedsIOCANdle(19));
 			break;
 
 		case SIM:
@@ -99,6 +104,9 @@ public class CrabbyContainer implements NFRRobotContainer
 					CrabbyConstants.DriveConstants.DRIVE_BASE_RADIUS, CrabbyConstants.DriveConstants.TRACK_WIDTH_X,
 					CrabbyConstants.DriveConstants.TRACK_WIDTH_Y, new ModuleIOSim(), new ModuleIOSim(),
 					new ModuleIOSim(), new ModuleIOSim());
+                leds = new LEDS(new LedsIO() {
+                    
+                });
 			break;
 
 		default:
@@ -119,6 +127,9 @@ public class CrabbyContainer implements NFRRobotContainer
 		{
 		}
 			;
+            leds = new LEDS(new LedsIO() {
+                    
+            });
 			break;
 		}
 
