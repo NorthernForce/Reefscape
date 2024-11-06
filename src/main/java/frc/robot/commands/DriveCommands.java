@@ -73,4 +73,34 @@ public class DriveCommands
 							isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
 		}, drive);
 	}
+
+	/**
+	 * Command to lock the robot's position and turns them inward, making it skid to
+	 * a stop XD
+	 * 
+	 * @param drive the drive object instantiated with the motors.
+	 * @return a runable command to lock the robot's position
+	 */
+	public static Command xLock(Drive drive)
+	{
+		return Commands.run(() ->
+		{
+			// Lock the robot's position and turns them inward, making it skid to a stop XD
+			drive.xLock(drive);
+		}, drive);
+	}
+
+	/**
+	 * Command to reset the robot's orientation
+	 * 
+	 * @param drive
+	 * @return
+	 */
+	public static Command resetOrientaion(Drive drive)
+	{
+		return Commands.run(() ->
+		{
+			drive.resetOrientation();
+		}, drive);
+	}
 }
