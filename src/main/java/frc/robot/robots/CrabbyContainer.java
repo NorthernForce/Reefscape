@@ -171,6 +171,10 @@ public class CrabbyContainer implements NFRRobotContainer
 		crabbyOI.bindOI(this);
 	}
 
+    public LEDS getLeds() {
+        return leds;
+    }
+
 	/**
 	 * get the drive
 	 * 

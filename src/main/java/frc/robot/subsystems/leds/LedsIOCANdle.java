@@ -22,7 +22,7 @@ public class LedsIOCANdle implements LedsIO
 		candle = new CANdle(id);
 		config = new CANdleConfiguration();
 		config.stripType = LEDStripType.RGB;
-		config.brightnessScalar = 0.5; // half brightness
+		config.brightnessScalar = 1.0; // half brightness
 		candle.configAllSettings(config);
 	}
 
