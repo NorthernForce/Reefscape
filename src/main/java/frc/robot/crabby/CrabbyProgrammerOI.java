@@ -17,9 +17,8 @@ public class CrabbyProgrammerOI implements CrabbyOI
 		final CommandXboxController manipulatorController = new CommandXboxController(1);
 		container.getDrive()
 				.setDefaultCommand(DriveCommands.joystickDrive(container.getDrive(), () -> driverController.getLeftX(),
-						() -> driverController.getLeftY(),
-						() -> Math.atan2(driverController.getRightY(), driverController.getRightX())));
-		driverController.x().onTrue(DriveCommands.xLock(container.getDrive()));
+						() -> driverController.getLeftY(), () -> driverController.getRightX()));
+		driverController.x().whileTrue(DriveCommands.xLock(container.getDrive()));
 		driverController.b().onTrue(DriveCommands.resetOrientaion(container.getDrive()));
 	}
 

@@ -98,7 +98,7 @@ public class DriveCommands
 	 */
 	public static Command resetOrientaion(Drive drive)
 	{
-		return Commands.run(() ->
+		return Commands.runOnce(() ->
 		{
 			drive.resetOrientation();
 		}, drive);
