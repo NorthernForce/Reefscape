@@ -105,7 +105,7 @@ public class Robot extends LoggedRobot
 		final var defaultAuto = container.getDefaultAutonomous();
 		autoChooser.addDefaultOption(defaultAuto.getFirst(), defaultAuto.getSecond());
 		container.getAutonomousOptions().forEach(autoChooser::addOption);
-
+		container.bindOI();
 	}
 
 	/** This function is called periodically during all modes. */

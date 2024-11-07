@@ -19,6 +19,7 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -62,10 +63,10 @@ public class ModuleIOTalonFX implements ModuleIO
 	private final double driveGearRatio;
 	private final double wheelCircumference;
 
-	public ModuleIOTalonFX(int driveId, int turnId, int encoderId, String canbus, double turnGearRatio, double driveGearRatio,
-			boolean invertDriveMotor, boolean invertTurnMotor, double driveCurrentLimit, double turnCurrentLimit,
-			double odometryFrequency, double wheelRadius, double driveP, double driveI, double driveV, double turnP,
-			double turnD)
+	public ModuleIOTalonFX(int driveId, int turnId, int encoderId, String canbus, double turnGearRatio,
+			double driveGearRatio, boolean invertDriveMotor, boolean invertTurnMotor, double driveCurrentLimit,
+			double turnCurrentLimit, double odometryFrequency, double wheelRadius, double driveP, double driveI,
+			double driveV, double turnP, double turnD)
 	{
 		this.driveGearRatio = driveGearRatio;
 		this.wheelCircumference = wheelRadius * 2 * Math.PI;
@@ -158,8 +159,7 @@ public class ModuleIOTalonFX implements ModuleIO
 	@Override
 	public void setDriveVelocity(double velocityMetersPerSecond)
 	{
-		driveTalon.setControl(
-				new VelocityTorqueCurrentFOC(velocityMetersPerSecond / wheelCircumference * driveGearRatio));
+		driveTalon.setControl(new VelocityVoltage(velocityMetersPerSecond / wheelCircumference * driveGearRatio));
 	}
 
 	@Override

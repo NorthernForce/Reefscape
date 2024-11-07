@@ -6,6 +6,8 @@ public class CrabbyConstants
 {
 	public class DriveConstants
 	{
+		public static final int PIDGEON_ID = 1;
+		public static final String PIDGEON_CANBUS = "rio";
 		public static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
 		public static final double TRACK_WIDTH_X = 0.45085;
 		public static final double TRACK_WIDTH_Y = 0.61595;
@@ -14,7 +16,7 @@ public class CrabbyConstants
 		public static final double DRIVE_GEAR_RATIO = 6.75;
 		public static final double TURN_GEAR_RATIO = 150.0 / 7.0;
 
-        public static final String DRIVE_CANBUS = "drive";
+		public static final String DRIVE_CANBUS = "drive";
 
 		public static final double DRIVE_CURRENT_LIMIT = 40.0;
 		public static final double TURN_CURRENT_LIMIT = 40.0;
@@ -23,8 +25,8 @@ public class CrabbyConstants
 		public static final double DRIVE_I = 0.01;
 		public static final double DRIVE_V = 0.1;
 
-		public static final double TURN_P = 0.1;
-		public static final double TURN_D = 0.01;
+		public static final double TURN_P = 10;
+		public static final double TURN_D = 0.07;
 
 		public static final double ODOMETRY_FREQUENCY = 250.0;
 

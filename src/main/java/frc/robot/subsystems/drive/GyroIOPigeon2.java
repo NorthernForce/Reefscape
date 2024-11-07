@@ -20,20 +20,24 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.robots.CrabbyConstants;
 
 /** IO implementation for Pigeon2 */
 public class GyroIOPigeon2 implements GyroIO
 {
 	// TODO: add yaw timestamps, pheonix stuff, etc
-	private final Pigeon2 pigeon = new Pigeon2(20);
-	private final StatusSignal<Double> yaw = pigeon.getYaw();
-	private final StatusSignal<Double> yawVelocity = pigeon.getAngularVelocityZWorld();
+	private final Pigeon2 pigeon;
+	private final StatusSignal<Double> yaw;
+	private final StatusSignal<Double> yawVelocity;
 
-	public GyroIOPigeon2(boolean phoenixDrive)
+	public GyroIOPigeon2(boolean phoenixDrive, int pidgeonId, String canbus)
 	{
+		pigeon = new Pigeon2(pidgeonId, canbus);
 		pigeon.getConfigurator().apply(new Pigeon2Configuration());
 		pigeon.getConfigurator().setYaw(0.0);
+		yaw = pigeon.getYaw();
 		yaw.setUpdateFrequency(Module.ODOMETRY_FREQUENCY);
+		yawVelocity = pigeon.getAngularVelocityZWorld();
 		yawVelocity.setUpdateFrequency(100.0);
 		pigeon.optimizeBusUtilization();
 	}
