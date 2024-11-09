@@ -1,6 +1,7 @@
 package frc.robot.robots;
 
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.drive.ModuleIOTalonFX.ModuleIOTalonFXParameters;
 
 public class CrabbyConstants
 {
@@ -27,6 +28,10 @@ public class CrabbyConstants
 		public static final double ODOMETRY_FREQUENCY = 250.0;
 
 		public static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
+
+		public static final ModuleIOTalonFXParameters MODULE_PARAMETERS = new ModuleIOTalonFXParameters(TURN_GEAR_RATIO,
+				DRIVE_GEAR_RATIO, DRIVE_CURRENT_LIMIT, TURN_CURRENT_LIMIT, ODOMETRY_FREQUENCY, WHEEL_RADIUS, DRIVE_P,
+				DRIVE_I, DRIVE_V, TURN_P, TURN_D);
 	}
 
 }
