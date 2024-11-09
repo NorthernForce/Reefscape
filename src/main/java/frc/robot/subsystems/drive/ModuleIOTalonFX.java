@@ -62,8 +62,53 @@ public class ModuleIOTalonFX implements ModuleIO
 	private final double driveGearRatio;
 	private final double wheelCircumference;
 
-	public ModuleIOTalonFX(int driveId, int turnId, int encoderId, double turnGearRatio, double driveGearRatio,
-			boolean invertDriveMotor, boolean invertTurnMotor, double driveCurrentLimit, double turnCurrentLimit,
+	/**
+	 * Parameters for configuring a TalonFX module
+	 * 
+	 * @param turnGearRatio     The gear ratio between the turn motor and the turn
+	 *                          encoder
+	 * @param driveGearRatio    The gear ratio between the drive motor and the drive
+	 *                          encoder
+	 * @param driveCurrentLimit The current limit for the drive motor Amps
+	 * @param turnCurrentLimit  The current limit for the turn motor Amps
+	 * @param odometryFrequency The frequency at which to update odometry Hz
+	 * @param wheelRadius       The radius of the wheel meters
+	 * @param driveP            The P gain for the drive motor
+	 * @param driveI            The I gain for the drive motor
+	 * @param driveV            The V gain for the drive motor
+	 * @param turnP             The P gain for the turn motor
+	 * @param turnD             The D gain for the turn motor
+	 * @return A record containing the module parameters
+	 */
+	public static record ModuleIOTalonFXParameters(double turnGearRatio, double driveGearRatio,
+			double driveCurrentLimit, double turnCurrentLimit, double odometryFrequency, double wheelRadius,
+			double driveP, double driveI, double driveV, double turnP, double turnD) {
+	}
+
+	/**
+	 * Constructor for ModuleIOTalonFX
+	 * 
+	 * @param driveId           The CAN ID of the drive motor controller
+	 * @param turnId            The CAN ID of the turn motor controller
+	 * @param encoderId         The CAN ID of the CANcoder
+	 * @param invertDriveMotor  Whether to invert the drive motor
+	 * @param invertTurnMotor   Whether to invert the turn motor
+	 * @param turnGearRatio     The gear ratio between the turn motor and the turn
+	 *                          encoder
+	 * @param driveGearRatio    The gear ratio between the drive motor and the drive
+	 *                          encoder
+	 * @param driveCurrentLimit The current limit for the drive motor Amps
+	 * @param turnCurrentLimit  The current limit for the turn motor Amps
+	 * @param odometryFrequency The frequency at which to update odometry Hz
+	 * @param wheelRadius       The radius of the wheel meters
+	 * @param driveP            The P gain for the drive motor
+	 * @param driveI            The I gain for the drive motor
+	 * @param driveV            The V gain for the drive motor
+	 * @param turnP             The P gain for the turn motor
+	 * @param turnD             The D gain for the turn motor
+	 */
+	public ModuleIOTalonFX(int driveId, int turnId, int encoderId, boolean invertDriveMotor, boolean invertTurnMotor,
+			double turnGearRatio, double driveGearRatio, double driveCurrentLimit, double turnCurrentLimit,
 			double odometryFrequency, double wheelRadius, double driveP, double driveI, double driveV, double turnP,
 			double turnD)
 	{
@@ -118,6 +163,15 @@ public class ModuleIOTalonFX implements ModuleIO
 				turnAppliedVolts, turnCurrent, driveTemperature, turnTemperature);
 		driveTalon.optimizeBusUtilization();
 		turnTalon.optimizeBusUtilization();
+	}
+
+	public ModuleIOTalonFX(int driveId, int turnId, int encoderId, boolean invertDriveMotor, boolean invertTurnMotor,
+			ModuleIOTalonFXParameters parameters)
+	{
+		this(driveId, turnId, encoderId, invertDriveMotor, invertTurnMotor, parameters.turnGearRatio,
+				parameters.driveGearRatio, parameters.driveCurrentLimit, parameters.turnCurrentLimit,
+				parameters.odometryFrequency, parameters.wheelRadius, parameters.driveP, parameters.driveI,
+				parameters.driveV, parameters.turnP, parameters.turnD);
 	}
 
 	@Override
