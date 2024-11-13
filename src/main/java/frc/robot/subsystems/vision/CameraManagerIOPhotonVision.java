@@ -1,15 +1,13 @@
 package frc.robot.subsystems.vision;
 
-import java.util.ArrayList;
-
 import org.photonvision.EstimatedRobotPose;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
 public class CameraManagerIOPhotonVision implements CameraManagerIO
 {
-	private final ArrayList<PhotonVisionCamera> photonVisionCameras;
-	private ArrayList<EstimatedRobotPose> estimatedPoses;
+	private final PhotonVisionCamera[] photonVisionCameras;
+	private EstimatedRobotPose[] estimatedPoses;
 
 	/**
 	 * Class to manage any number PhotonVisionCamera objects
@@ -18,12 +16,8 @@ public class CameraManagerIOPhotonVision implements CameraManagerIO
 	 */
 	public CameraManagerIOPhotonVision(PhotonVisionCamera... photonVisionCameras)
 	{
-		estimatedPoses = new ArrayList<>();
-		this.photonVisionCameras = new ArrayList<>();
-		for (PhotonVisionCamera cam : photonVisionCameras)
-		{
-			this.photonVisionCameras.add(cam);
-		}
+		estimatedPoses = new EstimatedRobotPose[photonVisionCameras.length];
+		this.photonVisionCameras = photonVisionCameras;
 	}
 
 	@Override
@@ -37,12 +31,13 @@ public class CameraManagerIOPhotonVision implements CameraManagerIO
 	 * @param prevEstimatedRobotPose
 	 * @return ArrayList of estimated poses from all the PhotonVisionCameras
 	 */
-	public ArrayList<EstimatedRobotPose> getEstimatedRobotPoses(Pose2d prevEstimatedRobotPose)
+	public EstimatedRobotPose[] getEstimatedRobotPoses(Pose2d prevEstimatedRobotPose)
 	{
-		ArrayList<EstimatedRobotPose> poses = new ArrayList<>();
-		for (PhotonVisionCamera cam : photonVisionCameras)
+		EstimatedRobotPose[] poses = new EstimatedRobotPose[photonVisionCameras.length];
+		for (int i = 0; i < poses.length; i++)
 		{
-			poses.add(cam.getEstimatedRobotPose(prevEstimatedRobotPose));
+            PhotonVisionCamera cam = photonVisionCameras[i];
+			poses[i] = cam.getEstimatedRobotPose(prevEstimatedRobotPose);
 		}
 		estimatedPoses = poses;
 		return poses;

@@ -33,7 +33,6 @@ import frc.robot.subsystems.vision.CameraManager;
 import frc.robot.subsystems.vision.CameraManagerIOPhotonVision;
 import frc.robot.subsystems.vision.PhotonVisionCamera;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.northernforce.util.NFRRobotContainer;
@@ -191,7 +190,7 @@ public class CrabbyContainer implements NFRRobotContainer
 	@Override
 	public void periodic()
 	{
-		ArrayList<EstimatedRobotPose> estimatedRobotPoses = photonManagerIO.getEstimatedRobotPoses(drive.getPose());
+		EstimatedRobotPose[] estimatedRobotPoses = photonManagerIO.getEstimatedRobotPoses(drive.getPose());
 		for (EstimatedRobotPose estimatedRobotPose : estimatedRobotPoses)
 		{
 			drive.addVisionMeasurement(estimatedRobotPose.estimatedPose.toPose2d(),
