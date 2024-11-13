@@ -29,7 +29,8 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.vision.PhotonManager;
+import frc.robot.subsystems.vision.CameraManager;
+import frc.robot.subsystems.vision.CameraManagerIOPhotonVision;
 import frc.robot.subsystems.vision.PhotonVisionCamera;
 
 import java.util.ArrayList;
@@ -51,7 +52,8 @@ public class CrabbyContainer implements NFRRobotContainer
 	private final Drive drive;
 	private final PhotonVisionCamera frontCamera;
 	private final PhotonVisionCamera backCamera;
-	private final PhotonManager photonManager;
+	private final CameraManager photonManager;
+	private final CameraManagerIOPhotonVision photonManagerIO;
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -101,7 +103,8 @@ public class CrabbyContainer implements NFRRobotContainer
 					CrabbyConstants.VisionConstants.frontCameraTransform, 0);
 			backCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
 					CrabbyConstants.VisionConstants.backCameraTransform, 1);
-			photonManager = new PhotonManager(frontCamera);
+			photonManagerIO = new CameraManagerIOPhotonVision(frontCamera);
+			photonManager = new CameraManager(photonManagerIO);
 			break;
 
 		case SIM:
@@ -116,7 +119,8 @@ public class CrabbyContainer implements NFRRobotContainer
 					CrabbyConstants.VisionConstants.frontCameraTransform, 0);
 			backCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
 					CrabbyConstants.VisionConstants.backCameraTransform, 1);
-			photonManager = new PhotonManager(frontCamera);
+			photonManagerIO = new CameraManagerIOPhotonVision(frontCamera);
+			photonManager = new CameraManager(photonManagerIO);
 			break;
 
 		default:
@@ -138,7 +142,8 @@ public class CrabbyContainer implements NFRRobotContainer
 					CrabbyConstants.VisionConstants.frontCameraTransform, 0);
 			backCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
 					CrabbyConstants.VisionConstants.backCameraTransform, 1);
-			photonManager = new PhotonManager(frontCamera, backCamera);
+			photonManagerIO = new CameraManagerIOPhotonVision(frontCamera, backCamera);
+			photonManager = new CameraManager(photonManagerIO);
 		{
 		}
 			;
@@ -186,7 +191,7 @@ public class CrabbyContainer implements NFRRobotContainer
 	@Override
 	public void periodic()
 	{
-		ArrayList<EstimatedRobotPose> estimatedRobotPoses = photonManager.getEstimatedRobotPoses(drive.getPose());
+		ArrayList<EstimatedRobotPose> estimatedRobotPoses = photonManagerIO.getEstimatedRobotPoses(drive.getPose());
 		for (EstimatedRobotPose estimatedRobotPose : estimatedRobotPoses)
 		{
 			drive.addVisionMeasurement(estimatedRobotPose.estimatedPose.toPose2d(),
