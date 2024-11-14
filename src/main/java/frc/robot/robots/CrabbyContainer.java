@@ -191,7 +191,6 @@ public class CrabbyContainer implements NFRRobotContainer
 	public void periodic()
 	{
 		EstimatedRobotPose[] estimatedRobotPoses = photonManagerIO.getEstimatedRobotPoses(drive.getPose());
-		boolean[] connected = photonManagerIO.getConnectedCameras();
 		for (EstimatedRobotPose estimatedRobotPose : estimatedRobotPoses)
 		{
 			drive.addVisionMeasurement(estimatedRobotPose.estimatedPose.toPose2d(),
