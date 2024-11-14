@@ -26,7 +26,7 @@ public class PhotonVisionCamera extends SubsystemBase
 	 */
 	public PhotonVisionCamera(AprilTagFieldLayout aprilTagFieldLayout, Transform3d robotToCam, int cameraNum)
 	{
-		photonCamera = new PhotonCamera("photonVisionCamera" + cameraNum);
+		photonCamera = new PhotonCamera("Global_Shutter_Camera (" + cameraNum + ")");
 		photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_RIO,
 				photonCamera, robotToCam);
 		photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
@@ -65,5 +65,10 @@ public class PhotonVisionCamera extends SubsystemBase
 		{
 			return null;
 		}
+	}
+
+	public boolean isConnected()
+	{
+		return photonCamera.isConnected();
 	}
 }

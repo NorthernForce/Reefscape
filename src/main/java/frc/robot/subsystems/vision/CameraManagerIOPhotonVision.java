@@ -7,7 +7,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 public class CameraManagerIOPhotonVision implements CameraManagerIO
 {
 	private final PhotonVisionCamera[] photonVisionCameras;
+	private boolean[] connected;
 	private EstimatedRobotPose[] estimatedPoses;
+	private int numberOfCameras;
 
 	/**
 	 * Class to manage any number PhotonVisionCamera objects
@@ -16,14 +18,34 @@ public class CameraManagerIOPhotonVision implements CameraManagerIO
 	 */
 	public CameraManagerIOPhotonVision(PhotonVisionCamera... photonVisionCameras)
 	{
-		estimatedPoses = new EstimatedRobotPose[photonVisionCameras.length];
+		numberOfCameras = photonVisionCameras.length;
+		connected = new boolean[numberOfCameras];
+		estimatedPoses = new EstimatedRobotPose[numberOfCameras];
 		this.photonVisionCameras = photonVisionCameras;
 	}
 
 	@Override
 	public void updateInputs(CameraManagerIOInputs inputs)
 	{
-		inputs.estimatedPoses = estimatedPoses;
+		// inputs.connectedCameras = connected;
+		for (int i = 0; i < numberOfCameras; i++)
+		{
+			EstimatedRobotPose pose = estimatedPoses[i];
+			inputs.poses[i] = pose.estimatedPose.toPose2d();
+			inputs.timestamps[i] = pose.timestampSeconds;
+		}
+	}
+
+	public boolean[] getConnectedCameras()
+	{
+		boolean[] connectedCameras = new boolean[numberOfCameras];
+		for (int i = 0; i < connected.length; i++)
+		{
+			PhotonVisionCamera cam = photonVisionCameras[i];
+			connectedCameras[i] = cam.isConnected();
+		}
+		connected = connectedCameras;
+		return connected;
 	}
 
 	/**
@@ -33,10 +55,10 @@ public class CameraManagerIOPhotonVision implements CameraManagerIO
 	 */
 	public EstimatedRobotPose[] getEstimatedRobotPoses(Pose2d prevEstimatedRobotPose)
 	{
-		EstimatedRobotPose[] poses = new EstimatedRobotPose[photonVisionCameras.length];
+		EstimatedRobotPose[] poses = new EstimatedRobotPose[numberOfCameras];
 		for (int i = 0; i < poses.length; i++)
 		{
-            PhotonVisionCamera cam = photonVisionCameras[i];
+			PhotonVisionCamera cam = photonVisionCameras[i];
 			poses[i] = cam.getEstimatedRobotPose(prevEstimatedRobotPose);
 		}
 		estimatedPoses = poses;
