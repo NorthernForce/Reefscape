@@ -86,6 +86,7 @@ public class ModuleIOTalonFX implements ModuleIO
 		setDriveBrakeMode(true);
 
 		var turnConfig = new TalonFXConfiguration();
+		turnConfig.CurrentLimits.SupplyCurrentLimit = turnCurrentLimit;
 		turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true; // TODO: MAYBE THIS? I saw it was in the drive configs... thought I'd add it.
 		turnConfig.CurrentLimits.StatorCurrentLimit = turnCurrentLimit;
 		turnConfig.CurrentLimits.StatorCurrentLimitEnable = true;
