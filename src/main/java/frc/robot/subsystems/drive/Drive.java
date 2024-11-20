@@ -102,6 +102,10 @@ public class Drive extends SubsystemBase
 		{
 			Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
 		});
+		for (int i = 0; i < moduleIOs.length; i++)
+		{
+			modules[i] = new Module(moduleIOs[i], i);
+		}
 
 		// Configure SysId
 		sysId = new SysIdRoutine(
@@ -111,7 +115,6 @@ public class Drive extends SubsystemBase
 				{
 					for (int i = 0; i < moduleIOs.length; i++)
 					{
-						modules[i] = new Module(moduleIOs[i], i);
 						modules[i].runCharacterization(voltage.in(Volts));
 					}
 				}, null, this));
@@ -252,8 +255,8 @@ public class Drive extends SubsystemBase
 	@AutoLogOutput(key = "SwerveStates/Measured")
 	private SwerveModuleState[] getModuleStates()
 	{
-		SwerveModuleState[] states = new SwerveModuleState[4];
-		for (int i = 0; i < 4; i++)
+		SwerveModuleState[] states = new SwerveModuleState[modules.length];
+		for (int i = 0; i < modules.length; i++)
 		{
 			states[i] = modules[i].getState();
 		}
