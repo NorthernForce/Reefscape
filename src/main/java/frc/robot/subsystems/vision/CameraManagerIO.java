@@ -19,4 +19,8 @@ public interface CameraManagerIO
 	public default void updateInputs(CameraManagerIOInputs inputs)
 	{
 	}
+
+    public default void updateSimulationWithPose(Pose2d pose)
+    {
+    }
 }
