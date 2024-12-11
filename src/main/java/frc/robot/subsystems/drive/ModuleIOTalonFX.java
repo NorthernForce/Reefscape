@@ -25,6 +25,11 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
 
 /**
  * Module IO implementation for Talon FX drive motor controller, Talon FX turn
@@ -47,15 +52,17 @@ public class ModuleIOTalonFX implements ModuleIO
 	private final TalonFX turnTalon;
 	private final CANcoder cancoder;
 
-	private final StatusSignal<Double> drivePosition;
-	private final StatusSignal<Double> driveVelocity;
-	private final StatusSignal<Double> driveAppliedVolts;
-	private final StatusSignal<Double> driveCurrent;
+	private final StatusSignal<Angle> drivePosition;
+	private final StatusSignal<AngularVelocity> driveVelocity;
+	private final StatusSignal<Voltage> driveAppliedVolts;
+	private final StatusSignal<Current> driveCurrent;
 
-	private final StatusSignal<Double> turnPosition;
-	private final StatusSignal<Double> turnVelocity;
-	private final StatusSignal<Double> turnAppliedVolts;
-	private final StatusSignal<Double> turnCurrent;
+	private final StatusSignal<Angle> turnPosition;
+	private final StatusSignal<AngularVelocity> turnVelocity;
+	private final StatusSignal<Voltage> turnAppliedVolts;
+	private final StatusSignal<Current> turnCurrent;
+	private final StatusSignal<Temperature> driveTemperature;
+	private final StatusSignal<Temperature> turnTemperature;
 
 	private final double driveGearRatio;
 	private final double wheelCircumference;
@@ -108,9 +115,12 @@ public class ModuleIOTalonFX implements ModuleIO
 		turnAppliedVolts = turnTalon.getMotorVoltage();
 		turnCurrent = turnTalon.getSupplyCurrent();
 
+		driveTemperature = driveTalon.getDeviceTemp();
+		turnTemperature = turnTalon.getDeviceTemp();
+
 		BaseStatusSignal.setUpdateFrequencyForAll(odometryFrequency, drivePosition, turnPosition);
 		BaseStatusSignal.setUpdateFrequencyForAll(50.0, driveVelocity, driveAppliedVolts, driveCurrent, turnVelocity,
-				turnAppliedVolts, turnCurrent);
+				turnAppliedVolts, turnCurrent, driveTemperature, turnTemperature);
 		driveTalon.optimizeBusUtilization();
 		turnTalon.optimizeBusUtilization();
 	}
@@ -119,7 +129,7 @@ public class ModuleIOTalonFX implements ModuleIO
 	public void updateInputs(ModuleIOInputs inputs)
 	{
 		BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent, turnPosition,
-				turnVelocity, turnAppliedVolts, turnCurrent);
+				turnVelocity, turnAppliedVolts, turnCurrent, driveTemperature, turnTemperature);
 
 		inputs.drivePositionMeters = drivePosition.getValueAsDouble() / driveGearRatio * wheelCircumference;
 		inputs.driveVelocityMetersPerSecond = driveVelocity.getValueAsDouble() / driveGearRatio * wheelCircumference;
@@ -133,6 +143,8 @@ public class ModuleIOTalonFX implements ModuleIO
 		inputs.turnCurrentAmps = new double[]
 		{ turnCurrent.getValueAsDouble() };
 
+		inputs.driveTemperature = driveTemperature.getValueAsDouble();
+		inputs.turnTemperature = turnTemperature.getValueAsDouble();
 	}
 
 	@Override

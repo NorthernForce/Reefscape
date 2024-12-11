@@ -15,11 +15,8 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -30,7 +27,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -65,7 +61,7 @@ public class Drive extends SubsystemBase
 
 	/**
 	 * Creates a new Drive object to drive the flipping robot
-	 * 
+	 *
 	 * @param gyroIO          the gyro to go by (not used yet I don't think)
 	 * @param maxLinearSpeed  the max speed the robot should travel
 	 * @param maxAngularSpeed the max speed the robot should turn
@@ -88,11 +84,7 @@ public class Drive extends SubsystemBase
 		// Start threads (no-op for each if no signals have been created)
 
 		// Configure AutoBuilder for PathPlanner
-		AutoBuilder.configureHolonomic(this::getPose, this::setPose,
-				() -> kinematics.toChassisSpeeds(getModuleStates()), this::runVelocity,
-				new HolonomicPathFollowerConfig(MAX_LINEAR_SPEED, DRIVE_BASE_RADIUS, new ReplanningConfig()),
-				() -> DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red,
-				this);
+		// AutoBuilder.configure();
 		Pathfinding.setPathfinder(new LocalADStarAK());
 		PathPlannerLogging.setLogActivePathCallback((activePath) ->
 		{
@@ -117,9 +109,7 @@ public class Drive extends SubsystemBase
 				}, null, this));
 	}
 
-	/**
-	 * periodic code to continuosly run
-	 */
+	/** periodic code to continuosly run */
 	public void periodic()
 	{
 		odometryLock.lock(); // Prevents odometry updates while reading data
@@ -324,5 +314,21 @@ public class Drive extends SubsystemBase
 				new Translation2d(TRACK_WIDTH_X / 2.0, -TRACK_WIDTH_Y / 2.0),
 				new Translation2d(-TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0),
 				new Translation2d(-TRACK_WIDTH_X / 2.0, -TRACK_WIDTH_Y / 2.0) };
+	}
+
+	/**
+	 * Stops the drive and turns the modules to an X arrangement to resist movement.
+	 * The modules will return to their normal orientations the next time a nonzero
+	 * velocity is requested.
+	 */
+	public void xLock(Drive drive)
+	{
+		drive.stopWithX();
+	}
+
+	/** Resets the robot's orientation to 0 degrees. */
+	public void resetOrientation()
+	{
+		poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), new Pose2d());
 	}
 }

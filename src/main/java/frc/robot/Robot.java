@@ -13,8 +13,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.robots.CrabbyContainer;
 import java.util.Map;
-
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -24,10 +26,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.northernforce.util.NFRRobotChooser;
 import org.northernforce.util.NFRRobotContainer;
-
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.robots.CrabbyContainer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -105,7 +103,6 @@ public class Robot extends LoggedRobot
 		final var defaultAuto = container.getDefaultAutonomous();
 		autoChooser.addDefaultOption(defaultAuto.getFirst(), defaultAuto.getSecond());
 		container.getAutonomousOptions().forEach(autoChooser::addOption);
-
 	}
 
 	/** This function is called periodically during all modes. */
