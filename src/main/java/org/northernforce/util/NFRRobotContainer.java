@@ -11,9 +11,7 @@ import java.util.Map;
  */
 public interface NFRRobotContainer
 {
-	/**
-	 * Binds the commands from subsystems to the operator interfaces.
-	 */
+	/** Binds the commands from subsystems to the operator interfaces. */
 	public void bindOI();
 
 	/** Runs periodically (every 20 ms) regardless of mode. */

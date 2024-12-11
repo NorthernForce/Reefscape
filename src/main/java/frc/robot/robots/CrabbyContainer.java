@@ -28,9 +28,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-
 import java.util.Map;
-
 import org.northernforce.util.NFRRobotContainer;
 
 /**
@@ -121,7 +119,6 @@ public class CrabbyContainer implements NFRRobotContainer
 			;
 			break;
 		}
-
 	}
 
 	public Map<String, Command> getAutonomousOptions()
@@ -141,7 +138,6 @@ public class CrabbyContainer implements NFRRobotContainer
 
 	public void setInitialPose(Pose2d pose)
 	{
-
 	}
 
 	public void bindOI()
@@ -162,7 +158,7 @@ public class CrabbyContainer implements NFRRobotContainer
 
 	/**
 	 * get the drive
-	 * 
+	 *
 	 * @return the drive
 	 */
 	public Drive getDrive()

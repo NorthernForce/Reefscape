@@ -28,5 +28,4 @@ public class CrabbyConstants
 
 		public static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
 	}
-
 }
