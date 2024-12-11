@@ -26,87 +26,81 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.DoubleSupplier;
 
-public class DriveCommands {
-  private static final double DEADBAND = 0.1;
+public class DriveCommands
+{
+	private static final double DEADBAND = 0.1;
 
-  private DriveCommands() {}
+	private DriveCommands()
+	{
+	}
 
-  /**
-   * Field relative drive command using two joysticks (controlling linear and angular velocities).
-   *
-   * @param drive the drive object instantiated with the motors.
-   * @param xSupplier controller axis x of joystick
-   * @param ySupplier controller axis y of joystick
-   * @param omegaSupplier speed of drive
-   * @return a runable command to drive el robo
-   */
-  public static Command joystickDrive(
-      Drive drive,
-      DoubleSupplier xSupplier,
-      DoubleSupplier ySupplier,
-      DoubleSupplier omegaSupplier) {
-    return Commands.run(
-        () -> {
-          // Apply deadband
-          double linearMagnitude =
-              MathUtil.applyDeadband(
-                  Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble()), DEADBAND);
-          Rotation2d linearDirection =
-              new Rotation2d(xSupplier.getAsDouble(), ySupplier.getAsDouble());
-          double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
+	/**
+	 * Field relative drive command using two joysticks (controlling linear and
+	 * angular velocities).
+	 *
+	 * @param drive         the drive object instantiated with the motors.
+	 * @param xSupplier     controller axis x of joystick
+	 * @param ySupplier     controller axis y of joystick
+	 * @param omegaSupplier speed of drive
+	 * @return a runable command to drive el robo
+	 */
+	public static Command joystickDrive(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier,
+			DoubleSupplier omegaSupplier)
+	{
+		return Commands.run(() ->
+		{
+			// Apply deadband
+			double linearMagnitude = MathUtil
+					.applyDeadband(Math.hypot(xSupplier.getAsDouble(), ySupplier.getAsDouble()), DEADBAND);
+			Rotation2d linearDirection = new Rotation2d(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+			double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
 
-          // Square values
-          linearMagnitude = linearMagnitude * linearMagnitude;
-          omega = Math.copySign(omega * omega, omega);
+			// Square values
+			linearMagnitude = linearMagnitude * linearMagnitude;
+			omega = Math.copySign(omega * omega, omega);
 
-          // Calcaulate new linear velocity
-          Translation2d linearVelocity =
-              new Pose2d(new Translation2d(), linearDirection)
-                  .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
-                  .getTranslation();
+			// Calcaulate new linear velocity
+			Translation2d linearVelocity = new Pose2d(new Translation2d(), linearDirection)
+					.transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d())).getTranslation();
 
-          // Convert to field relative speeds & send command
-          boolean isFlipped =
-              DriverStation.getAlliance().isPresent()
-                  && DriverStation.getAlliance().get() == Alliance.Red;
-          drive.runVelocity(
-              ChassisSpeeds.fromFieldRelativeSpeeds(
-                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                  omega * drive.getMaxAngularSpeedRadPerSec(),
-                  isFlipped
-                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                      : drive.getRotation()));
-        },
-        drive);
-  }
+			// Convert to field relative speeds & send command
+			boolean isFlipped = DriverStation.getAlliance().isPresent()
+					&& DriverStation.getAlliance().get() == Alliance.Red;
+			drive.runVelocity(
+					ChassisSpeeds.fromFieldRelativeSpeeds(linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+							linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+							omega * drive.getMaxAngularSpeedRadPerSec(),
+							isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
+		}, drive);
+	}
 
-  /**
-   * Command to lock the robot's position and turns them inward, making it skid to a stop XD
-   *
-   * @param drive the drive object instantiated with the motors.
-   * @return a runable command to lock the robot's position
-   */
-  public static Command xLock(Drive drive) {
-    return Commands.run(
-        () -> {
-          // Lock the robot's position and turns them inward, making it skid to a stop XD
-          drive.xLock(drive);
-        },
-        drive);
-  }
+	/**
+	 * Command to lock the robot's position and turns them inward, making it skid to
+	 * a stop XD
+	 *
+	 * @param drive the drive object instantiated with the motors.
+	 * @return a runable command to lock the robot's position
+	 */
+	public static Command xLock(Drive drive)
+	{
+		return Commands.run(() ->
+		{
+			// Lock the robot's position and turns them inward, making it skid to a stop XD
+			drive.xLock(drive);
+		}, drive);
+	}
 
-  /**
-   * Command to reset the robot's orientation
-   *
-   * @param drive
-   * @return
-   */
-  public static Command resetOrientaion(Drive drive) {
-    return Commands.run(
-        () -> {
-          drive.resetOrientation();
-        },
-        drive);
-  }
+	/**
+	 * Command to reset the robot's orientation
+	 *
+	 * @param drive
+	 * @return
+	 */
+	public static Command resetOrientaion(Drive drive)
+	{
+		return Commands.run(() ->
+		{
+			drive.resetOrientation();
+		}, drive);
+	}
 }

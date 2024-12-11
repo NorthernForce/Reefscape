@@ -16,43 +16,64 @@ package frc.robot.subsystems.drive;
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface ModuleIO {
-  @AutoLog
-  public static class ModuleIOInputs {
-    public double drivePositionMeters = 0.0;
-    public double driveVelocityMetersPerSecond = 0.0;
-    public double driveAppliedVolts = 0.0;
-    public double[] driveCurrentAmps = new double[] {};
+public interface ModuleIO
+{
+	@AutoLog
+	public static class ModuleIOInputs
+	{
+		public double drivePositionMeters = 0.0;
+		public double driveVelocityMetersPerSecond = 0.0;
+		public double driveAppliedVolts = 0.0;
+		public double[] driveCurrentAmps = new double[]
+		{};
 
-    public Rotation2d turnPosition = new Rotation2d();
-    public double turnVelocityRotationsPerSecond = 0.0;
-    public double turnAppliedVolts = 0.0;
-    public double[] turnCurrentAmps = new double[] {};
+		public Rotation2d turnPosition = new Rotation2d();
+		public double turnVelocityRotationsPerSecond = 0.0;
+		public double turnAppliedVolts = 0.0;
+		public double[] turnCurrentAmps = new double[]
+		{};
 
-    public double[] odometryTimestamps = new double[] {};
-    public double[] odometryDrivePositionsMeters = new double[] {};
-    public Rotation2d[] odometryTurnPositions = new Rotation2d[] {};
+		public double[] odometryTimestamps = new double[]
+		{};
+		public double[] odometryDrivePositionsMeters = new double[]
+		{};
+		public Rotation2d[] odometryTurnPositions = new Rotation2d[]
+		{};
 
-    public double driveTemperature = 0.0;
-    public double turnTemperature = 0.0;
-  }
+		public double driveTemperature = 0.0;
+		public double turnTemperature = 0.0;
+	}
 
-  /** Updates the set of loggable inputs. */
-  public default void updateInputs(ModuleIOInputs inputs) {}
+	/** Updates the set of loggable inputs. */
+	public default void updateInputs(ModuleIOInputs inputs)
+	{
+	}
 
-  /** Run the drive motor at the specified voltage. */
-  public default void setDriveVoltage(double volts) {}
+	/** Run the drive motor at the specified voltage. */
+	public default void setDriveVoltage(double volts)
+	{
+	}
 
-  /** Run the turn motor at the specified voltage. */
-  public default void setTurnVoltage(double volts) {}
+	/** Run the turn motor at the specified voltage. */
+	public default void setTurnVoltage(double volts)
+	{
+	}
 
-  public default void setDriveVelocity(double velocityMetersPerSecond) {}
+	public default void setDriveVelocity(double velocityMetersPerSecond)
+	{
+	}
 
-  public default void setTurnPosition(Rotation2d position) {}
+	public default void setTurnPosition(Rotation2d position)
+	{
+	}
 
-  /** Enable or disable brake mode on the drive motor. */
-  public default void setDriveBrakeMode(boolean enable) {}
+	/** Enable or disable brake mode on the drive motor. */
+	public default void setDriveBrakeMode(boolean enable)
+	{
+	}
 
-  /** Enable or disable brake mode on the turn motor. */
-  public default void setTurnBrakeMode(boolean enable) {}
+	/** Enable or disable brake mode on the turn motor. */
+	public default void setTurnBrakeMode(boolean enable)
+	{
+	}
 }
