@@ -27,7 +27,7 @@ import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.robots.CrabbyContainer;
+import frc.robot.robots.ZippyContainer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -68,8 +68,8 @@ public class Robot extends LoggedRobot
 			break;
 		}
 
-		final NFRRobotChooser chooser = new NFRRobotChooser(() -> new CrabbyContainer(),
-				Map.of("Crabby", () -> new CrabbyContainer()));
+		final NFRRobotChooser chooser = new NFRRobotChooser(() -> new ZippyContainer(),
+				Map.of("Zippy", () -> new ZippyContainer()));
 		container = chooser.getNFRRobotContainer();
 
 		// Set up data receivers & replay source
