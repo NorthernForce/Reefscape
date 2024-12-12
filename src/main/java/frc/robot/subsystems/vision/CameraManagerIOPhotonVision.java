@@ -64,4 +64,10 @@ public class CameraManagerIOPhotonVision implements CameraManagerIO
 		estimatedPoses = poses;
 		return poses;
 	}
+
+	@Override
+	public void updateSimulationWithPose(Pose2d pose)
+	{
+
+	}
 }

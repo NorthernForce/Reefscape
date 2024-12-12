@@ -1,11 +1,14 @@
 package frc.robot.subsystems.vision;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -28,7 +31,7 @@ public class PhotonVisionCamera extends SubsystemBase
 	{
 		photonCamera = new PhotonCamera("Global_Shutter_Camera (" + cameraNum + ")");
 		photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_RIO,
-				photonCamera, robotToCam);
+				robotToCam);
 		photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 	}
 
@@ -43,7 +46,7 @@ public class PhotonVisionCamera extends SubsystemBase
 			PoseStrategy poseStrategy)
 	{
 		photonCamera = new PhotonCamera("photonvision");
-		photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, poseStrategy, photonCamera, robotToCam);
+		photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, poseStrategy, robotToCam);
 		photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 	}
 
@@ -57,7 +60,12 @@ public class PhotonVisionCamera extends SubsystemBase
 	public EstimatedRobotPose getEstimatedRobotPose(Pose2d prevEstimatedRobotPose)
 	{
 		photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-		Optional<EstimatedRobotPose> estimatedPose = photonPoseEstimator.update();
+		List<PhotonPipelineResult> camResults = photonCamera.getAllUnreadResults();
+		Optional<EstimatedRobotPose> estimatedPose = null;
+		for (PhotonPipelineResult camResult : camResults)
+		{
+			estimatedPose = photonPoseEstimator.update(camResult);
+		}
 		if (estimatedPose.isPresent())
 		{
 			return estimatedPose.get();

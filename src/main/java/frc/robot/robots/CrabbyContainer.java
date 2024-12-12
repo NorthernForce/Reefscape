@@ -193,6 +193,8 @@ public class CrabbyContainer implements NFRRobotContainer
 			drive.addVisionMeasurement(estimatedRobotPose.estimatedPose.toPose2d(),
 					estimatedRobotPose.timestampSeconds);
 		}
+	}
+
 	/**
 	 * get the drive
 	 *

@@ -1,18 +1,25 @@
 package frc.robot.subsystems.vision;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.simulation.VisionSystemSim;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 
-public class CameraManagerIOPhotonVisionSim implements CameraManagerIO {
-    private final PhotonVisionCameraSim[] photonVisionCameras;
+public class CameraManagerIOPhotonVisionSim implements CameraManagerIO
+{
+	private final PhotonVisionCameraSim[] photonVisionCameras;
 	private boolean[] connected;
 	private EstimatedRobotPose[] estimatedPoses;
 	private int numberOfCameras;
-    private VisionSystemSim photonSim;
+	private VisionSystemSim photonSim;
 
 	/**
 	 * Class to manage any number PhotonVisionCamera objects
@@ -25,8 +32,12 @@ public class CameraManagerIOPhotonVisionSim implements CameraManagerIO {
 		connected = new boolean[numberOfCameras];
 		estimatedPoses = new EstimatedRobotPose[numberOfCameras];
 		this.photonVisionCameras = photonVisionCameras;
-        photonSim = new VisionSystemSim("main");
-        photonSim.addAprilTags(AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo));
+		photonSim = new VisionSystemSim("main");
+		photonSim.addAprilTags(AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo));
+		for (PhotonVisionCameraSim cam : photonVisionCameras)
+		{
+			photonSim.addCamera(cam.getCameraSim(), cam.getRobotToCamera());
+		}
 	}
 
 	@Override
@@ -58,23 +69,33 @@ public class CameraManagerIOPhotonVisionSim implements CameraManagerIO {
 	 * @param prevEstimatedRobotPose
 	 * @return ArrayList of estimated poses from all the PhotonVisionCameras
 	 */
-	// public EstimatedRobotPose[] getEstimatedRobotPoses(Pose2d prevEstimatedRobotPose)
-	// {
-	// 	EstimatedRobotPose[] poses = new EstimatedRobotPose[numberOfCameras];
-	// 	for (int i = 0; i < poses.length; i++)
-	// 	{
-	// 		PhotonVisionCameraSim cam = photonVisionCameras[i];
-	// 		poses[i] = cam.getEstimatedRobotPose(prevEstimatedRobotPose);
-	// 	}
-	// 	estimatedPoses = poses;
-	// 	return poses;
-	// }
+	public EstimatedRobotPose[] getEstimatedRobotPoses(Pose2d prevEstimatedRobotPose)
+	{
+		EstimatedRobotPose[] poses = new EstimatedRobotPose[numberOfCameras];
+		for (int i = 0; i < poses.length; i++)
+		{
+			PhotonVisionCameraSim simCam = photonVisionCameras[i];
+			PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(
+					AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo), PoseStrategy.MULTI_TAG_PNP_ON_RIO,
+					simCam.getRobotToCamera());
+			PhotonPipelineResult camResult = simCam.getCameraSim().getCamera().getAllUnreadResults().get(0);
+			Optional<EstimatedRobotPose> estimatedPose = null;
+			estimatedPose = poseEstimator.update(camResult);
+			if (estimatedPose.isPresent())
+			{
+				poses[i] = estimatedPose.get();
+			} else
+			{
+				poses[i] = null;
+			}
+		}
+		estimatedPoses = poses;
+		return poses;
+	}
 
-    @Override
-    public void updateSimulationWithPose(Pose2d pose)
-    {
-        for (PhotonVisionCameraSim cam : photonVisionCameras){
-            cam.getCameraSim().updateSimulationWithPose(pose);
-        }
-    }
+	@Override
+	public void updateSimulationWithPose(Pose2d pose)
+	{
+		photonSim.update(pose);
+	}
 }

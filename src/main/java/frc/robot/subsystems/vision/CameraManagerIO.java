@@ -20,7 +20,7 @@ public interface CameraManagerIO
 	{
 	}
 
-    public default void updateSimulationWithPose(Pose2d pose)
-    {
-    }
+	public default void updateSimulationWithPose(Pose2d pose)
+	{
+	}
 }
