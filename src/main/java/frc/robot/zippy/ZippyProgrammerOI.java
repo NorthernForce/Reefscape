@@ -1,6 +1,11 @@
 package frc.robot.zippy;
 
-public class ZippyProgrammerOI
-{
+import frc.robot.robots.ZippyContainer;
 
+public class ZippyProgrammerOI implements ZippyOI
+{
+	@Override
+	public void bindOI(ZippyContainer container)
+	{
+	}
 }
