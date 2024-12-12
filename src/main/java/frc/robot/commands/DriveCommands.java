@@ -37,7 +37,7 @@ public class DriveCommands
 	/**
 	 * Field relative drive command using two joysticks (controlling linear and
 	 * angular velocities).
-	 * 
+	 *
 	 * @param drive         the drive object instantiated with the motors.
 	 * @param xSupplier     controller axis x of joystick
 	 * @param ySupplier     controller axis y of joystick
@@ -77,7 +77,7 @@ public class DriveCommands
 	/**
 	 * Command to lock the robot's position and turns them inward, making it skid to
 	 * a stop XD
-	 * 
+	 *
 	 * @param drive the drive object instantiated with the motors.
 	 * @return a runable command to lock the robot's position
 	 */
@@ -92,7 +92,7 @@ public class DriveCommands
 
 	/**
 	 * Command to reset the robot's orientation
-	 * 
+	 *
 	 * @param drive
 	 * @return
 	 */
