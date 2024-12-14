@@ -15,6 +15,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerFeedbackType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 import edu.wpi.first.units.measure.*;
+import frc.robot.util.DriveConstants;
 
 public class ZippyConstants
 {
@@ -133,14 +134,5 @@ public class ZippyConstants
 			return new SwerveModuleConstants(); // TODO: talk to connnor about slick phoenix generation stuff
 		}
 	}
-
-	public class DriveConstants
-	{
-		public static final double ODOMETRY_FREQUENCY = 100.0;
-		public static final double MAX_LINEAR_SPEED = 18;
-		public static final double TRACK_WIDTH_X = 0.5;
-		public static final double TRACK_WIDTH_Y = 0.5;
-		public static final double DRIVE_BASE_RADIUS = 2;
-		public static final double MAX_ANGULAR_SPEED = 50;
-	}
+    public static DriveConstants driveConstants = new DriveConstants(50, 3, 0.5, 0.5, 0.5, 3);
 }

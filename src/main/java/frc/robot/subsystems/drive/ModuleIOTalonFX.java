@@ -1,9 +1,11 @@
 package frc.robot.subsystems.drive;
 
+import frc.robot.util.DriveConstants;
 import frc.robot.util.PhoenixUtil;
 import java.util.Queue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import frc.robot.robots.ZippyConstants;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -61,7 +63,7 @@ public class ModuleIOTalonFX implements ModuleIO
 	private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
 	private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5);
 
-	public ModuleIOTalonFX(SwerveModuleConstants constants)
+	public ModuleIOTalonFX(SwerveModuleConstants constants, DriveConstants driveConstants)
 	{
 		this.constants = constants;
 		driveTalon = new TalonFX(constants.DriveMotorId, ZippyConstants.TunerConstants.DrivetrainConstants.CANBusName);
@@ -114,7 +116,7 @@ public class ModuleIOTalonFX implements ModuleIO
 		turnAppliedVolts = turnTalon.getMotorVoltage();
 		turnCurrent = turnTalon.getStatorCurrent();
 
-		BaseStatusSignal.setUpdateFrequencyForAll(ZippyConstants.DriveConstants.ODOMETRY_FREQUENCY, drivePosition,
+		BaseStatusSignal.setUpdateFrequencyForAll(driveConstants.odometryFrequency(), drivePosition,
 				turnPosition);
 		BaseStatusSignal.setUpdateFrequencyForAll(50.0, driveVelocity, driveAppliedVolts, driveCurrent,
 				turnAbsolutePosition, turnVelocity, turnAppliedVolts, turnCurrent);

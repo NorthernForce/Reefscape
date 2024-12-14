@@ -8,6 +8,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.DoubleSupplier;
 import frc.robot.robots.ZippyConstants;
+import frc.robot.util.DriveConstants;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
@@ -101,8 +103,7 @@ public class PhoenixOdometryThread extends Thread
 		return queue;
 	}
 
-	@Override
-	public void run()
+	public void run(DriveConstants driveConstants)
 	{
 		while (true)
 		{
@@ -111,10 +112,10 @@ public class PhoenixOdometryThread extends Thread
 			{
 				if (isCANFD && phoenixSignals.length > 0)
 				{
-					BaseStatusSignal.waitForAll(2.0 / ZippyConstants.DriveConstants.ODOMETRY_FREQUENCY, phoenixSignals);
+					BaseStatusSignal.waitForAll(2.0 / driveConstants.odometryFrequency(), phoenixSignals);
 				} else
 				{
-					Thread.sleep((long) (1000.0 / ZippyConstants.DriveConstants.ODOMETRY_FREQUENCY));
+					Thread.sleep((long) (1000.0 / driveConstants.odometryFrequency()));
 					if (phoenixSignals.length > 0)
 						BaseStatusSignal.refreshAll(phoenixSignals);
 				}
