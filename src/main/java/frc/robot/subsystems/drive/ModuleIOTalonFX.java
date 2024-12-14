@@ -116,8 +116,7 @@ public class ModuleIOTalonFX implements ModuleIO
 		turnAppliedVolts = turnTalon.getMotorVoltage();
 		turnCurrent = turnTalon.getStatorCurrent();
 
-		BaseStatusSignal.setUpdateFrequencyForAll(driveConstants.odometryFrequency(), drivePosition,
-				turnPosition);
+		BaseStatusSignal.setUpdateFrequencyForAll(driveConstants.odometryFrequency(), drivePosition, turnPosition);
 		BaseStatusSignal.setUpdateFrequencyForAll(50.0, driveVelocity, driveAppliedVolts, driveCurrent,
 				turnAbsolutePosition, turnVelocity, turnAppliedVolts, turnCurrent);
 		ParentDevice.optimizeBusUtilizationForAll(driveTalon, turnTalon);

@@ -134,5 +134,6 @@ public class ZippyConstants
 			return new SwerveModuleConstants(); // TODO: talk to connnor about slick phoenix generation stuff
 		}
 	}
-    public static DriveConstants driveConstants = new DriveConstants(50, 3, 0.5, 0.5, 0.5, 3);
+
+	public static DriveConstants driveConstants = new DriveConstants(50, 3, 0.5, 0.5, 0.5, 3);
 }
