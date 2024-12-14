@@ -2,9 +2,10 @@ package frc.robot.subsystems.drive;
 
 import frc.robot.util.DriveConstants;
 import frc.robot.util.PhoenixUtil;
+import frc.robot.util.TunerConstants;
+
 import java.util.Queue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import frc.robot.robots.ZippyConstants;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -58,17 +59,18 @@ public class ModuleIOTalonFX implements ModuleIO
 	private final StatusSignal<AngularVelocity> turnVelocity;
 	private final StatusSignal<Voltage> turnAppliedVolts;
 	private final StatusSignal<Current> turnCurrent;
-
+    private final TunerConstants tunerConstants;
 	private final Debouncer driveConnectedDebounce = new Debouncer(0.5);
 	private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
 	private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5);
 
-	public ModuleIOTalonFX(SwerveModuleConstants constants, DriveConstants driveConstants)
+	public ModuleIOTalonFX(SwerveModuleConstants constants, DriveConstants driveConstants, TunerConstants tunerConstants)
 	{
+        this.tunerConstants = tunerConstants;
 		this.constants = constants;
-		driveTalon = new TalonFX(constants.DriveMotorId, ZippyConstants.TunerConstants.DrivetrainConstants.CANBusName);
-		turnTalon = new TalonFX(constants.DriveMotorId, ZippyConstants.TunerConstants.DrivetrainConstants.CANBusName);
-		cancoder = new CANcoder(constants.CANcoderId, ZippyConstants.TunerConstants.DrivetrainConstants.CANBusName);
+		driveTalon = new TalonFX(constants.DriveMotorId, tunerConstants.DrivetrainConstants().CANBusName);
+		turnTalon = new TalonFX(constants.DriveMotorId, tunerConstants.DrivetrainConstants().CANBusName);
+		cancoder = new CANcoder(constants.CANcoderId, tunerConstants.DrivetrainConstants().CANBusName);
 		var driveConfig = constants.DriveMotorInitialConfigs;
 		driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 		driveConfig.Slot0 = constants.DriveMotorGains;

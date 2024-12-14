@@ -35,8 +35,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.robots.ZippyConstants;
-import frc.robot.robots.ZippyConstants.TunerConstants;
 import frc.robot.util.LocalADStarAK;
+import frc.robot.util.TunerConstants;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -50,7 +51,7 @@ public class Drive extends SubsystemBase
 	private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
 	private final Module[] modules;
 	private final SysIdRoutine sysId;
-
+    private final TunerConstants tunerConstants;
 	private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
 	private Rotation2d rawGyroRotation = new Rotation2d();
 	private SwerveModulePosition[] lastModulePositions = // For delta tracking
@@ -73,11 +74,13 @@ public class Drive extends SubsystemBase
 	 *                        would we have more than 4? idk ask connor >:(
 	 */
 	public Drive(GyroIO gyroIO, double maxLinearSpeed, double maxAngularSpeed, double driveBaseRadius,
-			double trackWidthX, double trackWidthY, ModuleIO... moduleIOs)
+			double trackWidthX, double trackWidthY, TunerConstants tunerConstants, ModuleIO... moduleIOs)
 	{
 
 		this.gyroIO = gyroIO;
+        this.tunerConstants = tunerConstants;
 		modules = new Module[moduleIOs.length];
+
 		Pathfinding.setPathfinder(new LocalADStarAK());
 		PathPlannerLogging.setLogActivePathCallback((activePath) ->
 		{
@@ -95,7 +98,7 @@ public class Drive extends SubsystemBase
 				{
 					for (int i = 0; i < moduleIOs.length; i++)
 					{
-						modules[i] = new Module(moduleIOs[i], i, ZippyConstants.TunerConstants.getConstantsAtPos(i));
+						modules[i] = new Module(moduleIOs[i], i, tunerConstants.getConstantsAtPos(i));
 						modules[i].runCharacterization(voltage.in(Volts));
 					}
 				}, null, this));
@@ -168,7 +171,7 @@ public class Drive extends SubsystemBase
 	{
 		speeds.discretize(0.02);
 		SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(speeds);
-		SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, TunerConstants.kSpeedAt12Volts);
+		SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, tunerConstants.kSpeedAt12Volts());
 
 		Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
 		Logger.recordOutput("SwerveChassisSpeeds/Setpoints", speeds);
@@ -356,7 +359,7 @@ public class Drive extends SubsystemBase
 	 */
 	public double getMaxLinearSpeedMetersPerSec()
 	{
-		return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+		return tunerConstants.kSpeedAt12Volts().in(MetersPerSecond);
 	}
 
 	/**
@@ -366,7 +369,7 @@ public class Drive extends SubsystemBase
 	 */
 	public double getMaxAngularSpeedRadPerSec()
 	{
-		return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+		return tunerConstants.kSpeedAt12Volts().in(MetersPerSecond);
 	}
 
 	/**
@@ -374,13 +377,13 @@ public class Drive extends SubsystemBase
 	 * 
 	 * @return the module translations
 	 */
-	public static Translation2d[] getModuleTranslations()
+	public Translation2d[] getModuleTranslations()
 	{
 		return new Translation2d[]
-		{ new Translation2d(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
-				new Translation2d(TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY),
-				new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
-				new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY) };
+		{ new Translation2d(tunerConstants.getConstantsAtPos(0).LocationX, tunerConstants.getConstantsAtPos(0).LocationY),
+				new Translation2d(tunerConstants.getConstantsAtPos(1).LocationX, tunerConstants.getConstantsAtPos(1).LocationY),
+				new Translation2d(tunerConstants.getConstantsAtPos(2).LocationX, tunerConstants.getConstantsAtPos(2).LocationY),
+				new Translation2d(tunerConstants.getConstantsAtPos(3).LocationX, tunerConstants.getConstantsAtPos(3).LocationY) };
 	}
 
 	/**
