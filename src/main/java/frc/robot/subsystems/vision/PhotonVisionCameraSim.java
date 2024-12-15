@@ -10,8 +10,8 @@ import frc.robot.subsystems.vision.VisionIO.VisionIOInputs;
 
 public class PhotonVisionCameraSim extends PhotonVisionCamera
 {
-    private final PhotonCameraSim cameraSim;
-    private final Transform3d robotToCamera;
+	private final PhotonCameraSim cameraSim;
+	private final Transform3d robotToCamera;
 
 	/**
 	 * Wrapper class for a PhotonCamera and PhotonPoseEstimator
@@ -22,26 +22,26 @@ public class PhotonVisionCameraSim extends PhotonVisionCamera
 	 */
 	public PhotonVisionCameraSim(String name, Transform3d robotToCamera, Supplier<Pose2d> poseSupplier)
 	{
-        super(name, robotToCamera);
-        this.robotToCamera = robotToCamera;
-        var cameraProperties = new SimCameraProperties();
-        cameraSim = new PhotonCameraSim(photonCamera, cameraProperties);
-        VisionIOPhotonVisionSim.visionSim.addCamera(cameraSim, robotToCamera);
+		super(name, robotToCamera);
+		this.robotToCamera = robotToCamera;
+		var cameraProperties = new SimCameraProperties();
+		cameraSim = new PhotonCameraSim(photonCamera, cameraProperties);
+		VisionIOPhotonVisionSim.visionSim.addCamera(cameraSim, robotToCamera);
 	}
 
-    @Override
-    public void updateInputs(VisionIOInputs inputs, int camIndex)
-    {
-        super.updateInputs(inputs, camIndex);
-    }
+	@Override
+	public void updateInputs(VisionIOInputs inputs, int camIndex)
+	{
+		super.updateInputs(inputs, camIndex);
+	}
 
-    public PhotonCameraSim getCameraSim()
-    {
-        return cameraSim;
-    }
+	public PhotonCameraSim getCameraSim()
+	{
+		return cameraSim;
+	}
 
-    public Transform3d getRobotToCamera()
-    {
-        return robotToCamera;
-    }
+	public Transform3d getRobotToCamera()
+	{
+		return robotToCamera;
+	}
 }

@@ -4,6 +4,7 @@ package frc.robot.subsystems.vision;
  * 
  */
 
-public class VisionIOInputs {
+public class VisionIOInputs
+{
 
 }

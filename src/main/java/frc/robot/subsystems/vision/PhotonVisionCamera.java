@@ -19,19 +19,19 @@ import frc.robot.subsystems.vision.VisionIO.VisionIOInputs;
 public class PhotonVisionCamera extends SubsystemBase
 {
 	protected final PhotonCamera photonCamera;
-    protected final Transform3d robotToCamera;
+	protected final Transform3d robotToCamera;
 
 	/**
 	 * Wrapper class for a PhotonCamera and PhotonPoseEstimator
 	 * 
 	 * @param aprilTagFieldLayout The layout of the apriltags on the field
-	 * @param robotToCamera          Transform between the robot origin and the camera
+	 * @param robotToCamera       Transform between the robot origin and the camera
 	 * @param cameraNum           Used to give each camera a unique name
 	 */
 	public PhotonVisionCamera(String name, Transform3d robotToCamera)
 	{
 		photonCamera = new PhotonCamera(name);
-        this.robotToCamera = robotToCamera;
+		this.robotToCamera = robotToCamera;
 	}
 
 	/**
@@ -43,60 +43,54 @@ public class PhotonVisionCamera extends SubsystemBase
 	 */
 	public void updateInputs(VisionIOInputs inputs, int camIndex)
 	{
-        Set<Short> tagIds = new HashSet<>();
-        List<PoseObservation> poseObservations = new LinkedList<>();
+		Set<Short> tagIds = new HashSet<>();
+		List<PoseObservation> poseObservations = new LinkedList<>();
 		for (var result : photonCamera.getAllUnreadResults())
-        {
-            if (result.hasTargets())
-            {
-                inputs.latestTargetObservation = new TargetObservation(
-                    Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
-                    Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
-            } else {
-                inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
-            }
+		{
+			if (result.hasTargets())
+			{
+				inputs.latestTargetObservation = new TargetObservation(
+						Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
+						Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
+			} else
+			{
+				inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
+			}
 
-            if (result.multitagResult.isPresent())
-            {
-                var multitagResult = result.multitagResult.get();
+			if (result.multitagResult.isPresent())
+			{
+				var multitagResult = result.multitagResult.get();
 
-                Transform3d fieldToCamera = multitagResult.estimatedPose.best;
-                Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
-                Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
-                
-                double totalTagDistance = 0.0;
-                for (var target : result.getTargets())
-                {
-                    totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
-                }
+				Transform3d fieldToCamera = multitagResult.estimatedPose.best;
+				Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
+				Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
 
-                tagIds.addAll(multitagResult.fiducialIDsUsed);
+				double totalTagDistance = 0.0;
+				for (var target : result.getTargets())
+				{
+					totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
+				}
 
-                poseObservations.add(
-                    new PoseObservation(
-                        result.getTimestampSeconds(),
-                        robotPose,
-                        multitagResult.estimatedPose.ambiguity,
-                        multitagResult.fiducialIDsUsed.size(),
-                        totalTagDistance / result.targets.size(),
-                        PoseObservationType.PHOTONVISION
-                    )
-                );
-            }
-        }
+				tagIds.addAll(multitagResult.fiducialIDsUsed);
 
-        inputs.poseObservations = new PoseObservation[poseObservations.size()];
-        for (int i = 0; i < poseObservations.size(); i++)
-        {
-            inputs.poseObservations[i] = poseObservations.get(i);
-        }
+				poseObservations.add(new PoseObservation(result.getTimestampSeconds(), robotPose,
+						multitagResult.estimatedPose.ambiguity, multitagResult.fiducialIDsUsed.size(),
+						totalTagDistance / result.targets.size(), PoseObservationType.PHOTONVISION));
+			}
+		}
 
-        inputs.tagIds = new int[tagIds.size()];
-        int i = 0;
-        for (int id : tagIds)
-        {
-            inputs.tagIds[i++] = id;
-        }
+		inputs.poseObservations = new PoseObservation[poseObservations.size()];
+		for (int i = 0; i < poseObservations.size(); i++)
+		{
+			inputs.poseObservations[i] = poseObservations.get(i);
+		}
+
+		inputs.tagIds = new int[tagIds.size()];
+		int i = 0;
+		for (int id : tagIds)
+		{
+			inputs.tagIds[i++] = id;
+		}
 	}
 
 	public boolean isConnected()

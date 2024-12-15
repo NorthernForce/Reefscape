@@ -36,8 +36,8 @@ public class VisionIOPhotonVision implements VisionIO
 		return connected;
 	}
 
-    public int getNumberOfCameras()
-    {
-        return numberOfCameras;
-    }
+	public int getNumberOfCameras()
+	{
+		return numberOfCameras;
+	}
 }

@@ -27,10 +27,10 @@ public class Vision extends SubsystemBase
 	@Override
 	public void periodic()
 	{
-        for (int i = 0; i < io.getNumberOfCameras(); i++)
-        {
-		    io.updateInputs(inputs, i);
-		    Logger.processInputs(getName(), inputs);
-        }
+		for (int i = 0; i < io.getNumberOfCameras(); i++)
+		{
+			io.updateInputs(inputs, i);
+			Logger.processInputs(getName(), inputs);
+		}
 	}
 }
