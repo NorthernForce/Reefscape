@@ -51,7 +51,7 @@ public class Drive extends SubsystemBase
 	private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
 	private final Module[] modules;
 	private final SysIdRoutine sysId;
-    private final TunerConstants tunerConstants;
+	private final TunerConstants tunerConstants;
 	private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
 	private Rotation2d rawGyroRotation = new Rotation2d();
 	private SwerveModulePosition[] lastModulePositions = // For delta tracking
@@ -78,7 +78,7 @@ public class Drive extends SubsystemBase
 	{
 
 		this.gyroIO = gyroIO;
-        this.tunerConstants = tunerConstants;
+		this.tunerConstants = tunerConstants;
 		modules = new Module[moduleIOs.length];
 
 		Pathfinding.setPathfinder(new LocalADStarAK());
@@ -380,10 +380,14 @@ public class Drive extends SubsystemBase
 	public Translation2d[] getModuleTranslations()
 	{
 		return new Translation2d[]
-		{ new Translation2d(tunerConstants.getConstantsAtPos(0).LocationX, tunerConstants.getConstantsAtPos(0).LocationY),
-				new Translation2d(tunerConstants.getConstantsAtPos(1).LocationX, tunerConstants.getConstantsAtPos(1).LocationY),
-				new Translation2d(tunerConstants.getConstantsAtPos(2).LocationX, tunerConstants.getConstantsAtPos(2).LocationY),
-				new Translation2d(tunerConstants.getConstantsAtPos(3).LocationX, tunerConstants.getConstantsAtPos(3).LocationY) };
+		{ new Translation2d(tunerConstants.getConstantsAtPos(0).LocationX,
+				tunerConstants.getConstantsAtPos(0).LocationY),
+				new Translation2d(tunerConstants.getConstantsAtPos(1).LocationX,
+						tunerConstants.getConstantsAtPos(1).LocationY),
+				new Translation2d(tunerConstants.getConstantsAtPos(2).LocationX,
+						tunerConstants.getConstantsAtPos(2).LocationY),
+				new Translation2d(tunerConstants.getConstantsAtPos(3).LocationX,
+						tunerConstants.getConstantsAtPos(3).LocationY) };
 	}
 
 	/**

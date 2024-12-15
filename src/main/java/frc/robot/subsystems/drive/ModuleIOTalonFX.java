@@ -59,14 +59,15 @@ public class ModuleIOTalonFX implements ModuleIO
 	private final StatusSignal<AngularVelocity> turnVelocity;
 	private final StatusSignal<Voltage> turnAppliedVolts;
 	private final StatusSignal<Current> turnCurrent;
-    private final TunerConstants tunerConstants;
+	private final TunerConstants tunerConstants;
 	private final Debouncer driveConnectedDebounce = new Debouncer(0.5);
 	private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
 	private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5);
 
-	public ModuleIOTalonFX(SwerveModuleConstants constants, DriveConstants driveConstants, TunerConstants tunerConstants)
+	public ModuleIOTalonFX(SwerveModuleConstants constants, DriveConstants driveConstants,
+			TunerConstants tunerConstants)
 	{
-        this.tunerConstants = tunerConstants;
+		this.tunerConstants = tunerConstants;
 		this.constants = constants;
 		driveTalon = new TalonFX(constants.DriveMotorId, tunerConstants.DrivetrainConstants().CANBusName);
 		turnTalon = new TalonFX(constants.DriveMotorId, tunerConstants.DrivetrainConstants().CANBusName);

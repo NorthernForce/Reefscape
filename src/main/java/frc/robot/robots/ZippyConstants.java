@@ -157,23 +157,34 @@ import frc.robot.util.TunerConstants;
 
 public class ZippyConstants
 {
-    public static TunerConstants tunerConstants = new TunerConstants(
-        new Slot0Configs().withKP(100).withKI(0).withKD(2.0).withKS(0.2).withKV(1.59).withKA(0).withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign),
-        new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKS(0).withKV(0.124),
-        ClosedLoopOutputType.Voltage, ClosedLoopOutputType.Voltage,
-        SteerFeedbackType.FusedCANcoder, Amps.of(120.0),
-        new TalonFXConfiguration(),
-        new TalonFXConfiguration().withCurrentLimits(new CurrentLimitsConfigs().withStatorCurrentLimit(Amps.of(60)).withStatorCurrentLimitEnable(true)),
-        new CANcoderConfiguration(), null,
-        new CANBus("rio", "./logs/example.hoot"),
-        MetersPerSecond.of(4.55), 3.5, 7.363636364, 12.8, Inches.of(2.167),
-        false, true, 1, 0.004, 0.025, Volts.of(0.25), Volts.of(0.25),
-        new SwerveDrivetrainConstants().withCANBusName("rio").withPigeon2Id(1).withPigeon2Configs(null),
-        new SwerveModuleConstantsFactory().withDriveMotorGearRatio(7.363636364).withSteerMotorGearRatio(12.8).withCouplingGearRatio(3.5).withWheelRadius(Inches.of(2.167)).withSteerMotorGains(new Slot0Configs().withKP(100).withKI(0).withKD(2.0).withKS(0.2).withKV(1.59).withKA(0).withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)).withDriveMotorGains(new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKS(0).withKV(0.124)).withSteerMotorClosedLoopOutput(ClosedLoopOutputType.Voltage).withDriveMotorClosedLoopOutput(ClosedLoopOutputType.Voltage).withSlipCurrent(Amps.of(120.0)).withSpeedAt12Volts(MetersPerSecond.of(4.55)).withFeedbackSource(SteerFeedbackType.FusedCANcoder).withDriveMotorInitialConfigs(new TalonFXConfiguration()).withSteerMotorInitialConfigs(new TalonFXConfiguration().withCurrentLimits(new CurrentLimitsConfigs().withStatorCurrentLimit(Amps.of(60)).withStatorCurrentLimitEnable(true))).withCANcoderInitialConfigs(new CANcoderConfiguration()).withSteerInertia(0.004).withDriveInertia(0.025).withSteerFrictionVoltage(Volts.of(0.25)).withDriveFrictionVoltage(Volts.of(0.25)),
-        5, 4, 2, Rotations.of(-0.83544921875), true, false, Inches.of(10.5), Inches.of(10.5),
-        7, 6, 3, Rotations.of(-0.15234375), true, false, Inches.of(10.5), Inches.of(-10.5),
-        1, 0, 0, Rotations.of(-0.4794921875), true, false, Inches.of(-10.5), Inches.of(10.5),
-        3, 2, 1, Rotations.of(-0.84130859375), true, false, Inches.of(-10.5), Inches.of(-10.5)
-    );
-    public static DriveConstants driveConstants = new DriveConstants(50, 3, 0.5, 0.5, 0.5, 3);
+	public static TunerConstants tunerConstants = new TunerConstants(
+			new Slot0Configs().withKP(100).withKI(0).withKD(2.0).withKS(0.2).withKV(1.59).withKA(0)
+					.withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign),
+			new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKS(0).withKV(0.124), ClosedLoopOutputType.Voltage,
+			ClosedLoopOutputType.Voltage, SteerFeedbackType.FusedCANcoder, Amps.of(120.0), new TalonFXConfiguration(),
+			new TalonFXConfiguration().withCurrentLimits(
+					new CurrentLimitsConfigs().withStatorCurrentLimit(Amps.of(60)).withStatorCurrentLimitEnable(true)),
+			new CANcoderConfiguration(), null, new CANBus("rio", "./logs/example.hoot"), MetersPerSecond.of(4.55), 3.5,
+			7.363636364, 12.8, Inches.of(2.167), false, true, 1, 0.004, 0.025, Volts.of(0.25), Volts.of(0.25),
+			new SwerveDrivetrainConstants().withCANBusName("rio").withPigeon2Id(1).withPigeon2Configs(null),
+			new SwerveModuleConstantsFactory().withDriveMotorGearRatio(7.363636364).withSteerMotorGearRatio(12.8)
+					.withCouplingGearRatio(3.5).withWheelRadius(Inches.of(2.167))
+					.withSteerMotorGains(new Slot0Configs().withKP(100).withKI(0).withKD(2.0).withKS(0.2).withKV(1.59)
+							.withKA(0).withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign))
+					.withDriveMotorGains(new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKS(0).withKV(0.124))
+					.withSteerMotorClosedLoopOutput(ClosedLoopOutputType.Voltage)
+					.withDriveMotorClosedLoopOutput(ClosedLoopOutputType.Voltage).withSlipCurrent(Amps.of(120.0))
+					.withSpeedAt12Volts(MetersPerSecond.of(4.55)).withFeedbackSource(SteerFeedbackType.FusedCANcoder)
+					.withDriveMotorInitialConfigs(new TalonFXConfiguration())
+					.withSteerMotorInitialConfigs(
+							new TalonFXConfiguration().withCurrentLimits(new CurrentLimitsConfigs()
+									.withStatorCurrentLimit(Amps.of(60)).withStatorCurrentLimitEnable(true)))
+					.withCANcoderInitialConfigs(new CANcoderConfiguration()).withSteerInertia(0.004)
+					.withDriveInertia(0.025).withSteerFrictionVoltage(Volts.of(0.25))
+					.withDriveFrictionVoltage(Volts.of(0.25)),
+			5, 4, 2, Rotations.of(-0.83544921875), true, false, Inches.of(10.5), Inches.of(10.5), 7, 6, 3,
+			Rotations.of(-0.15234375), true, false, Inches.of(10.5), Inches.of(-10.5), 1, 0, 0,
+			Rotations.of(-0.4794921875), true, false, Inches.of(-10.5), Inches.of(10.5), 3, 2, 1,
+			Rotations.of(-0.84130859375), true, false, Inches.of(-10.5), Inches.of(-10.5));
+	public static DriveConstants driveConstants = new DriveConstants(50, 3, 0.5, 0.5, 0.5, 3);
 }
