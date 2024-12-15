@@ -34,7 +34,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.robots.ZippyConstants;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.TunerConstants;
 
