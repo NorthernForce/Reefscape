@@ -1,19 +1,17 @@
 package frc.robot.subsystems.vision;
 
-import org.photonvision.PhotonCamera;
+import java.util.function.Supplier;
+
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import frc.robot.subsystems.vision.VisionIO.VisionIOInputs;
 
-public class PhotonVisionCameraSim extends SubsystemBase
+public class PhotonVisionCameraSim extends PhotonVisionCamera
 {
-	private final PhotonCamera photonCamera;
-	private final PhotonCameraSim photonCameraSim;
-	private final SimCameraProperties simCameraProperties;
-	private final Transform3d robotToCam;
+    private final PhotonCameraSim cameraSim;
+    private final Transform3d robotToCamera;
 
 	/**
 	 * Wrapper class for a PhotonCamera and PhotonPoseEstimator
@@ -22,39 +20,28 @@ public class PhotonVisionCameraSim extends SubsystemBase
 	 * @param robotToCam          Transform between the robot origin and the camera
 	 * @param cameraNum           Used to give each camera a unique name
 	 */
-	public PhotonVisionCameraSim(AprilTagFieldLayout aprilTagFieldLayout, Transform3d robotToCam, int cameraNum)
+	public PhotonVisionCameraSim(String name, Transform3d robotToCamera, Supplier<Pose2d> poseSupplier)
 	{
-		simCameraProperties = new SimCameraProperties();
-		simCameraProperties.setCalibration(320, 240, Rotation2d.fromDegrees(70));
-		simCameraProperties.setCalibError(0.25, 0.08);
-		simCameraProperties.setFPS(5);
-		simCameraProperties.setAvgLatencyMs(35);
-		simCameraProperties.setLatencyStdDevMs(5);
-		this.robotToCam = robotToCam;
-
-		photonCamera = new PhotonCamera("Global_Shutter_Camera (" + cameraNum + ")");
-		photonCameraSim = new PhotonCameraSim(photonCamera, simCameraProperties);
+        super(name, robotToCamera);
+        this.robotToCamera = robotToCamera;
+        var cameraProperties = new SimCameraProperties();
+        cameraSim = new PhotonCameraSim(photonCamera, cameraProperties);
+        VisionIOPhotonVisionSim.visionSim.addCamera(cameraSim, robotToCamera);
 	}
 
-	/**
-	 * Gets estimated robot pose according to PhotonPoseEstimator
-	 * 
-	 * @param prevEstimatedRobotPose Used as a reference to make sure
-	 *                               PhotonPoseEstimator doesn't do something funky
-	 * @return Pose2d if present, else null
-	 */
-	public PhotonCameraSim getCameraSim()
-	{
-		return photonCameraSim;
-	}
+    @Override
+    public void updateInputs(VisionIOInputs inputs, int camIndex)
+    {
+        super.updateInputs(inputs, camIndex);
+    }
 
-	public Transform3d getRobotToCamera()
-	{
-		return robotToCam;
-	}
+    public PhotonCameraSim getCameraSim()
+    {
+        return cameraSim;
+    }
 
-	public boolean isConnected()
-	{
-		return photonCamera.isConnected();
-	}
+    public Transform3d getRobotToCamera()
+    {
+        return robotToCamera;
+    }
 }

@@ -13,6 +13,7 @@
 
 package frc.robot.robots;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -29,8 +30,8 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.vision.CameraManager;
-import frc.robot.subsystems.vision.CameraManagerIOPhotonVision;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.PhotonVisionCamera;
 
 import java.util.Map;
@@ -50,8 +51,8 @@ public class CrabbyContainer implements NFRRobotContainer
 	private final Drive drive;
 	private final PhotonVisionCamera frontCamera;
 	private final PhotonVisionCamera backCamera;
-	private final CameraManager photonManager;
-	private final CameraManagerIOPhotonVision photonManagerIO;
+	private final Vision photonManager;
+	private final VisionIOPhotonVision photonManagerIO;
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -97,12 +98,12 @@ public class CrabbyContainer implements NFRRobotContainer
 							CrabbyConstants.DriveConstants.WHEEL_RADIUS, CrabbyConstants.DriveConstants.DRIVE_P,
 							CrabbyConstants.DriveConstants.DRIVE_I, CrabbyConstants.DriveConstants.DRIVE_V,
 							CrabbyConstants.DriveConstants.TURN_P, CrabbyConstants.DriveConstants.TURN_D));
-			frontCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+			frontCamera = new PhotonVisionCamera(AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo),
 					CrabbyConstants.VisionConstants.frontCameraTransform, 0);
-			backCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+			backCamera = new PhotonVisionCamera(AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo),
 					CrabbyConstants.VisionConstants.backCameraTransform, 1);
-			photonManagerIO = new CameraManagerIOPhotonVision(frontCamera);
-			photonManager = new CameraManager(photonManagerIO);
+			photonManagerIO = new VisionIOPhotonVision(frontCamera);
+			photonManager = new Vision(photonManagerIO);
 			break;
 
 		case SIM:
@@ -113,12 +114,12 @@ public class CrabbyContainer implements NFRRobotContainer
 					CrabbyConstants.DriveConstants.DRIVE_BASE_RADIUS, CrabbyConstants.DriveConstants.TRACK_WIDTH_X,
 					CrabbyConstants.DriveConstants.TRACK_WIDTH_Y, new ModuleIOSim(), new ModuleIOSim(),
 					new ModuleIOSim(), new ModuleIOSim());
-			frontCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+			frontCamera = new PhotonVisionCamera(AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo),
 					CrabbyConstants.VisionConstants.frontCameraTransform, 0);
-			backCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+			backCamera = new PhotonVisionCamera(AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo),
 					CrabbyConstants.VisionConstants.backCameraTransform, 1);
-			photonManagerIO = new CameraManagerIOPhotonVision(frontCamera);
-			photonManager = new CameraManager(photonManagerIO);
+			photonManagerIO = new VisionIOPhotonVision(frontCamera);
+			photonManager = new Vision(photonManagerIO);
 			break;
 
 		default:
@@ -136,12 +137,12 @@ public class CrabbyContainer implements NFRRobotContainer
 					}, new ModuleIO()
 					{
 					});
-			frontCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+			frontCamera = new PhotonVisionCamera(AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo),
 					CrabbyConstants.VisionConstants.frontCameraTransform, 0);
-			backCamera = new PhotonVisionCamera(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
+			backCamera = new PhotonVisionCamera(AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo),
 					CrabbyConstants.VisionConstants.backCameraTransform, 1);
-			photonManagerIO = new CameraManagerIOPhotonVision(frontCamera, backCamera);
-			photonManager = new CameraManager(photonManagerIO);
+			photonManagerIO = new VisionIOPhotonVision(frontCamera, backCamera);
+			photonManager = new Vision(photonManagerIO);
 		{
 		}
 			;

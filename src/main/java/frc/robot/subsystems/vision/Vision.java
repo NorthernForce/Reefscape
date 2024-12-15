@@ -2,21 +2,20 @@ package frc.robot.subsystems.vision;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class CameraManager extends SubsystemBase
+public class Vision extends SubsystemBase
 {
 
-	private final CameraManagerIO io;
-	private final CameraManagerIOInputsAutoLogged inputs = new CameraManagerIOInputsAutoLogged();
+	private final VisionIO io;
+	private final VisionIOInputsAutoLogged inputs = new VisionIOInputsAutoLogged();
 
 	/**
 	 * Class to manage any number PhotonVisionCamera objects
 	 * 
 	 * @param photonVisionCamera The PhotonVisionCamera objects to be managed
 	 */
-	public CameraManager(CameraManagerIO io)
+	public Vision(VisionIO io)
 	{
 		this.io = io;
 	}
@@ -28,8 +27,10 @@ public class CameraManager extends SubsystemBase
 	@Override
 	public void periodic()
 	{
-		io.updateInputs(inputs);
-		io.updateSimulationWithPose(new Pose2d(null, null)); // TODO: How do i get the pose here???
-		Logger.processInputs(getName(), inputs);
+        for (int i = 0; i < io.getNumberOfCameras(); i++)
+        {
+		    io.updateInputs(inputs, i);
+		    Logger.processInputs(getName(), inputs);
+        }
 	}
 }
