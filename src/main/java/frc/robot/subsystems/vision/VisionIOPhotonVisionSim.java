@@ -2,18 +2,24 @@ package frc.robot.subsystems.vision;
 
 import java.util.function.Supplier;
 
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform3d;
 
 public class VisionIOPhotonVisionSim extends VisionIOPhotonVision
 {
-	private final Supplier<Pose2d> poseSupplier;
-	protected static VisionSystemSim visionSim;
+	private static VisionSystemSim visionSim;
 
-	public VisionIOPhotonVisionSim(Supplier<Pose2d> poseSupplier, PhotonVisionCameraSim... photonVisionCameras)
+	private final Supplier<Pose2d> poseSupplier;
+	private final PhotonCameraSim cameraSim;
+
+	public VisionIOPhotonVisionSim(String name, Transform3d robotToCamera, Supplier<Pose2d> poseSupplier)
 	{
+		super(name, robotToCamera);
 		this.poseSupplier = poseSupplier;
 
 		if (visionSim == null)
@@ -22,16 +28,15 @@ public class VisionIOPhotonVisionSim extends VisionIOPhotonVision
 			visionSim.addAprilTags(AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo));
 		}
 
-		for (PhotonVisionCameraSim cam : photonVisionCameras)
-		{
-			visionSim.addCamera(cam.getCameraSim(), cam.getRobotToCamera());
-		}
+		var cameraPropertes = new SimCameraProperties();
+		cameraSim = new PhotonCameraSim(camera, cameraPropertes);
+		visionSim.addCamera(cameraSim, robotToCamera);
 	}
 
 	@Override
-	public void updateInputs(VisionIOInputs inputs, int camIndex)
+	public void updateInputs(VisionIOInputs inputs)
 	{
 		visionSim.update(poseSupplier.get());
-		super.updateInputs(inputs, camIndex);
+		super.updateInputs(inputs);
 	}
 }
