@@ -58,6 +58,7 @@ public class Vision extends SubsystemBase
 	@Override
 	public void periodic()
 	{
+		// Process all camera inputs
 		for (int i = 0; i < io.length; i++)
 		{
 			io[i].updateInputs(inputs[i]);
@@ -71,6 +72,7 @@ public class Vision extends SubsystemBase
 
 		for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++)
 		{
+			// Check if the camera is disconnected
 			disconnectedAlerts[cameraIndex].set(!inputs[cameraIndex].connected);
 
 			List<Pose3d> tagPoses = new LinkedList<>();
@@ -78,6 +80,7 @@ public class Vision extends SubsystemBase
 			List<Pose3d> robotPosesAccepted = new LinkedList<>();
 			List<Pose3d> robotPosesRejected = new LinkedList<>();
 
+			// Adds tag poses if they exist
 			for (int tagId : inputs[cameraIndex].tagIds)
 			{
 				var tagPose = aprilTagLayout.getTagPose(tagId);
@@ -89,6 +92,8 @@ public class Vision extends SubsystemBase
 
 			for (var observation : inputs[cameraIndex].poseObservations)
 			{
+				// All the reasons why a pose might be rejected: no tags, too ambiguous, outside
+				// field boundaries
 				boolean rejectPose = observation.tagCount() == 0
 						|| (observation.tagCount() == 1 && observation.ambiguity() > maxAmbiguity)
 						|| Math.abs(observation.pose().getZ()) > maxZError || observation.pose().getX() < 0.0
@@ -110,6 +115,7 @@ public class Vision extends SubsystemBase
 					continue;
 				}
 
+				// Find the standard deviation of the pose
 				double stdDevFactor = Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
 				double linearStdDev = linearStdDevBaseline * stdDevFactor;
 				double angularStdDev = angularStdDevBaseline * stdDevFactor;
@@ -124,10 +130,12 @@ public class Vision extends SubsystemBase
 					angularStdDev *= cameraStdDevFactor[cameraIndex];
 				}
 
+				// Give the pose to the drive subsystem
 				consumer.accept(observation.pose().toPose2d(), observation.timestamp(),
 						VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
 			}
 
+			// Log the poses with AdvantageKit
 			Logger.recordOutput("Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
 					tagPoses.toArray(new Pose3d[tagPoses.size()]));
 			Logger.recordOutput("Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
