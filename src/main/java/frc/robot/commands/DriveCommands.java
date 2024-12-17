@@ -86,7 +86,7 @@ public class DriveCommands
 		return Commands.run(() ->
 		{
 			// Lock the robot's position and turns them inward, making it skid to a stop XD
-			drive.xLock(drive);
+			drive.xLock();
 		}, drive);
 	}
 
