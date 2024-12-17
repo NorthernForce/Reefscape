@@ -4,8 +4,7 @@ import java.util.Map;
 
 import org.northernforce.util.NFRRobotContainer;
 
-import static frc.robot.subsystems.vision.VisionConstants.*;
-
+import frc.robot.subsystems.vision.VisionConstants;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,29 +17,30 @@ import frc.robot.zippy.ZippyDriverOI;
 import frc.robot.zippy.ZippyOI;
 import frc.robot.zippy.ZippyProgrammerOI;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.ModuleIO;
 
 public class ZippyContainer implements NFRRobotContainer
 {
 	private final Vision vision;
-	private final Drive drive = new Drive(null, 0, 0, 0, 0, 0, null, null);
+	private final Drive drive = new Drive(null, 0, 0, 0, 0, 0, null, new ModuleIO[0]);
 
 	public ZippyContainer()
 	{
 		switch (Constants.kCurrentMode)
 		{
 		case REAL:
-			vision = new Vision(drive::addVisionMeasurement, new VisionIOPhotonVision(camera0Name, robotToCamera0),
-					new VisionIOPhotonVision(camera1Name, robotToCamera1),
-					new VisionIOPhotonVision(camera2Name, robotToCamera2),
-					new VisionIOPhotonVision(camera3Name, robotToCamera3));
+			vision = new Vision(drive::addVisionMeasurement, new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0),
+					new VisionIOPhotonVision(VisionConstants.camera1Name, VisionConstants.robotToCamera1),
+					new VisionIOPhotonVision(VisionConstants.camera2Name, VisionConstants.robotToCamera2),
+					new VisionIOPhotonVision(VisionConstants.camera3Name, VisionConstants.robotToCamera3));
 			break;
 
 		case SIM:
 			vision = new Vision(drive::addVisionMeasurement,
-					new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
-					new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose),
-					new VisionIOPhotonVisionSim(camera2Name, robotToCamera2, drive::getPose),
-					new VisionIOPhotonVisionSim(camera3Name, robotToCamera3, drive::getPose));
+					new VisionIOPhotonVisionSim(VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
+					new VisionIOPhotonVisionSim(VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose),
+					new VisionIOPhotonVisionSim(VisionConstants.camera2Name, VisionConstants.robotToCamera2, drive::getPose),
+					new VisionIOPhotonVisionSim(VisionConstants.camera3Name, VisionConstants.robotToCamera3, drive::getPose));
 			break;
 
 		default:
