@@ -29,7 +29,8 @@ public class ZippyContainer implements NFRRobotContainer
 		switch (Constants.kCurrentMode)
 		{
 		case REAL:
-			vision = new Vision(drive::addVisionMeasurement, new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0),
+			vision = new Vision(drive::addVisionMeasurement,
+					new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0),
 					new VisionIOPhotonVision(VisionConstants.camera1Name, VisionConstants.robotToCamera1),
 					new VisionIOPhotonVision(VisionConstants.camera2Name, VisionConstants.robotToCamera2),
 					new VisionIOPhotonVision(VisionConstants.camera3Name, VisionConstants.robotToCamera3));
@@ -37,10 +38,14 @@ public class ZippyContainer implements NFRRobotContainer
 
 		case SIM:
 			vision = new Vision(drive::addVisionMeasurement,
-					new VisionIOPhotonVisionSim(VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
-					new VisionIOPhotonVisionSim(VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose),
-					new VisionIOPhotonVisionSim(VisionConstants.camera2Name, VisionConstants.robotToCamera2, drive::getPose),
-					new VisionIOPhotonVisionSim(VisionConstants.camera3Name, VisionConstants.robotToCamera3, drive::getPose));
+					new VisionIOPhotonVisionSim(VisionConstants.camera0Name, VisionConstants.robotToCamera0,
+							drive::getPose),
+					new VisionIOPhotonVisionSim(VisionConstants.camera1Name, VisionConstants.robotToCamera1,
+							drive::getPose),
+					new VisionIOPhotonVisionSim(VisionConstants.camera2Name, VisionConstants.robotToCamera2,
+							drive::getPose),
+					new VisionIOPhotonVisionSim(VisionConstants.camera3Name, VisionConstants.robotToCamera3,
+							drive::getPose));
 			break;
 
 		default:
