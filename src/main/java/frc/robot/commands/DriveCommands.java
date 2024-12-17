@@ -83,7 +83,7 @@ public class DriveCommands
 	 */
 	public static Command xLock(Drive drive)
 	{
-		return Commands.run(() ->
+		return Commands.runOnce(() ->
 		{
 			// Lock the robot's position and turns them inward, making it skid to a stop XD
 			drive.xLock(drive);
@@ -98,7 +98,7 @@ public class DriveCommands
 	 */
 	public static Command resetOrientaion(Drive drive)
 	{
-		return Commands.run(() ->
+		return Commands.runOnce(() ->
 		{
 			drive.resetOrientation();
 		}, drive);
