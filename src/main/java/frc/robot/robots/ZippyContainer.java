@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.northernforce.util.NFRRobotContainer;
 
-import frc.robot.subsystems.vision.VisionConstants;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,27 +28,31 @@ public class ZippyContainer implements NFRRobotContainer
 		switch (Constants.kCurrentMode)
 		{
 		case REAL:
-			vision = new Vision(drive::addVisionMeasurement,
-					new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0),
-					new VisionIOPhotonVision(VisionConstants.camera1Name, VisionConstants.robotToCamera1),
-					new VisionIOPhotonVision(VisionConstants.camera2Name, VisionConstants.robotToCamera2),
-					new VisionIOPhotonVision(VisionConstants.camera3Name, VisionConstants.robotToCamera3));
+			vision = new Vision(drive::addVisionMeasurement, ZippyConstants.visionConstants,
+					new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[0],
+							ZippyConstants.visionConstants.cameraTransforms()[0]),
+					new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[1],
+							ZippyConstants.visionConstants.cameraTransforms()[0]),
+					new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[2],
+							ZippyConstants.visionConstants.cameraTransforms()[0]),
+					new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[3],
+							ZippyConstants.visionConstants.cameraTransforms()[0]));
 			break;
 
 		case SIM:
-			vision = new Vision(drive::addVisionMeasurement,
-					new VisionIOPhotonVisionSim(VisionConstants.camera0Name, VisionConstants.robotToCamera0,
-							drive::getPose),
-					new VisionIOPhotonVisionSim(VisionConstants.camera1Name, VisionConstants.robotToCamera1,
-							drive::getPose),
-					new VisionIOPhotonVisionSim(VisionConstants.camera2Name, VisionConstants.robotToCamera2,
-							drive::getPose),
-					new VisionIOPhotonVisionSim(VisionConstants.camera3Name, VisionConstants.robotToCamera3,
-							drive::getPose));
+			vision = new Vision(drive::addVisionMeasurement, ZippyConstants.visionConstants,
+					new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[0],
+							ZippyConstants.visionConstants.cameraTransforms()[0], drive::getPose),
+					new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[1],
+							ZippyConstants.visionConstants.cameraTransforms()[1], drive::getPose),
+					new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[2],
+							ZippyConstants.visionConstants.cameraTransforms()[2], drive::getPose),
+					new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[3],
+							ZippyConstants.visionConstants.cameraTransforms()[3], drive::getPose));
 			break;
 
 		default:
-			vision = new Vision(drive::addVisionMeasurement, new VisionIO()
+			vision = new Vision(drive::addVisionMeasurement, ZippyConstants.visionConstants, new VisionIO()
 			{
 			}, new VisionIO()
 			{

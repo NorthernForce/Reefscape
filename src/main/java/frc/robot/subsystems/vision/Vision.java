@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.littletonrobotics.junction.Logger;
 
-import static frc.robot.subsystems.vision.VisionConstants.*;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,6 +16,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
+import frc.robot.util.VisionConstants;
 
 public class Vision extends SubsystemBase
 {
@@ -25,15 +24,17 @@ public class Vision extends SubsystemBase
 	private final VisionIO[] io;
 	private final VisionIOInputsAutoLogged[] inputs;
 	private final Alert[] disconnectedAlerts;
+	private final VisionConstants visionConstants;
 
 	/**
 	 * Class to manage any number PhotonVisionCamera objects
 	 * 
 	 * @param photonVisionCamera The PhotonVisionCamera objects to be managed
 	 */
-	public Vision(VisionConsumer consumer, VisionIO... io)
+	public Vision(VisionConsumer consumer, VisionConstants visionConstants, VisionIO... io)
 	{
 		this.consumer = consumer;
+		this.visionConstants = visionConstants;
 		this.io = io;
 
 		this.inputs = new VisionIOInputsAutoLogged[io.length];
@@ -83,7 +84,7 @@ public class Vision extends SubsystemBase
 			// Adds tag poses if they exist
 			for (int tagId : inputs[cameraIndex].tagIds)
 			{
-				var tagPose = aprilTagLayout.getTagPose(tagId);
+				var tagPose = visionConstants.aprilTagLayout().getTagPose(tagId);
 				if (tagPose.isPresent())
 				{
 					tagPoses.add(tagPose.get());
@@ -95,11 +96,12 @@ public class Vision extends SubsystemBase
 				// All the reasons why a pose might be rejected: no tags, too ambiguous, outside
 				// field boundaries
 				boolean rejectPose = observation.tagCount() == 0
-						|| (observation.tagCount() == 1 && observation.ambiguity() > maxAmbiguity)
-						|| Math.abs(observation.pose().getZ()) > maxZError || observation.pose().getX() < 0.0
-						|| observation.pose().getX() > aprilTagLayout.getFieldLength()
+						|| (observation.tagCount() == 1 && observation.ambiguity() > visionConstants.maxAmbiguity())
+						|| Math.abs(observation.pose().getZ()) > visionConstants.maxZError()
+						|| observation.pose().getX() < 0.0
+						|| observation.pose().getX() > visionConstants.aprilTagLayout().getFieldLength()
 						|| observation.pose().getY() < 0.0
-						|| observation.pose().getY() > aprilTagLayout.getFieldWidth();
+						|| observation.pose().getY() > visionConstants.aprilTagLayout().getFieldWidth();
 
 				robotPoses.add(observation.pose());
 				if (rejectPose)
@@ -117,17 +119,17 @@ public class Vision extends SubsystemBase
 
 				// Find the standard deviation of the pose
 				double stdDevFactor = Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
-				double linearStdDev = linearStdDevBaseline * stdDevFactor;
-				double angularStdDev = angularStdDevBaseline * stdDevFactor;
+				double linearStdDev = visionConstants.linearStdDevBaseline() * stdDevFactor;
+				double angularStdDev = visionConstants.angularStdDevBaseline() * stdDevFactor;
 				if (observation.type() == PoseObservationType.MEGATAG_2)
 				{
-					linearStdDev *= linearStdDevMegatag2Factor;
-					angularStdDev *= angularStdDevMegatag2Factor;
+					linearStdDev *= visionConstants.linearStdDevMegatag2Factor();
+					angularStdDev *= visionConstants.angularStdDevMegatag2Factor();
 				}
-				if (cameraIndex < cameraStdDevFactor.length)
+				if (cameraIndex < visionConstants.cameraStdDevFactor().length)
 				{
-					linearStdDev *= cameraStdDevFactor[cameraIndex];
-					angularStdDev *= cameraStdDevFactor[cameraIndex];
+					linearStdDev *= visionConstants.cameraStdDevFactor()[cameraIndex];
+					angularStdDev *= visionConstants.cameraStdDevFactor()[cameraIndex];
 				}
 
 				// Give the pose to the drive subsystem
