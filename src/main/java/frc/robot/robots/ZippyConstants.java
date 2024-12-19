@@ -13,8 +13,13 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerFeedbackType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import frc.robot.util.DriveConstants;
 import frc.robot.util.TunerConstants;
+import frc.robot.util.VisionConstants;
 
 // EVERYTHING THAT MUST BE SET IN THE TUNER CONSTANTS:
 
@@ -187,4 +192,42 @@ public class ZippyConstants
 			Rotations.of(-0.4794921875), true, false, Inches.of(-10.5), Inches.of(10.5), 3, 2, 1,
 			Rotations.of(-0.84130859375), true, false, Inches.of(-10.5), Inches.of(-10.5));
 	public static DriveConstants driveConstants = new DriveConstants(50, 3, 0.5, 0.5, 0.5, 3);
+
+	public static VisionConstants visionConstants = new VisionConstants(
+			AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField), 0.3, 0.75, 0.02, 0.06, new double[]
+			{ 1.0, 1.0, 1.0, 1.0 }, 0.5, Double.POSITIVE_INFINITY, new String[]
+			{ "camera_0", "camera_1", "camera_2", "camera_3" }, new Transform3d[]
+			{ new Transform3d(13.731, 13.731, 11.248, new Rotation3d(0, Math.toRadians(10), Math.toRadians(315))),
+					new Transform3d(13.731, -13.731, 11.248,
+							new Rotation3d(0, Math.toRadians(10), Math.toRadians(225))),
+					new Transform3d(-13.731, -13.731, 11.248,
+							new Rotation3d(0, Math.toRadians(10), Math.toRadians(135))),
+					new Transform3d(-13.731, 13.731, 11.248,
+							new Rotation3d(0, Math.toRadians(10), Math.toRadians(45))) });
+
+	public class VisionConstantsA
+	{
+		public static AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+
+		public static String camera0Name = "camera_0";
+		public static String camera1Name = "camera_1";
+		public static String camera2Name = "camera_2";
+		public static String camera3Name = "camera_3";
+
+		public static double maxAmbiguity = 0.3;
+		public static double maxZError = 0.75;
+
+		public static double linearStdDevBaseline = 0.02; // Meters
+		public static double angularStdDevBaseline = 0.06; // Radians
+
+		public static double[] cameraStdDevFactor = new double[]
+		{ 1.0, // Camera 0
+				1.0, // Camera 1
+				1.0, // Camera 2
+				1.0 // Camera 3
+		};
+
+		public static double linearStdDevMegatag2Factor = 0.5;
+		public static double angularStdDevMegatag2Factor = Double.POSITIVE_INFINITY;
+	}
 }
