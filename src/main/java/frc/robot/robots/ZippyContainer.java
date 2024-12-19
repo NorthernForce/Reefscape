@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.northernforce.util.NFRRobotContainer;
 
+import com.fasterxml.jackson.databind.Module;
+
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,12 +18,16 @@ import frc.robot.zippy.ZippyDriverOI;
 import frc.robot.zippy.ZippyOI;
 import frc.robot.zippy.ZippyProgrammerOI;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.drive.ModuleIOSim;
 
 public class ZippyContainer implements NFRRobotContainer
 {
 	private final Vision vision;
-	private final Drive drive = new Drive(null, 0, 0, 0, 0, 0, null, new ModuleIO[0]);
+	private final Drive drive = new Drive(null, 0, 0, 0, 0, 0, null, null);
 
 	public ZippyContainer()
 	{
