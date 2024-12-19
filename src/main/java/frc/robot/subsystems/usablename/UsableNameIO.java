@@ -24,5 +24,7 @@ public interface UsableNameIO
 	 * 
 	 * @return data from coprocessor
 	 */
-	public UsableNameIODataAutoLogged getVisionData();
+	public void updateInputs();
+
+	public UsableNameIODataAutoLogged getInputs();
 }
