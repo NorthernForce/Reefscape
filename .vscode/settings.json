@@ -34,5 +34,6 @@
   "java.format.settings.url": ".vscode/java-formatter.xml",
   "[java]": {
     "editor.detectIndentation": false
-  }
+  },
+  "java.debug.settings.onBuildFailureProceed": true
 }
