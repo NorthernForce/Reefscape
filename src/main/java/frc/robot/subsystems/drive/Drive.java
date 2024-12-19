@@ -390,10 +390,11 @@ public class Drive extends SubsystemBase
 	}
 
 	/**
-	 * This sets the wheels to zero degrees
+	 * This sets the rotation of the robot to zero relative to the field.
 	 */
 	public void resetOrientation()
 	{
-		poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), new Pose2d());
+		poseEstimator.resetPosition(rawGyroRotation, getModulePositions(),
+				new Pose2d(getPose().getTranslation(), new Rotation2d()));
 	}
 }
