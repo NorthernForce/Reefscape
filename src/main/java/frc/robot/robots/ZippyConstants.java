@@ -9,10 +9,13 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerFeedbackType;
-import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
-
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import frc.robot.util.DriveConstants;
 import frc.robot.util.TunerConstants;
 
@@ -186,5 +189,14 @@ public class ZippyConstants
 			Rotations.of(-0.15234375), true, false, Inches.of(10.5), Inches.of(-10.5), 1, 0, 0,
 			Rotations.of(-0.4794921875), true, false, Inches.of(-10.5), Inches.of(10.5), 3, 2, 1,
 			Rotations.of(-0.84130859375), true, false, Inches.of(-10.5), Inches.of(-10.5));
-	public static DriveConstants driveConstants = new DriveConstants(50, 3, 0.5, 0.5, 0.5, 3);
+	static double kDriveGearRatioL2 = 6.75;
+	static double kDriveGearRatioL3 = 6.12;
+	static double kTurnGearRatio = 150.0 / 7;
+	static double kWheelRadius = Units.inchesToMeters(2);
+	static double kWheelCircumference = 2 * kWheelRadius * Math.PI;
+	static double kDriveP = 1;
+	static double kTurnP = 5;
+	static double kMaxDriveSpeed = Units.feetToMeters(18.2);
+	public static DriveConstants driveConstants = new DriveConstants(50, 3, 0.5, 0.5, 0.5, 3, 3, kDriveGearRatioL3,
+			kTurnGearRatio, kWheelRadius, kWheelCircumference, kDriveP, kTurnP, kMaxDriveSpeed);
 }
