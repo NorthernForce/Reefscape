@@ -205,7 +205,7 @@ public class Drive extends SubsystemBase
 	/**
 	 * Stops the drive with the wheels locked in the x direction.
 	 */
-	public void stopWithX()
+	public void xLock()
 	{
 		Rotation2d[] headings = new Rotation2d[modules.length];
 		for (int i = 0; i < modules.length; i++)
@@ -390,22 +390,11 @@ public class Drive extends SubsystemBase
 	}
 
 	/**
-	 * This one points the wheels in to resist movement. The modules will return to
-	 * their normal orientations the next time a velocity that isn't zero is
-	 * recieved.
-	 * 
-	 * @param drive the drive object to refer to
-	 */
-	public void xLock(Drive drive)
-	{
-		drive.stopWithX();
-	}
-
-	/**
-	 * This sets the wheels to zero degrees
+	 * This sets the rotation of the robot to zero relative to the field.
 	 */
 	public void resetOrientation()
 	{
-		poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), new Pose2d());
+		poseEstimator.resetPosition(rawGyroRotation, getModulePositions(),
+				new Pose2d(getPose().getTranslation(), new Rotation2d()));
 	}
 }
