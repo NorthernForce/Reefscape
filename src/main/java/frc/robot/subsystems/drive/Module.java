@@ -17,133 +17,139 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
+
 import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 
 public class Module
 {
 	private static final double WHEEL_RADIUS = Units.inchesToMeters(2.0);
 	static final double ODOMETRY_FREQUENCY = 250.0;
-
 	private final ModuleIO io;
 	private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
 	private final int index;
+	private final SwerveModuleConstants constants;
 
+	private final Alert driveDisconnectedAlert;
+	private final Alert turnDisconnectedAlert;
+	private final Alert turnEncoderDisconnectedAlert;
 	private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[]
 	{};
 
-	public Module(ModuleIO io, int index)
-	{
-		this.io = io;
-		this.index = index;
-		setBrakeMode(true);
-	}
-
-	/**
-	 * Update inputs without running the rest of the periodic logic. This is useful
-	 * since these updates need to be properly thread-locked.
-	 */
 	public void updateInputs()
 	{
 		io.updateInputs(inputs);
 	}
 
-	public void periodic()
-	{
-		Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
-
-		// Calculate positions for odometry
-		int sampleCount = inputs.odometryTimestamps.length; // All signals are sampled together
-		odometryPositions = new SwerveModulePosition[sampleCount];
-		for (int i = 0; i < sampleCount; i++)
-		{
-			double positionMeters = inputs.odometryDrivePositionsMeters[i];
-			Rotation2d angle = inputs.odometryTurnPositions[i];
-			odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
-		}
-	}
-
-	/**
-	 * Runs the module with the specified setpoint state. Returns the optimized
-	 * state.
-	 */
-	public SwerveModuleState runSetpoint(SwerveModuleState state)
-	{
-		// Optimize state based on current angle
-		// Controllers run in "periodic" when the setpoint is not null
-		var optimizedState = SwerveModuleState.optimize(state, getAngle());
-		io.setDriveVelocity(optimizedState.speedMetersPerSecond);
-		io.setTurnPosition(optimizedState.angle);
-		return optimizedState;
-	}
-
-	/**
-	 * Runs the module with the specified voltage while controlling to zero degrees.
-	 */
-	public void runCharacterization(double volts)
-	{
-		io.setTurnPosition(new Rotation2d());
-		io.setDriveVoltage(volts);
-	}
-
-	/** Disables all outputs to motors. */
-	public void stop()
-	{
-		io.setTurnVoltage(0.0);
-		io.setDriveVoltage(0.0);
-	}
-
-	/** Sets whether brake mode is enabled. */
 	public void setBrakeMode(boolean enabled)
 	{
 		io.setDriveBrakeMode(enabled);
 		io.setTurnBrakeMode(enabled);
 	}
 
-	/** Returns the current turn angle of the module. */
+	public double getCharacterizationVelocity()
+	{
+		return inputs.driveVelocityMetersPerSecond / WHEEL_RADIUS;
+	}
+
+	public Module(ModuleIO io, int index, SwerveModuleConstants constants)
+	{
+		this.io = io;
+		this.index = index;
+		this.constants = constants;
+		driveDisconnectedAlert = new Alert("Disconnected drive motor on module " + Integer.toString(index) + ".",
+				AlertType.kError);
+		turnDisconnectedAlert = new Alert("Disconnected turn motor on module " + Integer.toString(index) + ".",
+				AlertType.kError);
+		turnEncoderDisconnectedAlert = new Alert("Disconnected turn encoder on module " + Integer.toString(index) + ".",
+				AlertType.kError);
+	}
+
+	public void periodic()
+	{
+		io.updateInputs(inputs);
+		Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
+
+		int sampleCount = inputs.odometryTimestamps.length;
+		odometryPositions = new SwerveModulePosition[sampleCount];
+		for (int i = 0; i < sampleCount; i++)
+		{
+			double positionMeters = inputs.odometryDrivePositionsRad[i] * constants.WheelRadius;
+			Rotation2d angle = inputs.odometryTurnPositions[i];
+			odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
+		}
+
+		driveDisconnectedAlert.set(!inputs.driveConnected);
+		turnDisconnectedAlert.set(!inputs.turnConnected);
+		turnEncoderDisconnectedAlert.set(!inputs.turnEncoderConnected);
+	}
+
+	public void runSetpoint(SwerveModuleState state)
+	{
+		state.optimize(getAngle());
+		state.cosineScale(inputs.turnPosition);
+
+		io.setDriveVelocity(state.speedMetersPerSecond / constants.WheelRadius);
+		io.setTurnPosition(state.angle);
+	}
+
+	public void runCharacterization(double output)
+	{
+		io.setDriveOpenLoop(output);
+		io.setTurnPosition(new Rotation2d());
+	}
+
+	public void stop()
+	{
+		io.setDriveOpenLoop(0.0);
+		io.setTurnOpenLoop(0.0);
+	}
+
 	public Rotation2d getAngle()
 	{
 		return inputs.turnPosition;
 	}
 
-	/** Returns the current drive position of the module in meters. */
 	public double getPositionMeters()
 	{
-		return inputs.drivePositionMeters;
+		return inputs.drivePositionRad * constants.WheelRadius;
 	}
 
-	/** Returns the current drive velocity of the module in meters per second. */
 	public double getVelocityMetersPerSec()
 	{
-		return inputs.driveVelocityMetersPerSecond;
+		return inputs.driveVelocityRadPerSec * constants.WheelRadius;
 	}
 
-	/** Returns the module position (turn angle and drive position). */
 	public SwerveModulePosition getPosition()
 	{
 		return new SwerveModulePosition(getPositionMeters(), getAngle());
 	}
 
-	/** Returns the module state (turn angle and drive velocity). */
 	public SwerveModuleState getState()
 	{
 		return new SwerveModuleState(getVelocityMetersPerSec(), getAngle());
 	}
 
-	/** Returns the module positions received this cycle. */
 	public SwerveModulePosition[] getOdometryPositions()
 	{
 		return odometryPositions;
 	}
 
-	/** Returns the timestamps of the samples received this cycle. */
 	public double[] getOdometryTimestamps()
 	{
 		return inputs.odometryTimestamps;
 	}
 
-	/** Returns the drive velocity in rad/sec. */
-	public double getCharacterizationVelocity()
+	public double getWheelRadiusCharacterizationPosition()
 	{
-		return inputs.driveVelocityMetersPerSecond / WHEEL_RADIUS;
+		return inputs.drivePositionRad;
+	}
+
+	public double getFFCharacterizationVelocity()
+	{
+		return Units.radiansToRotations(inputs.driveVelocityRadPerSec);
 	}
 }
