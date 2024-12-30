@@ -15,10 +15,10 @@ public class PneumaticHub extends SubsystemBase
 		m_io = io;
 	}
 
-    public void toggle()
-    {
-        m_io.toggle();
-    }
+	public void toggle()
+	{
+		m_io.toggle();
+	}
 
 	public void periodic()
 	{
