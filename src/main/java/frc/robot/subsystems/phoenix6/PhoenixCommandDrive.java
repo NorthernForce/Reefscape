@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
@@ -134,4 +135,14 @@ public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 	{
 		return getState().Speeds;
 	}
+
+    public void setBrakeMode()
+    {
+        configNeutralMode(NeutralModeValue.Brake);
+    }
+
+    public void setCoastMode()
+    {
+        configNeutralMode(NeutralModeValue.Coast);
+    }
 }
