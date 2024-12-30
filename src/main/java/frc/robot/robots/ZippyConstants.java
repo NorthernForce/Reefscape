@@ -11,9 +11,13 @@ import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerFeedbackType;
+
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 
 import frc.robot.util.DriveConstants;
+import frc.robot.util.PneumaticConstants;
 import frc.robot.util.TunerConstants;
 
 // EVERYTHING THAT MUST BE SET IN THE TUNER CONSTANTS:
@@ -187,4 +191,5 @@ public class ZippyConstants
 			Rotations.of(-0.4794921875), true, false, Inches.of(-10.5), Inches.of(10.5), 3, 2, 1,
 			Rotations.of(-0.84130859375), true, false, Inches.of(-10.5), Inches.of(-10.5));
 	public static DriveConstants driveConstants = new DriveConstants(50, 3, 0.5, 0.5, 0.5, 3);
+	public static PneumaticConstants pneumaticConstants = new PneumaticConstants(PneumaticsModuleType.REVPH, 70, 120);
 }
