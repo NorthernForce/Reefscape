@@ -136,13 +136,13 @@ public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 		return getState().Speeds;
 	}
 
-    public void setBrakeMode()
-    {
-        configNeutralMode(NeutralModeValue.Brake);
-    }
+	public void setBrakeMode()
+	{
+		configNeutralMode(NeutralModeValue.Brake);
+	}
 
-    public void setCoastMode()
-    {
-        configNeutralMode(NeutralModeValue.Coast);
-    }
+	public void setCoastMode()
+	{
+		configNeutralMode(NeutralModeValue.Coast);
+	}
 }
