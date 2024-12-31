@@ -1,6 +1,7 @@
 package frc.robot.subsystems.pneumatic;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.robot.util.PneumaticConstants;
 
 public class PneumaticHubIORev implements PneumaticHubIO
@@ -11,7 +12,7 @@ public class PneumaticHubIORev implements PneumaticHubIO
 	public PneumaticHubIORev(PneumaticConstants constants)
 	{
 		m_constants = constants;
-		m_compressor = new Compressor(m_constants.type());
+		m_compressor = new Compressor(constants.canId(), PneumaticsModuleType.REVPH);
 	}
 
 	@Override

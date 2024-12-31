@@ -191,5 +191,5 @@ public class ZippyConstants
 			Rotations.of(-0.4794921875), true, false, Inches.of(-10.5), Inches.of(10.5), 3, 2, 1,
 			Rotations.of(-0.84130859375), true, false, Inches.of(-10.5), Inches.of(-10.5));
 	public static DriveConstants driveConstants = new DriveConstants(50, 3, 0.5, 0.5, 0.5, 3);
-	public static PneumaticConstants pneumaticConstants = new PneumaticConstants(PneumaticsModuleType.REVPH, 70, 120);
+	public static PneumaticConstants pneumaticConstants = new PneumaticConstants(22, 70, 120);
 }
