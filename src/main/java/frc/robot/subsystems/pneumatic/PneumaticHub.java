@@ -19,6 +19,16 @@ public class PneumaticHub extends SubsystemBase
 		m_io.toggle();
 	}
 
+	public void enable()
+	{
+		m_io.enable();
+	}
+
+	public void disable()
+	{
+		m_io.disable();
+	}
+
 	public void periodic()
 	{
 		m_io.updateInputs(m_inputs);
