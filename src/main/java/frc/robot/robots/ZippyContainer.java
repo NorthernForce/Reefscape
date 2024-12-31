@@ -8,6 +8,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.subsystems.pneumatic.PneumaticHub;
 import frc.robot.subsystems.pneumatic.PneumaticHubIORev;
 import frc.robot.zippy.ZippyDriverOI;
 import frc.robot.zippy.ZippyOI;
@@ -16,10 +17,12 @@ import frc.robot.zippy.ZippyProgrammerOI;
 public class ZippyContainer implements NFRRobotContainer
 {
 	private final PneumaticHubIORev m_pneumaticHubIO;
+    private final PneumaticHub m_pneumaticHub;
 
 	public ZippyContainer()
 	{
 		m_pneumaticHubIO = new PneumaticHubIORev(ZippyConstants.pneumaticConstants);
+        m_pneumaticHub = new PneumaticHub(m_pneumaticHubIO);
 	}
 
 	public void bindOI()
