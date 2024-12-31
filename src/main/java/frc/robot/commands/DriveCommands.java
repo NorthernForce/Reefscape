@@ -14,6 +14,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -85,5 +86,16 @@ public class DriveCommands
 		{
 			drive.resetOrientation();
 		}, drive);
+	}
+
+	/**
+	 * Command to drive the robot to a pose on the field
+	 */
+	public static Command driveToPosition(Drive drive, Pose2d pose)
+	{
+		return Commands.runOnce(() ->
+		{
+			drive.driveToPosition(pose);
+		});
 	}
 }
