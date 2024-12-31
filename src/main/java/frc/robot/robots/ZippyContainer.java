@@ -20,7 +20,6 @@ public class ZippyContainer implements NFRRobotContainer
 	public ZippyContainer()
 	{
 		m_pneumaticHubIO = new PneumaticHubIORev(ZippyConstants.pneumaticConstants);
-		m_pneumaticHubIO.enable();
 	}
 
 	public void bindOI()
