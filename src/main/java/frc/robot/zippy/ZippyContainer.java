@@ -1,7 +1,5 @@
 package frc.robot.zippy;
 
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -9,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
+import frc.robot.zippy.constants.ZippyConstants;
 import frc.robot.zippy.constants.ZippyTunerConstants;
 import frc.robot.zippy.oi.ZippyDriverOI;
 import frc.robot.zippy.oi.ZippyOI;
@@ -20,8 +19,8 @@ public class ZippyContainer implements NFRRobotContainer
 
 	public ZippyContainer()
 	{
-		drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants, ZippyTunerConstants.kSpeedAt12Volts,
-				RotationsPerSecond.of(0.75), ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight,
+		drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants, ZippyConstants.DrivetrainConstants.MAX_SPEED,
+                ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED, ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight,
 				ZippyTunerConstants.BackLeft, ZippyTunerConstants.BackRight);
 	}
 
