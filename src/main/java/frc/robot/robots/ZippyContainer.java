@@ -16,13 +16,11 @@ import frc.robot.zippy.ZippyProgrammerOI;
 
 public class ZippyContainer implements NFRRobotContainer
 {
-	private final PneumaticHubIORev m_pneumaticHubIO;
-    private final PneumaticHub m_pneumaticHub;
+	private final PneumaticHub m_pneumaticHub;
 
 	public ZippyContainer()
 	{
-		m_pneumaticHubIO = new PneumaticHubIORev(ZippyConstants.pneumaticConstants);
-        m_pneumaticHub = new PneumaticHub(m_pneumaticHubIO);
+		m_pneumaticHub = new PneumaticHub(new PneumaticHubIORev(ZippyConstants.pneumaticConstants));
 	}
 
 	public void bindOI()
