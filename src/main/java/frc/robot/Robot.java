@@ -40,13 +40,13 @@ public class Robot extends LoggedRobot
 {
 	private Command autoSelected = null;
 	private NFRRobotContainer container = null;
-    private final Alert competitionCodeAlert = new Alert("Code has not been deployed from event branch",
-        Alert.AlertType.kWarning);
+	private final Alert competitionCodeAlert = new Alert("Code has not been deployed from event branch",
+			Alert.AlertType.kWarning);
 
-    public static boolean isCompetition()
-    {
-        return DriverStation.isFMSAttached();
-    }
+	public static boolean isCompetition()
+	{
+		return DriverStation.isFMSAttached();
+	}
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -116,7 +116,7 @@ public class Robot extends LoggedRobot
 	{
 		CommandScheduler.getInstance().run();
 		container.periodic();
-        competitionCodeAlert.set(isCompetition() && !BuildConstants.GIT_BRANCH.startsWith("event/"));
+		competitionCodeAlert.set(isCompetition() && !BuildConstants.GIT_BRANCH.startsWith("event/"));
 	}
 
 	/** This function is called once when autonomous is enabled. */
