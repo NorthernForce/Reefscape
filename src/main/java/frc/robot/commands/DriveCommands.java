@@ -93,9 +93,6 @@ public class DriveCommands
 	 */
 	public static Command driveToPosition(Drive drive, Pose2d pose)
 	{
-		return Commands.runOnce(() ->
-		{
-			drive.driveToPosition(pose);
-		});
+        return drive.driveToPoseCommand(pose);
 	}
 }

@@ -161,11 +161,6 @@ public class Drive extends SubsystemBase
 		}
 	}
 
-	public void driveToPosition(Pose2d pose)
-	{
-		Pathfinding.setGoalPosition(pose.getTranslation());
-	}
-
 	/**
 	 * Runs the drive at the desired velocity.
 	 *
