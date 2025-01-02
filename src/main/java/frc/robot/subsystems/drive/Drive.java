@@ -402,4 +402,43 @@ public class Drive extends SubsystemBase
 		poseEstimator.resetPosition(rawGyroRotation, getModulePositions(),
 				new Pose2d(getPose().getTranslation(), new Rotation2d()));
 	}
+
+    /**
+     * Creates a new path using the pose and returns a FollowPathCommand
+     */
+    public Command driveToPoseCommand(Pose2d pose) {
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+            pose
+        );
+
+        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+        PathPlannerPath path = new PathPlannerPath(
+            waypoints,
+            constraints,
+            null,
+            new GoalEndState(0.0, Rotation2d.fromDegrees(-90));
+        );
+
+        path.preventFlipping = true;
+
+        return new FollowPathCommand(
+            path,
+            this::getPose,
+            this::getRobotRelativeSpeeds,
+            this::drive,
+            new PPHolonomicDriveController(
+                new PIDConstants(5.0, 0.0, 0.0),
+                new PIDConstants(5.0, 0.0, 0.0)
+            ),
+            Constants.robotConfig,
+            () -> {
+                var alliance = DriverStation.getAlliance();
+                if (alliance.isPresent()) {
+                    return alliance.get() == DriverStation.Alliance.Red;
+                }
+                return false;
+            },
+            this
+        )
+    }
 }
