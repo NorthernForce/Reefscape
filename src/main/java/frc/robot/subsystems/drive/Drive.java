@@ -112,25 +112,18 @@ public class Drive extends SubsystemBase
 					}
 				}, null, this));
 
-        AutoBuilder.configure(
-            this::getPose,
-            this::resetPose,
-            this::getChassisSpeeds,
-            (speeds, feedforwards) -> runVelocity(speeds),
-            new PPHolonomicDriveController(
-                new PIDConstants(5.0, 0.0, 0.0),
-                new PIDConstants(5.0, 0.0, 0.0)
-            ),
-            ZippyConstants.PathplannerConstants.robotConfig,
-            () -> {
-                var alliance = DriverStation.getAlliance();
-                if (alliance.isPresent()) {
-                    return alliance.get() == DriverStation.Alliance.Red;
-                }
-                return false;
-            },
-            this
-        );
+		AutoBuilder.configure(this::getPose, this::resetPose, this::getChassisSpeeds,
+				(speeds, feedforwards) -> runVelocity(speeds),
+				new PPHolonomicDriveController(new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+				ZippyConstants.PathplannerConstants.robotConfig, () ->
+				{
+					var alliance = DriverStation.getAlliance();
+					if (alliance.isPresent())
+					{
+						return alliance.get() == DriverStation.Alliance.Red;
+					}
+					return false;
+				}, this);
 	}
 
 	public void periodic()
@@ -346,10 +339,10 @@ public class Drive extends SubsystemBase
 		return poseEstimator.getEstimatedPosition();
 	}
 
-    public void resetPose(Pose2d pose)
-    {
-        poseEstimator.resetPose(pose);
-    }
+	public void resetPose(Pose2d pose)
+	{
+		poseEstimator.resetPose(pose);
+	}
 
 	/**
 	 * Returns the current odometry pose.
@@ -433,23 +426,19 @@ public class Drive extends SubsystemBase
 				new Pose2d(getPose().getTranslation(), new Rotation2d()));
 	}
 
-    /**
-     * Creates a new path using the pose and assigns the AutoBuilder to follow that path
-     */
-    public PathPlannerPath createPathToPose(Pose2d pose) {
-        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-            pose
-        );
+	/**
+	 * Creates a new path using the pose and assigns the AutoBuilder to follow that
+	 * path
+	 */
+	public PathPlannerPath createPathToPose(Pose2d pose)
+	{
+		List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(pose);
 
-        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
-        PathPlannerPath path = new PathPlannerPath(
-            waypoints,
-            constraints,
-            null,
-            new GoalEndState(0.0, Rotation2d.fromDegrees(-90))
-        );
-        path.preventFlipping = true;
+		PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+		PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null,
+				new GoalEndState(0.0, Rotation2d.fromDegrees(-90)));
+		path.preventFlipping = true;
 
-        return path;
-    }
+		return path;
+	}
 }

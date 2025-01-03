@@ -24,9 +24,12 @@ public class ZippyConstants
 		public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
 	}
 
-    public static class PathplannerConstants
-    {
-        public static final ModuleConfig moduleConfig = new ModuleConfig(null, null, 0, null, null, 0); //TODO: Find constants
-        public static final RobotConfig robotConfig = new RobotConfig(56.0, 10.0, moduleConfig, new Translation2d(11.125, 11.125), new Translation2d(11.125, -11.125), new Translation2d(-11.125, 11.125), new Translation2d(-11.125, -11.125));
-    }
+	public static class PathplannerConstants
+	{
+		public static final ModuleConfig moduleConfig = new ModuleConfig(null, null, 0, null, null, 0); // TODO: Find
+																										// constants
+		public static final RobotConfig robotConfig = new RobotConfig(56.0, 10.0, moduleConfig,
+				new Translation2d(11.125, 11.125), new Translation2d(11.125, -11.125),
+				new Translation2d(-11.125, 11.125), new Translation2d(-11.125, -11.125));
+	}
 }

@@ -95,6 +95,6 @@ public class DriveCommands
 	 */
 	public static Command driveToPosition(Drive drive, Pose2d pose)
 	{
-        return Commands.runOnce(() -> AutoBuilder.followPath(drive.createPathToPose(pose)), drive);
+		return Commands.runOnce(() -> AutoBuilder.followPath(drive.createPathToPose(pose)), drive);
 	}
 }
