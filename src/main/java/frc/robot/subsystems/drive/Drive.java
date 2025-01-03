@@ -15,6 +15,13 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
@@ -36,9 +43,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.TunerConstants;
+import frc.robot.zippy.constants.ZippyConstants;
 
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -101,6 +111,26 @@ public class Drive extends SubsystemBase
 						modules[i].runCharacterization(voltage.in(Volts));
 					}
 				}, null, this));
+
+        AutoBuilder.configure(
+            this::getPose,
+            this::resetPose,
+            this::getChassisSpeeds,
+            (speeds, feedforwards) -> runVelocity(speeds),
+            new PPHolonomicDriveController(
+                new PIDConstants(5.0, 0.0, 0.0),
+                new PIDConstants(5.0, 0.0, 0.0)
+            ),
+            ZippyConstants.PathplannerConstants.robotConfig,
+            () -> {
+                var alliance = DriverStation.getAlliance();
+                if (alliance.isPresent()) {
+                    return alliance.get() == DriverStation.Alliance.Red;
+                }
+                return false;
+            },
+            this
+        );
 	}
 
 	public void periodic()
@@ -316,6 +346,11 @@ public class Drive extends SubsystemBase
 		return poseEstimator.getEstimatedPosition();
 	}
 
+    public void resetPose(Pose2d pose)
+    {
+        poseEstimator.resetPose(pose);
+    }
+
 	/**
 	 * Returns the current odometry pose.
 	 * 
@@ -399,9 +434,9 @@ public class Drive extends SubsystemBase
 	}
 
     /**
-     * Creates a new path using the pose and returns a FollowPathCommand
+     * Creates a new path using the pose and assigns the AutoBuilder to follow that path
      */
-    public Command driveToPoseCommand(Pose2d pose) {
+    public PathPlannerPath createPathToPose(Pose2d pose) {
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
             pose
         );
@@ -411,29 +446,10 @@ public class Drive extends SubsystemBase
             waypoints,
             constraints,
             null,
-            new GoalEndState(0.0, Rotation2d.fromDegrees(-90));
+            new GoalEndState(0.0, Rotation2d.fromDegrees(-90))
         );
-
         path.preventFlipping = true;
 
-        return new FollowPathCommand(
-            path,
-            this::getPose,
-            this::getRobotRelativeSpeeds,
-            this::drive,
-            new PPHolonomicDriveController(
-                new PIDConstants(5.0, 0.0, 0.0),
-                new PIDConstants(5.0, 0.0, 0.0)
-            ),
-            Constants.robotConfig,
-            () -> {
-                var alliance = DriverStation.getAlliance();
-                if (alliance.isPresent()) {
-                    return alliance.get() == DriverStation.Alliance.Red;
-                }
-                return false;
-            },
-            this
-        )
+        return path;
     }
 }
