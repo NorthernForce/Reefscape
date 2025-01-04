@@ -88,6 +88,7 @@ public class Vision extends SubsystemBase
 				if (tagPose.isPresent())
 				{
 					tagPoses.add(tagPose.get());
+					allTagPoses.add(tagPose.get());
 				}
 			}
 
@@ -104,12 +105,16 @@ public class Vision extends SubsystemBase
 						|| observation.pose().getY() > visionConstants.aprilTagLayout().getFieldWidth();
 
 				robotPoses.add(observation.pose());
+				allRobotPoses.add(observation.pose());
+
 				if (rejectPose)
 				{
 					robotPosesRejected.add(observation.pose());
+					allRobotPosesRejected.add(observation.pose());
 				} else
 				{
 					robotPosesAccepted.add(observation.pose());
+					allRobotPosesAccepted.add(observation.pose());
 				}
 
 				if (rejectPose)
@@ -148,6 +153,12 @@ public class Vision extends SubsystemBase
 					robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
 		}
 
+		Logger.recordOutput("Vision/AllTagPoses", allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
+		Logger.recordOutput("Vision/AllRobotPoses", allRobotPoses.toArray(new Pose3d[allRobotPoses.size()]));
+		Logger.recordOutput("Vision/AllRobotPosesAccepted",
+				allRobotPosesAccepted.toArray(new Pose3d[allRobotPosesAccepted.size()]));
+		Logger.recordOutput("Vision/AllRobotPosesRejected",
+				allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
 	}
 
 	@FunctionalInterface
