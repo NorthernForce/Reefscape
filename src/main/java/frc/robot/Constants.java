@@ -25,7 +25,7 @@ package frc.robot;
  */
 public final class Constants
 {
-	public static final Mode kCurrentMode = Mode.REAL;
+	public static final Mode kCurrentMode = Mode.SIM;
 
 	public static enum Mode
 	{
