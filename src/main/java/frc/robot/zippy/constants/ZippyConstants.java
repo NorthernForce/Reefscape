@@ -31,5 +31,12 @@ public class ZippyConstants
 		public static final RobotConfig robotConfig = new RobotConfig(56.0, 10.0, moduleConfig,
 				new Translation2d(11.125, 11.125), new Translation2d(11.125, -11.125),
 				new Translation2d(-11.125, 11.125), new Translation2d(-11.125, -11.125));
+
+		public static final double linearkP = 5.0;
+		public static final double linearkI = 0.0;
+		public static final double linearkD = 0.0;
+		public static final double angularkP = 5.0;
+		public static final double angularkI = 0.0;
+		public static final double angularkD = 0.0;
 	}
 }

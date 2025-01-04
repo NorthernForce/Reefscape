@@ -114,7 +114,11 @@ public class Drive extends SubsystemBase
 
 		AutoBuilder.configure(this::getPose, this::resetPose, this::getChassisSpeeds,
 				(speeds, feedforwards) -> runVelocity(speeds),
-				new PPHolonomicDriveController(new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+				new PPHolonomicDriveController(new PIDConstants(ZippyConstants.PathplannerConstants.linearkP,
+						ZippyConstants.PathplannerConstants.linearkI, ZippyConstants.PathplannerConstants.linearkD),
+						new PIDConstants(ZippyConstants.PathplannerConstants.angularkP,
+								ZippyConstants.PathplannerConstants.angularkI,
+								ZippyConstants.PathplannerConstants.angularkD)),
 				ZippyConstants.PathplannerConstants.robotConfig, () ->
 				{
 					var alliance = DriverStation.getAlliance();
