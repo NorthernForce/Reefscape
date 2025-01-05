@@ -26,7 +26,8 @@ public class NFRRobotChooser
 	 * @param robotNamePath the path of where to find the file.
 	 */
 	public NFRRobotChooser(Supplier<NFRRobotContainer> defaultRobot,
-			Map<String, Supplier<NFRRobotContainer>> otherRobots, String robotNamePath)
+			Map<String, Supplier<NFRRobotContainer>> otherRobots, String robotNamePa    
+            th)
 	{
 		this.defaultRobot = defaultRobot;
 		this.otherRobots = otherRobots;
