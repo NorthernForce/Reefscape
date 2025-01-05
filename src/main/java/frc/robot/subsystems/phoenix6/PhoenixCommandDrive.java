@@ -49,6 +49,7 @@ public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 		this.maxSpeed = maxSpeed;
 		this.maxAngularSpeed = maxAngularSpeed;
 
+        // Configure the Pathplanner AutoBuilder for easier pathfinding
 		AutoBuilder.configure(this::getPose, this::resetPose, this::getChassisSpeeds,
 				(speeds, feedforwards) -> runVelocity(speeds),
 				new PPHolonomicDriveController(new PIDConstants(ZippyConstants.PathplannerConstants.linearkP,
@@ -102,9 +103,15 @@ public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 		});
 	}
 
-	public void runVelocity(ChassisSpeeds speeds)
+    /**
+     * Get a command that drives the robot at chassis speeds
+     * 
+     * @param speeds the speeds that the chassis should drive at
+     * @return the command to drive the robot at the specified chassis speeds
+     */
+	public Command runVelocity(ChassisSpeeds speeds)
 	{
-		applyRequest(() ->
+		return applyRequest(() ->
 		{
 			return new SwerveRequest.ApplyRobotSpeeds().withSpeeds(speeds);
 		});
