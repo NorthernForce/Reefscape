@@ -50,7 +50,7 @@ public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 		this.maxSpeed = maxSpeed;
 		this.maxAngularSpeed = maxAngularSpeed;
 
-        // Configure the Pathplanner AutoBuilder for easier pathfinding
+		// Configure the Pathplanner AutoBuilder for easier pathfinding
 		AutoBuilder.configure(this::getPose, this::resetPose, this::getChassisSpeeds,
 				(speeds, feedforwards) -> runVelocity(speeds),
 				new PPHolonomicDriveController(new PIDConstants(ZippyConstants.PathplannerConstants.linearkP,
@@ -104,12 +104,12 @@ public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 		});
 	}
 
-    /**
-     * Get a command that drives the robot at chassis speeds
-     * 
-     * @param speeds the speeds that the chassis should drive at
-     * @return the command to drive the robot at the specified chassis speeds
-     */
+	/**
+	 * Get a command that drives the robot at chassis speeds
+	 * 
+	 * @param speeds the speeds that the chassis should drive at
+	 * @return the command to drive the robot at the specified chassis speeds
+	 */
 	public Command runVelocity(ChassisSpeeds speeds)
 	{
 		return applyRequest(() ->
@@ -118,16 +118,17 @@ public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 		});
 	}
 
-    /**
-     * Get a command to drive the robot to a pose on the field using Pathplanner
-     * @param pose The pose that the robot should drive to
-     * @return A command that drives the robot to the specified pose
-     */
-    public Command driveToPose(Pose2d pose)
-    {
-        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
-        return AutoBuilder.pathfindToPose(pose, constraints, 0.0);
-    }
+	/**
+	 * Get a command to drive the robot to a pose on the field using Pathplanner
+	 * 
+	 * @param pose The pose that the robot should drive to
+	 * @return A command that drives the robot to the specified pose
+	 */
+	public Command driveToPose(Pose2d pose)
+	{
+		PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+		return AutoBuilder.pathfindToPose(pose, constraints, 0.0);
+	}
 
 	/**
 	 * Get a command that locks the robot in place by point the wheels towards the

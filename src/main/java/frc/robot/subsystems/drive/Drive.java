@@ -107,8 +107,8 @@ public class Drive extends SubsystemBase
 						modules[i].runCharacterization(voltage.in(Volts));
 					}
 				}, null, this));
-        
-        // Configure the Pathplanner AutoBuilder for easier pathfinding
+
+		// Configure the Pathplanner AutoBuilder for easier pathfinding
 		AutoBuilder.configure(this::getPose, this::resetPose, this::getChassisSpeeds,
 				(speeds, feedforwards) -> runVelocity(speeds),
 				new PPHolonomicDriveController(new PIDConstants(ZippyConstants.PathplannerConstants.linearkP,
@@ -428,10 +428,11 @@ public class Drive extends SubsystemBase
 	}
 
 	/**
-     * Get a command to drive the robot to a pose on the field using Pathplanner
-     * @param pose The pose that the robot should drive to
-     * @return A command that drives the robot to the specified pose
-     */
+	 * Get a command to drive the robot to a pose on the field using Pathplanner
+	 * 
+	 * @param pose The pose that the robot should drive to
+	 * @return A command that drives the robot to the specified pose
+	 */
 	public Command driveToPose(Pose2d pose)
 	{
 		PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
