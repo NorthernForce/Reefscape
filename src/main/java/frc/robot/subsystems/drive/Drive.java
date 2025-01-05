@@ -52,7 +52,7 @@ public class Drive extends SubsystemBase
 	private final SysIdRoutine sysId;
 	private final TunerConstants tunerConstants;
 	private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
-	private Rotation2d rawGyroRotation = new Rotation2d();
+	private Rotation2d rawGyroRotation = Rotation2d.kZero;
 	private SwerveModulePosition[] lastModulePositions = // For delta tracking
 			new SwerveModulePosition[]
 			{ new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition(),
@@ -395,6 +395,6 @@ public class Drive extends SubsystemBase
 	public void resetOrientation()
 	{
 		poseEstimator.resetPosition(rawGyroRotation, getModulePositions(),
-				new Pose2d(getPose().getTranslation(), new Rotation2d()));
+				new Pose2d(getPose().getTranslation(), Rotation2d.kZero));
 	}
 }
