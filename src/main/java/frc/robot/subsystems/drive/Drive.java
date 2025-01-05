@@ -18,10 +18,7 @@ import static edu.wpi.first.units.Units.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
@@ -45,7 +42,6 @@ import frc.robot.util.LocalADStarAK;
 import frc.robot.util.TunerConstants;
 import frc.robot.zippy.constants.ZippyConstants;
 
-import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -432,19 +428,13 @@ public class Drive extends SubsystemBase
 	}
 
 	/**
-     * Creates a path to the specified pose with a null starting pose so the robot will drive immediately to the pose
-     * @param pose The pose to drive to
-     * @return The path to the pose
+     * Get a command to drive the robot to a pose on the field using Pathplanner
+     * @param pose The pose that the robot should drive to
+     * @return A command that drives the robot to the specified pose
      */
-	public PathPlannerPath createPathToPose(Pose2d pose)
+	public Command driveToPose(Pose2d pose)
 	{
-		List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(pose);
-
 		PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
-		PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null,
-				new GoalEndState(0.0, Rotation2d.fromDegrees(-90)));
-		path.preventFlipping = true;
-
-		return path;
+		return AutoBuilder.pathfindToPose(pose, constraints, 0.0);
 	}
 }

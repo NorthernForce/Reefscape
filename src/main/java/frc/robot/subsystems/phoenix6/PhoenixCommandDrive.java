@@ -13,6 +13,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -116,6 +117,17 @@ public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 			return new SwerveRequest.ApplyRobotSpeeds().withSpeeds(speeds);
 		});
 	}
+
+    /**
+     * Get a command to drive the robot to a pose on the field using Pathplanner
+     * @param pose The pose that the robot should drive to
+     * @return A command that drives the robot to the specified pose
+     */
+    public Command driveToPose(Pose2d pose)
+    {
+        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+        return AutoBuilder.pathfindToPose(pose, constraints, 0.0);
+    }
 
 	/**
 	 * Get a command that locks the robot in place by point the wheels towards the

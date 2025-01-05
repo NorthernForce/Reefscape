@@ -23,8 +23,6 @@ import frc.robot.subsystems.drive.Drive;
 import java.util.function.DoubleSupplier;
 import java.util.function.DoubleUnaryOperator;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-
 public class DriveCommands
 {
 
@@ -95,6 +93,6 @@ public class DriveCommands
 	 */
 	public static Command driveToPosition(Drive drive, Pose2d pose)
 	{
-		return Commands.runOnce(() -> AutoBuilder.followPath(drive.createPathToPose(pose)), drive);
+		return Commands.runOnce(() -> drive.driveToPose(pose), drive);
 	}
 }
