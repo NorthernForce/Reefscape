@@ -10,6 +10,9 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,11 +20,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.phoenix6.requests.XLockRequest;
+import frc.robot.zippy.constants.ZippyConstants;
 
 public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 {
@@ -43,6 +48,23 @@ public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 		CommandScheduler.getInstance().registerSubsystem(this);
 		this.maxSpeed = maxSpeed;
 		this.maxAngularSpeed = maxAngularSpeed;
+
+		AutoBuilder.configure(this::getPose, this::resetPose, this::getChassisSpeeds,
+				(speeds, feedforwards) -> runVelocity(speeds),
+				new PPHolonomicDriveController(new PIDConstants(ZippyConstants.PathplannerConstants.linearkP,
+						ZippyConstants.PathplannerConstants.linearkI, ZippyConstants.PathplannerConstants.linearkD),
+						new PIDConstants(ZippyConstants.PathplannerConstants.angularkP,
+								ZippyConstants.PathplannerConstants.angularkI,
+								ZippyConstants.PathplannerConstants.angularkD)),
+				ZippyConstants.PathplannerConstants.robotConfig, () ->
+				{
+					var alliance = DriverStation.getAlliance();
+					if (alliance.isPresent())
+					{
+						return alliance.get() == DriverStation.Alliance.Red;
+					}
+					return false;
+				}, this);
 	}
 
 	/**
@@ -77,6 +99,14 @@ public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 			return fieldCentric.withVelocityX(maxSpeed.times(xSupplier.getAsDouble()))
 					.withVelocityY(maxSpeed.times(ySupplier.getAsDouble()))
 					.withRotationalRate(maxAngularSpeed.times(omegaSupplier.getAsDouble()));
+		});
+	}
+
+	public void runVelocity(ChassisSpeeds speeds)
+	{
+		applyRequest(() ->
+		{
+			return new SwerveRequest.ApplyRobotSpeeds().withSpeeds(speeds);
 		});
 	}
 
