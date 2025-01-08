@@ -1,17 +1,17 @@
-package frc.robot.subsystems.usablename;
+package frc.robot.subsystems.viewer;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Xavier;
 
-public class UsableName extends SubsystemBase implements UsableNameIO
+public class Viewer extends SubsystemBase implements ViewerIO
 {
 	private final Xavier xavier;
-	public UsableNameIODataAutoLogged data;
+	public ViewerIODataAutoLogged data;
 
-	public UsableName(Xavier xavier)
+	public Viewer(Xavier xavier)
 	{
 		this.xavier = xavier;
-		this.data = new UsableNameIODataAutoLogged();
+		this.data = new ViewerIODataAutoLogged();
 
 	}
 
@@ -23,7 +23,7 @@ public class UsableName extends SubsystemBase implements UsableNameIO
 		data.yawRadians = yaw;
 	}
 
-	public UsableNameIODataAutoLogged getInputs()
+	public ViewerIODataAutoLogged getInputs()
 	{
 		return this.data;
 	}

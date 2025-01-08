@@ -1,4 +1,4 @@
-package frc.robot.subsystems.usablename;
+package frc.robot.subsystems.viewer;
 
 import org.littletonrobotics.junction.AutoLog;
 
@@ -6,13 +6,13 @@ import org.littletonrobotics.junction.AutoLog;
  * base class of what VisionIO interface should be like, (will most certainly be
  * modified in the future as this is purely an example)
  */
-public interface UsableNameIO
+public interface ViewerIO
 {
 	/**
 	 * record containing the data from coprocessor
 	 */
 	@AutoLog
-	public class UsableNameIOData
+	public class ViewerIOData
 	{
 		float yawRadians = Float.NaN;
 		boolean detected = false;
@@ -26,5 +26,5 @@ public interface UsableNameIO
 	 */
 	public void updateInputs();
 
-	public UsableNameIODataAutoLogged getInputs();
+	public ViewerIODataAutoLogged getInputs();
 }
