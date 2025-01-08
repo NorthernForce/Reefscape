@@ -10,6 +10,8 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -135,6 +137,20 @@ public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 	{
 		return getState().Speeds;
 	}
+
+    public void runVelocity(ChassisSpeeds speeds)
+    {
+        // maybe motion magic one day guys
+        setControl(new SwerveRequest.FieldCentric()
+            .withDriveRequestType(DriveRequestType.Velocity)
+            .withVelocityX(speeds.vxMetersPerSecond)
+            .withVelocityY(speeds.vyMetersPerSecond)
+            .withRotationalRate(speeds.omegaRadiansPerSecond));
+    }
+
+    public void setPose(Pose2d pose)
+    {
+    }
 
 	public void setBrakeMode()
 	{
