@@ -4,11 +4,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-
-import com.pathplanner.lib.config.ModuleConfig;
-import com.pathplanner.lib.config.RobotConfig;
-
-import edu.wpi.first.math.geometry.Translation2d;
+import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -26,17 +22,7 @@ public class ZippyConstants
 
 	public static class PathplannerConstants
 	{
-		public static final ModuleConfig moduleConfig = new ModuleConfig(null, null, 0, null, null, 0); // TODO: Find
-																										// constants
-		public static final RobotConfig robotConfig = new RobotConfig(56.0, 10.0, moduleConfig,
-				new Translation2d(11.125, 11.125), new Translation2d(11.125, -11.125),
-				new Translation2d(-11.125, 11.125), new Translation2d(-11.125, -11.125));
-
-		public static final double linearkP = 5.0;
-		public static final double linearkI = 0.0;
-		public static final double linearkD = 0.0;
-		public static final double angularkP = 5.0;
-		public static final double angularkI = 0.0;
-		public static final double angularkD = 0.0;
+		public static final PIDConstants linearPIDConstants = new PIDConstants(10.0, 0.0, 0.0);
+		public static final PIDConstants angularPIDConstants = new PIDConstants(5.0, 0.0, 0.0);
 	}
 }

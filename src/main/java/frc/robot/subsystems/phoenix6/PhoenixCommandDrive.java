@@ -12,6 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 
@@ -22,17 +23,18 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.phoenix6.requests.XLockRequest;
-import frc.robot.zippy.constants.ZippyConstants;
 
 public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 {
 	private final LinearVelocity maxSpeed;
 	private final AngularVelocity maxAngularSpeed;
+	private final SwerveRequest.ApplyRobotSpeeds applyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
 	/**
 	 * Create a new PhoenixCommandDrive
@@ -43,7 +45,8 @@ public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 	 * @param moduleConstants     the module constants
 	 */
 	public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
-			AngularVelocity maxAngularSpeed, SwerveModuleConstants... moduleConstants)
+			AngularVelocity maxAngularSpeed, PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
+			SwerveModuleConstants... moduleConstants)
 	{
 		super(drivetrainConstants, moduleConstants);
 		CommandScheduler.getInstance().registerSubsystem(this);
@@ -51,22 +54,25 @@ public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 		this.maxAngularSpeed = maxAngularSpeed;
 
 		// Configure the Pathplanner AutoBuilder for easier pathfinding
-		AutoBuilder.configure(this::getPose, this::resetPose, this::getChassisSpeeds,
-				(speeds, feedforwards) -> runVelocity(speeds),
-				new PPHolonomicDriveController(new PIDConstants(ZippyConstants.PathplannerConstants.linearkP,
-						ZippyConstants.PathplannerConstants.linearkI, ZippyConstants.PathplannerConstants.linearkD),
-						new PIDConstants(ZippyConstants.PathplannerConstants.angularkP,
-								ZippyConstants.PathplannerConstants.angularkI,
-								ZippyConstants.PathplannerConstants.angularkD)),
-				ZippyConstants.PathplannerConstants.robotConfig, () ->
-				{
-					var alliance = DriverStation.getAlliance();
-					if (alliance.isPresent())
-					{
-						return alliance.get() == DriverStation.Alliance.Red;
-					}
-					return false;
-				}, this);
+		configureAutoBuilder(linearPIDConstants, angularPIDConstants);
+	}
+
+	private void configureAutoBuilder(PIDConstants linear, PIDConstants angular)
+	{
+		try
+		{
+			RobotConfig config = RobotConfig.fromGUISettings();
+			AutoBuilder.configure(() -> getState().Pose, this::resetPose, () -> getState().Speeds,
+					(speeds, feedforwards) -> setControl(applyRobotSpeeds.withSpeeds(speeds)
+							.withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+							.withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
+					new PPHolonomicDriveController(new PIDConstants(linear.kP, linear.kI, linear.kD),
+							new PIDConstants(angular.kP, angular.kI, angular.kD)),
+					config, () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, this);
+		} catch (Exception e)
+		{
+			System.out.println(e.getStackTrace());
+		}
 	}
 
 	/**
@@ -101,20 +107,6 @@ public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 			return fieldCentric.withVelocityX(maxSpeed.times(xSupplier.getAsDouble()))
 					.withVelocityY(maxSpeed.times(ySupplier.getAsDouble()))
 					.withRotationalRate(maxAngularSpeed.times(omegaSupplier.getAsDouble()));
-		});
-	}
-
-	/**
-	 * Get a command that drives the robot at chassis speeds
-	 * 
-	 * @param speeds the speeds that the chassis should drive at
-	 * @return the command to drive the robot at the specified chassis speeds
-	 */
-	public Command runVelocity(ChassisSpeeds speeds)
-	{
-		return applyRequest(() ->
-		{
-			return new SwerveRequest.ApplyRobotSpeeds().withSpeeds(speeds);
 		});
 	}
 

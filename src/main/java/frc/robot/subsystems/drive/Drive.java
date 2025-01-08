@@ -15,10 +15,6 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
@@ -40,8 +36,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.TunerConstants;
-import frc.robot.zippy.constants.ZippyConstants;
-
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -107,24 +101,6 @@ public class Drive extends SubsystemBase
 						modules[i].runCharacterization(voltage.in(Volts));
 					}
 				}, null, this));
-
-		// Configure the Pathplanner AutoBuilder for easier pathfinding
-		AutoBuilder.configure(this::getPose, this::resetPose, this::getChassisSpeeds,
-				(speeds, feedforwards) -> runVelocity(speeds),
-				new PPHolonomicDriveController(new PIDConstants(ZippyConstants.PathplannerConstants.linearkP,
-						ZippyConstants.PathplannerConstants.linearkI, ZippyConstants.PathplannerConstants.linearkD),
-						new PIDConstants(ZippyConstants.PathplannerConstants.angularkP,
-								ZippyConstants.PathplannerConstants.angularkI,
-								ZippyConstants.PathplannerConstants.angularkD)),
-				ZippyConstants.PathplannerConstants.robotConfig, () ->
-				{
-					var alliance = DriverStation.getAlliance();
-					if (alliance.isPresent())
-					{
-						return alliance.get() == DriverStation.Alliance.Red;
-					}
-					return false;
-				}, this);
 	}
 
 	public void periodic()
@@ -425,17 +401,5 @@ public class Drive extends SubsystemBase
 	{
 		poseEstimator.resetPosition(rawGyroRotation, getModulePositions(),
 				new Pose2d(getPose().getTranslation(), new Rotation2d()));
-	}
-
-	/**
-	 * Get a command to drive the robot to a pose on the field using Pathplanner
-	 * 
-	 * @param pose The pose that the robot should drive to
-	 * @return A command that drives the robot to the specified pose
-	 */
-	public Command driveToPose(Pose2d pose)
-	{
-		PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
-		return AutoBuilder.pathfindToPose(pose, constraints, 0.0);
 	}
 }
