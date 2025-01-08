@@ -38,7 +38,6 @@ import frc.robot.util.LocalADStarAK;
 import frc.robot.util.TunerConstants;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -314,11 +313,6 @@ public class Drive extends SubsystemBase
 	public Pose2d getPose()
 	{
 		return poseEstimator.getEstimatedPosition();
-	}
-
-	public void resetPose(Pose2d pose)
-	{
-		poseEstimator.resetPose(pose);
 	}
 
 	/**
