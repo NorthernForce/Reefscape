@@ -3,7 +3,7 @@ package frc.robot.subsystems.viewer;
 import org.littletonrobotics.junction.AutoLog;
 
 /**
- * base class of what VisionIO interface should be like, (will most certainly be
+ * base class of what ViewerIO interface should be like, (will most certainly be
  * modified in the future as this is purely an example)
  */
 public interface ViewerIO
@@ -20,7 +20,7 @@ public interface ViewerIO
 	}
 
 	/**
-	 * example function of Vision
+	 * example function of ViewerIO
 	 * 
 	 * @return data from coprocessor
 	 */
