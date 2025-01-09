@@ -1,11 +1,21 @@
 package frc.robot.zippy;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import javax.xml.stream.FactoryConfigurationError;
+
 import org.northernforce.util.NFRRobotContainer;
 
-import edu.wpi.first.math.geometry.Pose2d;
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
+import choreo.auto.AutoRoutine;
+import choreo.trajectory.SwerveSample;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
@@ -20,6 +30,8 @@ public class ZippyContainer implements NFRRobotContainer
 {
 	private final PhoenixCommandDrive drive;
 	private final Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Red);
+	private AutoFactory factory = null;
+	private AutoChooser autoChooser = null;
 
 	public ZippyContainer()
 	{
@@ -64,7 +76,26 @@ public class ZippyContainer implements NFRRobotContainer
 	@Override
 	public void autonomousInit()
 	{
-		drive.resetPose(new Pose2d());
+		ZippyConstants.AutoConstants.xPID.reset();
+		ZippyConstants.AutoConstants.yPID.reset();
+		ZippyConstants.AutoConstants.rPID.reset();
+		factory = new AutoFactory(drive::getPose, drive::resetPose, (SwerveSample sample) ->
+		{
+			var robot = drive.getPose();
+			var speeds = new ChassisSpeeds(
+					sample.vx + ZippyConstants.AutoConstants.xPID.calculate(robot.getX(), sample.x),
+					sample.vy + ZippyConstants.AutoConstants.yPID.calculate(robot.getY(), sample.y),
+					sample.omega + ZippyConstants.AutoConstants.rPID.calculate(robot.getRotation().getRadians(),
+							sample.heading));
+			drive.runVelocity(speeds);
+		}, true, drive);
+		factory.bind("test", Commands.run(() -> System.out.println("test binding ran!"))).bind("test2",
+				Commands.run(() -> System.out.println("yup yup!")));
+	}
+
+	public Map<String, Supplier<AutoRoutine>> getAutonomousCommands()
+	{
+		return Map.of("nothing", () -> factory.newRoutine("nothing"));
 	}
 
 	@Override
