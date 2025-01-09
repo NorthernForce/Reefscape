@@ -40,6 +40,6 @@ public class ZippyProgrammerOI implements ZippyOI
 		driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
 
 		manipulatorJoystick.start()
-				.onTrue(container.getDrive().driveToPose(new Pose2d(new Translation2d(2, 2), new Rotation2d.kZero)));
+				.onTrue(container.getDrive().driveToPose(new Pose2d(new Translation2d(2, 2), Rotation2d.kZero)));
 	}
 }
