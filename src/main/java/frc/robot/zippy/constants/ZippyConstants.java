@@ -20,11 +20,12 @@ public class ZippyConstants
 		public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(3.0);
 		public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
 	}
-    public static class AutoConstants
-    {
-        // TODO: tuning
-        public static final PIDController xPID = new PIDController(0, 0, 0);
-        public static final PIDController yPID = new PIDController(0, 0, 0);
-        public static final PIDController rPID = new PIDController(0, 0, 0);
-    }
+
+	public static class AutoConstants
+	{
+		// TODO: tuning
+		public static final PIDController xPID = new PIDController(10, 0, 0);
+		public static final PIDController yPID = new PIDController(10, 0, 0);
+		public static final PIDController rPID = new PIDController(7.5, 0, 0);
+	}
 }
