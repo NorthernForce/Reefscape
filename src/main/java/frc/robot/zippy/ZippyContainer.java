@@ -24,7 +24,7 @@ public class ZippyContainer implements NFRRobotContainer
 {
 	private final PhoenixCommandDrive drive;
 	private final Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Red);
-    private final Vision vision;
+	private final Vision vision;
 
 	public ZippyContainer()
 	{
@@ -34,26 +34,43 @@ public class ZippyContainer implements NFRRobotContainer
 				ZippyTunerConstants.BackRight);
 		drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
 
-        switch (Constants.kCurrentMode){
-            case REAL:
-                vision = new Vision(drive::addVisionMeasurement, ZippyConstants.visionConstants, 
-                    new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[0], ZippyConstants.visionConstants.cameraTransforms()[0]), 
-                    new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[1], ZippyConstants.visionConstants.cameraTransforms()[1]), 
-                    new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[2], ZippyConstants.visionConstants.cameraTransforms()[2]), 
-                    new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[3], ZippyConstants.visionConstants.cameraTransforms()[3]));
-                break;
-            case SIM:
-                vision = new Vision(drive::addVisionMeasurement, ZippyConstants.visionConstants,
-                    new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[0], ZippyConstants.visionConstants.cameraTransforms()[0], drive::getPose),
-                    new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[1], ZippyConstants.visionConstants.cameraTransforms()[1], drive::getPose),
-                    new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[2], ZippyConstants.visionConstants.cameraTransforms()[2], drive::getPose),
-                    new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[3], ZippyConstants.visionConstants.cameraTransforms()[3], drive::getPose));
-                break;
-            default:
-                vision = new Vision(drive::addVisionMeasurement, ZippyConstants.visionConstants, new VisionIO() {}, new VisionIO() {}, new VisionIO() {}, new VisionIO() {});
-                break;
-        }
-    }
+		switch (Constants.kCurrentMode)
+		{
+		case REAL:
+			vision = new Vision(drive::addVisionMeasurement, ZippyConstants.visionConstants,
+					new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[0],
+							ZippyConstants.visionConstants.cameraTransforms()[0]),
+					new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[1],
+							ZippyConstants.visionConstants.cameraTransforms()[1]),
+					new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[2],
+							ZippyConstants.visionConstants.cameraTransforms()[2]),
+					new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[3],
+							ZippyConstants.visionConstants.cameraTransforms()[3]));
+			break;
+		case SIM:
+			vision = new Vision(drive::addVisionMeasurement, ZippyConstants.visionConstants,
+					new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[0],
+							ZippyConstants.visionConstants.cameraTransforms()[0], drive::getPose),
+					new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[1],
+							ZippyConstants.visionConstants.cameraTransforms()[1], drive::getPose),
+					new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[2],
+							ZippyConstants.visionConstants.cameraTransforms()[2], drive::getPose),
+					new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[3],
+							ZippyConstants.visionConstants.cameraTransforms()[3], drive::getPose));
+			break;
+		default:
+			vision = new Vision(drive::addVisionMeasurement, ZippyConstants.visionConstants, new VisionIO()
+			{
+			}, new VisionIO()
+			{
+			}, new VisionIO()
+			{
+			}, new VisionIO()
+			{
+			});
+			break;
+		}
+	}
 
 	public PhoenixCommandDrive getDrive()
 	{
