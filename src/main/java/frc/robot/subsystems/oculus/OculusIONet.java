@@ -12,18 +12,18 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class OculusIONet implements OculusIO
 {
-	NetworkTableInstance nt4Instance;
-	NetworkTable nt4Table;
-	private IntegerSubscriber questMiso;
-	private IntegerPublisher questMosi;
+	private final NetworkTableInstance nt4Instance;
+	private final NetworkTable nt4Table;
+	private final IntegerSubscriber questMiso;
+	private final IntegerPublisher questMosi;
 
 	// Subscribe to the Network Tables oculus data topics
-	private IntegerSubscriber questFrameCount;
-	private DoubleSubscriber questTimestamp;
-	private FloatArraySubscriber questPosition;
-	private FloatArraySubscriber questQuaternion;
-	private FloatArraySubscriber questEulerAngles;
-	private DoubleSubscriber questBattery;
+	private final IntegerSubscriber questFrameCount;
+	private final DoubleSubscriber questTimestamp;
+	private final FloatArraySubscriber questPosition;
+	private final FloatArraySubscriber questQuaternion;
+	private final FloatArraySubscriber questEulerAngles;
+	private final DoubleSubscriber questBattery;
 
 	public OculusIONet(String tableName)
 	{
