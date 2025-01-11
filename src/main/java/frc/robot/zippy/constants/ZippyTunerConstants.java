@@ -39,7 +39,7 @@ public class ZippyTunerConstants
 	private static final TalonFXConfiguration steerInitialConfigs = new TalonFXConfiguration().withCurrentLimits(
 			new CurrentLimitsConfigs().withStatorCurrentLimit(Amps.of(60)).withStatorCurrentLimitEnable(true));
 	private static final CANcoderConfiguration cancoderInitialConfigs = new CANcoderConfiguration();
-	private static final Pigeon2Configuration pigeonConfigs = null;
+	private static final Pigeon2Configuration pigeonConfigs = new Pigeon2Configuration();
 
 	public static final CANBus kCANBus = new CANBus("drive");
 
@@ -51,8 +51,8 @@ public class ZippyTunerConstants
 	private static final double kSteerGearRatio = 12.8;
 	private static final Distance kWheelRadius = Inches.of(2);
 
-	private static final boolean kInvertLeftSide = false;
-	private static final boolean kInvertRightSide = true;
+	private static final boolean kInvertLeftSide = true;
+	private static final boolean kInvertRightSide = false;
 
 	private static final int kPigeonId = 1;
 
