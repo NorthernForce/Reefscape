@@ -10,9 +10,9 @@ public interface OculusIO
 	public static class OculusIOInputs
 	{
 		public boolean connected = false;
-        public Translation2d getOculusPosition = new Translation2d();
-        public float getOculusYaw = 0;
-        public Pose2d getOculusPose = new Pose2d();
+		public Translation2d getOculusPosition = new Translation2d();
+		public float getOculusYaw = 0;
+		public Pose2d getOculusPose = new Pose2d();
 	}
 
 	public default void updateInputs(OculusIOInputs inputs)

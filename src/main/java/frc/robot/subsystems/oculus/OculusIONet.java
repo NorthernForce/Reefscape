@@ -47,9 +47,9 @@ public class OculusIONet implements OculusIO
 	public void updateInputs(OculusIOInputs inputs)
 	{
 		inputs.connected = nt4Instance.isConnected();
-        inputs.getOculusPosition = getOculusPosition();
-        inputs.getOculusYaw = getOculusYaw();
-        inputs.getOculusPose = getOculusPose();
+		inputs.getOculusPosition = getOculusPosition();
+		inputs.getOculusYaw = getOculusYaw();
+		inputs.getOculusPose = getOculusPose();
 	}
 
 	// Get the yaw Euler angle of the headset
