@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
+import frc.robot.subsystems.leds.LEDS;
+import frc.robot.subsystems.leds.LedsIOCANdle;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 import frc.robot.zippy.constants.ZippyConstants;
 import frc.robot.zippy.constants.ZippyTunerConstants;
@@ -20,6 +22,7 @@ public class ZippyContainer implements NFRRobotContainer
 {
 	private final PhoenixCommandDrive drive;
 	private final Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Red);
+	private final LEDS leds = new LEDS(new LedsIOCANdle(30));
 
 	public ZippyContainer()
 	{
@@ -33,6 +36,11 @@ public class ZippyContainer implements NFRRobotContainer
 	public PhoenixCommandDrive getDrive()
 	{
 		return drive;
+	}
+
+	public LEDS getLEDs()
+	{
+		return leds;
 	}
 
 	@Override

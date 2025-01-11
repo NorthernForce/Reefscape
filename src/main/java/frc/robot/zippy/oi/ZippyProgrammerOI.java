@@ -34,5 +34,6 @@ public class ZippyProgrammerOI implements ZippyOI
 						processJoystickInput(driverJoystick::getRightX)));
 
 		driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
+		driverJoystick.y().whileTrue(container.getLEDs().getSetColour(255, 0, 0));
 	}
 }
