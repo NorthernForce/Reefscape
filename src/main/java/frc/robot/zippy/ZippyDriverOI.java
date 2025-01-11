@@ -1,6 +1,6 @@
-package frc.robot.zippy.oi;
+package frc.robot.zippy;
 
-import frc.robot.zippy.ZippyContainer;
+import frc.robot.robots.ZippyContainer;
 
 public class ZippyDriverOI implements ZippyOI
 {
