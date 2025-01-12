@@ -30,7 +30,6 @@ public class ZippyProgrammerOI implements ZippyOI
 	public void bindOI(ZippyContainer container)
 	{
 		CommandXboxController driverJoystick = new CommandXboxController(0);
-		CommandXboxController manipulatorJoystick = new CommandXboxController(1);
 
 		container.getDrive()
 				.setDefaultCommand(container.getDrive().getDriveByJoystickCommand(
@@ -39,7 +38,7 @@ public class ZippyProgrammerOI implements ZippyOI
 
 		driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
 
-		manipulatorJoystick.start()
+		driverJoystick.start()
 				.onTrue(container.getDrive().driveToPose(new Pose2d(new Translation2d(2, 2), Rotation2d.kZero)));
 	}
 }
