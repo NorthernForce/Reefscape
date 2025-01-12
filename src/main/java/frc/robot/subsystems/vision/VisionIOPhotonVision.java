@@ -79,4 +79,10 @@ public class VisionIOPhotonVision implements VisionIO
 			inputs.tagIds[i++] = id;
 		}
 	}
+
+	@Override
+	public String getCameraName()
+	{
+		return camera.getName();
+	}
 }

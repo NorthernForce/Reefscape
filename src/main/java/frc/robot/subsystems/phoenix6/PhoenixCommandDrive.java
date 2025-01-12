@@ -10,10 +10,15 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotController;
@@ -26,6 +31,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 {
 	private final LinearVelocity maxSpeed;
 	private final AngularVelocity maxAngularSpeed;
+	private SwerveDrivePoseEstimator poseEstimator;
 
 	/**
 	 * Create a new PhoenixCommandDrive
@@ -42,6 +48,11 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 		CommandScheduler.getInstance().registerSubsystem(this);
 		this.maxSpeed = maxSpeed;
 		this.maxAngularSpeed = maxAngularSpeed;
+		poseEstimator = new SwerveDrivePoseEstimator(getKinematics(),
+				new Rotation2d(getPigeon2().getYaw().getValueAsDouble()), new SwerveModulePosition[]
+				{ new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition(),
+						new SwerveModulePosition() },
+				getPose());
 	}
 
 	/**
@@ -56,6 +67,28 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 		{
 			setControl(requestSupplier.get());
 		});
+	}
+
+	/**
+	 * Adds the pose and timestamp to the pose estimator
+	 * 
+	 * @param pose                     The pose to be added (in meters)
+	 * @param timestamp                The time of the recorded pose (in seconds)
+	 * @param visionMeasurementStdDevs The standard deviations of the pose
+	 */
+	public void addVisionMeasurement(Pose2d pose, double timestamp, Matrix<N3, N1> visionMeasurementStdDevs)
+	{
+		poseEstimator.addVisionMeasurement(pose, timestamp, visionMeasurementStdDevs);
+	}
+
+	/**
+	 * Sets the pose of the pose estimator to the supplied pose
+	 * 
+	 * @param pose The pose to be reset to
+	 */
+	public void resetPose(Pose2d pose)
+	{
+		poseEstimator.resetPose(pose);
 	}
 
 	/**

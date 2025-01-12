@@ -39,4 +39,10 @@ public class VisionIOPhotonVisionSim extends VisionIOPhotonVision
 		visionSim.update(poseSupplier.get());
 		super.updateInputs(inputs);
 	}
+
+	@Override
+	public String getCameraName()
+	{
+		return camera.getName();
+	}
 }

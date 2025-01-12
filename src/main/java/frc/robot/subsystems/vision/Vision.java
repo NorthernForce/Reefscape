@@ -29,7 +29,9 @@ public class Vision extends SubsystemBase
 	/**
 	 * Class to manage any number PhotonVisionCamera objects
 	 * 
-	 * @param photonVisionCamera The PhotonVisionCamera objects to be managed
+	 * @param consumer        Consumer to receive the vision outputs
+	 * @param visionConstants Constants for the vision subsystem
+	 * @param io              VisionIOs (one for each camera)
 	 */
 	public Vision(VisionConsumer consumer, VisionConstants visionConstants, VisionIO... io)
 	{
@@ -51,19 +53,30 @@ public class Vision extends SubsystemBase
 		}
 	}
 
+	/**
+	 * Gets the yaw from the robot to the most recent AprilTag observation
+	 * 
+	 * @param cameraIndex The index of the camera being accessed
+	 * @return The yaw to the AprilTag
+	 */
 	public Rotation2d getTargetX(int cameraIndex)
 	{
 		return inputs[cameraIndex].latestTargetObservation.tx();
 	}
 
+	/**
+	 * Runs automatically Processes the inputs from each camera and determines
+	 * whether they should be accepted or rejected before adding them to logged
+	 * Lists If the pose is accepted it is sent to the VisionConsumer
+	 */
 	@Override
 	public void periodic()
 	{
-		// Process all camera inputs
+		// Process and log all camera inputs
 		for (int i = 0; i < io.length; i++)
 		{
 			io[i].updateInputs(inputs[i]);
-			Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
+			Logger.processInputs("Vision/" + io[i].getCameraName(), inputs[i]);
 		}
 
 		List<Pose3d> allTagPoses = new LinkedList<>();
@@ -81,7 +94,7 @@ public class Vision extends SubsystemBase
 			List<Pose3d> robotPosesAccepted = new LinkedList<>();
 			List<Pose3d> robotPosesRejected = new LinkedList<>();
 
-			// Adds tag poses if they exist
+			// Add tag poses if they exist
 			for (int tagId : inputs[cameraIndex].tagIds)
 			{
 				var tagPose = visionConstants.aprilTagLayout().getTagPose(tagId);
@@ -161,6 +174,9 @@ public class Vision extends SubsystemBase
 				allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
 	}
 
+	/**
+	 * Interface that processes camera inputs
+	 */
 	@FunctionalInterface
 	public static interface VisionConsumer
 	{

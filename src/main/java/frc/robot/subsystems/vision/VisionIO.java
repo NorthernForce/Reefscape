@@ -33,6 +33,11 @@ public interface VisionIO
 		return 0;
 	}
 
+	public default String getCameraName()
+	{
+		return "Camera";
+	}
+
 	/** Updates the set of loggable inputs. */
 	public default void updateInputs(VisionIOInputs inputs)
 	{
