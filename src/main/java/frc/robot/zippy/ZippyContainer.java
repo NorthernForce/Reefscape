@@ -1,5 +1,7 @@
 package frc.robot.zippy;
 
+import java.util.function.Supplier;
+
 import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -19,7 +21,7 @@ import frc.robot.zippy.oi.ZippyProgrammerOI;
 public class ZippyContainer implements NFRRobotContainer
 {
 	private final PhoenixCommandDrive drive;
-	private final Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Red);
+	private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
 
 	public ZippyContainer()
 	{
@@ -27,7 +29,7 @@ public class ZippyContainer implements NFRRobotContainer
 				ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
 				ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,
 				ZippyTunerConstants.BackRight);
-		drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
+		drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
 	}
 
 	public PhoenixCommandDrive getDrive()
@@ -55,9 +57,9 @@ public class ZippyContainer implements NFRRobotContainer
 	@Override
 	public void periodic()
 	{
-		if (alliance != DriverStation.getAlliance().orElse(Alliance.Red))
+		if (allianceSupplier.get() != DriverStation.getAlliance().orElse(Alliance.Red))
 		{
-			drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
+			drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
 		}
 	}
 
