@@ -1,5 +1,7 @@
 package frc.robot.zippy;
 
+import java.util.function.Supplier;
+
 import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -19,7 +21,8 @@ import frc.robot.zippy.oi.ZippyProgrammerOI;
 public class ZippyContainer implements NFRRobotContainer
 {
 	private final PhoenixCommandDrive drive;
-	private final Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Red);
+	private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
+	private Alliance alliance = allianceSupplier.get();
 
 	public ZippyContainer()
 	{
@@ -56,9 +59,10 @@ public class ZippyContainer implements NFRRobotContainer
 	@Override
 	public void periodic()
 	{
-		if (alliance != DriverStation.getAlliance().orElse(Alliance.Red))
+		if (alliance != allianceSupplier.get())
 		{
-			drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
+			alliance = allianceSupplier.get();
+			drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
 		}
 	}
 
