@@ -22,7 +22,7 @@ public class ZippyContainer implements NFRRobotContainer
 {
 	private final PhoenixCommandDrive drive;
 	private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
-    private Alliance alliance = allianceSupplier.get();
+	private Alliance alliance = allianceSupplier.get();
 
 	public ZippyContainer()
 	{
@@ -60,7 +60,7 @@ public class ZippyContainer implements NFRRobotContainer
 	{
 		if (alliance != allianceSupplier.get())
 		{
-            alliance = allianceSupplier.get();
+			alliance = allianceSupplier.get();
 			drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
 		}
 	}
