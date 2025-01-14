@@ -10,42 +10,43 @@ public class PneumaticHub extends SubsystemBase
 	private final PneumaticHubIO m_io;
 	private final PneumaticHubIOInputsAutoLogged m_inputs = new PneumaticHubIOInputsAutoLogged();
 
-    /**
-     * Initialize new PneumaticHub
-     * @param io the io instance to pass in
-     */
+	/**
+	 * Initialize new PneumaticHub
+	 * 
+	 * @param io the io instance to pass in
+	 */
 	public PneumaticHub(PneumaticHubIO io)
 	{
 		m_io = io;
 	}
 
-    /**
-     * toggles whether the pneumatic hub hardware interface is enabled or disabled
-     */
+	/**
+	 * toggles whether the pneumatic hub hardware interface is enabled or disabled
+	 */
 	public void toggle()
 	{
 		m_io.toggle();
 	}
 
-    /**
-     * enables the pneumatic hub io hardware interface
-     */
+	/**
+	 * enables the pneumatic hub io hardware interface
+	 */
 	public void enable()
 	{
 		m_io.enable();
 	}
 
-    /**
-     * disables the pneumatic hub io hardware interface
-     */
+	/**
+	 * disables the pneumatic hub io hardware interface
+	 */
 	public void disable()
 	{
 		m_io.disable();
 	}
 
-    /**
-     * periodic input update and processing
-     */
+	/**
+	 * periodic input update and processing
+	 */
 	public void periodic()
 	{
 		m_io.updateInputs(m_inputs);
