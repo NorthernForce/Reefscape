@@ -156,13 +156,13 @@ public class Vision extends SubsystemBase
 			}
 
 			// Log the poses with AdvantageKit
-			Logger.recordOutput("Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
+			Logger.recordOutput("Vision/" + io[cameraIndex].getCameraName() + "/TagPoses",
 					tagPoses.toArray(new Pose3d[tagPoses.size()]));
-			Logger.recordOutput("Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
+			Logger.recordOutput("Vision/" + io[cameraIndex].getCameraName() + "/RobotPoses",
 					robotPoses.toArray(new Pose3d[robotPoses.size()]));
-			Logger.recordOutput("Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesAccepted",
+			Logger.recordOutput("Vision/" + io[cameraIndex].getCameraName() + "/RobotPosesAccepted",
 					robotPosesAccepted.toArray(new Pose3d[robotPosesAccepted.size()]));
-			Logger.recordOutput("Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
+			Logger.recordOutput("Vision/" + io[cameraIndex].getCameraName() + "/RobotPosesRejected",
 					robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
 		}
 
