@@ -1,9 +1,6 @@
 package frc.robot.zippy.constants;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -32,14 +29,14 @@ public class ZippyConstants
 	private static String camera2Name = "back_left_camera";
 	private static String camera3Name = "back_right_camera";
 
-	private static Transform3d robotToCamera0 = new Transform3d(0.3487674, -0.3487674, 0.2856992,
-			new Rotation3d(0.0, 0.174533, Math.PI / 4));
-	private static Transform3d robotToCamera1 = new Transform3d(0.3487674, 0.3487674, 0.2856992,
-			new Rotation3d(0.0, 0.174533, 7 * Math.PI / 4));
-	private static Transform3d robotToCamera2 = new Transform3d(-0.3487674, -0.3487674, 0.2856992,
-			new Rotation3d(0.0, 0.174533, 3 * Math.PI / 4));
-	private static Transform3d robotToCamera3 = new Transform3d(-0.3487674, 0.3487674, 0.2856992,
-			new Rotation3d(0.0, 0.174533, 5 * Math.PI / 4));
+	private static Transform3d robotToCamera0 = new Transform3d(Inches.of(13.731), Inches.of(-13.731),
+			Inches.of(11.248), new Rotation3d(Degrees.of(0.0), Degrees.of(10.0), Degrees.of(45.0)));
+	private static Transform3d robotToCamera1 = new Transform3d(Inches.of(13.731), Inches.of(13.731), Inches.of(11.248),
+			new Rotation3d(Degrees.of(0.0), Degrees.of(10.0), Degrees.of(315.0)));
+	private static Transform3d robotToCamera2 = new Transform3d(Inches.of(-13.731), Inches.of(-13.731),
+			Inches.of(11.248), new Rotation3d(Degrees.of(0.0), Degrees.of(10.0), Degrees.of(135)));
+	private static Transform3d robotToCamera3 = new Transform3d(Inches.of(-13.731), Inches.of(13.731),
+			Inches.of(11.248), new Rotation3d(Degrees.of(0.0), Degrees.of(10.0), Degrees.of(225)));
 
 	private static double maxAmbiguity = 0.3;
 	private static double maxZError = 0.75;
