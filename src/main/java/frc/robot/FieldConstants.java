@@ -55,11 +55,14 @@ public class FieldConstants
 		public static final Pose2d LEFT = new Pose2d(1.18, 7.07, Rotation2d.fromDegrees(127.5));
 		public static final Pose2d RIGHT = new Pose2d(1.11, 1.00, Rotation2d.fromDegrees(-127.5));
 	}
-    
-    public static class ProcessorStations
-    {
-        public static final Pose2d PROCESSOR_STATION = new Pose2d(6.34, 0.44, Rotation2d.fromDegrees(90));
-    }
+
+	/**
+	 * All poses are BLUE relative
+	 */
+	public static class ProcessorStations
+	{
+		public static final Pose2d PROCESSOR_STATION = new Pose2d(6.34, 0.44, Rotation2d.fromDegrees(90));
+	}
 
 	/**
 	 * Gets a rotation based on the alliance
