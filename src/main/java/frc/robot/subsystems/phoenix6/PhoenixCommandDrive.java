@@ -70,7 +70,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 					config, () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, this);
 		} catch (Exception e)
 		{
-			System.out.println(e.getStackTrace());
+			e.printStackTrace();
 		}
 	}
 
