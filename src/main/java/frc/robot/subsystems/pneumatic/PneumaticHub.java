@@ -50,6 +50,6 @@ public class PneumaticHub extends SubsystemBase
 	public void periodic()
 	{
 		m_io.updateInputs(m_inputs);
-		Logger.processInputs(m_io.getName(), m_inputs);
+		Logger.processInputs(getName(), m_inputs);
 	}
 }

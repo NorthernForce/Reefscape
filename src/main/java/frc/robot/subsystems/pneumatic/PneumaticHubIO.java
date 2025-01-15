@@ -31,12 +31,7 @@ public interface PneumaticHubIO
 	public default void disable()
 	{
 	}
-
-	/**
-	 * get the hardware interface name (even though we ONLY USE REV CONNOR (😡))
-	 */
-	public String getName();
-
+    
 	/**
 	 * update inputs for the Hub
 	 * 

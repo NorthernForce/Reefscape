@@ -55,15 +55,6 @@ public class PneumaticHubIORev implements PneumaticHubIO
 	}
 
 	/**
-	 * gets the name of the module
-	 */
-	@Override
-	public String getName()
-	{
-		return "Pneumatics/PneumaticHubRev";
-	}
-
-	/**
 	 * updates the inputs (like if it is at pressure)
 	 */
 	@Override
