@@ -3,6 +3,7 @@ package frc.robot.zippy.oi;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.zippy.ZippyContainer;
 
@@ -34,5 +35,8 @@ public class ZippyProgrammerOI implements ZippyOI
 						processJoystickInput(driverJoystick::getRightX)));
 
 		driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
+
+		driverJoystick.back()
+				.onTrue(Commands.runOnce(() -> container.getDrive().getPigeon2().reset(), container.getDrive()));
 	}
 }
