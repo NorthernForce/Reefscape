@@ -24,11 +24,11 @@ public class ZippyContainer implements NFRRobotContainer
 	private final PhoenixCommandDrive drive;
 	private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
 	private Alliance alliance = allianceSupplier.get();
-    private ZippyDashboardIOElastic dashboard;
+	private ZippyDashboardIOElastic dashboard;
 
 	public ZippyContainer()
 	{
-        dashboard = new ZippyDashboardIOElastic();
+		dashboard = new ZippyDashboardIOElastic();
 		drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants,
 				ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
 				ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,
