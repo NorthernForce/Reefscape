@@ -31,7 +31,7 @@ public interface PneumaticHubIO
 	public default void disable()
 	{
 	}
-    
+
 	/**
 	 * update inputs for the Hub
 	 * 
