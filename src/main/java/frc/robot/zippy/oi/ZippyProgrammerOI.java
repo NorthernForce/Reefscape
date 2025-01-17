@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.zippy.ZippyContainer;
 import frc.robot.FieldConstants;
 
@@ -39,11 +40,9 @@ public class ZippyProgrammerOI implements ZippyOI
 
 		driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
 
-		driverJoystick.back()
-				.onTrue(Commands.runOnce(
-						() -> container.getDrive()
-								.resetPose(new Pose2d(container.getDrive().getPose().getTranslation(),
-										FieldConstants.getFieldRotation(DriverStation.getAlliance().get()))),
-						container.getDrive()));
+		driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
+				.resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
+						DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
+				container.getDrive()));
 	}
 }
