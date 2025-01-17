@@ -4,11 +4,11 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.zippy.ZippyContainer;
+import frc.robot.FieldConstants;
 
 public class ZippyProgrammerOI implements ZippyOI
 {
@@ -39,11 +39,11 @@ public class ZippyProgrammerOI implements ZippyOI
 
 		driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
 
-		driverJoystick.back().onTrue(new ParallelCommandGroup(
-				Commands.runOnce(() -> container.getDrive().getPigeon2().reset(), container.getDrive()),
-				Commands.runOnce(
-						() -> container.getDrive().resetPose(
-								new Pose2d(container.getDrive().getPose().getTranslation(), Rotation2d.fromDegrees(0))),
-						container.getDrive())));
+		driverJoystick.back()
+				.onTrue(Commands.runOnce(
+						() -> container.getDrive()
+								.resetPose(new Pose2d(container.getDrive().getPose().getTranslation(),
+										FieldConstants.getFieldRotation(DriverStation.getAlliance().get()))),
+						container.getDrive()));
 	}
 }
