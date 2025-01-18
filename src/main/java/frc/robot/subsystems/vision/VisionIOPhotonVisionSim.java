@@ -25,7 +25,7 @@ public class VisionIOPhotonVisionSim extends VisionIOPhotonVision
 		if (visionSim == null)
 		{
 			visionSim = new VisionSystemSim("main");
-			visionSim.addAprilTags(AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo));
+			visionSim.addAprilTags(AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape));
 		}
 
 		var cameraPropertes = new SimCameraProperties();
