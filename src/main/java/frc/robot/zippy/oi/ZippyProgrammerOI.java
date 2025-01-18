@@ -3,11 +3,9 @@ package frc.robot.zippy.oi;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.zippy.ZippyContainer;
+import frc.robot.FieldConstants;
 
 public class ZippyProgrammerOI implements ZippyOI
 {
@@ -39,6 +37,6 @@ public class ZippyProgrammerOI implements ZippyOI
 		driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
 
 		driverJoystick.start()
-				.onTrue(container.getDrive().driveToPose(new Pose2d(new Translation2d(2, 2), Rotation2d.kZero)));
+				.whileTrue(container.getDrive().driveToPose(FieldConstants.ProcessorStations.PROCESSOR_STATION));
 	}
 }
