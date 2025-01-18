@@ -19,4 +19,21 @@ public class ZippyConstants
 		public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(3.0);
 		public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
 	}
+
+	public static class FieldConstants // TODO: Change these values
+	{
+		public static final double L1_HEIGHT = 1;
+		public static final double L2_HEIGHT = 3;
+		public static final double L3_HEIGHT = 5;
+		public static final double L4_HEIGHT = 8;
+	}
+
+	public static class ElevatorConstants
+	{
+		public static final double GEAR_BOX_RATIO = 20.0;
+		public static final double SPROCKET_DIAM = 1.44;
+		public static final double SPROCKET_TEETH = 18;
+		public static final double GEAR_RATIO = GEAR_BOX_RATIO * SPROCKET_TEETH / SPROCKET_DIAM;
+		public static final double SPROCKET_CIRCUMFERENCE = Math.PI * SPROCKET_DIAM;
+	}
 }
