@@ -29,7 +29,7 @@ public class ZippyContainer implements NFRRobotContainer
 
 	public ZippyContainer()
 	{
-        elevator = new Elevator(new ElevatorIOTalon(27));
+        elevator = new Elevator(new ElevatorIOTalon(27, 28));
 		drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants,
 				ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
 				ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,

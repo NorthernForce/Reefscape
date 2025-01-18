@@ -30,10 +30,18 @@ public class ZippyConstants
 
 	public static class ElevatorConstants
 	{
+        // outer ratios
 		public static final double GEAR_BOX_RATIO = 20.0;
 		public static final double SPROCKET_DIAM = 1.44;
 		public static final double SPROCKET_TEETH = 18;
 		public static final double GEAR_RATIO = GEAR_BOX_RATIO * SPROCKET_TEETH / SPROCKET_DIAM;
 		public static final double SPROCKET_CIRCUMFERENCE = Math.PI * SPROCKET_DIAM;
+
+        // inner ratios
+        public static final double INNER_GEAR_BOX_RATIO = 20.0;
+        public static final double INNER_SPROCKET_DIAM = 1.44;
+        public static final double INNER_SPROCKET_TEETH = 18;
+        public static final double INNER_GEAR_RATIO = INNER_GEAR_BOX_RATIO * INNER_SPROCKET_TEETH / INNER_SPROCKET_DIAM;
+        public static final double INNER_SPROCKET_CIRCUMFERENCE = Math.PI * INNER_SPROCKET_DIAM;
 	}
 }
