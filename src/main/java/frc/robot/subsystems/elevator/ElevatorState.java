@@ -8,12 +8,12 @@ public enum ElevatorState
 	L3(3, ZippyConstants.FieldConstants.L3_HEIGHT), L4(4, ZippyConstants.FieldConstants.L4_HEIGHT);
 
 	private double level;
-    private double height;
+	private double height;
 
 	ElevatorState(int level, double height)
 	{
 		this.level = level;
-        this.height = height;
+		this.height = height;
 	}
 
 	public double getLevel()
@@ -21,8 +21,8 @@ public enum ElevatorState
 		return level;
 	}
 
-    public double getHeight()
-    {
-        return height;
-    }
+	public double getHeight()
+	{
+		return height;
+	}
 }
