@@ -96,7 +96,7 @@ public class Elevator implements Subsystem
 	public void periodic()
 	{
 		m_motor.updateInputs(m_inputs);
-        m_inputs.state = m_level;
-        Logger.processInputs(getName(), m_inputs);
+		m_inputs.state = m_level;
+		Logger.processInputs(getName(), m_inputs);
 	}
 }

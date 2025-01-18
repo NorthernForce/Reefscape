@@ -1,7 +1,6 @@
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Meters;
-import org.littletonrobotics.junction.AutoLog;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -13,13 +12,6 @@ import frc.robot.zippy.constants.ZippyConstants;
 
 public class ElevatorIOTalon implements ElevatorIO
 {
-	@AutoLog
-	public static class ElevatorIOInputs
-	{
-		public double temperature = 0;
-		public ElevatorState state = ElevatorState.L1;
-	}
-
 	private TalonFX m_motor;
 	private StatusSignal<Angle> m_position;
 	private StatusSignal<Temperature> m_temperature;
@@ -52,7 +44,7 @@ public class ElevatorIOTalon implements ElevatorIO
 	public void updateInputs(ElevatorIO.ElevatorIOInputs inputs)
 	{
 		inputs.temperature = m_temperature.getValueAsDouble();
-    }
+	}
 
 	@SuppressWarnings("removal")
 	public void setInverted(boolean inverted)

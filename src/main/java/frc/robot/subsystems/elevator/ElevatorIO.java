@@ -9,8 +9,8 @@ public interface ElevatorIO
 	@AutoLog
 	public static class ElevatorIOInputs
 	{
-		public double temperature;
-		public ElevatorState state;
+		public double temperature = 0;
+		public ElevatorState state = ElevatorState.L1;
 	}
 
 	public void start(double speed);
