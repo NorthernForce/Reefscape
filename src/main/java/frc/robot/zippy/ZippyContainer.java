@@ -12,22 +12,19 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.subsystems.photonvision.PhotonVision;
 import frc.robot.zippy.constants.ZippyConstants;
 import frc.robot.zippy.constants.ZippyTunerConstants;
 import frc.robot.zippy.oi.ZippyDriverOI;
 import frc.robot.zippy.oi.ZippyOI;
 import frc.robot.zippy.oi.ZippyProgrammerOI;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
 
 public class ZippyContainer implements NFRRobotContainer
 {
 	private final PhoenixCommandDrive drive;
 	private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
 	private Alliance alliance = allianceSupplier.get();
-	private final Vision vision;
+	private final PhotonVision vision;
 
 	public ZippyContainer()
 	{
@@ -36,43 +33,8 @@ public class ZippyContainer implements NFRRobotContainer
 				ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,
 				ZippyTunerConstants.BackRight);
 		drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
-
-		switch (Constants.kCurrentMode)
-		{
-		case REAL:
-			vision = new Vision(drive::addVisionMeasurement, ZippyConstants.visionConstants,
-					new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[0],
-							ZippyConstants.visionConstants.cameraTransforms()[0]),
-					new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[1],
-							ZippyConstants.visionConstants.cameraTransforms()[1]),
-					new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[2],
-							ZippyConstants.visionConstants.cameraTransforms()[2]),
-					new VisionIOPhotonVision(ZippyConstants.visionConstants.cameraNames()[3],
-							ZippyConstants.visionConstants.cameraTransforms()[3]));
-			break;
-		case SIM:
-			vision = new Vision(drive::addVisionMeasurement, ZippyConstants.visionConstants,
-					new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[0],
-							ZippyConstants.visionConstants.cameraTransforms()[0], drive::getPose),
-					new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[1],
-							ZippyConstants.visionConstants.cameraTransforms()[1], drive::getPose),
-					new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[2],
-							ZippyConstants.visionConstants.cameraTransforms()[2], drive::getPose),
-					new VisionIOPhotonVisionSim(ZippyConstants.visionConstants.cameraNames()[3],
-							ZippyConstants.visionConstants.cameraTransforms()[3], drive::getPose));
-			break;
-		default:
-			vision = new Vision(drive::addVisionMeasurement, ZippyConstants.visionConstants, new VisionIO()
-			{
-			}, new VisionIO()
-			{
-			}, new VisionIO()
-			{
-			}, new VisionIO()
-			{
-			});
-			break;
-		}
+		vision = new PhotonVision(ZippyConstants.visionConstants.cameraNames(),
+				ZippyConstants.visionConstants.cameraTransforms(), ZippyConstants.visionConstants.aprilTagLayout());
 	}
 
 	public PhoenixCommandDrive getDrive()
@@ -104,6 +66,10 @@ public class ZippyContainer implements NFRRobotContainer
 		{
 			alliance = allianceSupplier.get();
 			drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
+		}
+		for (var poseEstimate : vision.getPoseEstimates())
+		{
+			drive.addVisionMeasurement(poseEstimate.estimatedPose.toPose2d(), poseEstimate.timestampSeconds);
 		}
 	}
 
