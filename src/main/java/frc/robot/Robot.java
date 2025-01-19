@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.zippy.ZippyContainer;
@@ -38,6 +39,7 @@ public class Robot extends LoggedRobot
 {
 	private Command autoSelected = null;
 	private NFRRobotContainer container = null;
+	private final Notifier notifier = new Notifier(() -> System.gc());
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -74,8 +76,8 @@ public class Robot extends LoggedRobot
 		{
 		case REAL:
 			// Running on a real robot, log to a USB stick ("/U/logs")
-			Logger.addDataReceiver(new WPILOGWriter());
-			Logger.addDataReceiver(new NT4Publisher());
+			// Logger.addDataReceiver(new WPILOGWriter());
+			// Logger.addDataReceiver(new NT4Publisher());
 			break;
 
 		case SIM:
@@ -96,9 +98,11 @@ public class Robot extends LoggedRobot
 		// Logger.disableDeterministicTimestamps()
 
 		// Start AdvantageKit logger
-		Logger.start();
+		// Logger.start();
 
 		container.bindOI();
+
+		notifier.startPeriodic(0.5);
 	}
 
 	/** This function is called periodically during all modes. */
