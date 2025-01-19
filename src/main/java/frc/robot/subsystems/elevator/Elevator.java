@@ -53,19 +53,19 @@ public class Elevator implements Subsystem
 		{
 			if (level.getLevel() <= 2)
 			{
-				return m_motor.getPosition().abs(Meters) >= ElevatorState.L1.getHeight();
+				return m_inputs.position.abs(Meters) >= ElevatorState.L1.getHeight();
 			} else
 			{
-				return m_motor.getPosition().abs(Meters) >= ElevatorState.L3.getHeight();
+				return m_inputs.position.abs(Meters) >= ElevatorState.L3.getHeight();
 			}
 		} else
 		{
 			if (level.getLevel() <= 2)
 			{
-				return m_motor.getPosition().abs(Meters) <= ElevatorState.L1.getHeight();
+				return m_inputs.position.abs(Meters) <= ElevatorState.L1.getHeight();
 			} else
 			{
-				return m_motor.getPosition().abs(Meters) <= ElevatorState.L3.getHeight();
+				return m_inputs.position.abs(Meters) <= ElevatorState.L3.getHeight();
 			}
 		}
 	}
@@ -76,19 +76,19 @@ public class Elevator implements Subsystem
 		{
 			if (level.getLevel() <= 2)
 			{
-				return m_motor.getInnerPosition().abs(Meters) + ElevatorState.L1.getHeight() >= level.getHeight();
+				return m_inputs.innerPosition.abs(Meters) + ElevatorState.L1.getHeight() >= level.getHeight();
 			} else
 			{
-				return m_motor.getInnerPosition().abs(Meters) + ElevatorState.L3.getHeight() >= level.getHeight();
+				return m_inputs.innerPosition.abs(Meters) + ElevatorState.L3.getHeight() >= level.getHeight();
 			}
 		} else
 		{
 			if (level.getLevel() <= 2)
 			{
-				return m_motor.getInnerPosition().abs(Meters) + ElevatorState.L1.getHeight() <= level.getHeight();
+				return m_inputs.innerPosition.abs(Meters) + ElevatorState.L1.getHeight() <= level.getHeight();
 			} else
 			{
-				return m_motor.getInnerPosition().abs(Meters) + ElevatorState.L3.getHeight() <= level.getHeight();
+				return m_inputs.innerPosition.abs(Meters) + ElevatorState.L3.getHeight() <= level.getHeight();
 			}
 		}
 	}
