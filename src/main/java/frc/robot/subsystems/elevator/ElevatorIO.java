@@ -15,8 +15,8 @@ public interface ElevatorIO
 		public double innerTemperature = 0;
 		public ElevatorState state = ElevatorState.L1;
 		public ElevatorState innerState = ElevatorState.L1;
-        public Distance position = Meters.of(0);
-        public Distance innerPosition = Meters.of(0);
+		public Distance position = Meters.of(0);
+		public Distance innerPosition = Meters.of(0);
 	}
 
 	public void startInner(double speed);

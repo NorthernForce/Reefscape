@@ -44,15 +44,15 @@ public class ZippyConstants
 		public static final double INNER_GEAR_RATIO = INNER_GEAR_BOX_RATIO * INNER_SPROCKET_TEETH / INNER_SPROCKET_DIAM;
 		public static final double INNER_SPROCKET_CIRCUMFERENCE = Math.PI * INNER_SPROCKET_DIAM;
 
-        // talon configs
-        public static final double kS = 0.25;
-        public static final double kV = 0.12;
-        public static final double kA = 0.02;
-        public static final double kP = 4.8;
-        public static final double kI = 0.0;
-        public static final double kD = 0.1;
-        public static final double CRUISE_VELOCITY = 80;
-        public static final double ACCELERATION = 160;
-        public static final double JERK = 1600;
-    }
+		// talon configs
+		public static final double kS = 0.25;
+		public static final double kV = 0.12;
+		public static final double kA = 0.02;
+		public static final double kP = 4.8;
+		public static final double kI = 0.0;
+		public static final double kD = 0.1;
+		public static final double CRUISE_VELOCITY = 80;
+		public static final double ACCELERATION = 160;
+		public static final double JERK = 1600;
+	}
 }
