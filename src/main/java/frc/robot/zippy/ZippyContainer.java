@@ -4,9 +4,13 @@ import java.util.function.Supplier;
 
 import org.northernforce.util.NFRRobotContainer;
 
+import com.ctre.phoenix6.Utils;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
@@ -25,6 +29,7 @@ public class ZippyContainer implements NFRRobotContainer
 	private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
 	private Alliance alliance = allianceSupplier.get();
 	private final PhotonVision vision;
+	private final PowerDistribution pdh;
 
 	public ZippyContainer()
 	{
@@ -35,6 +40,7 @@ public class ZippyContainer implements NFRRobotContainer
 		drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
 		vision = new PhotonVision(ZippyConstants.visionConstants.cameraNames(),
 				ZippyConstants.visionConstants.cameraTransforms(), ZippyConstants.visionConstants.aprilTagLayout());
+		pdh = new PowerDistribution(40, ModuleType.kRev);
 	}
 
 	public PhoenixCommandDrive getDrive()
@@ -69,7 +75,7 @@ public class ZippyContainer implements NFRRobotContainer
 		}
 		for (var poseEstimate : vision.getPoseEstimates())
 		{
-			drive.addVisionMeasurement(poseEstimate.estimatedPose.toPose2d(), poseEstimate.timestampSeconds);
+			drive.addVisionMeasurement(poseEstimate.pose(), Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
 		}
 	}
 
@@ -84,5 +90,4 @@ public class ZippyContainer implements NFRRobotContainer
 	{
 		return new InstantCommand();
 	}
-
 }

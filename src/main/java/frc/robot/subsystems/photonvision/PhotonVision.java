@@ -9,6 +9,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -50,9 +51,17 @@ public class PhotonVision extends SubsystemBase
 	}
 
 	@AutoLogOutput
-	public EstimatedRobotPose[] getPoseEstimates()
+	public PoseEstimate[] getPoseEstimates()
 	{
-		EstimatedRobotPose[] poses = new EstimatedRobotPose[poseEstimates.size()];
-		return poseEstimates.toArray(poses);
+		PoseEstimate[] poses = new PoseEstimate[poseEstimates.size()];
+		for (int i = 0; i < poses.length; i++)
+		{
+			poses[i] = new PoseEstimate(poseEstimates.get(i).estimatedPose.toPose2d(),
+					poseEstimates.get(i).timestampSeconds);
+		}
+		return poses;
+	}
+
+	public static record PoseEstimate(Pose2d pose, double timestamp) {
 	}
 }

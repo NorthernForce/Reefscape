@@ -57,6 +57,6 @@ public class ZippyConstants
 	public static VisionConstants visionConstants = new VisionConstants(aprilTagLayout, maxAmbiguity, maxZError,
 			linearStdDevBaseline, angularStdDevBaseline, cameraStdDevFactors, linearStdDevMegatag2Factor,
 			angularStdDevMegatag2Factor, new String[]
-			{ camera0Name, camera1Name, camera2Name, camera3Name }, new Transform3d[]
-			{ robotToCamera0, robotToCamera1, robotToCamera2, robotToCamera3 });
+			{ camera0Name, camera1Name, camera3Name }, new Transform3d[]
+			{ robotToCamera0, robotToCamera1, robotToCamera3 });
 }
