@@ -12,28 +12,16 @@ public interface ElevatorIO
 	public static class ElevatorIOInputs
 	{
 		public double temperature = 0;
-		public double innerTemperature = 0;
-		public ElevatorState state = ElevatorState.L1;
-		public ElevatorState innerState = ElevatorState.L1;
 		public Distance position = Meters.of(0);
-		public Distance innerPosition = Meters.of(0);
+		public boolean isAtTargetPosition = false;
+		public ElevatorState goingTo = ElevatorState.L1;
 	}
 
-	public void startInner(double speed);
-
-	public void stopInner();
-
-	public void start(double speed);
+	public void start(double speed, ElevatorState level);
 
 	public void stop();
-
-	public Distance getInnerPosition();
-
-	public Distance getPosition();
 
 	public void updateInputs(ElevatorIOInputs inputs);
 
 	public void setInverted(boolean inverted);
-
-	public void setInnerInverted(boolean inverted);
 }
