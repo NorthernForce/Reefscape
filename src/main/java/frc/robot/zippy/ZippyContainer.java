@@ -25,11 +25,9 @@ public class ZippyContainer implements NFRRobotContainer
 	private final PhoenixCommandDrive drive;
 	private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
 	private Alliance alliance = allianceSupplier.get();
-	private final Climber climber;
 
 	public ZippyContainer()
 	{
-		climber = new Climber(new ClimberIOTalon(29, ZippyConstants.ClimberConstants.GEAR_RATIO));
 		drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants,
 				ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
 				ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,
@@ -40,11 +38,6 @@ public class ZippyContainer implements NFRRobotContainer
 	public PhoenixCommandDrive getDrive()
 	{
 		return drive;
-	}
-
-	public Climber getClimber()
-	{
-		return climber;
 	}
 
 	@Override
