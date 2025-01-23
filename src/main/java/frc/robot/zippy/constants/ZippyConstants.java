@@ -19,4 +19,9 @@ public class ZippyConstants
 		public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(3.0);
 		public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
 	}
+
+	public static class ClimberConstants
+	{
+		public static final double GEAR_RATIO = 20; // TODO: Change this
+	}
 }
