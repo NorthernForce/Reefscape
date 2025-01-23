@@ -16,13 +16,18 @@ public class Intake implements Subsystem
 
 	public void intake()
 	{
-		intakeIO.intake();
+		intakeIO.set(1);
 	}
 
 	public void outtake()
 	{
-		intakeIO.outtake();
+		intakeIO.set(-1);
 	}
+
+    public void stop()
+    {
+        intakeIO.set(0);
+    }
 
 	public void periodic()
 	{

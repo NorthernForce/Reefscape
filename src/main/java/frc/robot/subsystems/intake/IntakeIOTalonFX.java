@@ -16,17 +16,11 @@ public class IntakeIOTalonFX implements IntakeIO
 		position = intakeMotor.getPosition();
 	}
 
-	@Override
-	public void intake()
-	{
-		intakeMotor.set(0.5);
-	}
-
-	@Override
-	public void outtake()
-	{
-		intakeMotor.set(-0.5);
-	}
+    @Override
+    public void set(double speed)
+    {
+        intakeMotor.set(speed);
+    }
 
 	@Override
 	public void updateInputs(IntakeIOInputs inputs)

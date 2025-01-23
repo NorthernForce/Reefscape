@@ -15,9 +15,7 @@ public interface IntakeIO
 		public Angle position = Rotations.of(0);
 	}
 
-	public void intake();
-
-	public void outtake();
+    public void set(double speed);
 
 	public void updateInputs(IntakeIOInputs inputs);
 }
