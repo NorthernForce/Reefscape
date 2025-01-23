@@ -25,33 +25,27 @@ public class ZippyContainer implements NFRRobotContainer
 	private final PhoenixCommandDrive drive;
 	private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
 	private Alliance alliance = allianceSupplier.get();
-	private final Elevator elevator;
 
 	public ZippyContainer()
 	{
-		elevator = new Elevator(new ElevatorIOTalon(27, ZippyConstants.ElevatorConstants.kS,
-				ZippyConstants.ElevatorConstants.kV, ZippyConstants.ElevatorConstants.kA,
-				ZippyConstants.ElevatorConstants.kP, ZippyConstants.ElevatorConstants.kI,
-				ZippyConstants.ElevatorConstants.kD, ZippyConstants.ElevatorConstants.CRUISE_VELOCITY,
-				ZippyConstants.ElevatorConstants.ACCELERATION, ZippyConstants.ElevatorConstants.JERK, 0.1,
-				ZippyConstants.ElevatorConstants.SPROCKET_CIRCUMFERENCE, ZippyConstants.ElevatorConstants.GEAR_RATIO),
-				new ElevatorIOTalon(28, ZippyConstants.ElevatorConstants.kS, ZippyConstants.ElevatorConstants.kV,
-						ZippyConstants.ElevatorConstants.kA, ZippyConstants.ElevatorConstants.kP,
-						ZippyConstants.ElevatorConstants.kI, ZippyConstants.ElevatorConstants.kD,
-						ZippyConstants.ElevatorConstants.CRUISE_VELOCITY, ZippyConstants.ElevatorConstants.ACCELERATION,
-						ZippyConstants.ElevatorConstants.JERK, 0.1,
-						ZippyConstants.ElevatorConstants.SPROCKET_CIRCUMFERENCE,
-						ZippyConstants.ElevatorConstants.GEAR_RATIO));
+		// elevator = new Elevator(new ElevatorIOTalon(27, ZippyConstants.ElevatorConstants.kS,
+		// 		ZippyConstants.ElevatorConstants.kV, ZippyConstants.ElevatorConstants.kA,
+		// 		ZippyConstants.ElevatorConstants.kP, ZippyConstants.ElevatorConstants.kI,
+		// 		ZippyConstants.ElevatorConstants.kD, ZippyConstants.ElevatorConstants.CRUISE_VELOCITY,
+		// 		ZippyConstants.ElevatorConstants.ACCELERATION, ZippyConstants.ElevatorConstants.JERK, 0.1,
+		// 		ZippyConstants.ElevatorConstants.SPROCKET_CIRCUMFERENCE, ZippyConstants.ElevatorConstants.GEAR_RATIO),
+		// 		new ElevatorIOTalon(28, ZippyConstants.ElevatorConstants.kS, ZippyConstants.ElevatorConstants.kV,
+		// 				ZippyConstants.ElevatorConstants.kA, ZippyConstants.ElevatorConstants.kP,
+		// 				ZippyConstants.ElevatorConstants.kI, ZippyConstants.ElevatorConstants.kD,
+		// 				ZippyConstants.ElevatorConstants.CRUISE_VELOCITY, ZippyConstants.ElevatorConstants.ACCELERATION,
+		// 				ZippyConstants.ElevatorConstants.JERK, 0.1,
+		// 				ZippyConstants.ElevatorConstants.SPROCKET_CIRCUMFERENCE,
+		// 				ZippyConstants.ElevatorConstants.GEAR_RATIO));
 		drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants,
 				ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
 				ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,
 				ZippyTunerConstants.BackRight);
 		drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
-	}
-
-	public Elevator getElevator()
-	{
-		return elevator;
 	}
 
 	public PhoenixCommandDrive getDrive()
