@@ -44,8 +44,8 @@ public class ZippyProgrammerOI implements ZippyOI
 				.resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
 						DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
 				container.getDrive()));
-		driverJoystick.povUp().whileTrue(container.getClimber().getClimbUpCommand());
-		driverJoystick.povDown().whileTrue(container.getClimber().getClimbDownCommand());
-		container.getClimber().setDefaultCommand(container.getClimber().getStopCommand());
+		driverJoystick.povUp().onTrue(container.getClimber().getClimbUpCommand());
+		driverJoystick.povDown().onTrue(container.getClimber().getClimbDownCommand());
+		driverJoystick.povCenter().onTrue(container.getClimber().getStopCommand());
 	}
 }

@@ -34,6 +34,12 @@ public class Climber implements Subsystem
 			{
 				climbUp();
 			}
+
+			@Override
+			public boolean isFinished()
+			{
+				return true;
+			}
 		};
 	}
 
@@ -45,6 +51,12 @@ public class Climber implements Subsystem
 			public void execute()
 			{
 				climbDown();
+			}
+
+			@Override
+			public boolean isFinished()
+			{
+				return true;
 			}
 		};
 	}
@@ -62,6 +74,12 @@ public class Climber implements Subsystem
 			public void execute()
 			{
 				stop();
+			}
+
+			@Override
+			public boolean isFinished()
+			{
+				return true;
 			}
 		};
 	}
