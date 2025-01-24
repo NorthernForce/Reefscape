@@ -8,12 +8,12 @@ import edu.wpi.first.units.measure.Temperature;
 public class RollersIOTalonFX implements RollersIO
 {
 	private final TalonFX intakeMotor;
-    private final StatusSignal<Temperature> temperature;
+	private final StatusSignal<Temperature> temperature;
 
 	public RollersIOTalonFX(int id)
 	{
 		intakeMotor = new TalonFX(id);
-        temperature = intakeMotor.getDeviceTemp();
+		temperature = intakeMotor.getDeviceTemp();
 	}
 
 	@Override
