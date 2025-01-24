@@ -63,6 +63,7 @@ public class Rollers implements Subsystem
 	{
 		intakeIO.updateInputs(m_inputs);
 		sensorIO.updateInputs(m_beamBreakInputs);
-		Logger.processInputs(getName(), m_inputs);
+		Logger.processInputs(getName() + "/Motor", m_inputs);
+        Logger.processInputs(getName() + "/BeamBreak", m_beamBreakInputs);
 	}
 }

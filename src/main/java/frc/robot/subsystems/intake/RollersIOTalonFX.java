@@ -3,17 +3,17 @@ package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Temperature;
 
 public class RollersIOTalonFX implements RollersIO
 {
 	private final TalonFX intakeMotor;
-	private final StatusSignal<Angle> position;
+    private final StatusSignal<Temperature> temperature;
 
 	public RollersIOTalonFX(int id)
 	{
 		intakeMotor = new TalonFX(id);
-		position = intakeMotor.getPosition();
+        temperature = intakeMotor.getDeviceTemp();
 	}
 
 	@Override
@@ -25,6 +25,6 @@ public class RollersIOTalonFX implements RollersIO
 	@Override
 	public void updateInputs(IntakeIOInputs inputs)
 	{
-		inputs.position = position.getValue();
+		inputs.temperature = temperature.getValue();
 	}
 }
