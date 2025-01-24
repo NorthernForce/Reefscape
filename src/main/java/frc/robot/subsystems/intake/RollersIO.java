@@ -6,7 +6,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.units.measure.Angle;
 
-public interface IntakeIO
+public interface RollersIO
 {
 
 	@AutoLog
@@ -15,7 +15,7 @@ public interface IntakeIO
 		public Angle position = Rotations.of(0);
 	}
 
-    public void set(double speed);
+	public void set(double speed);
 
 	public void updateInputs(IntakeIOInputs inputs);
 }
