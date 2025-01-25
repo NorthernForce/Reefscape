@@ -153,9 +153,9 @@ public class LedsIOCANdle implements LedsIO
 	/**
 	 * uses CANdle srobe animation to create a strobe effect with the leds
 	 * 
-	 * @param r sets the red colour of the leds
-	 * @param g sets the green colour of the leds
-	 * @param b sets the blue colour of the leds
+	 * @param r     sets the red colour of the leds
+	 * @param g     sets the green colour of the leds
+	 * @param b     sets the blue colour of the leds
 	 * @param speed double 0.0 to 1.0 controls the speed of the strobe
 	 */
 	@Override
