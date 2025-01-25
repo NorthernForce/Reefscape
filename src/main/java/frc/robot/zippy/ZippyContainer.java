@@ -2,13 +2,13 @@ package frc.robot.zippy;
 
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.northernforce.util.NFRRobotContainer;
 
 import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,7 +29,7 @@ public class ZippyContainer implements NFRRobotContainer
 	private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
 	private Alliance alliance = allianceSupplier.get();
 	private final PhotonVision vision;
-	private final PowerDistribution pdh;
+	private final LoggedPowerDistribution pdh;
 
 	public ZippyContainer()
 	{
@@ -40,7 +40,7 @@ public class ZippyContainer implements NFRRobotContainer
 		drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
 		vision = new PhotonVision(ZippyConstants.visionConstants.cameraNames(),
 				ZippyConstants.visionConstants.cameraTransforms(), ZippyConstants.visionConstants.aprilTagLayout());
-		pdh = new PowerDistribution(40, ModuleType.kRev);
+		pdh = LoggedPowerDistribution.getInstance(40, ModuleType.kRev);
 	}
 
 	public PhoenixCommandDrive getDrive()
