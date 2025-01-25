@@ -1,25 +1,26 @@
 package frc.robot.subsystems.leds;
 
+import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdleConfiguration;
-
-import edu.wpi.first.wpilibj.CAN;
+import com.ctre.phoenix.led.RainbowAnimation;
 import frc.robot.subsystems.leds.LedsIO;
 
 /**
  * @see frc.robot.subsystems.leds.LedsIOCANdle
- * @param setOn sets the LED on or off
+ * @param setOn         sets the LED on or off
  * @param setBrightness sets the brightness of the LED
- * @param setColours sets the colours of the LED
- * @param updateInputs updates the LED inputs
- * @param r red value of the LED
- * @param g green value of the LED
- * @param b blue value of the LED
+ * @param setColours    sets the colours of the LED
+ * @param updateInputs  updates the LED inputs
+ * @param r             red value of the LED
+ * @param g             green value of the LED
+ * @param b             blue value of the LED
  */
 
 public class LedsIOCANdle implements LedsIO
 {
+	// Variables
 	CANdle candle;
 	CANdleConfiguration config;
 
@@ -64,6 +65,13 @@ public class LedsIOCANdle implements LedsIO
 		g = gInput;
 		b = bInput;
 		candle.setLEDs(r, g, b);
+	}
+
+	@Override
+	public void RainbowAnimation()
+	{
+		Animation anim = new RainbowAnimation();
+		candle.animate(anim);
 	}
 
 	@Override
