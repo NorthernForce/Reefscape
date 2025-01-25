@@ -25,10 +25,11 @@ public class LedsIOCANdle implements LedsIO
 	private double speed = 1.0;
 	private int animationIndex = 0;
 
-    /**
-     * Initializes the CANdle for leds
-     * @param id id of the CANdle on the rio
-     */
+	/**
+	 * Initializes the CANdle for leds
+	 * 
+	 * @param id id of the CANdle on the rio
+	 */
 	// Constructor
 	public LedsIOCANdle(int id)
 	{
@@ -39,10 +40,11 @@ public class LedsIOCANdle implements LedsIO
 		candle.configAllSettings(config);
 	}
 
-    /**
-     * turns the leds on or off
-     * @param on boolean for on or off true: on false: off
-     */
+	/**
+	 * turns the leds on or off
+	 * 
+	 * @param on boolean for on or off true: on false: off
+	 */
 	@Override
 	public void setOn(boolean on)
 	{
@@ -54,10 +56,11 @@ public class LedsIOCANdle implements LedsIO
 		// LedsIO.animating is final and cannot be reassigned
 	}
 
-    /**
-     * sets the brightness of the leds
-     * @param brightness double of 0.0 to 1.0 scale
-     */
+	/**
+	 * sets the brightness of the leds
+	 * 
+	 * @param brightness double of 0.0 to 1.0 scale
+	 */
 	@Override
 	public void setBrightness(double brightness)
 	{
@@ -69,12 +72,13 @@ public class LedsIOCANdle implements LedsIO
 		animating = false;
 	}
 
-    /**
-     * sets the colors of all of the leds to r, g, b
-     * @param rInput red colour of the leds
-     * @param gInput green colour of the leds
-     * @param bInput blue colour of the leds
-     */
+	/**
+	 * sets the colors of all of the leds to r, g, b
+	 * 
+	 * @param rInput red colour of the leds
+	 * @param gInput green colour of the leds
+	 * @param bInput blue colour of the leds
+	 */
 	@Override
 	public void setColours(int rInput, int gInput, int bInput)
 	{
@@ -85,12 +89,15 @@ public class LedsIOCANdle implements LedsIO
 		animating = false;
 	}
 
-    /**
-     * Uses CANdles built in rainbow animation to create a rainbow effect for the leds
-     * @param ledCount the amount of leds this takes effect upon
-     * @param speed a double 0.0 to 1.0 determining how fast the animation happens
-     * @param brightness a double 0.0 to 1.0 determining how bright the leds are
-     */
+	/**
+	 * Uses CANdles built in rainbow animation to create a rainbow effect for the
+	 * leds
+	 * 
+	 * @param ledCount   the amount of leds this takes effect upon
+	 * @param speed      a double 0.0 to 1.0 determining how fast the animation
+	 *                   happens
+	 * @param brightness a double 0.0 to 1.0 determining how bright the leds are
+	 */
 	@Override
 	public void rainbowAnimation(int ledCount, double speed, double brightness)
 	{
@@ -99,13 +106,15 @@ public class LedsIOCANdle implements LedsIO
 		animating = true;
 	}
 
-    /**
-     * Uses CANdles built in twinkle animation to create a twinkle effect for the leds
-     * @param r sets the red colour of the leds
-     * @param g sets the green colour of the leds
-     * @param b sets the blue colour of the leds
-     * @param speed a double 0.0 to 1.0 that determines the speed of the animation
-     */
+	/**
+	 * Uses CANdles built in twinkle animation to create a twinkle effect for the
+	 * leds
+	 * 
+	 * @param r     sets the red colour of the leds
+	 * @param g     sets the green colour of the leds
+	 * @param b     sets the blue colour of the leds
+	 * @param speed a double 0.0 to 1.0 that determines the speed of the animation
+	 */
 	@Override
 	public void twinkleAnimation(int r, int g, int b, double speed)
 	{
@@ -114,15 +123,16 @@ public class LedsIOCANdle implements LedsIO
 		animating = true;
 	}
 
-    /**
-     * Uses CANdle colourflow animation to create a flow effect for the leds
-     * @param r sets the red colour of the leds
-     * @param g sets the green colour of the leds
-     * @param b sets the blue colour of the leds
-     * @param speed sets the speed of the flow effect 0.0 to 1.0
-     * @param direction boolean true: flows forwards false: flows backwards
-     * @param offset offset of the flow animation
-     */
+	/**
+	 * Uses CANdle colourflow animation to create a flow effect for the leds
+	 * 
+	 * @param r         sets the red colour of the leds
+	 * @param g         sets the green colour of the leds
+	 * @param b         sets the blue colour of the leds
+	 * @param speed     sets the speed of the flow effect 0.0 to 1.0
+	 * @param direction boolean true: flows forwards false: flows backwards
+	 * @param offset    offset of the flow animation
+	 */
 	@Override
 	public void colourFlow(int r, int g, int b, double speed, boolean direction, int offSet)
 	{
@@ -140,13 +150,14 @@ public class LedsIOCANdle implements LedsIO
 		animating = true;
 	}
 
-    /**
-     * uses CANdle srobe animation to create a strobe effect with the leds
-     * @param r sets the red colour of the leds
-     * @param g sets the green colour of the leds
-     * @param b sets the blue colour of the leds
-     * @speed double 0.0 to 1.0 controls the speed of the strobe
-     */
+	/**
+	 * uses CANdle srobe animation to create a strobe effect with the leds
+	 * 
+	 * @param r sets the red colour of the leds
+	 * @param g sets the green colour of the leds
+	 * @param b sets the blue colour of the leds
+	 * @speed double 0.0 to 1.0 controls the speed of the strobe
+	 */
 	@Override
 	public void strobeAnimation(int r, int g, int b, double speed)
 	{
@@ -155,9 +166,9 @@ public class LedsIOCANdle implements LedsIO
 		animating = true;
 	}
 
-    /**
-     * clears all of the animation channels to stop any animations
-     */
+	/**
+	 * clears all of the animation channels to stop any animations
+	 */
 	@Override
 	public void clearAnimationBuffer()
 	{
@@ -168,9 +179,10 @@ public class LedsIOCANdle implements LedsIO
 		animating = false;
 	}
 
-    /**
-     * changes the current state of the ledsto the next one so they can be cycled through automaticaly
-     */
+	/**
+	 * changes the current state of the ledsto the next one so they can be cycled
+	 * through automaticaly
+	 */
 	@Override
 	public void incrementAnimation()
 	{
