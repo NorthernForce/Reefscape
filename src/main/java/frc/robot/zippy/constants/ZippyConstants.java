@@ -20,14 +20,6 @@ public class ZippyConstants
 		public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
 	}
 
-	public static class FieldConstants // TODO: Change these values
-	{
-		public static final double L1_HEIGHT = 1;
-		public static final double L2_HEIGHT = 3;
-		public static final double L3_HEIGHT = 5;
-		public static final double L4_HEIGHT = 8;
-	}
-
 	public static class ElevatorConstants
 	{
 		// outer ratios
@@ -54,5 +46,31 @@ public class ZippyConstants
 		public static final double CRUISE_VELOCITY = 80;
 		public static final double ACCELERATION = 160;
 		public static final double JERK = 1600;
+
+		public static enum ElevatorState
+		{
+			L1Outer(1, 0), L2Outer(2, 0), L3Outer(3, 5), L4Outer(4, 5), L1Inner(1, 0), L2Inner(2, 5), L3Inner(3, 0),
+			L4Inner(4, 5);
+
+			private double level;
+			private double height;
+
+			ElevatorState(int level, double height)
+			{
+				this.level = level;
+				this.height = height;
+			}
+
+			public double getLevel()
+			{
+				return level;
+			}
+
+			public double getHeight()
+			{
+				return height;
+			}
+		}
+
 	}
 }

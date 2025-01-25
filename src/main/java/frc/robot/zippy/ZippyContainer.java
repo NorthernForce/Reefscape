@@ -11,8 +11,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
-import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorIOTalon;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 import frc.robot.zippy.constants.ZippyConstants;
 import frc.robot.zippy.constants.ZippyTunerConstants;
@@ -28,25 +26,6 @@ public class ZippyContainer implements NFRRobotContainer
 
 	public ZippyContainer()
 	{
-		// elevator = new Elevator(new ElevatorIOTalon(27,
-		// ZippyConstants.ElevatorConstants.kS,
-		// ZippyConstants.ElevatorConstants.kV, ZippyConstants.ElevatorConstants.kA,
-		// ZippyConstants.ElevatorConstants.kP, ZippyConstants.ElevatorConstants.kI,
-		// ZippyConstants.ElevatorConstants.kD,
-		// ZippyConstants.ElevatorConstants.CRUISE_VELOCITY,
-		// ZippyConstants.ElevatorConstants.ACCELERATION,
-		// ZippyConstants.ElevatorConstants.JERK, 0.1,
-		// ZippyConstants.ElevatorConstants.SPROCKET_CIRCUMFERENCE,
-		// ZippyConstants.ElevatorConstants.GEAR_RATIO),
-		// new ElevatorIOTalon(28, ZippyConstants.ElevatorConstants.kS,
-		// ZippyConstants.ElevatorConstants.kV,
-		// ZippyConstants.ElevatorConstants.kA, ZippyConstants.ElevatorConstants.kP,
-		// ZippyConstants.ElevatorConstants.kI, ZippyConstants.ElevatorConstants.kD,
-		// ZippyConstants.ElevatorConstants.CRUISE_VELOCITY,
-		// ZippyConstants.ElevatorConstants.ACCELERATION,
-		// ZippyConstants.ElevatorConstants.JERK, 0.1,
-		// ZippyConstants.ElevatorConstants.SPROCKET_CIRCUMFERENCE,
-		// ZippyConstants.ElevatorConstants.GEAR_RATIO));
 		drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants,
 				ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
 				ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,

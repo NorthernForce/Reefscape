@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.zippy.constants.ZippyConstants.ElevatorConstants.ElevatorState;
 
 public class Elevator implements Subsystem
 {
@@ -18,29 +19,10 @@ public class Elevator implements Subsystem
 		m_motorInner = ioInner;
 	}
 
-	private void start(double speed, ElevatorState level)
+	private void start(double speed, ElevatorState levelOuter, ElevatorState levelInner)
 	{
-		if (level.getLevel() > 2)
-		{
-			m_motorOuter.start(speed, ElevatorState.L3);
-			if (level.getLevel() == 3)
-			{
-				m_motorInner.start(speed, ElevatorState.L1);
-			} else
-			{
-				m_motorInner.start(speed, ElevatorState.L2);
-			}
-		} else
-		{
-			m_motorOuter.start(speed, ElevatorState.L1);
-			if (level.getLevel() == 1)
-			{
-				m_motorInner.start(speed, ElevatorState.L1);
-			} else
-			{
-				m_motorInner.start(speed, ElevatorState.L2);
-			}
-		}
+		m_motorOuter.setTargetPosition(speed, levelOuter);
+		m_motorInner.setTargetPosition(speed, levelInner);
 	}
 
 	private void stop()
@@ -49,7 +31,7 @@ public class Elevator implements Subsystem
 		m_motorInner.stop();
 	}
 
-	public Command getLevelCommand(ElevatorState level)
+	public Command getLevelCommand(ElevatorState levelOuter, ElevatorState levelInner)
 	{
 
 		return new Command()
@@ -57,7 +39,7 @@ public class Elevator implements Subsystem
 			@Override
 			public void initialize()
 			{
-				start(0.5, level);
+				start(0.5, levelOuter, levelInner);
 			}
 
 			@Override
@@ -76,22 +58,22 @@ public class Elevator implements Subsystem
 
 	public Command getL1Command()
 	{
-		return getLevelCommand(ElevatorState.L1);
+		return getLevelCommand(ElevatorState.L1Outer, ElevatorState.L1Inner);
 	}
 
 	public Command getL2Command()
 	{
-		return getLevelCommand(ElevatorState.L2);
+		return getLevelCommand(ElevatorState.L2Outer, ElevatorState.L2Inner);
 	}
 
 	public Command getL3Command()
 	{
-		return getLevelCommand(ElevatorState.L3);
+		return getLevelCommand(ElevatorState.L3Outer, ElevatorState.L3Inner);
 	}
 
 	public Command getL4Command()
 	{
-		return getLevelCommand(ElevatorState.L4);
+		return getLevelCommand(ElevatorState.L4Outer, ElevatorState.L4Inner);
 	}
 
 	@Override

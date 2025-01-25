@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Meters;
 import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.units.measure.Distance;
+import frc.robot.zippy.constants.ZippyConstants.ElevatorConstants.ElevatorState;
 
 public interface ElevatorIO
 {
@@ -14,14 +15,21 @@ public interface ElevatorIO
 		public double temperature = 0;
 		public Distance position = Meters.of(0);
 		public boolean isAtTargetPosition = false;
-		public ElevatorState goingTo = ElevatorState.L1;
 	}
 
-	public void start(double speed, ElevatorState level);
+	public default void setTargetPosition(double speed, ElevatorState level)
+	{
+	}
 
-	public void stop();
+	public default void stop()
+	{
+	}
 
-	public void updateInputs(ElevatorIOInputs inputs);
+	public default void updateInputs(ElevatorIOInputs inputs)
+	{
+	}
 
-	public void setInverted(boolean inverted);
+	public default void setInverted(boolean inverted)
+	{
+	}
 }

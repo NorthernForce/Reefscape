@@ -10,6 +10,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Temperature;
+import frc.robot.zippy.constants.ZippyConstants.ElevatorConstants.ElevatorState;
 
 public class ElevatorIOTalon implements ElevatorIO
 {
@@ -19,14 +20,14 @@ public class ElevatorIOTalon implements ElevatorIO
 	private StatusSignal<Temperature> m_temperature;
 	private double gearRatio;
 	private ElevatorState goingTo;
-	private double errorTollerance;
+	private double errorTolerance;
 
 	public ElevatorIOTalon(int index, double kS, double kV, double kA, double kP, double kI, double kD,
-			double cruiseVelocity, double acceleration, double jerk, double errorTollerance,
+			double cruiseVelocity, double acceleration, double jerk, double errorTolerance,
 			double sprocketCircumference, double gearRatio)
 	{
 		m_motor = new TalonFX(index);
-		this.errorTollerance = errorTollerance;
+		this.errorTolerance = errorTolerance;
 		talonFXConfigs = new TalonFXConfiguration();
 		this.gearRatio = gearRatio;
 
@@ -49,7 +50,8 @@ public class ElevatorIOTalon implements ElevatorIO
 		m_temperature = m_motor.getDeviceTemp();
 	}
 
-	public void start(double speed, ElevatorState level)
+	@Override
+	public void setTargetPosition(double speed, ElevatorState level)
 	{
 		goingTo = level;
 		m_motor.setControl(new MotionMagicVoltage(gearRatio * level.getHeight()));
@@ -65,8 +67,7 @@ public class ElevatorIOTalon implements ElevatorIO
 	{
 		inputs.temperature = m_temperature.getValueAsDouble();
 		inputs.position = Meters.of(m_position.getValueAsDouble() / gearRatio);
-		inputs.isAtTargetPosition = Math.abs(inputs.position.in(Meters) - goingTo.getHeight()) < errorTollerance;
-		inputs.goingTo = goingTo;
+		inputs.isAtTargetPosition = Math.abs(inputs.position.in(Meters) - goingTo.getHeight()) < errorTolerance;
 	}
 
 	public void setInverted(boolean inverted)
