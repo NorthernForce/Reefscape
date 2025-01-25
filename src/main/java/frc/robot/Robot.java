@@ -13,21 +13,19 @@
 
 package frc.robot;
 
-import java.util.Map;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.zippy.ZippyContainer;
 
+import java.util.Map;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.northernforce.util.NFRRobotChooser;
 import org.northernforce.util.NFRRobotContainer;
-
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.robots.CrabbyContainer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -39,7 +37,6 @@ import frc.robot.robots.CrabbyContainer;
 public class Robot extends LoggedRobot
 {
 	private Command autoSelected = null;
-	private final LoggedDashboardChooser<Command> autoChooser = new LoggedDashboardChooser<>("Auto Choices");
 	private NFRRobotContainer container = null;
 
 	/**
@@ -68,8 +65,8 @@ public class Robot extends LoggedRobot
 			break;
 		}
 
-		final NFRRobotChooser chooser = new NFRRobotChooser(() -> new CrabbyContainer(),
-				Map.of("Crabby", () -> new CrabbyContainer()));
+		final NFRRobotChooser chooser = new NFRRobotChooser(() -> new ZippyContainer(),
+				Map.of("Zippy", () -> new ZippyContainer()));
 		container = chooser.getNFRRobotContainer();
 
 		// Set up data receivers & replay source
@@ -101,11 +98,7 @@ public class Robot extends LoggedRobot
 		// Start AdvantageKit logger
 		Logger.start();
 
-		// Initialize auto chooser
-		final var defaultAuto = container.getDefaultAutonomous();
-		autoChooser.addDefaultOption(defaultAuto.getFirst(), defaultAuto.getSecond());
-		container.getAutonomousOptions().forEach(autoChooser::addOption);
-
+		container.bindOI();
 	}
 
 	/** This function is called periodically during all modes. */
@@ -120,8 +113,9 @@ public class Robot extends LoggedRobot
 	@Override
 	public void autonomousInit()
 	{
-		autoSelected = autoChooser.get();
-		if (autoChooser != null)
+		container.autonomousInit();
+		autoSelected = container.getAutonomousCommand();
+		if (autoSelected != null)
 		{
 			System.out.println("Auto selected: " + autoSelected.getName());
 			autoSelected.schedule();
