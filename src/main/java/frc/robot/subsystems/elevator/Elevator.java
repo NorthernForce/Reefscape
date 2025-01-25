@@ -4,6 +4,8 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.subsystems.elevator.brake.BrakeIO;
+import frc.robot.subsystems.elevator.brake.BrakeIOInputsAutoLogged;
 import frc.robot.zippy.constants.ZippyConstants.ElevatorConstants.ElevatorState;
 
 public class Elevator implements Subsystem
@@ -12,14 +14,20 @@ public class Elevator implements Subsystem
 	private ElevatorIO m_motorInner;
 	private final ElevatorIOInputsAutoLogged m_inputsOuter = new ElevatorIOInputsAutoLogged();
 	private final ElevatorIOInputsAutoLogged m_inputsInner = new ElevatorIOInputsAutoLogged();
+	private final BrakeIOInputsAutoLogged m_brakeInputsOuter = new BrakeIOInputsAutoLogged();
+	private final BrakeIOInputsAutoLogged m_brakeInputsInner = new BrakeIOInputsAutoLogged();
+	private BrakeIO m_brakeOuter;
+	private BrakeIO m_brakeInner;
 
-	public Elevator(ElevatorIO ioOuter, ElevatorIO ioInner)
+	public Elevator(ElevatorIO ioOuter, ElevatorIO ioInner, BrakeIO breakOuter, BrakeIO breakInner)
 	{
 		m_motorOuter = ioOuter;
 		m_motorInner = ioInner;
+		m_brakeOuter = breakOuter;
+		m_brakeInner = breakInner;
 	}
 
-	private void start(double speed, ElevatorState levelOuter, ElevatorState levelInner)
+	private void setTargetPosition(double speed, ElevatorState levelOuter, ElevatorState levelInner)
 	{
 		m_motorOuter.setTargetPosition(speed, levelOuter);
 		m_motorInner.setTargetPosition(speed, levelInner);
@@ -29,6 +37,8 @@ public class Elevator implements Subsystem
 	{
 		m_motorOuter.stop();
 		m_motorInner.stop();
+		m_brakeInner.setBreak(true);
+		m_brakeOuter.setBreak(true);
 	}
 
 	public Command getLevelCommand(ElevatorState levelOuter, ElevatorState levelInner)
@@ -39,7 +49,9 @@ public class Elevator implements Subsystem
 			@Override
 			public void initialize()
 			{
-				start(0.5, levelOuter, levelInner);
+				m_brakeInner.setBreak(false);
+				m_brakeOuter.setBreak(false);
+				setTargetPosition(0.5, levelOuter, levelInner);
 			}
 
 			@Override
@@ -81,7 +93,11 @@ public class Elevator implements Subsystem
 	{
 		m_motorOuter.updateInputs(m_inputsOuter);
 		m_motorInner.updateInputs(m_inputsInner);
+		m_brakeOuter.updateInputs(m_brakeInputsOuter);
+		m_brakeInner.updateInputs(m_brakeInputsInner);
 		Logger.processInputs(getName() + "/outer", m_inputsOuter);
 		Logger.processInputs(getName() + "/inner", m_inputsInner);
+		Logger.processInputs(getName() + "/brake/outer", m_brakeInputsOuter);
+		Logger.processInputs(getName() + "/brake/inner", m_brakeInputsInner);
 	}
 }

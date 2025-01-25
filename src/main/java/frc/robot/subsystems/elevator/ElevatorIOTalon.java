@@ -6,12 +6,11 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.wpilibj.Relay.Direction;
+import com.ctre.phoenix6.signals.InvertedValue;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Temperature;
 import frc.robot.zippy.constants.ZippyConstants.ElevatorConstants.ElevatorState;
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.Relay.Value;
 
 public class ElevatorIOTalon implements ElevatorIO
 {
@@ -22,17 +21,15 @@ public class ElevatorIOTalon implements ElevatorIO
 	private double gearRatio;
 	private ElevatorState goingTo;
 	private double errorTolerance;
-	private Relay m_relay;
 
 	public ElevatorIOTalon(int index, double kS, double kV, double kA, double kP, double kI, double kD,
 			double cruiseVelocity, double acceleration, double jerk, double errorTolerance,
-			double sprocketCircumference, double gearRatio, int relayChannel)
+			double sprocketCircumference, double gearRatio)
 	{
 		m_motor = new TalonFX(index);
 		this.errorTolerance = errorTolerance;
 		talonFXConfigs = new TalonFXConfiguration();
 		this.gearRatio = gearRatio;
-		m_relay = new Relay(relayChannel);
 
 		var slot0Configs = talonFXConfigs.Slot0;
 		slot0Configs.kS = kS;
@@ -57,13 +54,11 @@ public class ElevatorIOTalon implements ElevatorIO
 	public void setTargetPosition(double speed, ElevatorState level)
 	{
 		goingTo = level;
-		m_relay.set(Value.kOn);
 		m_motor.setControl(new MotionMagicVoltage(gearRatio * level.getHeight()));
 	}
 
 	public void stop()
 	{
-		m_relay.set(Value.kOff);
 		m_motor.stopMotor();
 	}
 
@@ -77,7 +72,9 @@ public class ElevatorIOTalon implements ElevatorIO
 
 	public void setInverted(boolean inverted)
 	{
-		m_relay.setDirection((inverted ? Direction.kReverse : Direction.kForward));
+		talonFXConfigs.MotorOutput.Inverted = inverted ? InvertedValue.Clockwise_Positive
+				: InvertedValue.CounterClockwise_Positive;
+		m_motor.getConfigurator().apply(talonFXConfigs);
 	}
 
 }
