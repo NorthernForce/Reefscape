@@ -46,6 +46,6 @@ public class ZippyProgrammerOI implements ZippyOI
 						DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
 				container.getDrive()));
 		driverJoystick.y().whileTrue(container.getLEDs().getSetColour(255, 0, 0));
-		driverJoystick.b().whileTrue(container.getLEDs().getRainbowAnimation());
+		driverJoystick.b().whileTrue(container.getLEDs().getIncrementAnimation());
 	}
 }

@@ -20,6 +20,10 @@ public interface LedsIO
 		public boolean on = false;
 		public int r, g, b;
 		public double brightness;
+		public int ledCount;
+		public double speed;
+		public boolean animating;
+		public int animationIndex;
 	}
 
 	public default void setColours(int r, int g, int b)
@@ -38,7 +42,31 @@ public interface LedsIO
 	{
 	}
 
-	public default void RainbowAnimation()
+	public default void updateAnimating(boolean on)
+	{
+	}
+
+	public default void rainbowAnimation(int ledCount, double speed, double brightness)
+	{
+	}
+
+	public default void twinkleAnimation(int r, int g, int b, double speed)
+	{
+	}
+
+	public default void colourFlow(int r, int g, int b, double speed, boolean direction, int offSet)
+	{
+	}
+
+	public default void strobeAnimation(int r, int g, int b, double speed)
+	{
+	}
+
+	public default void incrementAnimation()
+	{
+	}
+
+	public default void clearAnimationBuffer()
 	{
 	}
 }

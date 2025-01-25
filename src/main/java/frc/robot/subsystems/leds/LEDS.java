@@ -1,7 +1,8 @@
 package frc.robot.subsystems.leds;
 
+import com.ctre.phoenix.led.Animation;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDS extends SubsystemBase
 {
+
 	private final LedsIO io;
 
 	public LEDS(LedsIO io)
@@ -48,9 +50,34 @@ public class LEDS extends SubsystemBase
 		io.setBrightness(brightness);
 	}
 
-	public void RainbowAnimation()
+	public void rainbowAnimation(int ledCount, double speed, double brightness)
 	{
-		io.RainbowAnimation();
+		io.rainbowAnimation(ledCount, speed, brightness);
+	}
+
+	public void twinkleAnimation(int r, int g, int b, double speed)
+	{
+		io.twinkleAnimation(r, g, b, speed);
+	}
+
+	public void colourFlow(int r, int g, int b, double speed, boolean direction, int offSet)
+	{
+		io.colourFlow(r, g, b, speed, direction, offSet);
+	}
+
+	public void strobeAnimation(int r, int g, int b, double speed)
+	{
+		io.strobeAnimation(r, g, b, speed);
+	}
+
+	public void incrementAnimation()
+	{
+		io.incrementAnimation();
+	}
+
+	public void clearAnimationBuffer()
+	{
+		io.clearAnimationBuffer();
 	}
 
 	public Command getSetColour(int r, int g, int b)
@@ -59,8 +86,13 @@ public class LEDS extends SubsystemBase
 		return runOnce(() -> setLEDColour(r, g, b));
 	}
 
-	public Command getRainbowAnimation()
+	public Command getRainbowAnimation(int ledCount, double speed, double brightness)
 	{
-		return runOnce(() -> RainbowAnimation());
+		return runOnce(() -> rainbowAnimation(ledCount, speed, brightness));
+	}
+
+	public Command getIncrementAnimation()
+	{
+		return runOnce(() -> incrementAnimation());
 	}
 }
