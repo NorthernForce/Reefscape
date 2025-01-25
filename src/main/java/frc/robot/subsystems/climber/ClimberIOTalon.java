@@ -1,20 +1,24 @@
 package frc.robot.subsystems.climber;
 
 import static edu.wpi.first.units.Units.Rotation;
+import static edu.wpi.first.units.Units.Rotations;
 
-import static edu.wpi.first.units.Units.Degrees;
-
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.units.measure.Angle;
 
 public class ClimberIOTalon implements ClimberIO
 {
 	private TalonFX m_motor;
 	private double m_gearRatio;
+	private StatusSignal<Angle> m_position;
 
 	public ClimberIOTalon(int id, double gearRatio)
 	{
 		m_motor = new TalonFX(id);
 		m_gearRatio = gearRatio;
+		m_position = m_motor.getPosition();
 	}
 
 	@Override
@@ -38,7 +42,7 @@ public class ClimberIOTalon implements ClimberIO
 	@Override
 	public void updateInputs(ClimberIOInputs inputs)
 	{
-		inputs.position = Degrees.of(m_motor.getPosition().getValue().in(Rotation) / m_gearRatio);
+		inputs.position = Rotations.of(m_position.getValue().in(Rotation) / m_gearRatio);
 	}
 
 }

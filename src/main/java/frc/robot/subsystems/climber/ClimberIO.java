@@ -10,7 +10,7 @@ public interface ClimberIO
 	@AutoLog
 	public static class ClimberIOInputs
 	{
-		public Angle position = Degrees.of(0);
+		public Angle position = Rotations.of(0);
 	}
 
 	public void climbUp();
