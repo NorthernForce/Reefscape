@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class SensorIOBeamBreak implements SensorIO
 {
-	private DigitalInput beamBreakSensor;
+	private final DigitalInput beamBreakSensor;
 
 	public SensorIOBeamBreak(int port)
 	{

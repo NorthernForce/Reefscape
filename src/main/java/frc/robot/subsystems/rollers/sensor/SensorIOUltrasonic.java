@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 
 public class SensorIOUltrasonic implements SensorIO
 {
-	private Ultrasonic m_sonar;
-	private double m_mmToObject;
+	private final Ultrasonic m_sonar;
+	private final double m_mmToObject;
 
 	public SensorIOUltrasonic(int trigChannel, int echoChannel, double mmToObject)
 	{

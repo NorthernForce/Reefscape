@@ -9,12 +9,12 @@ import frc.robot.subsystems.rollers.sensor.SensorIO;
 
 public class Rollers implements Subsystem
 {
-	public RollersIO m_intakeIO;
-	public SensorIO m_sensorIOAlgae;
-	public SensorIO m_sensorIOCoral;
-	private IntakeIOInputsAutoLogged m_inputs = new IntakeIOInputsAutoLogged();
-	private SensorIOInputsAutoLogged m_sensorIOAlgaeInputs = new SensorIOInputsAutoLogged();
-	private SensorIOInputsAutoLogged m_sensorIOCoralInputs = new SensorIOInputsAutoLogged();
+	public final RollersIO m_intakeIO;
+	public final SensorIO m_sensorIOAlgae;
+	public final SensorIO m_sensorIOCoral;
+	private final IntakeIOInputsAutoLogged m_inputs = new IntakeIOInputsAutoLogged();
+	private final SensorIOInputsAutoLogged m_sensorIOAlgaeInputs = new SensorIOInputsAutoLogged();
+	private final SensorIOInputsAutoLogged m_sensorIOCoralInputs = new SensorIOInputsAutoLogged();
 
 	public Rollers(RollersIO intakeIO, SensorIO sensorIOAlgae, SensorIO sensorIOCoral)
 	{
