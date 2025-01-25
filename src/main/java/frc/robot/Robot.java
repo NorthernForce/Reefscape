@@ -116,7 +116,7 @@ public class Robot extends LoggedRobot
 	{
 		CommandScheduler.getInstance().run();
 		container.periodic();
-		competitionCodeAlert.set(isCompetition() && !BuildConstants.GIT_BRANCH.startsWith("event/"));
+		competitionCodeAlert.set(isCompetition() && !BuildConstants.GIT_BRANCH.startsWith("event"));
 	}
 
 	/** This function is called once when autonomous is enabled. */
