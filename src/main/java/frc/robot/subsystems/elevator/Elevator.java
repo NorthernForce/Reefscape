@@ -27,10 +27,12 @@ public class Elevator implements Subsystem
 		m_brakeInner = breakInner;
 	}
 
-	private void setTargetPosition(double speed, ElevatorState levelOuter, ElevatorState levelInner)
+	private void setTargetPosition(double speed, ElevatorState level)
 	{
-		m_motorOuter.setTargetPosition(speed, levelOuter);
-		m_motorInner.setTargetPosition(speed, levelInner);
+		m_brakeInner.setBreak(false);
+		m_brakeOuter.setBreak(false);
+		m_motorOuter.setTargetPosition(speed, level.getOuterHeight());
+		m_motorInner.setTargetPosition(speed, level.getInnerHeight());
 	}
 
 	private void stop()
@@ -41,7 +43,7 @@ public class Elevator implements Subsystem
 		m_brakeOuter.setBreak(true);
 	}
 
-	public Command getLevelCommand(ElevatorState levelOuter, ElevatorState levelInner)
+	public Command getLevelCommand(ElevatorState level)
 	{
 
 		return new Command()
@@ -49,9 +51,7 @@ public class Elevator implements Subsystem
 			@Override
 			public void initialize()
 			{
-				m_brakeInner.setBreak(false);
-				m_brakeOuter.setBreak(false);
-				setTargetPosition(0.5, levelOuter, levelInner);
+				setTargetPosition(0.5, level);
 			}
 
 			@Override
@@ -70,22 +70,22 @@ public class Elevator implements Subsystem
 
 	public Command getL1Command()
 	{
-		return getLevelCommand(ElevatorState.L1Outer, ElevatorState.L1Inner);
+		return getLevelCommand(ElevatorState.L1);
 	}
 
 	public Command getL2Command()
 	{
-		return getLevelCommand(ElevatorState.L2Outer, ElevatorState.L2Inner);
+		return getLevelCommand(ElevatorState.L2);
 	}
 
 	public Command getL3Command()
 	{
-		return getLevelCommand(ElevatorState.L3Outer, ElevatorState.L3Inner);
+		return getLevelCommand(ElevatorState.L3);
 	}
 
 	public Command getL4Command()
 	{
-		return getLevelCommand(ElevatorState.L4Outer, ElevatorState.L4Inner);
+		return getLevelCommand(ElevatorState.L4);
 	}
 
 	@Override

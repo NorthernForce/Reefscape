@@ -49,16 +49,17 @@ public class ZippyConstants
 
 		public static enum ElevatorState
 		{
-			L1Outer(1, 0), L2Outer(2, 0), L3Outer(3, 5), L4Outer(4, 5), L1Inner(1, 0), L2Inner(2, 5), L3Inner(3, 0),
-			L4Inner(4, 5);
+			L1(1, 0, 0), L2(2, 5, 0), L3(3, 0, 5), L4(4, 5, 5);
 
-			private double level;
-			private double height;
+			private int level;
+			private double innerHeight;
+			private double outerHeight;
 
-			ElevatorState(int level, double height)
+			ElevatorState(int level, double innerHeight, double outerHeight)
 			{
 				this.level = level;
-				this.height = height;
+				this.outerHeight = outerHeight;
+				this.innerHeight = innerHeight;
 			}
 
 			public double getLevel()
@@ -66,9 +67,14 @@ public class ZippyConstants
 				return level;
 			}
 
-			public double getHeight()
+			public double getOuterHeight()
 			{
-				return height;
+				return outerHeight;
+			}
+
+			public double getInnerHeight()
+			{
+				return innerHeight;
 			}
 		}
 

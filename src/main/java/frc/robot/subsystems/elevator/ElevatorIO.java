@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.Meters;
 import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.units.measure.Distance;
-import frc.robot.zippy.constants.ZippyConstants.ElevatorConstants.ElevatorState;
 
 public interface ElevatorIO
 {
@@ -17,7 +16,7 @@ public interface ElevatorIO
 		public boolean isAtTargetPosition = false;
 	}
 
-	public default void setTargetPosition(double speed, ElevatorState level)
+	public default void setTargetPosition(double speed, double height)
 	{
 	}
 
