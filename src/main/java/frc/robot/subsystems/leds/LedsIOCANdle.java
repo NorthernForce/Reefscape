@@ -156,7 +156,7 @@ public class LedsIOCANdle implements LedsIO
 	 * @param r sets the red colour of the leds
 	 * @param g sets the green colour of the leds
 	 * @param b sets the blue colour of the leds
-	 * @speed double 0.0 to 1.0 controls the speed of the strobe
+	 * @param speed double 0.0 to 1.0 controls the speed of the strobe
 	 */
 	@Override
 	public void strobeAnimation(int r, int g, int b, double speed)
