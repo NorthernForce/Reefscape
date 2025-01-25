@@ -7,6 +7,17 @@ import com.ctre.phoenix.led.CANdleConfiguration;
 import edu.wpi.first.wpilibj.CAN;
 import frc.robot.subsystems.leds.LedsIO;
 
+/**
+ * @see frc.robot.subsystems.leds.LedsIOCANdle
+ * @param setOn sets the LED on or off
+ * @param setBrightness sets the brightness of the LED
+ * @param setColours sets the colours of the LED
+ * @param updateInputs updates the LED inputs
+ * @param r red value of the LED
+ * @param g green value of the LED
+ * @param b blue value of the LED
+ */
+
 public class LedsIOCANdle implements LedsIO
 {
 	CANdle candle;

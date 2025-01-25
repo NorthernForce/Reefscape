@@ -4,6 +4,21 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+
+
+ /**
+  * @see frc.robot.subsystems.leds.LEDS
+  * @param setLEDColour sets the colour of the LED
+    * @param switchLEDs switches the LED on or off
+    * @param setLEDBrightness sets the brightness of the LED
+    * @param getSetColour gets the colour of the LED
+    * @param io sets the LED IO
+    * @param periodic updates the LED IO
+  * @param r sets the red value of the LED
+  * @param g sets the green value of the LED
+  * @param b sets the blue value of the LED
+  */
+
 public class LEDS extends SubsystemBase
 {
 	private final LedsIO io;
