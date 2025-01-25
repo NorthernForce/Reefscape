@@ -1,33 +1,27 @@
 package frc.robot.subsystems.rollers.sensor;
 
-import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Ultrasonic;
 
 public class SensorIOUltrasonic implements SensorIO
 {
+	private Ultrasonic m_sonar;
+	private double m_mmToObject;
 
-	private final AnalogInput ultrasonicSensor;
-	private final double distanceToStopAt;
-
-	public SensorIOUltrasonic(int signalChannel, double distanceToStopAt)
+	public SensorIOUltrasonic(int trigChannel, int echoChannel, double mmToObject)
 	{
-		ultrasonicSensor = new AnalogInput(signalChannel);
-		this.distanceToStopAt = distanceToStopAt;
+		m_sonar = new Ultrasonic(trigChannel, echoChannel);
+		m_mmToObject = mmToObject;
 	}
 
-	/**
-	 * gets the distance from the ultrasonic sensor
-	 * 
-	 * @return the distance, where 0V = 20 mm, and 5V = 4000 mm. Do the math.
-	 */
-	private double getDistance()
+	private double getRange()
 	{
-		return ultrasonicSensor.getVoltage() / 5.0 * 3980.0 + 20.0;
+		return m_sonar.getRangeMM();
 	}
 
 	@Override
 	public void updateInputs(SensorIOInputs inputs)
 	{
-		inputs.hasPiece = getDistance() <= distanceToStopAt;
+		inputs.hasPiece = getRange() <= m_mmToObject;
 	}
 
 }

@@ -62,6 +62,30 @@ public class Rollers implements Subsystem
 		};
 	}
 
+	public Command getOuttakeCommand()
+	{
+		return new Command()
+		{
+			@Override
+			public void execute()
+			{
+				outtake();
+			}
+
+			@Override
+			public boolean isFinished()
+			{
+				return true;
+			}
+
+			@Override
+			public void end(boolean interrupted)
+			{
+				stop();
+			}
+		};
+	}
+
 	public void periodic()
 	{
 		m_intakeIO.updateInputs(m_inputs);
