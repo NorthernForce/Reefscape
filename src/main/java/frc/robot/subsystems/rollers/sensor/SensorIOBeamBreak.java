@@ -1,4 +1,4 @@
-package frc.robot.subsystems.intake.sensor;
+package frc.robot.subsystems.rollers.sensor;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 

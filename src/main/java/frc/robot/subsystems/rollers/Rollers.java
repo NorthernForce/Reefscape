@@ -1,11 +1,11 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.rollers;
 
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.subsystems.intake.sensor.SensorIO;
-import frc.robot.subsystems.intake.sensor.SensorIOInputsAutoLogged;
+import frc.robot.subsystems.rollers.sensor.SensorIOInputsAutoLogged;
+import frc.robot.subsystems.rollers.sensor.SensorIO;
 
 public class Rollers implements Subsystem
 {
