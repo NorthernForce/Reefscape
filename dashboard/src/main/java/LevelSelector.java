@@ -52,19 +52,20 @@ public class LevelSelector extends JComponent implements MouseListener
 	{
 		int centerX = (int) (getWidth() / 2.0);
 		int centerY = (int) (getHeight() / 2.0);
-		levelRectangles[0] = new Rectangle(0, 0, (int) centerX - 10, (int) centerY / 3 - 10);
-		levelRectangles[1] = new Rectangle((int) centerX + 10, 0, (int) centerX - 10, (int) centerY / 3 - 10);
+		levelRectangles[0] = new Rectangle(0, 10, (int) centerX - 10, (int) centerY / 3 - 10);
+		levelRectangles[1] = new Rectangle((int) centerX + 10, 10, (int) centerX - 10, (int) centerY / 3 - 10);
 		levelRectangles[2] = new Rectangle(0, (int) centerY / 3 + 10, (int) centerX - 10, (int) centerY / 3 - 10);
 		levelRectangles[3] = new Rectangle((int) centerX + 10, (int) centerY / 3 + 10, (int) centerX - 10,
 				(int) centerY / 3 - 10);
-		int algaeRadius = Math.min(centerX, centerY) / 3 - 10;
-		algaeEllipse.setFrame(centerX - algaeRadius, centerY - algaeRadius, 2 * algaeRadius, 2 * algaeRadius);
-		levelRectangles[4] = new Rectangle(0, 4 * (int) centerY / 3 + 10, (int) centerX - 10, (int) centerY / 3 - 10);
-		levelRectangles[5] = new Rectangle((int) centerX + 10, 4 * (int) centerY / 3 + 10, (int) centerX - 10,
+		levelRectangles[4] = new Rectangle(0, 2 * (int) centerY / 3 + 10, (int) centerX - 10, (int) centerY / 3 - 10);
+		levelRectangles[5] = new Rectangle((int) centerX + 10, 2 * (int) centerY / 3 + 10, (int) centerX - 10,
 				(int) centerY / 3 - 10);
-		levelRectangles[6] = new Rectangle(0, 5 * (int) centerY / 3 + 10, (int) centerX - 10, (int) centerY / 3 - 10);
-		levelRectangles[7] = new Rectangle((int) centerX + 10, 5 * (int) centerY / 3 + 10, (int) centerX - 10,
+		levelRectangles[6] = new Rectangle(0, 3 * (int) centerY / 3 + 10, (int) centerX - 10, (int) centerY / 3 - 10);
+		levelRectangles[7] = new Rectangle((int) centerX + 10, 3 * (int) centerY / 3 + 10, (int) centerX - 10,
 				(int) centerY / 3 - 10);
+		int algaeRadius = Math.min(centerX, centerY) / 2 - 10;
+		algaeEllipse.setFrame(centerX - algaeRadius, 5 * (int) centerY / 3 - algaeRadius, 2 * algaeRadius,
+				2 * algaeRadius);
 	}
 
 	@Override

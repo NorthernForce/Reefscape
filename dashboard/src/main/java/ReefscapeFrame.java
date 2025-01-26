@@ -1,5 +1,7 @@
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.awt.GridLayout;
@@ -26,7 +28,8 @@ public class ReefscapeFrame extends JFrame
 	private final BooleanArraySubscriber stateSubscriber;
 	private final HexagonSelector hexagonSelector;
 	private final LevelSelector levelSelector;
-	private final StationChooser stationChooser;
+	private final StationChooser leftCoral, rightCoral, processor;
+	private final JPanel leftPanel, rightPanel;
 
 	public ReefscapeFrame()
 	{
@@ -45,7 +48,73 @@ public class ReefscapeFrame extends JFrame
 		setLayout(new GridLayout(1, 3));
 		hexagonSelector = new HexagonSelector();
 		levelSelector = new LevelSelector();
-		add(hexagonSelector);
+		leftPanel = new JPanel();
+		leftPanel.setLayout(new GridLayout(2, 1));
+		leftPanel.add(hexagonSelector);
+		leftCoral = new StationChooser();
+		rightCoral = new StationChooser();
+		processor = new StationChooser();
+		leftCoral.setAction(new AbstractAction()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				choicePublisher.set(48);
+				if (rightCoral.isSelected())
+				{
+					rightCoral.deselect();
+				}
+				if (processor.isSelected())
+				{
+					processor.deselect();
+				}
+				if (levelSelector.getSelectedLevel().isPresent())
+				{
+					levelSelector.deselectLevel();
+				}
+			}
+		});
+		rightCoral.setAction(new AbstractAction()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				choicePublisher.set(49);
+				if (leftCoral.isSelected())
+				{
+					leftCoral.deselect();
+				}
+				if (processor.isSelected())
+				{
+					processor.deselect();
+				}
+				if (levelSelector.getSelectedLevel().isPresent())
+				{
+					levelSelector.deselectLevel();
+				}
+			}
+		});
+		processor.setAction(new AbstractAction()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				choicePublisher.set(50);
+				if (leftCoral.isSelected())
+				{
+					leftCoral.deselect();
+				}
+				if (rightCoral.isSelected())
+				{
+					rightCoral.deselect();
+				}
+				if (levelSelector.getSelectedLevel().isPresent())
+				{
+					levelSelector.deselectLevel();
+				}
+			}
+		});
+		leftPanel.add(leftCoral);
 		hexagonSelector.setAction(new AbstractAction()
 		{
 			@Override
@@ -53,7 +122,7 @@ public class ReefscapeFrame extends JFrame
 			{
 				if (hexagonSelector.getSelectedTrapezoid().isPresent() && levelSelector.getSelectedLevel().isPresent())
 				{
-					choicePublisher.set(hexagonSelector.getSelectedTrapezoid().get() * 6
+					choicePublisher.set(hexagonSelector.getSelectedTrapezoid().get() * 9
 							+ levelSelector.getSelectedLevel().get().ordinal());
 				}
 				if (hexagonSelector.getSelectedTrapezoid().isPresent())
@@ -68,6 +137,7 @@ public class ReefscapeFrame extends JFrame
 				}
 			}
 		});
+		add(leftPanel);
 		add(levelSelector);
 		levelSelector.setAction(new AbstractAction()
 		{
@@ -78,24 +148,26 @@ public class ReefscapeFrame extends JFrame
 				{
 					choicePublisher.set(hexagonSelector.getSelectedTrapezoid().get() * 6
 							+ levelSelector.getSelectedLevel().get().ordinal());
-					stationChooser.deselect();
 				}
-			}
-		});
-		stationChooser = new StationChooser();
-		stationChooser.setAction(new AbstractAction()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				if (stationChooser.getSelectedStation().isPresent())
+				if (leftCoral.isSelected())
 				{
-					choicePublisher.set(stationChooser.getSelectedStation().get().ordinal() + 36);
-					levelSelector.deselectLevel();
+					leftCoral.deselect();
+				}
+				if (rightCoral.isSelected())
+				{
+					rightCoral.deselect();
+				}
+				if (processor.isSelected())
+				{
+					processor.deselect();
 				}
 			}
 		});
-		add(stationChooser);
+		rightPanel = new JPanel();
+		rightPanel.setLayout(new GridLayout(2, 1));
+		rightPanel.add(processor);
+		rightPanel.add(rightCoral);
+		add(rightPanel);
 		setVisible(true);
 	}
 
