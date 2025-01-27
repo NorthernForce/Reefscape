@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.zippy.ZippyContainer;
@@ -38,6 +39,7 @@ public class Robot extends LoggedRobot
 {
 	private Command autoSelected = null;
 	private NFRRobotContainer container = null;
+	private final Notifier notifier = new Notifier(() -> System.gc());
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -101,6 +103,8 @@ public class Robot extends LoggedRobot
 		container = chooser.getNFRRobotContainer();
 
 		container.bindOI();
+
+		notifier.startPeriodic(0.5);
 	}
 
 	/** This function is called periodically during all modes. */

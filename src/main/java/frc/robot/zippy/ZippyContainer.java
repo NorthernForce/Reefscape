@@ -2,16 +2,21 @@ package frc.robot.zippy;
 
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.northernforce.util.NFRRobotContainer;
+
+import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
+import frc.robot.subsystems.photonvision.PhotonVision;
 import frc.robot.zippy.constants.ZippyConstants;
 import frc.robot.zippy.constants.ZippyTunerConstants;
 import frc.robot.zippy.oi.ZippyDriverOI;
@@ -23,6 +28,8 @@ public class ZippyContainer implements NFRRobotContainer
 	private final PhoenixCommandDrive drive;
 	private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
 	private Alliance alliance = allianceSupplier.get();
+	private final PhotonVision vision;
+	private final LoggedPowerDistribution pdh;
 
 	public ZippyContainer()
 	{
@@ -31,6 +38,9 @@ public class ZippyContainer implements NFRRobotContainer
 				ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,
 				ZippyTunerConstants.BackRight);
 		drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
+		vision = new PhotonVision(ZippyConstants.visionConstants.cameraNames(),
+				ZippyConstants.visionConstants.cameraTransforms(), ZippyConstants.visionConstants.aprilTagLayout());
+		pdh = LoggedPowerDistribution.getInstance(40, ModuleType.kRev);
 	}
 
 	public PhoenixCommandDrive getDrive()
@@ -63,6 +73,10 @@ public class ZippyContainer implements NFRRobotContainer
 			alliance = allianceSupplier.get();
 			drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
 		}
+		for (var poseEstimate : vision.getPoseEstimates())
+		{
+			drive.addVisionMeasurement(poseEstimate.pose(), Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
+		}
 	}
 
 	@Override
@@ -76,5 +90,4 @@ public class ZippyContainer implements NFRRobotContainer
 	{
 		return new InstantCommand();
 	}
-
 }
