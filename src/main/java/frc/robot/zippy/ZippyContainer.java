@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
+import frc.robot.subsystems.oculus.Oculus;
+import frc.robot.subsystems.oculus.OculusIONet;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 import frc.robot.zippy.constants.ZippyConstants;
 import frc.robot.zippy.constants.ZippyTunerConstants;
@@ -21,8 +23,13 @@ import frc.robot.zippy.oi.ZippyProgrammerOI;
 public class ZippyContainer implements NFRRobotContainer
 {
 	private final PhoenixCommandDrive drive;
+<<<<<<< HEAD
+	private final Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Red);
+	private final Oculus oculus = new Oculus(new OculusIONet("questnav"));
+=======
 	private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
 	private Alliance alliance = allianceSupplier.get();
+>>>>>>> origin/devel
 
 	public ZippyContainer()
 	{
