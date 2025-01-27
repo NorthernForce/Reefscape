@@ -62,6 +62,10 @@ public interface LedsIO
 	{
 	}
 
+	public default void setSpecificLEDs(int startIdx, int endIdx, int r, int g, int b)
+	{
+	}
+
 	public default void incrementAnimation()
 	{
 	}

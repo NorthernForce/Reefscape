@@ -50,6 +50,11 @@ public class LEDS extends SubsystemBase
 		io.setBrightness(brightness);
 	}
 
+	public void setSpecificLEDs(int startIdx, int endIdx, int r, int g, int b)
+	{
+		io.setSpecificLEDs(startIdx, endIdx, r, g, b);
+	}
+
 	public void rainbowAnimation(int ledCount, double speed, double brightness)
 	{
 		io.rainbowAnimation(ledCount, speed, brightness);

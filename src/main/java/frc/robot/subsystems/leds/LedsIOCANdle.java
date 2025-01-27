@@ -90,6 +90,21 @@ public class LedsIOCANdle implements LedsIO
 	}
 
 	/**
+	 * untested but should be able to set a range of leds to a specific colour
+	 * 
+	 * @param startIdx the start index of the leds
+	 * @param endIdx   the end index of the leds
+	 * @param r        the red value of the leds
+	 * @param g        the green value of the leds
+	 * @param b        the blue value of the leds
+	 */
+	@Override
+	public void setSpecificLEDs(int startIdx, int endIdx, int r, int g, int b)
+	{
+		candle.setLEDs(r, g, b, 0, startIdx, Math.abs(endIdx - startIdx));
+	}
+
+	/**
 	 * Uses CANdles built in rainbow animation to create a rainbow effect for the
 	 * leds
 	 * 
@@ -225,6 +240,9 @@ public class LedsIOCANdle implements LedsIO
 		case 11:
 			setColours(0, 0, 0);
 			clearAnimationBuffer();
+		case 12:
+			setSpecificLEDs(0, 10, 255, 0, 0);
+			break;
 		default:
 			animationIndex = 0;
 			break;
