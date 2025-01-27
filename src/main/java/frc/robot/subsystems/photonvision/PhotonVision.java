@@ -13,13 +13,23 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-/** If only we had two RoboRIO 2's */
+/**
+ * A subsystem that interfaces with PhotonVision cameras and pose estimators.
+ * This class is responsible for updating the pose estimators with new camera
+ * results and providing the latest pose estimates.
+ */
 public class PhotonVision extends SubsystemBase
 {
 	private final PhotonCamera[] cameras;
 	private final PhotonPoseEstimator[] poseEstimators;
 	private final ArrayList<EstimatedRobotPose> poseEstimates;
 
+    /**
+     * Constructs a new PhotonVision subsystem with the given camera names, poses, and field layout.
+     * @param cameraNames The names of the cameras to use.
+     * @param cameraPoses The poses of the cameras relative to the robot.
+     * @param layout The apriltag field layout to use.
+     */
 	public PhotonVision(String[] cameraNames, Transform3d[] cameraPoses, AprilTagFieldLayout layout)
 	{
 		cameras = new PhotonCamera[cameraNames.length];
@@ -50,6 +60,10 @@ public class PhotonVision extends SubsystemBase
 		}
 	}
 
+    /**
+     * Returns the latest pose estimates from the PhotonVision cameras.
+     * @return The latest pose estimates.
+     */
 	@AutoLogOutput
 	public PoseEstimate[] getPoseEstimates()
 	{
@@ -62,6 +76,23 @@ public class PhotonVision extends SubsystemBase
 		return poses;
 	}
 
+    @AutoLogOutput
+    public boolean[] getConnectedStatus()
+    {
+        boolean[] connected = new boolean[cameras.length];
+        for (int i = 0; i < cameras.length; i++)
+        {
+            connected[i] = cameras[i].isConnected();
+        }
+        return connected;
+    }
+
+    /**
+     * A record that represents a pose estimate from a PhotonVision camera.
+     * This record contains the pose estimate and the timestamp of the estimate.
+     * @param pose The pose estimate.
+     * @param timestamp The timestamp of the estimate.
+     */
 	public static record PoseEstimate(Pose2d pose, double timestamp) {
 	}
 }
