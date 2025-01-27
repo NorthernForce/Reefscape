@@ -20,9 +20,9 @@ public class BlennyContainer implements NFRRobotContainer
 {
 	private final PhoenixCommandDrive drive;
 
-    /**
-     * Create a new BlennyContainer
-     */
+	/**
+	 * Create a new BlennyContainer
+	 */
 	public BlennyContainer()
 	{
 		drive = new PhoenixCommandDrive(BlennyTunerConstants.DrivetrainConstants,
@@ -31,10 +31,11 @@ public class BlennyContainer implements NFRRobotContainer
 				BlennyTunerConstants.BackRight);
 	}
 
-    /**
-     * Get the drive subsystem
-     * @return the drive subsystem (PhoenixCommandDrive)
-     */
+	/**
+	 * Get the drive subsystem
+	 * 
+	 * @return the drive subsystem (PhoenixCommandDrive)
+	 */
 	public PhoenixCommandDrive getDrive()
 	{
 		return drive;
@@ -43,16 +44,16 @@ public class BlennyContainer implements NFRRobotContainer
 	@Override
 	public void bindOI()
 	{
-        switch (Constants.kOI)
-        {
-            case PROGRAMMER:
-                new BlennyProgrammerOI().bindOI(this);
-                break;
-            case DRIVER:
-            default:
-                new BlennyDriverOI().bindOI(this);
-                break;
-        }
+		switch (Constants.kOI)
+		{
+		case PROGRAMMER:
+			new BlennyProgrammerOI().bindOI(this);
+			break;
+		case DRIVER:
+		default:
+			new BlennyDriverOI().bindOI(this);
+			break;
+		}
 	}
 
 	@Override
