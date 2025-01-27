@@ -71,7 +71,7 @@ public class Robot extends LoggedRobot
 		Logger.recordMetadata("RoboRIO ID", NFRRobotChooser.getRoborioID());
 
 		// Set up data receivers & replay source
-		switch (Constants.kCurrentMode)
+		switch (Constants.getMode())
 		{
 		case REAL:
 			// Running on a real robot, log to a USB stick ("/U/logs")
