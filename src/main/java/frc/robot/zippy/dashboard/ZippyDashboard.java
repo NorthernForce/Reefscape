@@ -34,11 +34,16 @@ public class ZippyDashboard extends SubsystemBase
 		this.reefDisplayInputs = new ReefDisplayIOInputsAutoLogged();
 	}
 
-    @AutoLogOutput
-    public Pose2d getTargetPose()
-    {
-        return FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.reefLocations);
-    }
+	/**
+	 * Gets the target pose for the reef location.
+	 * 
+	 * @return The target pose.
+	 */
+	@AutoLogOutput
+	public Pose2d getTargetPose()
+	{
+		return FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.reefLocations);
+	}
 
 	@Override
 	public void periodic()
@@ -51,7 +56,7 @@ public class ZippyDashboard extends SubsystemBase
 				name = name.substring(name.indexOf("ZippyDashboardIO") + "ZippyDashboardIO".length());
 			Logger.processInputs(getName() + "/" + name, m_inputs[i]);
 		}
-        reefDisplayIO.updateInputs(reefDisplayInputs);
-        Logger.processInputs(getName() + "/ReefDisplayIO", reefDisplayInputs);
+		reefDisplayIO.updateInputs(reefDisplayInputs);
+		Logger.processInputs(getName() + "/ReefDisplayIO", reefDisplayInputs);
 	}
 }
