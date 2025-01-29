@@ -8,9 +8,9 @@ import edu.wpi.first.units.measure.Temperature;
 public interface RollersIO
 {
 
-    /**
-     * The inputs for the rollers.
-     */
+	/**
+	 * The inputs for the rollers.
+	 */
 
 	@AutoLog
 	public static class IntakeIOInputs
@@ -23,17 +23,19 @@ public interface RollersIO
 		public Current motorTwoCurrent;
 	}
 
-    /**
-     * Sets the speed of the rollers.
-     * @param speed The speed to set the rollers to.
-     */
+	/**
+	 * Sets the speed of the rollers.
+	 * 
+	 * @param speed The speed to set the rollers to.
+	 */
 
 	public void set(double speed);
 
-    /**
-     * Updates the inputs for the rollers.
-     * @param inputs The inputs to update.
-     */
+	/**
+	 * Updates the inputs for the rollers.
+	 * 
+	 * @param inputs The inputs to update.
+	 */
 
 	public void updateInputs(IntakeIOInputs inputs);
 }

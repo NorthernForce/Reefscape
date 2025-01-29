@@ -8,7 +8,8 @@ import frc.robot.subsystems.rollers.sensor.RollersSensorIO;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIOInputsAutoLogged;
 
 /**
- * The rollers subsystem is responsible for controlling the rollers on the robot.
+ * The rollers subsystem is responsible for controlling the rollers on the
+ * robot.
  */
 
 public class Rollers extends SubsystemBase
@@ -20,12 +21,13 @@ public class Rollers extends SubsystemBase
 	private final RollersSensorIOInputsAutoLogged m_sensorIOAlgaeInputs = new RollersSensorIOInputsAutoLogged();
 	private final RollersSensorIOInputsAutoLogged m_sensorIOCoralInputs = new RollersSensorIOInputsAutoLogged();
 
-    /**
-     * Constructs a new Rollers subsystem.
-     * @param intakeIO The IO for the rollers.
-     * @param sensorIOAlgae The IO for the algae sensor.
-     * @param sensorIOCoral The IO for the coral sensor.
-     */
+	/**
+	 * Constructs a new Rollers subsystem.
+	 * 
+	 * @param intakeIO      The IO for the rollers.
+	 * @param sensorIOAlgae The IO for the algae sensor.
+	 * @param sensorIOCoral The IO for the coral sensor.
+	 */
 
 	public Rollers(RollersIO intakeIO, RollersSensorIO sensorIOAlgae, RollersSensorIO sensorIOCoral)
 	{
@@ -34,37 +36,38 @@ public class Rollers extends SubsystemBase
 		m_sensorIOCoral = sensorIOCoral;
 	}
 
-    /**
-     * Runs motors to intake piece.
-     */
+	/**
+	 * Runs motors to intake piece.
+	 */
 
 	public void intake()
 	{
 		m_intakeIO.set(1);
 	}
 
-    /**
-     * Runs motors to outtake piece.
-     */
+	/**
+	 * Runs motors to outtake piece.
+	 */
 
 	public void outtake()
 	{
 		m_intakeIO.set(-1);
 	}
 
-    /**
-     * Stops motors.
-     */
+	/**
+	 * Stops motors.
+	 */
 
 	public void stop()
 	{
 		m_intakeIO.set(0);
 	}
 
-    /**
-     * Returns a command that intakes a piece.
-     * @return The command.
-     */
+	/**
+	 * Returns a command that intakes a piece.
+	 * 
+	 * @return The command.
+	 */
 
 	public Command getIntakeCommand()
 	{
@@ -90,10 +93,11 @@ public class Rollers extends SubsystemBase
 		};
 	}
 
-    /**
-     * Returns a command that outtakes a piece.
-     * @return The command.
-     */
+	/**
+	 * Returns a command that outtakes a piece.
+	 * 
+	 * @return The command.
+	 */
 
 	public Command getOuttakeCommand()
 	{
@@ -119,28 +123,33 @@ public class Rollers extends SubsystemBase
 		};
 	}
 
-    public Command getStopCommand() {
-        return new Command() {
-            @Override
-            public void execute() {
-                stop();
-            }
+	public Command getStopCommand()
+	{
+		return new Command()
+		{
+			@Override
+			public void execute()
+			{
+				stop();
+			}
 
-            @Override
-            public boolean isFinished() {
-                return true;
-            }
+			@Override
+			public boolean isFinished()
+			{
+				return true;
+			}
 
-            @Override
-            public void end(boolean interrupted) {
-                stop();
-            }
-        };
-    }
+			@Override
+			public void end(boolean interrupted)
+			{
+				stop();
+			}
+		};
+	}
 
-    /**
-     * Updates inputs.
-     */
+	/**
+	 * Updates inputs.
+	 */
 
 	@Override
 	public void periodic()

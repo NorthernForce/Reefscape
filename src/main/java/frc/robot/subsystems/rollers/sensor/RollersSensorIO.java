@@ -9,9 +9,9 @@ import org.littletonrobotics.junction.AutoLog;
 public interface RollersSensorIO
 {
 
-    /**
-     * The inputs for the rollers algae and coral sensor.
-     */
+	/**
+	 * The inputs for the rollers algae and coral sensor.
+	 */
 
 	@AutoLog
 	public static class RollersSensorIOInputs
@@ -19,10 +19,11 @@ public interface RollersSensorIO
 		public boolean hasPiece;
 	}
 
-    /**
-     * Updates the inputs for the rollers algae and coral sensor.
-     * @param inputs The inputs to update.
-     */
-    
+	/**
+	 * Updates the inputs for the rollers algae and coral sensor.
+	 * 
+	 * @param inputs The inputs to update.
+	 */
+
 	public void updateInputs(RollersSensorIOInputs inputs);
 }

@@ -22,11 +22,12 @@ public class RollersIOTalonFX implements RollersIO
 	private final Supplier<Boolean> motorTwoPresent;
 	private final StatusSignal<Current> motorTwoCurrent;
 
-    /**
-     * Constructs a new RollersIOTalonFX.
-     * @param id1 The ID of the first motor.
-     * @param id2 The ID of the second motor.
-     */
+	/**
+	 * Constructs a new RollersIOTalonFX.
+	 * 
+	 * @param id1 The ID of the first motor.
+	 * @param id2 The ID of the second motor.
+	 */
 
 	public RollersIOTalonFX(int id1, int id2)
 	{
@@ -40,10 +41,11 @@ public class RollersIOTalonFX implements RollersIO
 		motorTwoCurrent = intakeMotorTwo.getTorqueCurrent();
 	}
 
-    /**
-     * Sets the speed of the rollers.
-     * @param speed The speed to set the rollers to.
-     */
+	/**
+	 * Sets the speed of the rollers.
+	 * 
+	 * @param speed The speed to set the rollers to.
+	 */
 
 	@Override
 	public void set(double speed)
@@ -52,10 +54,11 @@ public class RollersIOTalonFX implements RollersIO
 		intakeMotorTwo.set(-speed);
 	}
 
-    /**
-     * Updates the inputs for the rollers.
-     * @param inputs The inputs to update.
-     */
+	/**
+	 * Updates the inputs for the rollers.
+	 * 
+	 * @param inputs The inputs to update.
+	 */
 
 	@Override
 	public void updateInputs(IntakeIOInputs inputs)
