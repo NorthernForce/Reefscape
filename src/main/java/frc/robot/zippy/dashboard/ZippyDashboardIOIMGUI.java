@@ -1,12 +1,7 @@
-package frc.robot.subsystems.dashboard;
+package frc.robot.zippy.dashboard;
 
 public class ZippyDashboardIOIMGUI implements ZippyDashboardIO
 {
-
-	public void publishValue(String key, Object value)
-	{
-
-	}
 
 	public void updateInputs(ZippyDashboardIOInputs inputs)
 	{
