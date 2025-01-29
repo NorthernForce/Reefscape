@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -25,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.phoenix6.requests.XLockRequest;
 
-public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
+public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsystem
 {
 	private final LinearVelocity maxSpeed;
 	private final AngularVelocity maxAngularSpeed;
@@ -39,7 +38,7 @@ public class PhoenixCommandDrive extends SwerveDrivetrain implements Subsystem
 	 * @param moduleConstants     the module constants
 	 */
 	public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
-			AngularVelocity maxAngularSpeed, SwerveModuleConstants... moduleConstants)
+			AngularVelocity maxAngularSpeed, SwerveModuleConstants<?, ?, ?>... moduleConstants)
 	{
 		super(drivetrainConstants, moduleConstants);
 		CommandScheduler.getInstance().registerSubsystem(this);

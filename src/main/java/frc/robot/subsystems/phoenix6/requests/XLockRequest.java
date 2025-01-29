@@ -12,7 +12,7 @@ public class XLockRequest implements SwerveRequest
 {
 
 	@Override
-	public StatusCode apply(SwerveControlParameters parameters, SwerveModule... modulesToApply)
+	public StatusCode apply(SwerveControlParameters parameters, SwerveModule<?, ?, ?>... modulesToApply)
 	{
 		for (int i = 0; i < modulesToApply.length; i++)
 		{
