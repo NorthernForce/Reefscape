@@ -49,23 +49,21 @@ public class ZippyProgrammerOI implements ZippyOI
 						DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
 				container.getDrive()));
 
-		driverJoystick.b().whileTrue(
-			Commands.sequence(
-                container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kForward),
-                container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kReverse),
-                container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kForward),
-                container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kReverse),
+		driverJoystick.b()
+				.whileTrue(Commands.sequence(
+						container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kForward),
+						container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kReverse),
+						container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kForward),
+						container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kReverse),
 
-                container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kForward),
-                container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kReverse),
-                container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kForward),
-                container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kReverse),
+						container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kForward),
+						container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kReverse),
+						container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kForward),
+						container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kReverse),
 
-                container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kForward),
-                container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kReverse),
-                container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kForward),
-                container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kReverse)
-            )
-        );
+						container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kForward),
+						container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kReverse),
+						container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kForward),
+						container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kReverse)));
 	}
 }
