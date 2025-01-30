@@ -47,30 +47,56 @@ public class ZippyConstants
 		public static final double ACCELERATION = 160;
 		public static final double JERK = 1600;
 
+		public static final double kSInner = 0.25;
+		public static final double kVInner = 0.12;
+		public static final double kAInner = 0.02;
+		public static final double kPInner = 4.8;
+		public static final double kIInner = 0.0;
+		public static final double kDInner = 0.1;
+		public static final double INNER_CRUISE_VELOCITY = 80;
+		public static final double INNER_ACCELERATION = 160;
+		public static final double INNER_JERK = 1600;
+
+		/**
+		 * Elevator states for the coral
+		 */
+
 		public static enum ElevatorState
 		{
-			L1(1, 0, 0), L2(2, 5, 0), L3(3, 0, 5), L4(4, 5, 5);
+			L1(0, 0), L2(5, 0), L3(0, 5), L4(5, 5);
 
-			private int level;
-			private double innerHeight;
-			private double outerHeight;
+			private final double innerHeight;
+			private final double outerHeight;
 
-			ElevatorState(int level, double innerHeight, double outerHeight)
+			/**
+			 * Elevator state constructor
+			 * 
+			 * @param innerHeight height of the inner elevator to go to
+			 * @param outerHeight height of the outer elevator to go to
+			 */
+
+			ElevatorState(double innerHeight, double outerHeight)
 			{
-				this.level = level;
 				this.outerHeight = outerHeight;
 				this.innerHeight = innerHeight;
 			}
 
-			public double getLevel()
-			{
-				return level;
-			}
+			/**
+			 * Get the outer height of the elevator state
+			 * 
+			 * @return the outer height of the elevator state
+			 */
 
 			public double getOuterHeight()
 			{
 				return outerHeight;
 			}
+
+			/**
+			 * Get the inner height of the elevator state
+			 * 
+			 * @return the inner height of the elevator state
+			 */
 
 			public double getInnerHeight()
 			{

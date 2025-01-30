@@ -1,34 +1,62 @@
 package frc.robot.subsystems.elevator;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Fahrenheit;
 import static edu.wpi.first.units.Units.Meters;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Temperature;
+
+/**
+ * ElevatorIO is an interface that defines the methods that an elevator must
+ * implement.
+ */
 
 public interface ElevatorIO
 {
+
+	/**
+	 * inputs for the elevator
+	 */
+
 	@AutoLog
 	public static class ElevatorIOInputs
 	{
-		public double temperature = 0;
+		public Temperature temperature = Fahrenheit.of(0);
 		public Distance position = Meters.of(0);
 		public boolean isAtTargetPosition = false;
+		public boolean present = false;
+		public Current current = Amps.of(0);
 	}
 
-	public default void setTargetPosition(double speed, double height)
+	/**
+	 * Sets the target position of the elevator
+	 * 
+	 * @param height the height to set the elevator to
+	 */
+
+	public default void setTargetPosition(double height)
 	{
 	}
+
+	/**
+	 * Stops the elevator
+	 */
 
 	public default void stop()
 	{
 	}
 
-	public default void updateInputs(ElevatorIOInputs inputs)
-	{
-	}
+	/**
+	 * Updates the inputs for the elevator
+	 * 
+	 * @param inputs the inputs to update
+	 */
 
-	public default void setInverted(boolean inverted)
+	public default void updateInputs(ElevatorIOInputs inputs)
 	{
 	}
 }
