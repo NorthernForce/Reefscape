@@ -12,28 +12,28 @@ import frc.robot.blenny.BlennyContainer;
  */
 public class BlennyProgrammerOI implements BlennyOI
 {
-	private static DoubleSupplier processJoystickInput(DoubleSupplier input)
-	{
-		return () ->
-		{
-			double x = MathUtil.applyDeadband(input.getAsDouble(), 0.1, 1);
-			return -x * Math.abs(x);
-		};
-	}
+    private static DoubleSupplier processJoystickInput(DoubleSupplier input)
+    {
+        return () ->
+        {
+            double x = MathUtil.applyDeadband(input.getAsDouble(), 0.1, 1);
+            return -x * Math.abs(x);
+        };
+    }
 
-	@Override
-	public void bindOI(BlennyContainer container)
-	{
-		CommandXboxController driverController = new CommandXboxController(0);
+    @Override
+    public void bindOI(BlennyContainer container)
+    {
+        CommandXboxController driverController = new CommandXboxController(0);
 
-		container.getDrive().setDefaultCommand(container.getDrive().getDriveByJoystickCommand(
-				processJoystickInput(driverController::getLeftY), processJoystickInput(driverController::getLeftX),
-				processJoystickInput(driverController::getRightX)));
+        container.getDrive().setDefaultCommand(container.getDrive().getDriveByJoystickCommand(
+                processJoystickInput(driverController::getLeftY), processJoystickInput(driverController::getLeftX),
+                processJoystickInput(driverController::getRightX)));
 
-		driverController.back().onTrue(container.getDrive()
-				.getResetOrientationCommand(FieldConstants.getFieldRotation(FieldConstants.getAlliance())));
+        driverController.back().onTrue(container.getDrive()
+                .getResetOrientationCommand(FieldConstants.getFieldRotation(FieldConstants.getAlliance())));
 
-		driverController.x().whileTrue(container.getDrive().getXLockCommand());
-	}
+        driverController.x().whileTrue(container.getDrive().getXLockCommand());
+    }
 
 }
