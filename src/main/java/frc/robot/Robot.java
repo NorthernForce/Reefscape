@@ -66,8 +66,9 @@ public class Robot extends LoggedRobot
 		}
 
 		final NFRRobotChooser chooser = new NFRRobotChooser(() -> new ZippyContainer(),
-				Map.of("Zippy", () -> new ZippyContainer()));
-		container = chooser.getNFRRobotContainer();
+				Map.of("0316d7d7", () -> new ZippyContainer()));
+
+		Logger.recordMetadata("RoboRIO ID", NFRRobotChooser.getRoborioID());
 
 		// Set up data receivers & replay source
 		switch (Constants.kCurrentMode)
@@ -97,6 +98,7 @@ public class Robot extends LoggedRobot
 
 		// Start AdvantageKit logger
 		Logger.start();
+		container = chooser.getNFRRobotContainer();
 
 		container.bindOI();
 	}
