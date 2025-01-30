@@ -1,14 +1,27 @@
 package frc.robot.zippy;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 import org.northernforce.util.NFRRobotContainer;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
+import choreo.auto.AutoRoutine;
+import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
@@ -21,6 +34,11 @@ import frc.robot.zippy.oi.ZippyProgrammerOI;
 public class ZippyContainer implements NFRRobotContainer
 {
 	private final PhoenixCommandDrive drive;
+	private AutoFactory factory = null;
+	private AutoChooser autoChooser = null;
+	private AutoRoutine hi = null;
+	private Command hicmd = null;
+	Field2d field;
 	private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
 	private Alliance alliance = allianceSupplier.get();
 
@@ -31,6 +49,9 @@ public class ZippyContainer implements NFRRobotContainer
 				ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,
 				ZippyTunerConstants.BackRight);
 		drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
+		field = new Field2d();
+		drive.resetPose(new Pose2d(7, 7, new Rotation2d(0)));
+		Shuffleboard.getTab("General").add("pose2d", field);
 	}
 
 	public PhoenixCommandDrive getDrive()
@@ -63,12 +84,46 @@ public class ZippyContainer implements NFRRobotContainer
 			alliance = allianceSupplier.get();
 			drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
 		}
+		field.setRobotPose(drive.getPose());
 	}
 
 	@Override
 	public void autonomousInit()
 	{
-		drive.resetPose(new Pose2d());
+		ZippyConstants.AutoConstants.xPID.reset();
+		ZippyConstants.AutoConstants.yPID.reset();
+		ZippyConstants.AutoConstants.rPID.reset();
+		factory = new AutoFactory(drive::getPose, drive::resetPose, (SwerveSample sample) ->
+		{
+			var robot = drive.getPose();
+			var speeds = new ChassisSpeeds(sample.vx, sample.vy, sample.omega);
+			System.out.println("AUTO STATS:");
+			System.out.println("x: " + speeds.vxMetersPerSecond);
+			System.out.println("y: " + speeds.vyMetersPerSecond);
+			System.out.println("r: " + speeds.omegaRadiansPerSecond);
+			drive.runVelocity(speeds);
+		}, true, drive);
+
+		NamedCommands.registerCommand("test", Commands.runOnce(() -> System.out.println("it works!")));
+		var routine = factory.newRoutine("test1");
+		var traj = routine.trajectory("testPath");
+		routine.active().onTrue(Commands.sequence(traj.resetOdometry(), traj.cmd()));
+		hi = routine;
+		// hicmd = factory.trajectoryCmd("testPath");
+		// RobotModeTriggers.autonomous().whileTrue(hicmd).whileTrue(Commands.run(() ->
+		// System.out.println("")));
+	}
+
+	@Override
+	public void autonomousPeriodic()
+	{
+		System.out.println("running auto...");
+		hi.poll();
+	}
+
+	public Map<String, Supplier<AutoRoutine>> getAutonomousCommands()
+	{
+		return Map.of("nothing", () -> factory.newRoutine("nothing"));
 	}
 
 	@Override
