@@ -3,7 +3,10 @@ package frc.robot.subsystems.rollers;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.signals.InvertedValue;
+
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 
@@ -25,14 +28,27 @@ public class RollersIOTalonFXS implements RollersIO
 	/**
 	 * Constructs a new RollersIOTalonFX.
 	 * 
-	 * @param id1 The ID of the first motor.
-	 * @param id2 The ID of the second motor.
+	 * @param id1      The ID of the first motor.
+	 * @param id2      The ID of the second motor.
+	 * @param inverted Whether the mechanism is inverted or not.
 	 */
 
-	public RollersIOTalonFXS(int id1, int id2)
+	public RollersIOTalonFXS(int id1, int id2, boolean inverted)
 	{
 		intakeMotorOne = new TalonFXS(id1);
 		intakeMotorTwo = new TalonFXS(id2);
+
+		TalonFXSConfiguration configMotorOne = new TalonFXSConfiguration();
+		configMotorOne.MotorOutput.Inverted = inverted ? InvertedValue.CounterClockwise_Positive
+				: InvertedValue.Clockwise_Positive;
+
+		TalonFXSConfiguration configMotorTwo = new TalonFXSConfiguration();
+		configMotorTwo.MotorOutput.Inverted = !inverted ? InvertedValue.CounterClockwise_Positive
+				: InvertedValue.Clockwise_Positive;
+
+		intakeMotorOne.getConfigurator().refresh(configMotorOne);
+		intakeMotorTwo.getConfigurator().refresh(configMotorTwo);
+
 		motorOneTemperature = intakeMotorOne.getDeviceTemp();
 		motorOnePresent = () -> intakeMotorOne.isConnected();
 		motorOneCurrent = intakeMotorOne.getTorqueCurrent();
@@ -51,7 +67,7 @@ public class RollersIOTalonFXS implements RollersIO
 	public void set(double speed)
 	{
 		intakeMotorOne.set(speed);
-		intakeMotorTwo.set(-speed);
+		intakeMotorTwo.set(speed);
 	}
 
 	/**
