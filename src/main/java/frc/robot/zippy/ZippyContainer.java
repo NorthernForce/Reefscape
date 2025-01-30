@@ -96,11 +96,7 @@ public class ZippyContainer implements NFRRobotContainer
 		factory = new AutoFactory(drive::getPose, drive::resetPose, (SwerveSample sample) ->
 		{
 			var robot = drive.getPose();
-			var speeds = new ChassisSpeeds(
-					sample.vx + ZippyConstants.AutoConstants.xPID.calculate(robot.getX(), sample.x),
-					sample.vy + ZippyConstants.AutoConstants.yPID.calculate(robot.getY(), sample.y),
-					sample.omega + ZippyConstants.AutoConstants.rPID.calculate(robot.getRotation().getRadians(),
-							sample.heading));
+			var speeds = new ChassisSpeeds(sample.vx, sample.vy, sample.omega);
 			System.out.println("AUTO STATS:");
 			System.out.println("x: " + speeds.vxMetersPerSecond);
 			System.out.println("y: " + speeds.vyMetersPerSecond);
