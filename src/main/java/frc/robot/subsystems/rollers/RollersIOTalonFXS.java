@@ -11,7 +11,7 @@ import edu.wpi.first.units.measure.Temperature;
  * The Talon IO for the rollers.
  */
 
-public class RollersIOTalonFX implements RollersIO
+public class RollersIOTalonFXS implements RollersIO
 {
 	private final TalonFXS intakeMotorOne;
 	private final TalonFXS intakeMotorTwo;
@@ -29,7 +29,7 @@ public class RollersIOTalonFX implements RollersIO
 	 * @param id2 The ID of the second motor.
 	 */
 
-	public RollersIOTalonFX(int id1, int id2)
+	public RollersIOTalonFXS(int id1, int id2)
 	{
 		intakeMotorOne = new TalonFXS(id1);
 		intakeMotorTwo = new TalonFXS(id2);
