@@ -14,41 +14,45 @@ public class Climber extends SubsystemBase
 	private ClimberIO io;
 	private final ClimberIOInputsAutoLogged m_inputs = new ClimberIOInputsAutoLogged();
 
-    /**
-     * Constructor for the Climber class.
-     * @param climberIO IO for the climber
-     */
+	/**
+	 * Constructor for the Climber class.
+	 * 
+	 * @param climberIO IO for the climber
+	 */
 
 	public Climber(ClimberIO climberIO)
 	{
 		io = climberIO;
 	}
 
-    /**
-     * climb up method for the Climber class.
-     * @param climbSpeed speed to climb up
-     */
+	/**
+	 * climb up method for the Climber class.
+	 * 
+	 * @param climbSpeed speed to climb up
+	 */
 
 	public void climbUp(double climbSpeed)
 	{
 		io.climbUp(climbSpeed);
 	}
 
-    /**
-     * climb down method for the Climber class.
-     * @param climbSpeed speed to climb down
-     */
+	/**
+	 * climb down method for the Climber class.
+	 * 
+	 * @param climbSpeed speed to climb down
+	 */
 
 	public void climbDown(double climbSpeed)
 	{
 		io.climbDown(climbSpeed);
 	}
 
-    /**
-     * get climb up command method for the Climber class.
-     * @param climbSpeed speed to climb up
-     * @return command to climb up
-     */
+	/**
+	 * get climb up command method for the Climber class.
+	 * 
+	 * @param climbSpeed speed to climb up
+	 * @return command to climb up
+	 */
 
 	public Command getClimbUpCommand(double climbSpeed)
 	{
@@ -68,11 +72,12 @@ public class Climber extends SubsystemBase
 		};
 	}
 
-    /**
-     * get climb down command method for the Climber class.
-     * @param climbSpeed speed to climb down
-     * @return command to climb down
-     */
+	/**
+	 * get climb down command method for the Climber class.
+	 * 
+	 * @param climbSpeed speed to climb down
+	 * @return command to climb down
+	 */
 
 	public Command getClimbDownCommand(double climbSpeed)
 	{
@@ -92,19 +97,20 @@ public class Climber extends SubsystemBase
 		};
 	}
 
-    /**
-     * stop method for the Climber class.
-     */
+	/**
+	 * stop method for the Climber class.
+	 */
 
 	public void stop()
 	{
 		io.stop();
 	}
 
-    /**
-     * get stop command method for the Climber class.
-     * @return command to stop
-     */
+	/**
+	 * get stop command method for the Climber class.
+	 * 
+	 * @return command to stop
+	 */
 
 	public Command getStopCommand()
 	{
@@ -124,9 +130,9 @@ public class Climber extends SubsystemBase
 		};
 	}
 
-    /**
-     * periodic method for the Climber class.
-     */
+	/**
+	 * periodic method for the Climber class.
+	 */
 
 	@Override
 	public void periodic()

@@ -14,11 +14,11 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface ClimberIO
 {
-    /**
-     * ClimberIOInputs class.
-     */
+	/**
+	 * ClimberIOInputs class.
+	 */
 
-     @AutoLog
+	@AutoLog
 	public static class ClimberIOInputs
 	{
 		public Angle position = Rotations.of(0);
@@ -27,32 +27,36 @@ public interface ClimberIO
 		public Current current = Amps.of(0);
 	}
 
-    /**
-     * climb up method for the ClimberIO class.
-     * @param climbSpeed speed to climb up
-     */
+	/**
+	 * climb up method for the ClimberIO class.
+	 * 
+	 * @param climbSpeed speed to climb up
+	 */
 
 	public void climbUp(double climbSpeed);
 
-    /**
-     * climb down method for the ClimberIO class.
-     * @param climbSpeed speed to climb down
-     */
+	/**
+	 * climb down method for the ClimberIO class.
+	 * 
+	 * @param climbSpeed speed to climb down
+	 */
 
 	public void climbDown(double climbSpeed);
 
-    /**
-     * get climb up command method for the ClimberIO class.
-     * @param climbSpeed speed to climb up
-     * @return command to climb up
-     */
+	/**
+	 * get climb up command method for the ClimberIO class.
+	 * 
+	 * @param climbSpeed speed to climb up
+	 * @return command to climb up
+	 */
 
 	public void stop();
 
-    /**
-     * update inputs method for the ClimberIO class.
-     * @param inputs inputs for the climber
-     */
+	/**
+	 * update inputs method for the ClimberIO class.
+	 * 
+	 * @param inputs inputs for the climber
+	 */
 
 	public void updateInputs(ClimberIOInputs inputs);
 }

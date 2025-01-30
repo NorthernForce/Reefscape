@@ -29,12 +29,13 @@ public class ClimberIOTalonFX implements ClimberIO
 	private StatusSignal<Current> m_current;
 	private CANcoder m_encoder;
 
-    /**
-     * Constructor for the ClimberIOTalonFX class.
-     * @param id motor controller ID
-     * @param inverted whether the motor is inverted
-     * @param encoderID CANcoder ID
-     */
+	/**
+	 * Constructor for the ClimberIOTalonFX class.
+	 * 
+	 * @param id        motor controller ID
+	 * @param inverted  whether the motor is inverted
+	 * @param encoderID CANcoder ID
+	 */
 
 	public ClimberIOTalonFX(int id, boolean inverted, int encoderID)
 	{
@@ -52,10 +53,11 @@ public class ClimberIOTalonFX implements ClimberIO
 		m_current = m_motor.getSupplyCurrent();
 	}
 
-    /**
-     * climb up method for the ClimberIOTalonFX class.
-     * @param climbSpeed speed to climb up
-     */
+	/**
+	 * climb up method for the ClimberIOTalonFX class.
+	 * 
+	 * @param climbSpeed speed to climb up
+	 */
 
 	@Override
 	public void climbUp(double climbSpeed)
@@ -63,9 +65,9 @@ public class ClimberIOTalonFX implements ClimberIO
 		m_motor.set(Math.abs(climbSpeed));
 	}
 
-    /**
-     * stop method for the ClimberIOTalonFX class.
-     */
+	/**
+	 * stop method for the ClimberIOTalonFX class.
+	 */
 
 	@Override
 	public void stop()
@@ -73,10 +75,11 @@ public class ClimberIOTalonFX implements ClimberIO
 		m_motor.stopMotor();
 	}
 
-    /**
-     * climb down method for the ClimberIOTalonFX class.
-     * @param climbSpeed speed to climb down
-     */
+	/**
+	 * climb down method for the ClimberIOTalonFX class.
+	 * 
+	 * @param climbSpeed speed to climb down
+	 */
 
 	@Override
 	public void climbDown(double climbSpeed)
@@ -84,10 +87,11 @@ public class ClimberIOTalonFX implements ClimberIO
 		m_motor.set(-Math.abs(climbSpeed));
 	}
 
-    /**
-     * update inputs method for the ClimberIOTalonFX class.
-     * @param inputs ClimberIOInputs inputs to update
-     */
+	/**
+	 * update inputs method for the ClimberIOTalonFX class.
+	 * 
+	 * @param inputs ClimberIOInputs inputs to update
+	 */
 
 	@Override
 	public void updateInputs(ClimberIOInputs inputs)
