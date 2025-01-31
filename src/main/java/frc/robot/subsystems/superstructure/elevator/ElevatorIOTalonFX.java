@@ -1,4 +1,4 @@
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.superstructure.elevator;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -32,8 +32,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
     private final Supplier<Boolean> m_isPresent;
     private final double gearRatio;
     private final Distance sprocketCircumference;
-    private Distance goingTo;
-    private final double errorTolerance;
+    private final MotionMagicVoltage m_motionMagicVoltage;
 
     /**
      * Converts rotations to distance
@@ -80,34 +79,62 @@ public class ElevatorIOTalonFX implements ElevatorIO
         return RotationsPerSecondPerSecond
                 .of(linearAcceleration.in(MetersPerSecondPerSecond) * gearRatio / sprocketCircumference.in(Meters));
     }
+    /**
+     * Constants for the elevator
+     * 
+     * @param kS                   the kS value
+     * @param kV                   the kV value
+     * @param kA                   the kA value
+     * @param kP                   the kP value
+     * @param kI                   the kI value
+     * @param kD                   the kD value
+     * @param cruiseVelocity       the cruise velocity
+     * @param acceleration         the acceleration
+     * @param jerk                 the jerk
+     * @param sprocketCircumference the sprocket circumference
+     * @param gearRatio            the gear ratio
+     * @param inverted             whether the motor is inverted
+     * @param upperLimit           the upper limit
+     */
+    public static record ElevatorConstants(double kS, double kV, double kA, double kP, double kI, double kD,
+            LinearVelocity cruiseVelocity, LinearAcceleration acceleration, double jerk, Distance sprocketCircumference,
+            double gearRatio, boolean inverted, Distance upperLimit) {
+    }
 
     /**
-     * Creates a new ElevatorIOTalon
+     * Creates a new ElevatorIOTalonFX
      * 
      * @param id                    the id of the talon
-     * @param kS                    kS parameter for the talon configs
-     * @param kV                    kV parameter for the talon configs
-     * @param kA                    kA parameter for the talon configs
-     * @param kP                    kP parameter for the talon configs
-     * @param kI                    kI parameter for the talon configs
-     * @param kD                    kD parameter for the talon configs
-     * @param cruiseVelocity        cruise velocity for the talon configs
-     * @param acceleration          acceleration for the talon configs
-     * @param jerk                  jerk movement for the talon configs
-     * @param errorTolerance        error tolerance for the elevator to be at the
-     *                              target position
-     * @param sprocketCircumference sprocket circumference
-     * @param gearRatio             gear ratio
-     * @param inverted              true if the talon is inverted, false if the
-     *                              talon is not inverted
-     * @param upperLimit            the upper limit of the elevator
+     * @param constants             the constants for the elevator
+     */
+    public ElevatorIOTalonFX(int id, ElevatorConstants constants)
+    {
+        this(id, constants.kS(), constants.kV(), constants.kA(), constants.kP(), constants.kI(), constants.kD(),
+                constants.cruiseVelocity(), constants.acceleration(), constants.jerk(), constants.sprocketCircumference(),
+                constants.gearRatio(), constants.inverted(), constants.upperLimit());
+    }
+    /**
+     * Creates a new ElevatorIOTalonFX
+     * @param id the id of the talon
+     * @param kS the kS value
+     * @param kV the kV value
+     * @param kA the kA value
+     * @param kP the kP value
+     * @param kI the kI value
+     * @param kD the kD value
+     * @param cruiseVelocity the cruise velocity
+     * @param acceleration the acceleration
+     * @param jerk the jerk
+     * @param sprocketCircumference the sprocket circumference
+     * @param gearRatio the gear ratio
+     * @param inverted whether the motor is inverted
+     * @param upperLimit the upper limit
      */
     public ElevatorIOTalonFX(int id, double kS, double kV, double kA, double kP, double kI, double kD,
-            LinearVelocity cruiseVelocity, LinearAcceleration acceleration, double jerk, double errorTolerance,
-            Distance sprocketCircumference, double gearRatio, boolean inverted, Distance upperLimit)
+            LinearVelocity cruiseVelocity, LinearAcceleration acceleration, double jerk, Distance sprocketCircumference,
+            double gearRatio, boolean inverted, Distance upperLimit)
     {
         m_motor = new TalonFX(id);
-        this.errorTolerance = errorTolerance;
         TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
         this.gearRatio = gearRatio;
         this.sprocketCircumference = sprocketCircumference;
@@ -141,6 +168,8 @@ public class ElevatorIOTalonFX implements ElevatorIO
         m_temperature = m_motor.getDeviceTemp();
         m_current = m_motor.getTorqueCurrent();
         m_isPresent = () -> m_motor.isConnected();
+
+        m_motionMagicVoltage = new MotionMagicVoltage(0);
     }
 
     /**
@@ -150,10 +179,9 @@ public class ElevatorIOTalonFX implements ElevatorIO
      */
 
     @Override
-    public void setTargetPosition(double height)
+    public void setTargetPosition(Distance height)
     {
-        goingTo = Meters.of(height);
-        m_motor.setControl(new MotionMagicVoltage(gearRatio * height));
+        m_motor.setControl(m_motionMagicVoltage.withPosition(convertDistanceToRotations(height)));
     }
 
     /**
@@ -185,7 +213,6 @@ public class ElevatorIOTalonFX implements ElevatorIO
     {
         inputs.temperature = m_temperature.getValue();
         inputs.position = convertRotationsToDistance(m_position.getValue());
-        inputs.isAtTargetPosition = Math.abs(inputs.position.in(Meters) - goingTo.in(Meters)) < errorTolerance;
         inputs.current = m_current.getValue();
         inputs.present = m_isPresent.get();
     }

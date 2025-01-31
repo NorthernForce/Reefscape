@@ -10,6 +10,14 @@ import frc.robot.blenny.constants.BlennyTunerConstants;
 import frc.robot.blenny.oi.BlennyDriverOI;
 import frc.robot.blenny.oi.BlennyProgrammerOI;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
+import frc.robot.subsystems.superstructure.Superstructure;
+import frc.robot.subsystems.superstructure.elevator.Elevator;
+import frc.robot.subsystems.superstructure.elevator.ElevatorIO;
+import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.superstructure.elevator.brake.BrakeIO;
+import frc.robot.subsystems.superstructure.elevator.brake.BrakeIORelay;
+import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIO;
+import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIOLimitSwitch;
 
 /**
  * 2025 Competition Robot Container. Name is still a work in progress and will
@@ -19,6 +27,7 @@ import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 public class BlennyContainer implements NFRRobotContainer
 {
     private final PhoenixCommandDrive drive;
+    private final Superstructure superstructure;
 
     /**
      * Create a new BlennyContainer
@@ -29,6 +38,29 @@ public class BlennyContainer implements NFRRobotContainer
                 BlennyConstants.DrivetrainConstants.MAX_SPEED, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 BlennyTunerConstants.FrontLeft, BlennyTunerConstants.FrontRight, BlennyTunerConstants.BackLeft,
                 BlennyTunerConstants.BackRight);
+        switch (Constants.kCurrentMode)
+        {
+        case SIM:
+        case REAL:
+            superstructure = new Superstructure(
+                new Elevator("InnerElevator",
+                    new ElevatorIOTalonFX(14, BlennyConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS),
+                        new BrakeIORelay(0), new ElevatorSensorIOLimitSwitch(0), 0.2),
+                new Elevator("OuterElevator",
+                    new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
+                        new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2));
+            break;
+        case REPLAY:
+        default:
+            superstructure = new Superstructure(
+                new Elevator("InnerElevator",
+                    new ElevatorIO() {},
+                        new BrakeIO() {}, new ElevatorSensorIO() {}, 0.2),
+                new Elevator("OuterElevator",
+                    new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
+                        new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2));
+            break;
+        }
     }
 
     /**
@@ -39,6 +71,15 @@ public class BlennyContainer implements NFRRobotContainer
     public PhoenixCommandDrive getDrive()
     {
         return drive;
+    }
+
+    /**
+     * Get the superstructure subsystem
+     * @return the superstructure subsystem (Superstructure)
+     */
+    public Superstructure getSuperstructure()
+    {
+        return superstructure;
     }
 
     @Override

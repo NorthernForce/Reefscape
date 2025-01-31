@@ -1,4 +1,4 @@
-package frc.robot.subsystems.elevator.brake;
+package frc.robot.subsystems.superstructure.elevator.brake;
 
 import edu.wpi.first.wpilibj.Relay;
 
@@ -14,14 +14,12 @@ public class BrakeIORelay implements BrakeIO
      * Creates a new BrakeIORelay
      * 
      * @param id        the id of the relay
-     * @param clockwise true if the relay is clockwise, false if the relay is
-     *                  counter clockwise
      */
 
-    public BrakeIORelay(int id, boolean clockwise)
+    public BrakeIORelay(int id)
     {
         m_brake = new Relay(id);
-        m_brake.setDirection(clockwise ? Relay.Direction.kForward : Relay.Direction.kReverse);
+        m_brake.setDirection(Relay.Direction.kForward);
     }
 
     /**
@@ -31,7 +29,7 @@ public class BrakeIORelay implements BrakeIO
      */
 
     @Override
-    public void setBreak(boolean on)
+    public void setBrake(boolean on)
     {
         m_brake.set(on ? Relay.Value.kOn : Relay.Value.kOff);
     }

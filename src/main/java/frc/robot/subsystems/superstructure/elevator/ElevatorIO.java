@@ -1,4 +1,4 @@
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.superstructure.elevator;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Fahrenheit;
@@ -27,7 +27,6 @@ public interface ElevatorIO
     {
         public Temperature temperature = Fahrenheit.of(0);
         public Distance position = Meters.of(0);
-        public boolean isAtTargetPosition = false;
         public boolean present = false;
         public Current current = Amps.of(0);
     }
@@ -38,7 +37,7 @@ public interface ElevatorIO
      * @param height the height to set the elevator to
      */
 
-    public default void setTargetPosition(double height)
+    public default void setTargetPosition(Distance height)
     {
     }
 

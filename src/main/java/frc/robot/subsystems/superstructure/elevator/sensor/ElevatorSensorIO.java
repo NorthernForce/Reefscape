@@ -1,4 +1,4 @@
-package frc.robot.subsystems.elevator.sensor;
+package frc.robot.subsystems.superstructure.elevator.sensor;
 
 import org.littletonrobotics.junction.AutoLog;
 
@@ -18,5 +18,7 @@ public interface ElevatorSensorIO
      * 
      * @param inputs the inputs to update
      */
-    public void updateInputs(ElevatorSensorIOInputs inputs);
+    public default void updateInputs(ElevatorSensorIOInputs inputs)
+    {
+    }
 }

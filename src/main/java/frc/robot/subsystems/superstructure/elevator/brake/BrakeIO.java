@@ -1,4 +1,4 @@
-package frc.robot.subsystems.elevator.brake;
+package frc.robot.subsystems.superstructure.elevator.brake;
 
 import org.littletonrobotics.junction.AutoLog;
 
@@ -25,7 +25,9 @@ public interface BrakeIO
      * @param on true to set the brake on, false to set the brake off
      */
 
-    public void setBreak(boolean on);
+    public default void setBrake(boolean on)
+    {
+    }
 
     /**
      * Updates the inputs for the brake

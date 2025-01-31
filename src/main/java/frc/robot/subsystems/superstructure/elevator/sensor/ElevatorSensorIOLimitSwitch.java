@@ -1,4 +1,4 @@
-package frc.robot.subsystems.elevator.sensor;
+package frc.robot.subsystems.superstructure.elevator.sensor;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
