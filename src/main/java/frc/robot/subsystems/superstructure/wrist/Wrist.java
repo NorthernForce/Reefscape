@@ -4,8 +4,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.units.measure.*;
 
-import frc.robot.subsystems.superstructure.wrist.WristIO;
-
 public class Wrist extends SubsystemBase
 {
     public final WristIO io;

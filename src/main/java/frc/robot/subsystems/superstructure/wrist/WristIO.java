@@ -18,9 +18,9 @@ public interface WristIO
         public boolean motorPresent;
     }
 
-    public void updateInputs(WristIOInputs inputs);
+    public default void updateInputs(WristIOInputs inputs){};
 
-    public void run(double speed);
+    public default void run(double speed){};
 
-    public void runToAngle(Rotation2d angle);
+    public default void runToAngle(Rotation2d angle){};
 }

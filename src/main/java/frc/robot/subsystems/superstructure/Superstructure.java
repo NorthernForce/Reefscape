@@ -1,7 +1,5 @@
 package frc.robot.subsystems.superstructure;
 
-import static edu.wpi.first.units.Units.Rotations;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import edu.wpi.first.units.measure.Angle;
@@ -101,6 +99,6 @@ public class Superstructure extends SubsystemBase
     public boolean isAtGoal(GenericSuperstructureGoal goal)
     {
         return m_innerElevator.isAtPosition(goal.getInnerElevatorGoal()) && m_outerElevator
-                .isAtPosition(goal.getOuterElevatorGoal() && m_wrist.isAtPosition(goal.getWristGoal()));
+                .isAtPosition(goal.getOuterElevatorGoal()) && m_wrist.isAtPosition(goal.getWristGoal());
     }
 }
