@@ -43,22 +43,24 @@ public class BlennyContainer implements NFRRobotContainer
         case SIM:
         case REAL:
             superstructure = new Superstructure(
-                new Elevator("InnerElevator",
-                    new ElevatorIOTalonFX(14, BlennyConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS),
-                        new BrakeIORelay(0), new ElevatorSensorIOLimitSwitch(0), 0.2),
-                new Elevator("OuterElevator",
-                    new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
-                        new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2));
+                    new Elevator("InnerElevator",
+                            new ElevatorIOTalonFX(14, BlennyConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS),
+                            new BrakeIORelay(0), new ElevatorSensorIOLimitSwitch(0), 0.2),
+                    new Elevator("OuterElevator",
+                            new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
+                            new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2));
             break;
         case REPLAY:
         default:
-            superstructure = new Superstructure(
-                new Elevator("InnerElevator",
-                    new ElevatorIO() {},
-                        new BrakeIO() {}, new ElevatorSensorIO() {}, 0.2),
-                new Elevator("OuterElevator",
+            superstructure = new Superstructure(new Elevator("InnerElevator", new ElevatorIO()
+            {
+            }, new BrakeIO()
+            {
+            }, new ElevatorSensorIO()
+            {
+            }, 0.2), new Elevator("OuterElevator",
                     new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
-                        new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2));
+                    new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2));
             break;
         }
     }
@@ -75,6 +77,7 @@ public class BlennyContainer implements NFRRobotContainer
 
     /**
      * Get the superstructure subsystem
+     * 
      * @return the superstructure subsystem (Superstructure)
      */
     public Superstructure getSuperstructure()

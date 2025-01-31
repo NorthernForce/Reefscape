@@ -79,22 +79,23 @@ public class ElevatorIOTalonFX implements ElevatorIO
         return RotationsPerSecondPerSecond
                 .of(linearAcceleration.in(MetersPerSecondPerSecond) * gearRatio / sprocketCircumference.in(Meters));
     }
+
     /**
      * Constants for the elevator
      * 
-     * @param kS                   the kS value
-     * @param kV                   the kV value
-     * @param kA                   the kA value
-     * @param kP                   the kP value
-     * @param kI                   the kI value
-     * @param kD                   the kD value
-     * @param cruiseVelocity       the cruise velocity
-     * @param acceleration         the acceleration
-     * @param jerk                 the jerk
+     * @param kS                    the kS value
+     * @param kV                    the kV value
+     * @param kA                    the kA value
+     * @param kP                    the kP value
+     * @param kI                    the kI value
+     * @param kD                    the kD value
+     * @param cruiseVelocity        the cruise velocity
+     * @param acceleration          the acceleration
+     * @param jerk                  the jerk
      * @param sprocketCircumference the sprocket circumference
-     * @param gearRatio            the gear ratio
-     * @param inverted             whether the motor is inverted
-     * @param upperLimit           the upper limit
+     * @param gearRatio             the gear ratio
+     * @param inverted              whether the motor is inverted
+     * @param upperLimit            the upper limit
      */
     public static record ElevatorConstants(double kS, double kV, double kA, double kP, double kI, double kD,
             LinearVelocity cruiseVelocity, LinearAcceleration acceleration, double jerk, Distance sprocketCircumference,
@@ -104,31 +105,33 @@ public class ElevatorIOTalonFX implements ElevatorIO
     /**
      * Creates a new ElevatorIOTalonFX
      * 
-     * @param id                    the id of the talon
-     * @param constants             the constants for the elevator
+     * @param id        the id of the talon
+     * @param constants the constants for the elevator
      */
     public ElevatorIOTalonFX(int id, ElevatorConstants constants)
     {
         this(id, constants.kS(), constants.kV(), constants.kA(), constants.kP(), constants.kI(), constants.kD(),
-                constants.cruiseVelocity(), constants.acceleration(), constants.jerk(), constants.sprocketCircumference(),
-                constants.gearRatio(), constants.inverted(), constants.upperLimit());
+                constants.cruiseVelocity(), constants.acceleration(), constants.jerk(),
+                constants.sprocketCircumference(), constants.gearRatio(), constants.inverted(), constants.upperLimit());
     }
+
     /**
      * Creates a new ElevatorIOTalonFX
-     * @param id the id of the talon
-     * @param kS the kS value
-     * @param kV the kV value
-     * @param kA the kA value
-     * @param kP the kP value
-     * @param kI the kI value
-     * @param kD the kD value
-     * @param cruiseVelocity the cruise velocity
-     * @param acceleration the acceleration
-     * @param jerk the jerk
+     * 
+     * @param id                    the id of the talon
+     * @param kS                    the kS value
+     * @param kV                    the kV value
+     * @param kA                    the kA value
+     * @param kP                    the kP value
+     * @param kI                    the kI value
+     * @param kD                    the kD value
+     * @param cruiseVelocity        the cruise velocity
+     * @param acceleration          the acceleration
+     * @param jerk                  the jerk
      * @param sprocketCircumference the sprocket circumference
-     * @param gearRatio the gear ratio
-     * @param inverted whether the motor is inverted
-     * @param upperLimit the upper limit
+     * @param gearRatio             the gear ratio
+     * @param inverted              whether the motor is inverted
+     * @param upperLimit            the upper limit
      */
     public ElevatorIOTalonFX(int id, double kS, double kV, double kA, double kP, double kI, double kD,
             LinearVelocity cruiseVelocity, LinearAcceleration acceleration, double jerk, Distance sprocketCircumference,

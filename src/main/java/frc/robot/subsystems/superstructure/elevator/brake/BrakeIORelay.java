@@ -13,7 +13,7 @@ public class BrakeIORelay implements BrakeIO
     /**
      * Creates a new BrakeIORelay
      * 
-     * @param id        the id of the relay
+     * @param id the id of the relay
      */
 
     public BrakeIORelay(int id)
