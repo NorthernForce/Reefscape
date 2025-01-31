@@ -41,10 +41,10 @@ public class ZippyProgrammerOI implements ZippyOI
                         processJoystickInput(driverJoystick::getLeftY), processJoystickInput(driverJoystick::getLeftX),
                         processJoystickInput(driverJoystick::getRightX)));
 
-		driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
+        driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
 
-		driverJoystick.start()
-				.onTrue(container.getDrive().driveToPose(new Pose2d(new Translation2d(2, 2), Rotation2d.kZero)));
+        driverJoystick.start()
+                .onTrue(container.getDrive().driveToPose(new Pose2d(new Translation2d(2, 2), Rotation2d.kZero)));
 
         driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
                 .resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(

@@ -24,15 +24,15 @@ public class ZippyContainer implements NFRRobotContainer
     private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
     private Alliance alliance = allianceSupplier.get();
 
-	public ZippyContainer()
-	{
-		drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants,
-				ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
-				ZippyConstants.PathplannerConstants.linearPIDConstants,
-				ZippyConstants.PathplannerConstants.angularPIDConstants, ZippyTunerConstants.FrontLeft,
-				ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft, ZippyTunerConstants.BackRight);
-		drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
-	}
+    public ZippyContainer()
+    {
+        drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants,
+                ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                ZippyConstants.PathplannerConstants.linearPIDConstants,
+                ZippyConstants.PathplannerConstants.angularPIDConstants, ZippyTunerConstants.FrontLeft,
+                ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft, ZippyTunerConstants.BackRight);
+        drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
+    }
 
     public PhoenixCommandDrive getDrive()
     {
