@@ -11,14 +11,14 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 public class XLockRequest implements SwerveRequest
 {
 
-	@Override
-	public StatusCode apply(SwerveControlParameters parameters, SwerveModule<?, ?, ?>... modulesToApply)
-	{
-		for (int i = 0; i < modulesToApply.length; i++)
-		{
-			modulesToApply[i].apply(new SwerveModule.ModuleRequest()
-					.withState(new SwerveModuleState(0, parameters.moduleLocations[i].getAngle())));
-		}
-		return StatusCode.OK;
-	}
+    @Override
+    public StatusCode apply(SwerveControlParameters parameters, SwerveModule<?, ?, ?>... modulesToApply)
+    {
+        for (int i = 0; i < modulesToApply.length; i++)
+        {
+            modulesToApply[i].apply(new SwerveModule.ModuleRequest()
+                    .withState(new SwerveModuleState(0, parameters.moduleLocations[i].getAngle())));
+        }
+        return StatusCode.OK;
+    }
 }

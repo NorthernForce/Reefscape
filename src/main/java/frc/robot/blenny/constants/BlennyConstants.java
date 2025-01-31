@@ -1,19 +1,17 @@
-package frc.robot.zippy.constants;
+package frc.robot.blenny.constants;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
+import static edu.wpi.first.units.Units.*;
+import com.pathplanner.lib.config.PIDConstants;
 
-public class ZippyConstants
+public class BlennyConstants
 {
     public static class DrivetrainConstants
     {
+        /** TODO */
         public static final LinearVelocity MAX_SPEED = MetersPerSecond.of(3.0);
         public static final AngularVelocity MAX_ANGULAR_SPEED = RotationsPerSecond.of(0.7);
         public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(3.0);
