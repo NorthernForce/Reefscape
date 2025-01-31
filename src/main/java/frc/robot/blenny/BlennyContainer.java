@@ -10,6 +10,9 @@ import frc.robot.blenny.constants.BlennyTunerConstants;
 import frc.robot.blenny.oi.BlennyDriverOI;
 import frc.robot.blenny.oi.BlennyProgrammerOI;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
+import frc.robot.subsystems.rollers.Rollers;
+import frc.robot.subsystems.rollers.RollersIOTalonFXS;
+import frc.robot.subsystems.rollers.sensor.RollersSensorIOUltrasonic;
 
 /**
  * 2025 Competition Robot Container. Name is still a work in progress and will
@@ -19,6 +22,7 @@ import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 public class BlennyContainer implements NFRRobotContainer
 {
     private final PhoenixCommandDrive drive;
+    private final Rollers rollers;
 
     /**
      * Create a new BlennyContainer
@@ -29,6 +33,9 @@ public class BlennyContainer implements NFRRobotContainer
                 BlennyConstants.DrivetrainConstants.MAX_SPEED, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 BlennyTunerConstants.FrontLeft, BlennyTunerConstants.FrontRight, BlennyTunerConstants.BackLeft,
                 BlennyTunerConstants.BackRight);
+
+        rollers = new Rollers(new RollersIOTalonFXS(30, 31, false), new RollersSensorIOUltrasonic(0, 1, 50),
+                new RollersSensorIOUltrasonic(2, 3, 50)); // TODO: FIX THESE IDS
     }
 
     /**
@@ -39,6 +46,17 @@ public class BlennyContainer implements NFRRobotContainer
     public PhoenixCommandDrive getDrive()
     {
         return drive;
+    }
+
+    /**
+     * Get the rollers subsystem from the container
+     * 
+     * @return the drive subsystem
+     */
+
+    public Rollers getRollers()
+    {
+        return rollers;
     }
 
     @Override

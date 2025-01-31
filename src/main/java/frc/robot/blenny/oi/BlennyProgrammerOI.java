@@ -3,6 +3,7 @@ package frc.robot.blenny.oi;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.FieldConstants;
 import frc.robot.blenny.BlennyContainer;
@@ -34,6 +35,11 @@ public class BlennyProgrammerOI implements BlennyOI
                 .getResetOrientationCommand(FieldConstants.getFieldRotation(FieldConstants.getAlliance())));
 
         driverController.x().whileTrue(container.getDrive().getXLockCommand());
+
+        driverController.axisGreaterThan(Axis.kLeftTrigger.value, 0.5)
+                .whileTrue(container.getRollers().getIntakeCommand());
+        driverController.axisGreaterThan(Axis.kRightTrigger.value, 0.5)
+                .whileTrue(container.getRollers().getOuttakeCommand());
     }
 
 }
