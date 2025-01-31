@@ -7,16 +7,16 @@ import org.littletonrobotics.junction.AutoLog;
  */
 public interface ElevatorSensorIO
 {
-	@AutoLog
-	public static class ElevatorSensorIOInputs
-	{
-		public boolean isAtBottom = false;
-	}
+    @AutoLog
+    public static class ElevatorSensorIOInputs
+    {
+        public boolean isAtBottom = false;
+    }
 
-	/**
-	 * Updates the inputs for the elevator
-	 * 
-	 * @param inputs the inputs to update
-	 */
-	public void updateInputs(ElevatorSensorIOInputs inputs);
+    /**
+     * Updates the inputs for the elevator
+     * 
+     * @param inputs the inputs to update
+     */
+    public void updateInputs(ElevatorSensorIOInputs inputs);
 }

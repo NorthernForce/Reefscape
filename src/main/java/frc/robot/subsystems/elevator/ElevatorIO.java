@@ -18,49 +18,49 @@ import edu.wpi.first.units.measure.Temperature;
 public interface ElevatorIO
 {
 
-	/**
-	 * inputs for the elevator
-	 */
+    /**
+     * inputs for the elevator
+     */
 
-	@AutoLog
-	public static class ElevatorIOInputs
-	{
-		public Temperature temperature = Fahrenheit.of(0);
-		public Distance position = Meters.of(0);
-		public boolean isAtTargetPosition = false;
-		public boolean present = false;
-		public Current current = Amps.of(0);
-	}
+    @AutoLog
+    public static class ElevatorIOInputs
+    {
+        public Temperature temperature = Fahrenheit.of(0);
+        public Distance position = Meters.of(0);
+        public boolean isAtTargetPosition = false;
+        public boolean present = false;
+        public Current current = Amps.of(0);
+    }
 
-	/**
-	 * Sets the target position of the elevator
-	 * 
-	 * @param height the height to set the elevator to
-	 */
+    /**
+     * Sets the target position of the elevator
+     * 
+     * @param height the height to set the elevator to
+     */
 
-	public default void setTargetPosition(double height)
-	{
-	}
+    public default void setTargetPosition(double height)
+    {
+    }
 
-	public default void resetPosition()
-	{
-	}
+    public default void resetPosition()
+    {
+    }
 
-	/**
-	 * Stops the elevator
-	 */
+    /**
+     * Stops the elevator
+     */
 
-	public default void stop()
-	{
-	}
+    public default void stop()
+    {
+    }
 
-	/**
-	 * Updates the inputs for the elevator
-	 * 
-	 * @param inputs the inputs to update
-	 */
+    /**
+     * Updates the inputs for the elevator
+     * 
+     * @param inputs the inputs to update
+     */
 
-	public default void updateInputs(ElevatorIOInputs inputs)
-	{
-	}
+    public default void updateInputs(ElevatorIOInputs inputs)
+    {
+    }
 }

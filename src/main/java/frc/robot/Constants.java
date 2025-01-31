@@ -25,24 +25,24 @@ package frc.robot;
  */
 public final class Constants
 {
-	public static final Mode kCurrentMode = Mode.SIM;
+    public static final Mode kCurrentMode = Mode.SIM;
 
-	public static enum Mode
-	{
-		/** Running on a real robot. */
-		REAL,
+    public static enum Mode
+    {
+        /** Running on a real robot. */
+        REAL,
 
-		/** Running a physics simulator. */
-		SIM,
+        /** Running a physics simulator. */
+        SIM,
 
-		/** Replaying from a log file. */
-		REPLAY
-	}
+        /** Replaying from a log file. */
+        REPLAY
+    }
 
-	public static enum OI
-	{
-		PROGRAMMER, DRIVER
-	}
+    public static enum OI
+    {
+        PROGRAMMER, DRIVER
+    }
 
-	public static final OI kOI = OI.PROGRAMMER;
+    public static final OI kOI = OI.PROGRAMMER;
 }
