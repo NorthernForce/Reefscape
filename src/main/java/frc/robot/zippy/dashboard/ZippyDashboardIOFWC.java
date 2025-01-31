@@ -8,6 +8,7 @@ public class ZippyDashboardIOFWC implements ZippyDashboardIO
     {
         WebServer.start(5800, "/home/lvuser/npm-dash");
     }
+
     @Override
     public void updateInputs(ZippyDashboardIOInputs inputs)
     {
