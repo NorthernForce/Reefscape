@@ -7,10 +7,21 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import static edu.wpi.first.units.Units.*;
 
+import java.util.HashMap;
+
 public class FieldConstants
 {
     public static final Distance FIELD_LENGTH = Meters.of(17.55);
     public static final Distance FIELD_WIDTH = Meters.of(8.05);
+
+    /**
+     * Enum for the reef locations
+     */
+    public static enum ReefLocations
+    {
+        A, B, C, D, E, F, G, H, I, J, K, L, AB_ALGAE, CD_ALGAE, EF_ALGAE, GH_ALGAE, IJ_ALGAE, KL_ALGAE,
+        LEFT_CORAL_STATION, RIGHT_CORAL_STATION, PROCESSOR_STATION
+    }
 
     public static class ReefRotations
     {
@@ -45,6 +56,32 @@ public class FieldConstants
         public static final Pose2d K = new Pose2d(3.95, 5.29, ReefRotations.KL_ROTATION);
         public static final Pose2d KL_ALGAE = new Pose2d(3.82, 5.19, ReefRotations.KL_ROTATION);
         public static final Pose2d L = new Pose2d(3.65, 5.12, ReefRotations.KL_ROTATION);
+    }
+
+    public static final HashMap<ReefLocations, Pose2d> REEF_POSITIONS = new HashMap<>();
+    static
+    {
+        REEF_POSITIONS.put(ReefLocations.A, ReefPositions.A);
+        REEF_POSITIONS.put(ReefLocations.B, ReefPositions.B);
+        REEF_POSITIONS.put(ReefLocations.C, ReefPositions.C);
+        REEF_POSITIONS.put(ReefLocations.D, ReefPositions.D);
+        REEF_POSITIONS.put(ReefLocations.E, ReefPositions.E);
+        REEF_POSITIONS.put(ReefLocations.F, ReefPositions.F);
+        REEF_POSITIONS.put(ReefLocations.G, ReefPositions.G);
+        REEF_POSITIONS.put(ReefLocations.H, ReefPositions.H);
+        REEF_POSITIONS.put(ReefLocations.I, ReefPositions.I);
+        REEF_POSITIONS.put(ReefLocations.J, ReefPositions.J);
+        REEF_POSITIONS.put(ReefLocations.K, ReefPositions.K);
+        REEF_POSITIONS.put(ReefLocations.L, ReefPositions.L);
+        REEF_POSITIONS.put(ReefLocations.AB_ALGAE, ReefPositions.AB_ALGAE);
+        REEF_POSITIONS.put(ReefLocations.CD_ALGAE, ReefPositions.CD_ALGAE);
+        REEF_POSITIONS.put(ReefLocations.EF_ALGAE, ReefPositions.EF_ALGAE);
+        REEF_POSITIONS.put(ReefLocations.GH_ALGAE, ReefPositions.GH_ALGAE);
+        REEF_POSITIONS.put(ReefLocations.IJ_ALGAE, ReefPositions.IJ_ALGAE);
+        REEF_POSITIONS.put(ReefLocations.KL_ALGAE, ReefPositions.KL_ALGAE);
+        REEF_POSITIONS.put(ReefLocations.LEFT_CORAL_STATION, CoralStations.LEFT);
+        REEF_POSITIONS.put(ReefLocations.RIGHT_CORAL_STATION, CoralStations.RIGHT);
+        REEF_POSITIONS.put(ReefLocations.PROCESSOR_STATION, ProcessorStations.PROCESSOR_STATION);
     }
 
     /**

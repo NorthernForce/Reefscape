@@ -180,3 +180,8 @@ src/main/java/frc/robot/BuildConstants.java
 ctre_sim/
 logs/
 networktables.json
+
+npm-dash/build
+npm-dash/node_modules
+npm-dash/package-lock.json
+npm-dash/dist

@@ -12,6 +12,9 @@ java {
 
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
+task copyDashboard(dependsOn: 'npm_run_build') {
+}
+
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
 deploy {
@@ -49,6 +52,12 @@ deploy {
                     // Change to true to delete files on roboRIO that no
                     // longer exist in deploy directory on roboRIO
                     deleteOldFiles = false
+                }
+
+                frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
+                    files = project.fileTree('npm-dash/dist')
+                    directory = '/home/lvuser/npm-dash'
+                    deleteOldFiles = true
                 }
             }
         }
@@ -205,7 +214,7 @@ spotless {
     json {
         target fileTree(".") {
             include "**/*.json"
-            exclude "**/build/**", "**/build-*/**"
+            exclude "**/build/**", "**/build-*/**", "**/npm-dash/**"
         }
         gson().indentWithSpaces(2)
     }
