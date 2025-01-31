@@ -98,7 +98,8 @@ public class Superstructure extends SubsystemBase
      */
     public boolean isAtGoal(GenericSuperstructureGoal goal)
     {
-        return m_innerElevator.isAtPosition(goal.getInnerElevatorGoal()) && m_outerElevator
-                .isAtPosition(goal.getOuterElevatorGoal()) && m_wrist.isAtPosition(goal.getWristGoal());
+        return m_innerElevator.isAtPosition(goal.getInnerElevatorGoal())
+                && m_outerElevator.isAtPosition(goal.getOuterElevatorGoal())
+                && m_wrist.isAtPosition(goal.getWristGoal());
     }
 }
