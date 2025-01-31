@@ -42,6 +42,10 @@ public interface ElevatorIO
 	{
 	}
 
+	public default void resetPosition()
+	{
+	}
+
 	/**
 	 * Stops the elevator
 	 */

@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.elevator.brake.BrakeIO;
 import frc.robot.subsystems.elevator.brake.BrakeIOInputsAutoLogged;
+import frc.robot.subsystems.elevator.sensor.ElevatorSensorIO;
+import frc.robot.subsystems.elevator.sensor.ElevatorSensorIOInputsAutoLogged;
 import frc.robot.zippy.constants.ZippyConstants.ElevatorConstants.ElevatorState;
 
 /**
@@ -23,6 +25,11 @@ public class Elevator extends SubsystemBase
 	private final BrakeIOInputsAutoLogged m_brakeInputsInner = new BrakeIOInputsAutoLogged();
 	private BrakeIO m_brakeOuter;
 	private BrakeIO m_brakeInner;
+	private final ElevatorSensorIO m_sensorOuter;
+	private final ElevatorSensorIO m_sensorInner;
+
+	private final ElevatorSensorIOInputsAutoLogged m_sensorInputsOuter = new ElevatorSensorIOInputsAutoLogged();
+	private final ElevatorSensorIOInputsAutoLogged m_sensorInputsInner = new ElevatorSensorIOInputsAutoLogged();
 
 	/**
 	 * Creates a new Elevator
@@ -33,12 +40,15 @@ public class Elevator extends SubsystemBase
 	 * @param breakInner the inner brake io
 	 */
 
-	public Elevator(ElevatorIO ioOuter, ElevatorIO ioInner, BrakeIO breakOuter, BrakeIO breakInner)
+	public Elevator(ElevatorIO ioOuter, ElevatorIO ioInner, BrakeIO breakOuter, BrakeIO breakInner,
+			ElevatorSensorIO sensorOuter, ElevatorSensorIO sensorInner)
 	{
 		m_motorOuter = ioOuter;
 		m_motorInner = ioInner;
 		m_brakeOuter = breakOuter;
 		m_brakeInner = breakInner;
+		m_sensorOuter = sensorOuter;
+		m_sensorInner = sensorInner;
 	}
 
 	/**
@@ -178,5 +188,17 @@ public class Elevator extends SubsystemBase
 		Logger.processInputs(getName() + "/Inner", m_inputsInner);
 		Logger.processInputs(getName() + "/BrakeOuter", m_brakeInputsOuter);
 		Logger.processInputs(getName() + "/BrakeInner", m_brakeInputsInner);
+		m_sensorOuter.updateInputs(m_sensorInputsOuter);
+		m_sensorInner.updateInputs(m_sensorInputsInner);
+		Logger.processInputs(getName() + "/SensorOuter", m_sensorInputsOuter);
+		Logger.processInputs(getName() + "/SensorInner", m_sensorInputsInner);
+		if (m_sensorInputsOuter.isAtBottom)
+		{
+			m_motorOuter.resetPosition();
+		}
+		if (m_sensorInputsInner.isAtBottom)
+		{
+			m_motorInner.resetPosition();
+		}
 	}
 }
