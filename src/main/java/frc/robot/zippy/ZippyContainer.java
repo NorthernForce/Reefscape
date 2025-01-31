@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
+import frc.robot.subsystems.leds.LEDS;
+import frc.robot.subsystems.leds.LedsIOCANdle;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 import frc.robot.zippy.constants.ZippyConstants;
 import frc.robot.zippy.constants.ZippyTunerConstants;
@@ -23,6 +25,8 @@ public class ZippyContainer implements NFRRobotContainer
     private final PhoenixCommandDrive drive;
     private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
     private Alliance alliance = allianceSupplier.get();
+
+    private final LEDS leds = new LEDS(new LedsIOCANdle(30));
 
     public ZippyContainer()
     {
@@ -38,22 +42,27 @@ public class ZippyContainer implements NFRRobotContainer
         return drive;
     }
 
-    @Override
-    public void bindOI()
-    {
-        ZippyOI zippyOI;
-        switch (Constants.kOI)
-        {
-        case PROGRAMMER:
-            zippyOI = new ZippyProgrammerOI();
-            break;
-        case DRIVER:
-        default:
-            zippyOI = new ZippyDriverOI();
-            break;
-        }
-        zippyOI.bindOI(this);
-    }
+	public LEDS getLEDs()
+	{
+		return leds;
+	}
+
+	@Override
+	public void bindOI()
+	{
+		ZippyOI zippyOI;
+		switch (Constants.kOI)
+		{
+		case PROGRAMMER:
+			zippyOI = new ZippyProgrammerOI();
+			break;
+		case DRIVER:
+		default:
+			zippyOI = new ZippyDriverOI();
+			break;
+		}
+		zippyOI.bindOI(this);
+	}
 
     @Override
     public void periodic()
