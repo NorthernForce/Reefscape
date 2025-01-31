@@ -30,3 +30,4 @@ Properties props = System.getProperties();
 props.setProperty("org.gradle.internal.native.headers.unresolved.dependencies.ignore", "true");
 
 include 'npm-dash'
+include 'dashboard'
