@@ -68,9 +68,8 @@ public class Robot extends LoggedRobot
             break;
         }
 
-        final NFRRobotChooser chooser = new NFRRobotChooser(() -> new ZippyContainer(),
-                Map.of("Zippy", () -> new ZippyContainer()));
-        container = chooser.getNFRRobotContainer();
+        final NFRRobotChooser chooser = new NFRRobotChooser(() -> new BlennyContainer(),
+                Map.of("0316d7d7", () -> new ZippyContainer(), "", () -> new BlennyContainer()));
 
         // Set up data receivers & replay source
         switch (Constants.kCurrentMode)
@@ -100,6 +99,8 @@ public class Robot extends LoggedRobot
 
         // Start AdvantageKit logger
         Logger.start();
+
+        container = chooser.getNFRRobotContainer();
 
         container.bindOI();
 
