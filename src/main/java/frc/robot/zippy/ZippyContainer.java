@@ -29,7 +29,6 @@ public class ZippyContainer implements NFRRobotContainer
     private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
     private Alliance alliance = allianceSupplier.get();
     private final PhotonVision vision;
-    private final LoggedPowerDistribution pdh;
 
     public ZippyContainer()
     {
@@ -38,9 +37,10 @@ public class ZippyContainer implements NFRRobotContainer
                 ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,
                 ZippyTunerConstants.BackRight);
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
-        vision = new PhotonVision(ZippyConstants.visionConstants.cameraNames(),
-                ZippyConstants.visionConstants.cameraTransforms(), ZippyConstants.visionConstants.aprilTagLayout());
-        pdh = LoggedPowerDistribution.getInstance(40, ModuleType.kRev);
+        vision = new PhotonVision(ZippyConstants.VisionConstants.cameraNames(),
+                ZippyConstants.VisionConstants.cameraTransforms(), ZippyConstants.VisionConstants.APRILTAG_LAYOUT,
+                ZippyConstants.VisionConstants.MAX_Y_COORDINATE);
+        LoggedPowerDistribution.getInstance(40, ModuleType.kRev);
     }
 
     public PhoenixCommandDrive getDrive()

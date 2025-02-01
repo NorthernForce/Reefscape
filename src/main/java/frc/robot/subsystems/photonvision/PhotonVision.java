@@ -1,12 +1,14 @@
 package frc.robot.subsystems.photonvision;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.TargetCorner;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,6 +25,7 @@ public class PhotonVision extends SubsystemBase
     private final PhotonCamera[] cameras;
     private final PhotonPoseEstimator[] poseEstimators;
     private final ArrayList<EstimatedRobotPose> poseEstimates;
+    private final double maxYCoordinate;
 
     /**
      * Constructs a new PhotonVision subsystem with the given camera names, poses,
@@ -32,7 +35,8 @@ public class PhotonVision extends SubsystemBase
      * @param cameraPoses The poses of the cameras relative to the robot.
      * @param layout      The apriltag field layout to use.
      */
-    public PhotonVision(String[] cameraNames, Transform3d[] cameraPoses, AprilTagFieldLayout layout)
+    public PhotonVision(String[] cameraNames, Transform3d[] cameraPoses, AprilTagFieldLayout layout,
+            double maxYCoordinate)
     {
         cameras = new PhotonCamera[cameraNames.length];
         poseEstimators = new PhotonPoseEstimator[cameraNames.length];
@@ -43,6 +47,32 @@ public class PhotonVision extends SubsystemBase
                     cameraPoses[i]);
         }
         poseEstimates = new ArrayList<>();
+        this.maxYCoordinate = maxYCoordinate;
+    }
+
+    private static double getYCoordinate(List<TargetCorner> corners)
+    {
+        return (corners.get(0).y + corners.get(1).y + corners.get(2).y + corners.get(3).y) / 4;
+    }
+
+    private void processCamera(int idx)
+    {
+        for (var result : cameras[idx].getAllUnreadResults())
+        {
+            for (var target : result.getTargets())
+            {
+                if (Math.abs(getYCoordinate(target.getDetectedCorners())) > maxYCoordinate)
+                {
+                    System.out.println("Target y out of range: " + getYCoordinate(target.getDetectedCorners()));
+                    return;
+                }
+            }
+            var opt = poseEstimators[idx].update(result);
+            if (opt.isPresent())
+            {
+                poseEstimates.add(opt.get());
+            }
+        }
     }
 
     @Override
@@ -51,14 +81,7 @@ public class PhotonVision extends SubsystemBase
         poseEstimates.clear();
         for (int i = 0; i < cameras.length; i++)
         {
-            for (var result : cameras[i].getAllUnreadResults())
-            {
-                var opt = poseEstimators[i].update(result);
-                if (opt.isPresent())
-                {
-                    poseEstimates.add(opt.get());
-                }
-            }
+            processCamera(i);
         }
     }
 
