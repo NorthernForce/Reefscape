@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
 import frc.robot.subsystems.reefscape.ReefDisplayIO;
@@ -14,22 +15,18 @@ import frc.robot.subsystems.reefscape.ReefDisplayIOInputsAutoLogged;
  */
 public class ZippyDashboard extends SubsystemBase
 {
-    private final ZippyDashboardIO[] m_ios;
-    private final ZippyDashboardIOInputsAutoLogged[] m_inputs;
+    private final ZippyDashboardIO m_io;
+    private final ZippyDashboardIOInputsAutoLogged m_input;
     private final ReefDisplayIO reefDisplayIO;
     private final ReefDisplayIOInputsAutoLogged reefDisplayInputs;
 
     /**
      * Constructs a new ZippyDashboard.
      */
-    public ZippyDashboard(ReefDisplayIO displayIO, ZippyDashboardIO... ios)
+    public ZippyDashboard(ReefDisplayIO displayIO, ZippyDashboardIO io)
     {
-        m_ios = ios;
-        m_inputs = new ZippyDashboardIOInputsAutoLogged[ios.length];
-        for (int i = 0; i < ios.length; i++)
-        {
-            m_inputs[i] = new ZippyDashboardIOInputsAutoLogged();
-        }
+        this.m_io = io;
+        this.m_input = new ZippyDashboardIOInputsAutoLogged();
         this.reefDisplayIO = displayIO;
         this.reefDisplayInputs = new ReefDisplayIOInputsAutoLogged();
     }
@@ -45,17 +42,36 @@ public class ZippyDashboard extends SubsystemBase
         return FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.reefLocations);
     }
 
+    public void addAutoCommand(String name, Command command)
+    {
+        m_io.addCommand(name, command, false);
+    }
+
+    public void addDefaultAutoCommand(String name, Command command)
+    {
+        m_io.addCommand(name, command, true);
+    }
+
+    public void setAutoStage()
+    {
+        m_io.setStage(ZippyDashboardIO.ZippyDashboardIOStage.AUTO);
+    }
+
+    public void setTeleopStage()
+    {
+        m_io.setStage(ZippyDashboardIO.ZippyDashboardIOStage.TELEOP);
+    }
+
+    public void setSettingsStage()
+    {
+        m_io.setStage(ZippyDashboardIO.ZippyDashboardIOStage.SETTINGS);
+    }
+
     @Override
     public void periodic()
     {
-        for (int i = 0; i < m_ios.length; i++)
-        {
-            m_ios[i].updateInputs(m_inputs[i]);
-            String name = m_ios.getClass().getSimpleName();
-            if (name.contains("ZippyDashboardIO"))
-                name = name.substring(name.indexOf("ZippyDashboardIO") + "ZippyDashboardIO".length());
-            Logger.processInputs(getName() + "/" + name, m_inputs[i]);
-        }
+        m_io.updateInputs(m_input);
+        Logger.processInputs(getName() + "/Dashboard", m_input);
         reefDisplayIO.updateInputs(reefDisplayInputs);
         Logger.processInputs(getName() + "/ReefDisplayIO", reefDisplayInputs);
     }

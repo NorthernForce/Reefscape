@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
@@ -16,8 +17,7 @@ import frc.robot.subsystems.reefscape.ReefDisplayIOSwing;
 import frc.robot.zippy.constants.ZippyConstants;
 import frc.robot.zippy.constants.ZippyTunerConstants;
 import frc.robot.zippy.dashboard.ZippyDashboard;
-import frc.robot.zippy.dashboard.ZippyDashboardIOElastic;
-import frc.robot.zippy.dashboard.ZippyDashboardIOIMGUI;
+import frc.robot.zippy.dashboard.ZippyDashboardIOFWC;
 import frc.robot.zippy.oi.ZippyDriverOI;
 import frc.robot.zippy.oi.ZippyOI;
 import frc.robot.zippy.oi.ZippyProgrammerOI;
@@ -31,13 +31,13 @@ public class ZippyContainer implements NFRRobotContainer
 
     public ZippyContainer()
     {
-        dashboard = new ZippyDashboard(new ReefDisplayIOSwing("ReefDisplay"), new ZippyDashboardIOElastic(),
-                new ZippyDashboardIOIMGUI());
+        dashboard = new ZippyDashboard(new ReefDisplayIOSwing("ReefDisplay"), new ZippyDashboardIOFWC());
         drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants,
                 ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,
                 ZippyTunerConstants.BackRight);
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
+        dashboard.addDefaultAutoCommand("Do Nothing", Commands.none());
     }
 
     public PhoenixCommandDrive getDrive()
@@ -81,6 +81,18 @@ public class ZippyContainer implements NFRRobotContainer
     public void autonomousInit()
     {
         drive.resetPose(new Pose2d());
+    }
+
+    @Override
+    public void teleopInit()
+    {
+        dashboard.setTeleopStage();
+    }
+
+    @Override
+    public void disabledInit()
+    {
+        dashboard.setAutoStage();
     }
 
     @Override

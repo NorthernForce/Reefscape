@@ -3,6 +3,7 @@ import './App.css';
 import { useState } from 'react';
 import { useEntry } from '@frc-web-components/react';
 import Teleop from './teleop/Teleop';
+import Auto from './teleop/Auto';
 
 function TabPanel(props: { children?: React.ReactNode, selected: number, index: number }) {
     return <div hidden={props.selected !== props.index}>
@@ -12,7 +13,7 @@ function TabPanel(props: { children?: React.ReactNode, selected: number, index: 
 
 function App(props: { targetIp: string }) {
     let [selected, setSelected] = useState(0);
-    let [tabEntry] = useEntry('FWC/selectedTab', 0)
+    let [tabEntry, _setSelectedTab] = useEntry('/FWC/selectedTab', 0)
     const handleTabChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
         if (tabsLocked) return;
         setSelected(newValue);
@@ -32,6 +33,7 @@ function App(props: { targetIp: string }) {
                 </Tabs>
                 <span className="header-status"
                     style={{ color: connected ? "green" : "#b5e349" }}>{connected ? "Connected to " : "Connecting to"} {props.targetIp}
+                    {tabEntry}
                 </span>
                 <FormControlLabel control={<Switch id="lock-switch" value={tabsLocked} defaultChecked
                     onChange={handleLockChange}/>} label="Lock tabs"/>
@@ -41,7 +43,7 @@ function App(props: { targetIp: string }) {
                     <Teleop />
                 </TabPanel>
                 <TabPanel selected={tabsLocked ? tabEntry : selected} index={1}>
-                    Autonomous
+                    <Auto />
                 </TabPanel>
                 <TabPanel selected={tabsLocked ? tabEntry : selected} index={2}>
                     Settings
