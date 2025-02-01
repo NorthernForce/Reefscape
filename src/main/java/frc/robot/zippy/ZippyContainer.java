@@ -25,6 +25,7 @@ import frc.robot.zippy.oi.ZippyProgrammerOI;
 
 public class ZippyContainer implements NFRRobotContainer
 {
+<<<<<<< HEAD
 	private final PhoenixCommandDrive drive;
 	private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
 	private Alliance alliance = allianceSupplier.get();
@@ -42,28 +43,42 @@ public class ZippyContainer implements NFRRobotContainer
 				ZippyConstants.visionConstants.cameraTransforms(), ZippyConstants.visionConstants.aprilTagLayout());
 		pdh = LoggedPowerDistribution.getInstance(40, ModuleType.kRev);
 	}
+=======
+    private final PhoenixCommandDrive drive;
+    private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
+    private Alliance alliance = allianceSupplier.get();
 
-	public PhoenixCommandDrive getDrive()
-	{
-		return drive;
-	}
+    public ZippyContainer()
+    {
+        drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants,
+                ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,
+                ZippyTunerConstants.BackRight);
+        drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
+    }
+>>>>>>> origin/devel
 
-	@Override
-	public void bindOI()
-	{
-		ZippyOI zippyOI;
-		switch (Constants.kOI)
-		{
-		case PROGRAMMER:
-			zippyOI = new ZippyProgrammerOI();
-			break;
-		case DRIVER:
-		default:
-			zippyOI = new ZippyDriverOI();
-			break;
-		}
-		zippyOI.bindOI(this);
-	}
+    public PhoenixCommandDrive getDrive()
+    {
+        return drive;
+    }
+
+    @Override
+    public void bindOI()
+    {
+        ZippyOI zippyOI;
+        switch (Constants.kOI)
+        {
+        case PROGRAMMER:
+            zippyOI = new ZippyProgrammerOI();
+            break;
+        case DRIVER:
+        default:
+            zippyOI = new ZippyDriverOI();
+            break;
+        }
+        zippyOI.bindOI(this);
+    }
 
 	@Override
 	public void periodic()
@@ -79,11 +94,11 @@ public class ZippyContainer implements NFRRobotContainer
 		}
 	}
 
-	@Override
-	public void autonomousInit()
-	{
-		drive.resetPose(new Pose2d());
-	}
+    @Override
+    public void autonomousInit()
+    {
+        drive.resetPose(new Pose2d());
+    }
 
 	@Override
 	public Command getAutonomousCommand()
