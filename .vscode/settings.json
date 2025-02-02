@@ -35,5 +35,6 @@
   "[java]": {
     "editor.detectIndentation": false
   },
-  "java.debug.settings.onBuildFailureProceed": true
+  "java.debug.settings.onBuildFailureProceed": true,
+  "git.ignoreLimitWarning": true
 }
