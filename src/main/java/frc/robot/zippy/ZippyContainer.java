@@ -39,8 +39,7 @@ public class ZippyContainer implements NFRRobotContainer
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
         vision = new PhotonVision(ZippyConstants.VisionConstants.cameraNames(),
                 ZippyConstants.VisionConstants.cameraTransforms(), ZippyConstants.VisionConstants.APRILTAG_LAYOUT,
-                ZippyConstants.VisionConstants.MAX_Y_COORDINATE,
-                ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED);
+                ZippyConstants.VisionConstants.MAX_Y_COORDINATE, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED);
         LoggedPowerDistribution.getInstance(40, ModuleType.kRev);
     }
 

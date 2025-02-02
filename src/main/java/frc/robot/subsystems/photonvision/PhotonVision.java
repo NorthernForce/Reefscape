@@ -143,8 +143,7 @@ public class PhotonVision extends SubsystemBase
                 if (valid)
                 {
                     poseEstimates.add(opt.get());
-                }
-                else
+                } else
                 {
                     rejectedEstimates.add(Pair.of(reason, opt.get()));
                 }
