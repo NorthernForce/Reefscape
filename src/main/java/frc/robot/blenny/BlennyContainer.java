@@ -49,7 +49,7 @@ public class BlennyContainer implements NFRRobotContainer
                 BlennyTunerConstants.BackRight);
         vision = new PhotonVision(BlennyConstants.VisionConstants.cameraNames(),
                 BlennyConstants.VisionConstants.cameraTransforms(), BlennyConstants.VisionConstants.APRILTAG_LAYOUT,
-                BlennyConstants.VisionConstants.MAX_Y_COORDINATE);
+                BlennyConstants.VisionConstants.MAX_Y_COORDINATE, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED);
         switch (Constants.kCurrentMode)
         {
         case SIM:
