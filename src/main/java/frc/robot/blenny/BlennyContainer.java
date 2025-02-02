@@ -62,7 +62,7 @@ public class BlennyContainer implements NFRRobotContainer
                     new Elevator("OuterElevator",
                             new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
                             new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2),
-                    new Wrist(new WristIOTalonFX(0, 0), 2.0));
+                    new Wrist(new WristIOTalonFX(16, 17), 2.0));
             break;
         case REPLAY:
         default:
