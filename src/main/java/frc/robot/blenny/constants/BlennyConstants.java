@@ -29,14 +29,15 @@ public class BlennyConstants
 
     public static class VisionConstants
     {
-        public static final AprilTagFieldLayout APRILTAG_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+        public static final AprilTagFieldLayout APRILTAG_LAYOUT = AprilTagFieldLayout
+                .loadField(AprilTagFields.k2025Reefscape);
 
         private static final String FL_CAMERA_NAME = "front_left_camera";
         private static final String FR_CAMERA_NAME = "front_right_camera";
 
         private static final Transform3d FL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(13.731), Inches.of(13.731),
                 Inches.of(11.248), new Rotation3d(Degrees.of(0.0), Degrees.of(10.0), Degrees.of(45.0)));
-        
+
         private static final Transform3d FR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(13.731), Inches.of(-13.731),
                 Inches.of(11.248), new Rotation3d(Degrees.of(0.0), Degrees.of(10.0), Degrees.of(315.0)));
 
