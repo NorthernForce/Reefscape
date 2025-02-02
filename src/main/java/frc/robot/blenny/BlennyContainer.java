@@ -2,14 +2,20 @@ package frc.robot.blenny;
 
 import org.northernforce.util.NFRRobotContainer;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
+import frc.robot.FieldConstants;
 import frc.robot.blenny.constants.BlennyConstants;
 import frc.robot.blenny.constants.BlennyTunerConstants;
 import frc.robot.blenny.oi.BlennyDriverOI;
 import frc.robot.blenny.oi.BlennyProgrammerOI;
+import frc.robot.subsystems.dashboard.Dashboard;
+import frc.robot.subsystems.dashboard.DashboardIOFWC;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
+import frc.robot.subsystems.reefscape.ReefDisplayIOSwing;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIO;
@@ -18,6 +24,7 @@ import frc.robot.subsystems.superstructure.elevator.brake.BrakeIO;
 import frc.robot.subsystems.superstructure.elevator.brake.BrakeIORelay;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIO;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIOLimitSwitch;
+import frc.robot.util.AutoRoutine;
 
 /**
  * 2025 Competition Robot Container. Name is still a work in progress and will
@@ -28,6 +35,7 @@ public class BlennyContainer implements NFRRobotContainer
 {
     private final PhoenixCommandDrive drive;
     private final Superstructure superstructure;
+    private final Dashboard dashboard;
 
     /**
      * Create a new BlennyContainer
@@ -39,6 +47,8 @@ public class BlennyContainer implements NFRRobotContainer
                 BlennyConstants.PathplannerConstants.linearPIDConstants,
                 BlennyConstants.PathplannerConstants.angularPIDConstants, BlennyTunerConstants.FrontLeft,
                 BlennyTunerConstants.FrontRight, BlennyTunerConstants.BackLeft, BlennyTunerConstants.BackRight);
+        dashboard = new Dashboard(new ReefDisplayIOSwing("ReefDisplay"), new DashboardIOFWC());
+        addAutonomousRoutines();
         switch (Constants.kCurrentMode)
         {
         case SIM:
@@ -66,6 +76,12 @@ public class BlennyContainer implements NFRRobotContainer
         }
     }
 
+    private void addAutonomousRoutines()
+    {
+        dashboard.addDefaultAutoRoutine("Do Nothing", new AutoRoutine(Commands.none(), new Translation2d[]
+        { new Translation2d(), new Translation2d() }, new Pose2d()));
+    }
+
     /**
      * Get the drive subsystem
      * 
@@ -86,6 +102,16 @@ public class BlennyContainer implements NFRRobotContainer
         return superstructure;
     }
 
+    /**
+     * Get the dashboard
+     * 
+     * @return the dashboard (Dashboard)
+     */
+    public Dashboard getDashboard()
+    {
+        return dashboard;
+    }
+
     @Override
     public void bindOI()
     {
@@ -104,7 +130,14 @@ public class BlennyContainer implements NFRRobotContainer
     @Override
     public Command getAutonomousCommand()
     {
-        return Commands.none();
+        return dashboard.getRoutine().command();
+    }
+
+    @Override
+    public void autonomousInit()
+    {
+        drive.resetPose(
+                FieldConstants.convertPoseByAlliance(dashboard.getRoutine().startPose(), FieldConstants.getAlliance()));
     }
 
 }
