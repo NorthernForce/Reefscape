@@ -90,7 +90,6 @@ public class PhotonVision extends SubsystemBase
         {
             if (Math.abs(getYCoordinate(target.getDetectedCorners())) > maxYCoordinate)
             {
-                System.out.println("Y coordinate too large: " + getYCoordinate(target.getDetectedCorners()));
                 return false;
             }
         }
