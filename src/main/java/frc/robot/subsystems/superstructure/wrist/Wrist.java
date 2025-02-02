@@ -43,7 +43,7 @@ public class Wrist extends SubsystemBase
 
     public Angle getTargetAngle()
     {
-        return io.getTargetAngle();
+        return inputs.targetAngle;
     }
 
     public boolean isAtTargetPosition()

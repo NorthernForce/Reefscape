@@ -13,6 +13,7 @@ public interface WristIO
     public static class WristIOInputs
     {
         public Angle encoderAngle;
+        public Angle targetAngle;
         public Current motorCurrent;
         public Temperature motorTemperature;
         public boolean motorPresent;

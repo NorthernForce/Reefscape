@@ -55,15 +55,10 @@ public class WristIOTalonFX implements WristIO
     public void updateInputs(WristIOInputs inputs)
     {
         inputs.encoderAngle = cancoderAngle.getValue();
+        inputs.targetAngle = targetAngle;
         inputs.motorTemperature = motorTemperature.getValue();
         inputs.motorCurrent = motorCurrent.getValue();
         inputs.motorPresent = motorPresent.get();
-    }
-
-    @Override
-    public Angle getTargetAngle()
-    {
-        return targetAngle;
     }
 
     @Override
