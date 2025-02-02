@@ -12,7 +12,6 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.TargetCorner;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -33,14 +32,18 @@ public class PhotonVision extends SubsystemBase
         OUT_OF_BOUNDS, TARGET_OUTSIDE_USABLE_AREA, ROBOT_ANGLE_TOO_LARGE
     }
 
+    public static record RejectedPoseEstimate(RejectionReason reason, PoseEstimate pose) {
+    }
+
     private final PhotonCamera[] cameras;
     private final PhotonPoseEstimator[] poseEstimators;
-    private final ArrayList<EstimatedRobotPose> poseEstimates;
-    private final ArrayList<Pair<RejectionReason, EstimatedRobotPose>> rejectedEstimates;
+    private final ArrayList<PoseEstimate> poseEstimates;
+    private final ArrayList<RejectedPoseEstimate> rejectedEstimates;
     private final double maxYCoordinate;
     private Rotation2d lastKnownRobotRotation;
     private final AngularVelocity maxAngularVelocity;
     private final AprilTagFieldLayout layout;
+    private final double cameraWidth;
 
     /**
      * Constructs a new PhotonVision subsystem with the given camera names, poses,
@@ -51,7 +54,7 @@ public class PhotonVision extends SubsystemBase
      * @param layout      The apriltag field layout to use.
      */
     public PhotonVision(String[] cameraNames, Transform3d[] cameraPoses, AprilTagFieldLayout layout,
-            double maxYCoordinate, AngularVelocity maxAngularVelocity)
+            double maxYCoordinate, AngularVelocity maxAngularVelocity, double cameraWidth)
     {
         cameras = new PhotonCamera[cameraNames.length];
         poseEstimators = new PhotonPoseEstimator[cameraNames.length];
@@ -66,11 +69,14 @@ public class PhotonVision extends SubsystemBase
         this.maxYCoordinate = maxYCoordinate;
         this.maxAngularVelocity = maxAngularVelocity;
         this.layout = layout;
+        this.cameraWidth = cameraWidth;
     }
 
-    private static double getYCoordinate(List<TargetCorner> corners)
+    private double getYCoordinate(List<TargetCorner> corners)
     {
-        return (corners.get(0).y + corners.get(1).y + corners.get(2).y + corners.get(3).y) / 4;
+        var y = (corners.get(0).y + corners.get(1).y + corners.get(2).y + corners.get(3).y) / 4;
+        y -= cameraWidth / 2;
+        return y;
     }
 
     public void setLastKnownRobotRotation(Rotation2d rotation)
@@ -84,6 +90,7 @@ public class PhotonVision extends SubsystemBase
         {
             if (Math.abs(getYCoordinate(target.getDetectedCorners())) > maxYCoordinate)
             {
+                System.out.println("Y coordinate too large: " + getYCoordinate(target.getDetectedCorners()));
                 return false;
             }
         }
@@ -114,6 +121,7 @@ public class PhotonVision extends SubsystemBase
     public void periodic()
     {
         poseEstimates.clear();
+        rejectedEstimates.clear();
         for (int i = 0; i < cameras.length; i++)
         {
             for (var result : cameras[i].getAllUnreadResults())
@@ -130,11 +138,11 @@ public class PhotonVision extends SubsystemBase
                     valid = false;
                     reason = RejectionReason.TARGET_OUTSIDE_USABLE_AREA;
                 }
-                if (!testRobotRotation(opt.get()))
-                {
-                    valid = false;
-                    reason = RejectionReason.ROBOT_ANGLE_TOO_LARGE;
-                }
+                // if (!testRobotRotation(opt.get()))
+                // {
+                // valid = false;
+                // reason = RejectionReason.ROBOT_ANGLE_TOO_LARGE;
+                // }
                 if (!testWithinField(opt.get()))
                 {
                     valid = false;
@@ -142,10 +150,11 @@ public class PhotonVision extends SubsystemBase
                 }
                 if (valid)
                 {
-                    poseEstimates.add(opt.get());
+                    poseEstimates.add(new PoseEstimate(opt.get().estimatedPose.toPose2d(), opt.get().timestampSeconds));
                 } else
                 {
-                    rejectedEstimates.add(Pair.of(reason, opt.get()));
+                    rejectedEstimates.add(new RejectedPoseEstimate(reason,
+                            new PoseEstimate(opt.get().estimatedPose.toPose2d(), opt.get().timestampSeconds)));
                 }
             }
         }
@@ -160,12 +169,14 @@ public class PhotonVision extends SubsystemBase
     public PoseEstimate[] getPoseEstimates()
     {
         PoseEstimate[] poses = new PoseEstimate[poseEstimates.size()];
-        for (int i = 0; i < poses.length; i++)
-        {
-            poses[i] = new PoseEstimate(poseEstimates.get(i).estimatedPose.toPose2d(),
-                    poseEstimates.get(i).timestampSeconds);
-        }
-        return poses;
+        return poseEstimates.toArray(poses);
+    }
+
+    @AutoLogOutput
+    public RejectedPoseEstimate[] getRejectedPoseEstimates()
+    {
+        RejectedPoseEstimate[] poses = new RejectedPoseEstimate[rejectedEstimates.size()];
+        return rejectedEstimates.toArray(poses);
     }
 
     @AutoLogOutput

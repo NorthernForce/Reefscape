@@ -53,5 +53,7 @@ public class ZippyConstants
             return new Transform3d[]
             { FL_ROBOT_TO_CAMERA, FR_ROBOT_TO_CAMERA, BL_ROBOT_TO_CAMERA, BR_ROBOT_TO_CAMERA };
         }
+
+        public static final double CAMERA_WIDTH = 800;
     }
 }

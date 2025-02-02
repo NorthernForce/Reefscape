@@ -54,6 +54,8 @@ public class BlennyConstants
         }
 
         public static final double MAX_Y_COORDINATE = 350; // TODO: Set this to the actual value
+
+        public static final double CAMERA_WIDTH = 800;
     }
 
     public static class InnerElevatorConstants
