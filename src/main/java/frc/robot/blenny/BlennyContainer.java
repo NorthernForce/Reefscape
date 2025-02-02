@@ -1,15 +1,21 @@
 package frc.robot.blenny;
 
+import java.util.function.Supplier;
+
 import org.northernforce.util.NFRRobotContainer;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
+import frc.robot.FieldConstants;
 import frc.robot.blenny.constants.BlennyConstants;
 import frc.robot.blenny.constants.BlennyTunerConstants;
 import frc.robot.blenny.oi.BlennyDriverOI;
 import frc.robot.blenny.oi.BlennyProgrammerOI;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
+import frc.robot.subsystems.photonvision.PhotonVision;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIO;
@@ -28,6 +34,9 @@ public class BlennyContainer implements NFRRobotContainer
 {
     private final PhoenixCommandDrive drive;
     private final Superstructure superstructure;
+    private final PhotonVision vision;
+    private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
+    private Alliance alliance = allianceSupplier.get();
 
     /**
      * Create a new BlennyContainer
@@ -38,6 +47,9 @@ public class BlennyContainer implements NFRRobotContainer
                 BlennyConstants.DrivetrainConstants.MAX_SPEED, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 BlennyTunerConstants.FrontLeft, BlennyTunerConstants.FrontRight, BlennyTunerConstants.BackLeft,
                 BlennyTunerConstants.BackRight);
+        vision = new PhotonVision(BlennyConstants.VisionConstants.cameraNames(),
+                BlennyConstants.VisionConstants.cameraTransforms(), BlennyConstants.VisionConstants.APRILTAG_LAYOUT,
+                BlennyConstants.VisionConstants.MAX_Y_COORDINATE);
         switch (Constants.kCurrentMode)
         {
         case SIM:
@@ -104,6 +116,20 @@ public class BlennyContainer implements NFRRobotContainer
     public Command getAutonomousCommand()
     {
         return Commands.none();
+    }
+
+    @Override
+    public void periodic()
+    {
+        if (alliance != allianceSupplier.get())
+        {
+            alliance = allianceSupplier.get();
+            drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
+        }
+        for (var poseEstimate : vision.getPoseEstimates())
+        {
+            drive.addVisionMeasurement(poseEstimate.pose(), poseEstimate.timestamp());
+        }
     }
 
 }

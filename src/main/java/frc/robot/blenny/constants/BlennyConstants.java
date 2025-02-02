@@ -11,6 +11,11 @@ import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX.ElevatorCo
 
 import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+
 public class BlennyConstants
 {
     public static class DrivetrainConstants
@@ -20,6 +25,34 @@ public class BlennyConstants
         public static final AngularVelocity MAX_ANGULAR_SPEED = RotationsPerSecond.of(0.7);
         public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(3.0);
         public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
+    }
+
+    public static class VisionConstants
+    {
+        public static final AprilTagFieldLayout APRILTAG_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+
+        private static final String FL_CAMERA_NAME = "front_left_camera";
+        private static final String FR_CAMERA_NAME = "front_right_camera";
+
+        private static final Transform3d FL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(13.731), Inches.of(13.731),
+                Inches.of(11.248), new Rotation3d(Degrees.of(0.0), Degrees.of(10.0), Degrees.of(45.0)));
+        
+        private static final Transform3d FR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(13.731), Inches.of(-13.731),
+                Inches.of(11.248), new Rotation3d(Degrees.of(0.0), Degrees.of(10.0), Degrees.of(315.0)));
+
+        public static String[] cameraNames()
+        {
+            return new String[]
+            { FL_CAMERA_NAME, FR_CAMERA_NAME };
+        }
+
+        public static Transform3d[] cameraTransforms()
+        {
+            return new Transform3d[]
+            { FL_ROBOT_TO_CAMERA, FR_ROBOT_TO_CAMERA };
+        }
+
+        public static final double MAX_Y_COORDINATE = 350; // TODO: Set this to the actual value
     }
 
     public static class InnerElevatorConstants
