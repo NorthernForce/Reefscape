@@ -5,19 +5,20 @@ import java.util.function.Supplier;
 import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
+import frc.robot.subsystems.dashboard.Dashboard;
+import frc.robot.subsystems.dashboard.DashboardIOFWC;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 import frc.robot.subsystems.reefscape.ReefDisplayIOSwing;
+import frc.robot.util.AutoRoutine;
 import frc.robot.zippy.constants.ZippyConstants;
 import frc.robot.zippy.constants.ZippyTunerConstants;
-import frc.robot.zippy.dashboard.ZippyDashboard;
-import frc.robot.zippy.dashboard.ZippyDashboardIOFWC;
 import frc.robot.zippy.oi.ZippyDriverOI;
 import frc.robot.zippy.oi.ZippyOI;
 import frc.robot.zippy.oi.ZippyProgrammerOI;
@@ -27,17 +28,18 @@ public class ZippyContainer implements NFRRobotContainer
     private final PhoenixCommandDrive drive;
     private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
     private Alliance alliance = allianceSupplier.get();
-    private final ZippyDashboard dashboard;
+    private final Dashboard dashboard;
 
     public ZippyContainer()
     {
-        dashboard = new ZippyDashboard(new ReefDisplayIOSwing("ReefDisplay"), new ZippyDashboardIOFWC());
+        dashboard = new Dashboard(new ReefDisplayIOSwing("ReefDisplay"), new DashboardIOFWC());
         drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants,
                 ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,
                 ZippyTunerConstants.BackRight);
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
-        dashboard.addDefaultAutoCommand("Do Nothing", Commands.none());
+        dashboard.addDefaultAutoRoutine("Do Nothing", new AutoRoutine(new InstantCommand(), new Translation2d[]
+        { new Translation2d(), new Translation2d() }, new Pose2d()));
     }
 
     public PhoenixCommandDrive getDrive()
@@ -45,7 +47,7 @@ public class ZippyContainer implements NFRRobotContainer
         return drive;
     }
 
-    public ZippyDashboard getDashboard()
+    public Dashboard getDashboard()
     {
         return dashboard;
     }

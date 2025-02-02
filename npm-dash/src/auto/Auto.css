@@ -8,6 +8,9 @@
 .auto-selector-container {
     grid-area: selector;
 }
-.auto-field {
+.auto-field-container {
     grid-area: field;
+}
+.auto-field {
+    width: 800px;
 }

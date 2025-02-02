@@ -3,7 +3,7 @@ import './App.css';
 import { useState } from 'react';
 import { useEntry } from '@frc-web-components/react';
 import Teleop from './teleop/Teleop';
-import Auto from './teleop/Auto';
+import Auto from './auto/Auto';
 
 function TabPanel(props: { children?: React.ReactNode, selected: number, index: number }) {
     return <div hidden={props.selected !== props.index}>
@@ -33,7 +33,6 @@ function App(props: { targetIp: string }) {
                 </Tabs>
                 <span className="header-status"
                     style={{ color: connected ? "green" : "#b5e349" }}>{connected ? "Connected to " : "Connecting to"} {props.targetIp}
-                    {tabEntry}
                 </span>
                 <FormControlLabel control={<Switch id="lock-switch" value={tabsLocked} defaultChecked
                     onChange={handleLockChange}/>} label="Lock tabs"/>

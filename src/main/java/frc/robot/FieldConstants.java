@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -128,6 +129,17 @@ public class FieldConstants
         {
             return new Pose2d(FIELD_LENGTH.in(Meters) - pose.getX(), FIELD_WIDTH.in(Meters) - pose.getY(),
                     pose.getRotation().plus(Rotation2d.fromDegrees(180)));
+        }
+    }
+
+    public static Translation2d convertTranslationByAlliance(Translation2d pose, Alliance alliance)
+    {
+        if (alliance == Alliance.Blue)
+        {
+            return pose;
+        } else
+        {
+            return new Translation2d(FIELD_LENGTH.in(Meters) - pose.getX(), FIELD_WIDTH.in(Meters) - pose.getY());
         }
     }
 

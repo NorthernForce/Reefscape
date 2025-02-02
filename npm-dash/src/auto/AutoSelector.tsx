@@ -4,10 +4,9 @@ import './AutoSelector.css';
 import { useEntry } from "@frc-web-components/react";
 
 function AutoSelector(props: { source: string }) {
-    let [options] = useEntry(props.source + "/options", []);
-    let [defaultChoice] = useEntry(props.source + "/default", 0);
-    let [activeChoice] = useEntry(props.source + "/active", defaultChoice);
-    let [_selectedChoice, setSelectedChoice] = useEntry(props.source + "/selected", activeChoice);
+    let [options] = useEntry(props.source + '/options', ['No Options Found']);
+    let [activeChoice] = useEntry(props.source + '/active', '');
+    let [_selectedChoice, setSelectedChoice] = useEntry(props.source + '/selected', '');
 
     return (
         <>
@@ -15,7 +14,7 @@ function AutoSelector(props: { source: string }) {
                 <List>
                     {options.map((option: string, index: number) => {
                         return <ListItem key={index}>
-                            <ListItemButton selected={activeChoice === index} onClick={() => setSelectedChoice(index)}>
+                            <ListItemButton selected={option == activeChoice} onClick={() => setSelectedChoice(option)}>
                                 <ListItemText primary={option} />
                             </ListItemButton>
                         </ListItem>
