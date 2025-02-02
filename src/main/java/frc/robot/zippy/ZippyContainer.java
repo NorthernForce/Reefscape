@@ -82,7 +82,8 @@ public class ZippyContainer implements NFRRobotContainer
     @Override
     public void autonomousInit()
     {
-        drive.resetPose(new Pose2d());
+        drive.resetPose(
+                FieldConstants.convertPoseByAlliance(dashboard.getRoutine().startPose(), FieldConstants.getAlliance()));
     }
 
     @Override
@@ -100,7 +101,7 @@ public class ZippyContainer implements NFRRobotContainer
     @Override
     public Command getAutonomousCommand()
     {
-        return new InstantCommand();
+        return dashboard.getRoutine().command();
     }
 
 }

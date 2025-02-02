@@ -75,4 +75,9 @@ public class Dashboard extends SubsystemBase
         reefDisplayIO.updateInputs(reefDisplayInputs);
         Logger.processInputs(getName() + "/ReefDisplayIO", reefDisplayInputs);
     }
+
+    public AutoRoutine getRoutine()
+    {
+        return m_io.getSelectedRoutine();
+    }
 }
