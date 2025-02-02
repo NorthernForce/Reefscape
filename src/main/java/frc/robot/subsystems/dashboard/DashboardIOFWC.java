@@ -27,8 +27,8 @@ public class DashboardIOFWC implements DashboardIO
         table = NetworkTableInstance.getDefault().getTable("/FWC");
         stagePublisher = table.getDoubleTopic("selectedTab").publish();
         table.getBooleanTopic("connected").publish().set(true);
-        autoPosePublisher = table.getDoubleArrayTopic("autoPose").publish();
-        autoPathPublisher = table.getDoubleArrayTopic("autoPath").publish();
+        autoPosePublisher = table.getDoubleArrayTopic("AutoPose").publish();
+        autoPathPublisher = table.getDoubleArrayTopic("AutoPath").publish();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class DashboardIOFWC implements DashboardIO
         pose = FieldConstants.convertPoseByAlliance(pose, FieldConstants.getAlliance());
         autoPosePublisher.set(new double[]
         { pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getRotation().getRadians() });
-        var path = autoChooser.get().waypoints();
+        var path = autoChooser.get().waypoints().clone();
         for (int i = 0; i < path.length; i++)
         {
             path[i] = FieldConstants.convertTranslationByAlliance(path[i], FieldConstants.getAlliance());

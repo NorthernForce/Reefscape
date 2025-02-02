@@ -18,8 +18,8 @@ fieldConfigs.push(
 )
 
 function Auto() {
-    let [autoPose] = useEntry('/SmartDashboard/AutoPose', [0, 0, 0]);
-    let [autoPath] = useEntry('/SmartDashboard/AutoPath', [0, 0, 2, 2]);
+    const [autoPose] = useEntry('/FWC/AutoPose', [0, 0, 0]);
+    const [autoPath] = useEntry('/FWC/AutoPath', [0, 0, 2, 2]);
     return (
         <>
             <div className="auto-container">
