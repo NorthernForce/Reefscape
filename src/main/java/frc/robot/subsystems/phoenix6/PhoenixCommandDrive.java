@@ -74,40 +74,40 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 		}
 	}
 
-	/**
-	 * Apply a request to the drivetrain (runs the request each loop)
-	 * 
-	 * @param requestSupplier the request to apply
-	 * @return a command that applies the request
-	 */
-	public Command applyRequest(Supplier<SwerveRequest> requestSupplier)
-	{
-		return run(() ->
-		{
-			setControl(requestSupplier.get());
-		});
-	}
+    /**
+     * Apply a request to the drivetrain (runs the request each loop)
+     * 
+     * @param requestSupplier the request to apply
+     * @return a command that applies the request
+     */
+    public Command applyRequest(Supplier<SwerveRequest> requestSupplier)
+    {
+        return run(() ->
+        {
+            setControl(requestSupplier.get());
+        });
+    }
 
-	/**
-	 * Get a command that drives the robot by joystick input
-	 * 
-	 * @param xSupplier     x input (relative to the field)
-	 * @param ySupplier     y input (relative to the field)
-	 * @param omegaSupplier omega input (rotational rate)
-	 * @return a command that drives the robot by joystick input
-	 */
-	public Command getDriveByJoystickCommand(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
-			DoubleSupplier omegaSupplier)
-	{
-		SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric().withDeadband(maxSpeed.times(0.1))
-				.withRotationalDeadband(maxAngularSpeed.times(0.1));
-		return applyRequest(() ->
-		{
-			return fieldCentric.withVelocityX(maxSpeed.times(xSupplier.getAsDouble()))
-					.withVelocityY(maxSpeed.times(ySupplier.getAsDouble()))
-					.withRotationalRate(maxAngularSpeed.times(omegaSupplier.getAsDouble()));
-		});
-	}
+    /**
+     * Get a command that drives the robot by joystick input
+     * 
+     * @param xSupplier     x input (relative to the field)
+     * @param ySupplier     y input (relative to the field)
+     * @param omegaSupplier omega input (rotational rate)
+     * @return a command that drives the robot by joystick input
+     */
+    public Command getDriveByJoystickCommand(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
+            DoubleSupplier omegaSupplier)
+    {
+        SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric().withDeadband(maxSpeed.times(0.1))
+                .withRotationalDeadband(maxAngularSpeed.times(0.1));
+        return applyRequest(() ->
+        {
+            return fieldCentric.withVelocityX(maxSpeed.times(xSupplier.getAsDouble()))
+                    .withVelocityY(maxSpeed.times(ySupplier.getAsDouble()))
+                    .withRotationalRate(maxAngularSpeed.times(omegaSupplier.getAsDouble()));
+        });
+    }
 
 	/**
 	 * Get a command to drive the robot to a pose on the field using Pathplanner
@@ -133,57 +133,57 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 		return applyRequest(() -> xLockRequest);
 	}
 
-	/**
-	 * Get a command that resets the orientation of the robot
-	 * 
-	 * @param orientation the orientation to reset to
-	 * @return a command that resets the orientation of the robot
-	 */
-	public Command getResetOrientationCommand(Rotation2d orientation)
-	{
-		return runOnce(() ->
-		{
-			resetRotation(orientation);
-		});
-	}
+    /**
+     * Get a command that resets the orientation of the robot
+     * 
+     * @param orientation the orientation to reset to
+     * @return a command that resets the orientation of the robot
+     */
+    public Command getResetOrientationCommand(Rotation2d orientation)
+    {
+        return runOnce(() ->
+        {
+            resetRotation(orientation);
+        });
+    }
 
-	@Override
-	public void simulationPeriodic()
-	{
-		updateSimState(0.02, RobotController.getBatteryVoltage());
-	}
+    @Override
+    public void simulationPeriodic()
+    {
+        updateSimState(0.02, RobotController.getBatteryVoltage());
+    }
 
-	@AutoLogOutput
-	public Pose2d getPose()
-	{
-		return getState().Pose;
-	}
+    @AutoLogOutput
+    public Pose2d getPose()
+    {
+        return getState().Pose;
+    }
 
-	@AutoLogOutput
-	public SwerveModuleState[] getModuleStates()
-	{
-		return getState().ModuleStates;
-	}
+    @AutoLogOutput
+    public SwerveModuleState[] getModuleStates()
+    {
+        return getState().ModuleStates;
+    }
 
-	@AutoLogOutput
-	public SwerveModuleState[] getTargetModuleStates()
-	{
-		return getState().ModuleTargets;
-	}
+    @AutoLogOutput
+    public SwerveModuleState[] getTargetModuleStates()
+    {
+        return getState().ModuleTargets;
+    }
 
-	@AutoLogOutput
-	public ChassisSpeeds getChassisSpeeds()
-	{
-		return getState().Speeds;
-	}
+    @AutoLogOutput
+    public ChassisSpeeds getChassisSpeeds()
+    {
+        return getState().Speeds;
+    }
 
-	public void setBrakeMode()
-	{
-		configNeutralMode(NeutralModeValue.Brake);
-	}
+    public void setBrakeMode()
+    {
+        configNeutralMode(NeutralModeValue.Brake);
+    }
 
-	public void setCoastMode()
-	{
-		configNeutralMode(NeutralModeValue.Coast);
-	}
+    public void setCoastMode()
+    {
+        configNeutralMode(NeutralModeValue.Coast);
+    }
 }
