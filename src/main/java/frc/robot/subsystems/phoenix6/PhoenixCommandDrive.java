@@ -31,48 +31,48 @@ import frc.robot.subsystems.phoenix6.requests.XLockRequest;
 
 public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsystem
 {
-	private final LinearVelocity maxSpeed;
-	private final AngularVelocity maxAngularSpeed;
-	private final SwerveRequest.ApplyRobotSpeeds applyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+    private final LinearVelocity maxSpeed;
+    private final AngularVelocity maxAngularSpeed;
+    private final SwerveRequest.ApplyRobotSpeeds applyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
-	/**
-	 * Create a new PhoenixCommandDrive
-	 * 
-	 * @param drivetrainConstants the drivetrain constants
-	 * @param maxSpeed            the maximum speed of the robot linearly
-	 * @param maxAngularSpeed     the maximum speed of the robot rotationally
-	 * @param moduleConstants     the module constants
-	 */
-	public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
-			AngularVelocity maxAngularSpeed, PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
-			SwerveModuleConstants<?, ?, ?>... moduleConstants)
-	{
-		super(drivetrainConstants, moduleConstants);
-		CommandScheduler.getInstance().registerSubsystem(this);
-		this.maxSpeed = maxSpeed;
-		this.maxAngularSpeed = maxAngularSpeed;
+    /**
+     * Create a new PhoenixCommandDrive
+     * 
+     * @param drivetrainConstants the drivetrain constants
+     * @param maxSpeed            the maximum speed of the robot linearly
+     * @param maxAngularSpeed     the maximum speed of the robot rotationally
+     * @param moduleConstants     the module constants
+     */
+    public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
+            AngularVelocity maxAngularSpeed, PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
+            SwerveModuleConstants<?, ?, ?>... moduleConstants)
+    {
+        super(drivetrainConstants, moduleConstants);
+        CommandScheduler.getInstance().registerSubsystem(this);
+        this.maxSpeed = maxSpeed;
+        this.maxAngularSpeed = maxAngularSpeed;
 
-		// Configure the Pathplanner AutoBuilder for easier pathfinding
-		configureAutoBuilder(linearPIDConstants, angularPIDConstants);
-	}
+        // Configure the Pathplanner AutoBuilder for easier pathfinding
+        configureAutoBuilder(linearPIDConstants, angularPIDConstants);
+    }
 
-	private void configureAutoBuilder(PIDConstants linear, PIDConstants angular)
-	{
-		try
-		{
-			RobotConfig config = RobotConfig.fromGUISettings();
-			AutoBuilder.configure(() -> getState().Pose, this::resetPose, () -> getState().Speeds,
-					(speeds, feedforwards) -> setControl(applyRobotSpeeds.withSpeeds(speeds)
-							.withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
-							.withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
-					new PPHolonomicDriveController(new PIDConstants(linear.kP, linear.kI, linear.kD),
-							new PIDConstants(angular.kP, angular.kI, angular.kD)),
-					config, () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, this);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
+    private void configureAutoBuilder(PIDConstants linear, PIDConstants angular)
+    {
+        try
+        {
+            RobotConfig config = RobotConfig.fromGUISettings();
+            AutoBuilder.configure(() -> getState().Pose, this::resetPose, () -> getState().Speeds,
+                    (speeds, feedforwards) -> setControl(applyRobotSpeeds.withSpeeds(speeds)
+                            .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+                            .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
+                    new PPHolonomicDriveController(new PIDConstants(linear.kP, linear.kI, linear.kD),
+                            new PIDConstants(angular.kP, angular.kI, angular.kD)),
+                    config, () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, this);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Apply a request to the drivetrain (runs the request each loop)
@@ -109,29 +109,29 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         });
     }
 
-	/**
-	 * Get a command to drive the robot to a pose on the field using Pathplanner
-	 * 
-	 * @param pose The pose that the robot should drive to
-	 * @return A command that drives the robot to the specified pose
-	 */
-	public Command driveToPose(Pose2d pose)
-	{
-		PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
-		return AutoBuilder.pathfindToPose(pose, constraints, 0.0);
-	}
+    /**
+     * Get a command to drive the robot to a pose on the field using Pathplanner
+     * 
+     * @param pose The pose that the robot should drive to
+     * @return A command that drives the robot to the specified pose
+     */
+    public Command driveToPose(Pose2d pose)
+    {
+        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+        return AutoBuilder.pathfindToPose(pose, constraints, 0.0);
+    }
 
-	/**
-	 * Get a command that locks the robot in place by point the wheels towards the
-	 * center of the robot
-	 * 
-	 * @return a command that locks the robot in place
-	 */
-	public Command getXLockCommand()
-	{
-		XLockRequest xLockRequest = new XLockRequest();
-		return applyRequest(() -> xLockRequest);
-	}
+    /**
+     * Get a command that locks the robot in place by point the wheels towards the
+     * center of the robot
+     * 
+     * @return a command that locks the robot in place
+     */
+    public Command getXLockCommand()
+    {
+        XLockRequest xLockRequest = new XLockRequest();
+        return applyRequest(() -> xLockRequest);
+    }
 
     /**
      * Get a command that resets the orientation of the robot
