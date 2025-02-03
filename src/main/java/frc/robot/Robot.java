@@ -140,6 +140,7 @@ public class Robot extends LoggedRobot
         {
             autoSelected.cancel();
         }
+        container.teleopInit();
     }
 
     /** This function is called periodically during operator control. */
@@ -153,6 +154,7 @@ public class Robot extends LoggedRobot
     @Override
     public void disabledInit()
     {
+        container.disabledInit();
     }
 
     /** This function is called periodically when disabled. */

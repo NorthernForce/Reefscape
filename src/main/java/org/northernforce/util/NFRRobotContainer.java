@@ -31,6 +31,16 @@ public interface NFRRobotContainer
     {
     }
 
+    /** Runs at the start of disabled */
+    public default void disabledInit()
+    {
+    }
+
+    /** Runs at the start of teleop */
+    public default void teleopInit()
+    {
+    }
+
     /**
      * Get the selected autonomous command
      * 
