@@ -10,6 +10,7 @@ import frc.robot.subsystems.superstructure.Superstructure.GenericSuperstructureG
 import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX.ElevatorConstants;
 
 import static edu.wpi.first.units.Units.*;
+import com.pathplanner.lib.config.PIDConstants;
 
 public class BlennyConstants
 {
@@ -122,5 +123,11 @@ public class BlennyConstants
         {
             return wristAngle;
         }
+    }
+
+    public static class PathplannerConstants
+    {
+        public static final PIDConstants linearPIDConstants = new PIDConstants(10.0, 0.0, 0.0);
+        public static final PIDConstants angularPIDConstants = new PIDConstants(5.0, 0.0, 0.0);
     }
 }

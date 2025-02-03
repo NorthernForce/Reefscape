@@ -44,7 +44,8 @@ public class BlennyContainer implements NFRRobotContainer
     {
         drive = new PhoenixCommandDrive(BlennyTunerConstants.DrivetrainConstants,
                 BlennyConstants.DrivetrainConstants.MAX_SPEED, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
-                BlennyTunerConstants.FrontLeft, BlennyTunerConstants.FrontRight, BlennyTunerConstants.BackLeft,
+                BlennyConstants.PathplannerConstants.linearPIDConstants,
+                BlennyConstants.PathplannerConstants.angularPIDConstants, BlennyTunerConstants.FrontLeft, BlennyTunerConstants.FrontRight, BlennyTunerConstants.BackLeft,
                 BlennyTunerConstants.BackRight);
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefDisplay"), new DashboardIOFWC());
         addAutonomousRoutines();

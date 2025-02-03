@@ -3,9 +3,11 @@ package frc.robot.zippy.oi;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.zippy.ZippyContainer;
@@ -38,10 +40,10 @@ public class ZippyProgrammerOI implements ZippyOI
                         processJoystickInput(driverJoystick::getLeftY), processJoystickInput(driverJoystick::getLeftX),
                         processJoystickInput(driverJoystick::getRightX)));
 
-		driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
+        driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
 
-		driverJoystick.start()
-				.whileTrue(container.getDrive().driveToPose(FieldConstants.ProcessorStations.PROCESSOR_STATION));
+        driverJoystick.start()
+                .onTrue(container.getDrive().driveToPose(new Pose2d(new Translation2d(2, 2), Rotation2d.kZero)));
 
         driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
                 .resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
