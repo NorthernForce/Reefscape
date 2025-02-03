@@ -13,6 +13,9 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import java.util.function.Supplier;
 
+/**
+ * WristIO to be used with a TalonFX motor controller
+ */
 public class WristIOTalonFX implements WristIO
 {
     private final TalonFX motor;
@@ -24,7 +27,13 @@ public class WristIOTalonFX implements WristIO
     private Angle targetAngle;
     private MotionMagicVoltage motorControl;
 
-    public WristIOTalonFX(int motorid, int cancoderid)
+    /**
+     * Creates a new WristIOTalonFX
+     * 
+     * @param motorid    The CAN id of the wrist motor
+     * @param cancoderid The CAN id of the wrist cancoder
+     */
+    public WristIOTalonFX(int motorid, int cancoderid, WristConstants wristConstants)
     {
         motor = new TalonFX(motorid);
         cancoder = new CANcoder(cancoderid);
@@ -34,15 +43,25 @@ public class WristIOTalonFX implements WristIO
         motorPresent = () -> motor.isConnected();
         targetAngle = null;
 
-        configureMotor(motorid, cancoderid);
+        configureMotor(motorid, cancoderid, wristConstants);
     }
 
+    /**
+     * Sets the wrist to run at the desired speed
+     * 
+     * @param speed (0.0 - 1.0) The speed to run the motor at
+     */
     @Override
     public void set(double speed)
     {
         motor.set(speed);
     }
 
+    /**
+     * Moves the wrist to the desired angle using Motion Magic
+     * 
+     * @param angle The angle to move the wrist to
+     */
     @Override
     public void moveToAngle(Angle angle)
     {
@@ -51,6 +70,11 @@ public class WristIOTalonFX implements WristIO
         motor.setControl(motorControl.withPosition(angle));
     }
 
+    /**
+     * Updates the inputs of the wrist
+     * 
+     * @param inputs The inputs to update
+     */
     @Override
     public void updateInputs(WristIOInputs inputs)
     {
@@ -61,13 +85,25 @@ public class WristIOTalonFX implements WristIO
         inputs.motorPresent = motorPresent.get();
     }
 
+    /**
+     * Sets the current angle of the motor's cancoder to the inputted angle
+     * 
+     * @param angle The angle to set to
+     */
     @Override
     public void resetEncoderAngle(Angle angle)
     {
         cancoder.setPosition(angle);
     }
 
-    public void configureMotor(int motorid, int cancoderid)
+    /**
+     * Configures the TalonFX and CANcoder
+     * 
+     * @param motorid        The CAN id of the wrist motor
+     * @param cancoderid     The CAN id of the wrist cancoder
+     * @param wristConstants The constants for the wrist
+     */
+    public void configureMotor(int motorid, int cancoderid, WristConstants constants)
     {
         var talonFXConfigs = new TalonFXConfiguration();
 
@@ -75,16 +111,16 @@ public class WristIOTalonFX implements WristIO
         talonFXConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
         var slot0Configs = talonFXConfigs.Slot0;
-        slot0Configs.kS = 0.25;
-        slot0Configs.kV = 0.12;
-        slot0Configs.kP = 4.8;
-        slot0Configs.kI = 0;
-        slot0Configs.kD = 0.1;
+        slot0Configs.kS = constants.kS();
+        slot0Configs.kV = constants.kV();
+        slot0Configs.kP = constants.kP();
+        slot0Configs.kI = constants.kI();
+        slot0Configs.kD = constants.kD();
 
         var motionMagicConfigs = talonFXConfigs.MotionMagic;
-        motionMagicConfigs.MotionMagicCruiseVelocity = 80;
-        motionMagicConfigs.MotionMagicAcceleration = 160;
-        motionMagicConfigs.MotionMagicJerk = 1600;
+        motionMagicConfigs.MotionMagicCruiseVelocity = constants.cruiseVelocity();
+        motionMagicConfigs.MotionMagicAcceleration = constants.acceleration();
+        motionMagicConfigs.MotionMagicJerk = constants.jerk();
 
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
         cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
@@ -92,12 +128,17 @@ public class WristIOTalonFX implements WristIO
 
         talonFXConfigs.Feedback.FeedbackRemoteSensorID = cancoder.getDeviceID();
         talonFXConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
-        talonFXConfigs.Feedback.SensorToMechanismRatio = 1.0;
-        talonFXConfigs.Feedback.RotorToSensorRatio = 12.8; // TODO
+        talonFXConfigs.Feedback.SensorToMechanismRatio = constants.sensorToMechanismRatio();
+        talonFXConfigs.Feedback.RotorToSensorRatio = constants.rotorToSensorRatio();
 
         motor.getConfigurator().apply(talonFXConfigs);
         cancoder.getConfigurator().apply(cancoderConfigs);
 
         motorControl = new MotionMagicVoltage(0).withSlot(0);
+    }
+
+    public static record WristConstants(double kS, double kV, double kA, double kP, double kI, double kD,
+            double cruiseVelocity, double acceleration, double jerk, boolean inverted, Angle upperLimit,
+            Angle lowerLimit, double sensorToMechanismRatio, double rotorToSensorRatio) {
     }
 }
