@@ -105,9 +105,9 @@ public class Wrist extends SubsystemBase
      * 
      * @param angle The angle to set to
      */
-    public void resetEncoderAngle(Angle angle)
+    public Command resetEncoderAngle(Angle angle)
     {
-        io.resetEncoderAngle(angle);
+        return Commands.runOnce(() -> io.resetEncoderAngle(angle));
     }
 
     /**
