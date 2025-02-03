@@ -31,20 +31,20 @@ public class ZippyProgrammerOI implements ZippyOI
     @Override
     public void bindOI(ZippyContainer container)
     {
-        CommandXboxController driverJoystick = new CommandXboxController(0);
+        CommandXboxController driverController = new CommandXboxController(0);
 
-        container.getDrive()
-                .setDefaultCommand(container.getDrive().getDriveByJoystickCommand(
-                        processJoystickInput(driverJoystick::getLeftY), processJoystickInput(driverJoystick::getLeftX),
-                        processJoystickInput(driverJoystick::getRightX)));
+        container.getDrive().setDefaultCommand(container.getDrive().getDriveByJoystickCommand(
+                processJoystickInput(driverController::getLeftY), processJoystickInput(driverController::getLeftX),
+                processJoystickInput(driverController::getRightX)));
 
-        driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
+        driverController.x().whileTrue(container.getDrive().getXLockCommand());
 
-        driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
+        driverController.back().onTrue(Commands.runOnce(() -> container.getDrive()
                 .resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
                         DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
                 container.getDrive()));
 
-        driverJoystick.start().whileTrue(container.getDrive().driveToPose(container.getDashboard().getTargetPose()));
+        driverController.rightTrigger()
+                .whileTrue(container.getDrive().driveToPose(container.getDashboard().getTargetPose()));
     }
 }
