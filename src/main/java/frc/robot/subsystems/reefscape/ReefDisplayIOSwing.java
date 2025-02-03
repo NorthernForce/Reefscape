@@ -20,7 +20,7 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
     {
         this.name = name;
         this.table = NetworkTableInstance.getDefault().getTable(name);
-        this.selectedPoint = table.getIntegerTopic("selectedPoint").subscribe(0);
+        this.selectedPoint = table.getIntegerTopic("choice").subscribe(0);
         Arrays.fill(this.grayedOut, false);
         this.grayedOutPublisher = table.getBooleanArrayTopic("grayedOut").publish();
     }

@@ -32,7 +32,7 @@ public class ZippyContainer implements NFRRobotContainer
 
     public ZippyContainer()
     {
-        dashboard = new Dashboard(new ReefDisplayIOSwing("ReefDisplay"), new DashboardIOFWC());
+        dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
         drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants,
                 ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,

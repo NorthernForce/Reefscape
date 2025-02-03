@@ -80,7 +80,7 @@ public class ReefscapeFrame extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                choicePublisher.set(48);
+                choicePublisher.set(54);
                 if (rightCoral.isSelected())
                 {
                     rightCoral.deselect();
@@ -100,7 +100,7 @@ public class ReefscapeFrame extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                choicePublisher.set(49);
+                choicePublisher.set(55);
                 if (leftCoral.isSelected())
                 {
                     leftCoral.deselect();
@@ -120,7 +120,7 @@ public class ReefscapeFrame extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                choicePublisher.set(50);
+                choicePublisher.set(56);
                 if (leftCoral.isSelected())
                 {
                     leftCoral.deselect();
