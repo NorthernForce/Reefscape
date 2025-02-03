@@ -1,5 +1,6 @@
 package frc.robot.zippy.oi;
 
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
@@ -44,7 +45,9 @@ public class ZippyProgrammerOI implements ZippyOI
                         DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
                 container.getDrive()));
 
-        driverController.rightTrigger()
-                .whileTrue(container.getDrive().driveToPose(container.getDashboard().getTargetPose()));
+        driverController.rightTrigger().onTrue(Commands.defer(() ->
+        {
+            return container.getDrive().driveToPose(container.getDashboard().getTargetPose());
+        }, Set.of(container.getDrive())));
     }
 }
