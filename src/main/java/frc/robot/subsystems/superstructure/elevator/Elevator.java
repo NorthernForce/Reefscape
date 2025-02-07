@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.*;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.superstructure.elevator.brake.BrakeIO;
@@ -27,6 +28,7 @@ public class Elevator extends SubsystemBase
     private final ElevatorSensorIOInputsAutoLogged m_sensorInputs = new ElevatorSensorIOInputsAutoLogged();
     private final double m_errorTolerance;
     private Distance targetState;
+    private Alert m_motorNotFoundAlert;
 
     /**
      * Creates a new Elevator
@@ -43,6 +45,8 @@ public class Elevator extends SubsystemBase
         m_sensor = sensor;
         m_errorTolerance = errorTolerance;
         targetState = Meters.of(0);
+        m_motorNotFoundAlert = new Alert("Elevator motor not found with name: " + getName(), Alert.AlertType.kWarning);
+
     }
 
     /**
@@ -110,6 +114,15 @@ public class Elevator extends SubsystemBase
         {
             m_motor.resetPosition();
         }
+
+        if (!m_inputs.present)
+        {
+            m_motorNotFoundAlert.set(true);
+        } else
+        {
+            m_motorNotFoundAlert.set(false);
+        }
+
     }
 
     /**
