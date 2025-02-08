@@ -31,6 +31,7 @@ public class ClimberIOTalonFX implements ClimberIO
 	private StatusSignal<Current> m_current;
 	private CANcoder m_encoder;
 	private double m_gearRatio;
+	private Distance m_sprocketCircumference;
 
 	/**
 	 * Constructor for the ClimberIOTalonFX class.
@@ -40,8 +41,10 @@ public class ClimberIOTalonFX implements ClimberIO
 	 * @param encoderID CANcoder ID
 	 */
 
-	public ClimberIOTalonFX(int id, boolean inverted, int encoderID, double gearRatio, Distance upperLimit)
+	public ClimberIOTalonFX(int id, boolean inverted, int encoderID, double gearRatio, Distance sprocketCircumference,
+			Distance upperLimit)
 	{
+		m_sprocketCircumference = sprocketCircumference;
 		m_gearRatio = gearRatio;
 		m_encoder = new CANcoder(encoderID);
 		m_motor = new TalonFX(id);
@@ -52,11 +55,7 @@ public class ClimberIOTalonFX implements ClimberIO
 		config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 		config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
 		config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-		config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = calculateRotationsFromDistance(upperLimit); // TODO: Set
-																										   // this to
-																										   // the
-																										   // correct
-																										   // value
+		config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = calculateRotationsFromDistance(upperLimit).in(Rotations);
 		config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
 		m_motor.getConfigurator().refresh(config);
@@ -115,9 +114,9 @@ public class ClimberIOTalonFX implements ClimberIO
 		inputs.temperature = m_temperature.getValue();
 	}
 
-	private double calculateRotationsFromDistance(Distance distance)
+	private Angle calculateRotationsFromDistance(Distance distance)
 	{
-		return distance.in(Meters) / (m_gearRatio);
+		return Rotations.of(distance.in(Meters) / m_sprocketCircumference.in(Meters) * m_gearRatio);
 	}
 
 }
