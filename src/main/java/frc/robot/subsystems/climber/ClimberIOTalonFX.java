@@ -46,8 +46,10 @@ public class ClimberIOTalonFX implements ClimberIO
 				: InvertedValue.CounterClockwise_Positive);
 		config.Feedback.FeedbackRemoteSensorID = m_encoder.getDeviceID();
 		config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-		config.HardwareLimitSwitch.ForwardLimitEnable = true;
-		config.HardwareLimitSwitch.ReverseLimitEnable = true;
+		config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+		config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 100; // TODO: Set this to the correct value
+        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
 		m_motor.getConfigurator().refresh(config);
 		m_position = m_encoder.getAbsolutePosition();
