@@ -1,5 +1,6 @@
 package frc.robot.subsystems.climber;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.Rotations;
 
@@ -14,6 +15,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Temperature;
 
 /**
@@ -28,6 +30,7 @@ public class ClimberIOTalonFX implements ClimberIO
 	private StatusSignal<Temperature> m_temperature;
 	private StatusSignal<Current> m_current;
 	private CANcoder m_encoder;
+	private double m_gearRatio;
 
 	/**
 	 * Constructor for the ClimberIOTalonFX class.
@@ -37,8 +40,9 @@ public class ClimberIOTalonFX implements ClimberIO
 	 * @param encoderID CANcoder ID
 	 */
 
-	public ClimberIOTalonFX(int id, boolean inverted, int encoderID)
+	public ClimberIOTalonFX(int id, boolean inverted, int encoderID, double gearRatio, Distance upperLimit)
 	{
+		m_gearRatio = gearRatio;
 		m_encoder = new CANcoder(encoderID);
 		m_motor = new TalonFX(id);
 		TalonFXConfiguration config = new TalonFXConfiguration();
@@ -48,8 +52,12 @@ public class ClimberIOTalonFX implements ClimberIO
 		config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 		config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
 		config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 100; // TODO: Set this to the correct value
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+		config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = calculateRotationsFromDistance(upperLimit); // TODO: Set
+																										   // this to
+																										   // the
+																										   // correct
+																										   // value
+		config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
 		m_motor.getConfigurator().refresh(config);
 		m_position = m_encoder.getAbsolutePosition();
@@ -105,6 +113,11 @@ public class ClimberIOTalonFX implements ClimberIO
 		inputs.current = m_current.getValue();
 		inputs.present = m_present.get();
 		inputs.temperature = m_temperature.getValue();
+	}
+
+	private double calculateRotationsFromDistance(Distance distance)
+	{
+		return distance.in(Meters) / (m_gearRatio);
 	}
 
 }
