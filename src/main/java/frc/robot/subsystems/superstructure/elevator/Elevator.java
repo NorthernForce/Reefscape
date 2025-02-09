@@ -115,14 +115,7 @@ public class Elevator extends SubsystemBase
             m_motor.resetPosition();
         }
 
-        if (!m_inputs.present)
-        {
-            m_motorNotFoundAlert.set(true);
-        } else
-        {
-            m_motorNotFoundAlert.set(false);
-        }
-
+        m_motorNotFoundAlert.set(!m_inputs.present);
     }
 
     /**
