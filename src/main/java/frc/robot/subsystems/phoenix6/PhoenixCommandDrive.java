@@ -1,19 +1,25 @@
 package frc.robot.subsystems.phoenix6;
 
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
+
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotController;
@@ -42,6 +48,16 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         CommandScheduler.getInstance().registerSubsystem(this);
         this.maxSpeed = maxSpeed;
         this.maxAngularSpeed = maxAngularSpeed;
+    }
+
+    public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
+            AngularVelocity maxAngularSpeed, SwerveModuleConstants<?, ?, ?>[] moduleConstants, Angle[] moduleOffsets)
+    {
+        this(drivetrainConstants, maxSpeed, maxAngularSpeed, new SwerveModuleConstants[]
+        { moduleConstants[0].withEncoderOffset(moduleOffsets[0]),
+                moduleConstants[1].withEncoderOffset(moduleOffsets[1]),
+                moduleConstants[2].withEncoderOffset(moduleOffsets[2]),
+                moduleConstants[3].withEncoderOffset(moduleOffsets[3]) });
     }
 
     /**
@@ -143,5 +159,44 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public void setCoastMode()
     {
         configNeutralMode(NeutralModeValue.Coast);
+    }
+
+    /**
+     * Reset the encoder angle to a target angle
+     * 
+     * @param moduleIdx   the module index
+     * @param targetAngle the target angle
+     * @return the new offset
+     */
+    private Angle resetEncoderAngle(int moduleIdx, Angle targetAngle)
+    {
+        final var module = getModule(moduleIdx);
+        final var currentAngle = Rotations.of(module.getCurrentState().angle.getRotations());
+        final var delta = targetAngle.minus(currentAngle);
+        final var cancoder = module.getEncoder();
+        final var config = new CANcoderConfiguration();
+        cancoder.getConfigurator().refresh(config);
+        final var currentOffest = Rotations.of(config.MagnetSensor.MagnetOffset);
+        var newOffset = currentOffest.plus(delta);
+        newOffset = Radians.of(MathUtil.angleModulus(newOffset.in(Radians)));
+        config.MagnetSensor.MagnetOffset = newOffset.in(Rotations);
+        cancoder.getConfigurator().apply(config);
+        return newOffset;
+    }
+
+    /**
+     * Reset the encoder angles to target angles
+     * 
+     * @param targetAngles the target angles
+     * @return the new offsets
+     */
+    public Angle[] resetEncoderAngles(Angle[] targetAngles)
+    {
+        final var newOffsets = new Angle[targetAngles.length];
+        for (int i = 0; i < targetAngles.length; i++)
+        {
+            newOffsets[i] = resetEncoderAngle(i, targetAngles[i]);
+        }
+        return newOffsets;
     }
 }
