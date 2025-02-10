@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj.Alert;
 
 /**
  * Class to control the robot's wrist joint
@@ -17,11 +18,13 @@ public class Wrist extends SubsystemBase
     private final WristIO io;
     private final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
     private final double errorTolerance;
+    private final Alert motorNotFoundAlert;
 
     public Wrist(WristIO io, double errorToleranceDegrees)
     {
         this.io = io;
         errorTolerance = errorToleranceDegrees;
+        motorNotFoundAlert = new Alert("Wrist motor not found with name: " + getName(), Alert.AlertType.kWarning);
     }
 
     /**
@@ -118,5 +121,6 @@ public class Wrist extends SubsystemBase
     {
         io.updateInputs(inputs);
         Logger.processInputs(getName() + "/Wrist", inputs);
+        motorNotFoundAlert.set(!inputs.motorPresent);
     }
 }
