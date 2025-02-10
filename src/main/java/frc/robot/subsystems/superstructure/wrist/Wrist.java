@@ -24,7 +24,7 @@ public class Wrist extends SubsystemBase
     {
         this.io = io;
         errorTolerance = errorToleranceDegrees;
-        motorNotFoundAlert = new Alert("Wrist motor not found with name: " + getName(), Alert.AlertType.kWarning);
+        motorNotFoundAlert = new Alert("Wrist motor not found with name: " + getName(), Alert.AlertType.kError);
     }
 
     /**
