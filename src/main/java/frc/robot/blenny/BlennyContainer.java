@@ -12,6 +12,9 @@ import frc.robot.blenny.constants.BlennyConstants;
 import frc.robot.blenny.constants.BlennyTunerConstants;
 import frc.robot.blenny.oi.BlennyDriverOI;
 import frc.robot.blenny.oi.BlennyProgrammerOI;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
@@ -35,6 +38,7 @@ public class BlennyContainer implements NFRRobotContainer
 {
     private final PhoenixCommandDrive drive;
     private final Superstructure superstructure;
+    private final Climber climber;
     private final Dashboard dashboard;
 
     /**
@@ -59,6 +63,10 @@ public class BlennyContainer implements NFRRobotContainer
                     new Elevator("OuterElevator",
                             new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
                             new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2));
+            climber = new Climber(
+                    new ClimberIOTalonFX(BlennyConstants.ClimberConstants.ID, BlennyConstants.ClimberConstants.INVERTED,
+                            BlennyConstants.ClimberConstants.ENCODER_ID,
+                            BlennyConstants.ClimberConstants.LOWER_LIMIT, BlennyConstants.ClimberConstants.UPPER_LIMIT));
             break;
         case REPLAY:
         default:
@@ -71,6 +79,8 @@ public class BlennyContainer implements NFRRobotContainer
             }, 0.2), new Elevator("OuterElevator",
                     new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
                     new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2));
+            climber = new Climber(new ClimberIO() {
+            });
             break;
         }
     }
@@ -99,6 +109,11 @@ public class BlennyContainer implements NFRRobotContainer
     public Superstructure getSuperstructure()
     {
         return superstructure;
+    }
+
+    public Climber getClimber()
+    {
+        return climber;
     }
 
     /**
