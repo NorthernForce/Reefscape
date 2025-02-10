@@ -14,49 +14,57 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface ClimberIO
 {
-	/**
-	 * ClimberIOInputs class.
-	 */
+    /**
+     * ClimberIOInputs class.
+     */
 
-	@AutoLog
-	public static class ClimberIOInputs
-	{
-		public Angle position = Rotations.of(0);
-		public boolean present = false;
-		public Temperature temperature = Fahrenheit.of(0);
-		public Current current = Amps.of(0);
-	}
+    @AutoLog
+    public static class ClimberIOInputs
+    {
+        public Angle position = Rotations.of(0);
+        public boolean present = false;
+        public Temperature temperature = Fahrenheit.of(0);
+        public Current current = Amps.of(0);
+    }
 
-	/**
-	 * climb up method for the ClimberIO class.
-	 * 
-	 * @param climbSpeed speed to climb up
-	 */
+    /**
+     * climb up method for the ClimberIO class.
+     * 
+     * @param climbSpeed speed to climb up
+     */
 
-	public void climbUp(double climbSpeed);
+    public default void climbUp(double climbSpeed)
+    {
+    }
 
-	/**
-	 * climb down method for the ClimberIO class.
-	 * 
-	 * @param climbSpeed speed to climb down
-	 */
+    /**
+     * climb down method for the ClimberIO class.
+     * 
+     * @param climbSpeed speed to climb down
+     */
 
-	public void climbDown(double climbSpeed);
+    public default void climbDown(double climbSpeed)
+    {
+    }
 
-	/**
-	 * get climb up command method for the ClimberIO class.
-	 * 
-	 * @param climbSpeed speed to climb up
-	 * @return command to climb up
-	 */
+    /**
+     * get climb up command method for the ClimberIO class.
+     * 
+     * @param climbSpeed speed to climb up
+     * @return command to climb up
+     */
 
-	public void stop();
+    public default void stop()
+    {
+    }
 
-	/**
-	 * update inputs method for the ClimberIO class.
-	 * 
-	 * @param inputs inputs for the climber
-	 */
+    /**
+     * update inputs method for the ClimberIO class.
+     * 
+     * @param inputs inputs for the climber
+     */
 
-	public void updateInputs(ClimberIOInputs inputs);
+    public default void updateInputs(ClimberIOInputs inputs)
+    {
+    }
 }
