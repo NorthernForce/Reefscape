@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.subsystems.phoenix6.requests.XLockRequest;
 
 public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsystem
 {
@@ -51,7 +50,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     }
 
     public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
-            AngularVelocity maxAngularSpeed, SwerveModuleConstants<?, ?, ?>[] moduleConstants, Angle[] moduleOffsets)
+            AngularVelocity maxAngularSpeed, Angle[] moduleOffsets, SwerveModuleConstants<?, ?, ?>... moduleConstants)
     {
         this(drivetrainConstants, maxSpeed, maxAngularSpeed, new SwerveModuleConstants[]
         { moduleConstants[0].withEncoderOffset(moduleOffsets[0]),
@@ -103,8 +102,18 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      */
     public Command getXLockCommand()
     {
-        XLockRequest xLockRequest = new XLockRequest();
-        return applyRequest(() -> xLockRequest);
+        final var request = new SwerveRequest.SwerveDriveBrake();
+        return applyRequest(() -> request);
+    }
+
+    /**
+     * Lets the swerve drive idle
+     * @return a command that lets the swerve drive idle
+     */
+    public Command getIdleCommand()
+    {
+        final var request = new SwerveRequest.Idle();
+        return applyRequest(() -> request);
     }
 
     /**
