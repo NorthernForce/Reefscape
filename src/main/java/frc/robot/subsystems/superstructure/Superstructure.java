@@ -102,4 +102,9 @@ public class Superstructure extends SubsystemBase
                 && m_outerElevator.isAtPosition(goal.getOuterElevatorGoal())
                 && m_wrist.isAtPosition(goal.getWristGoal());
     }
+
+    public Wrist getWrist()
+    {
+        return m_wrist;
+    }
 }

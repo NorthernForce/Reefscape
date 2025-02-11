@@ -75,7 +75,7 @@ public class BlennyConstants
                 Meters.of(SPROCKET_CIRCUMFERENCE), GEAR_RATIO, false, UPPER_LIMIT);
     }
 
-    public static class WristMotorConstants
+    public static class WristJointConstants
     {
         public static final double kS = 0.25;
         public static final double kV = 0.12;
@@ -91,6 +91,7 @@ public class BlennyConstants
         public static final Angle LOWER_LIMIT = Degrees.of(0);
         public static final double SENSOR_TO_MECHANISM_RATIO = 1.0;
         public static final double ROTOR_TO_SENSOR_RATIO = 20.0;
+        public static final double MANUAL_MOVE_SPEED = 0.8;
 
         public static final WristConstants WRIST_CONSTANTS = new WristConstants(kS, kV, kA, kP, kI, kD, CRUISE_VELOCITY,
                 ACCELERATION, JERK, INVERTED, UPPER_LIMIT, LOWER_LIMIT, SENSOR_TO_MECHANISM_RATIO,
