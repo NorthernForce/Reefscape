@@ -38,11 +38,14 @@ public class BlennyProgrammerOI implements BlennyOI
 
         driverController.x().whileTrue(container.getDrive().getXLockCommand());
 
-        container.getSuperstructure().getWrist().setDefaultCommand(container.getSuperstructure().getWrist().getStopCommand());
+        container.getSuperstructure().getWrist()
+                .setDefaultCommand(container.getSuperstructure().getWrist().getStopCommand());
 
-        manipulatorController.leftBumper().whileTrue(Commands.runOnce(() -> container.getSuperstructure().getWrist().set(-BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED)));
+        manipulatorController.leftBumper().whileTrue(Commands.runOnce(() -> container.getSuperstructure().getWrist()
+                .set(-BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED)));
 
-        manipulatorController.rightBumper().whileTrue(Commands.runOnce(() -> container.getSuperstructure().getWrist().set(BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED)));
+        manipulatorController.rightBumper().whileTrue(Commands.runOnce(() -> container.getSuperstructure().getWrist()
+                .set(BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED)));
     }
 
 }
