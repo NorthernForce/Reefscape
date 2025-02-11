@@ -8,6 +8,9 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.FieldConstants.ReefLocations;
 
+/**
+ * ReefDisplayIO for the Swing dashboard.
+ */
 public class ReefDisplayIOSwing implements ReefDisplayIO
 {
     private final String name;
@@ -16,6 +19,10 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
     private final BooleanArrayPublisher grayedOutPublisher;
     private final boolean[] grayedOut = new boolean[48];
 
+    /**
+     * Creates a new ReefDisplayIOSwing
+     * @param name the name of the network table to use
+     */
     public ReefDisplayIOSwing(String name)
     {
         this.name = name;
