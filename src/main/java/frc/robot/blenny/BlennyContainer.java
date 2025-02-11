@@ -24,6 +24,9 @@ import frc.robot.subsystems.superstructure.elevator.brake.BrakeIO;
 import frc.robot.subsystems.superstructure.elevator.brake.BrakeIORelay;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIO;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIOLimitSwitch;
+import frc.robot.subsystems.superstructure.wrist.Wrist;
+import frc.robot.subsystems.superstructure.wrist.WristIO;
+import frc.robot.subsystems.superstructure.wrist.WristIOTalonFX;
 import frc.robot.util.AutoRoutine;
 
 /**
@@ -59,7 +62,8 @@ public class BlennyContainer implements NFRRobotContainer
                             new BrakeIORelay(0), new ElevatorSensorIOLimitSwitch(0), 0.2),
                     new Elevator("OuterElevator",
                             new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
-                            new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2));
+                            new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2),
+                    new Wrist(new WristIOTalonFX(16, 17, BlennyConstants.WristJointConstants.WRIST_CONSTANTS), 2.0));
             break;
         case REPLAY:
         default:
@@ -71,7 +75,9 @@ public class BlennyContainer implements NFRRobotContainer
             {
             }, 0.2), new Elevator("OuterElevator",
                     new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
-                    new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2));
+                    new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2), new Wrist(new WristIO()
+                    {
+                    }, 2.0));
             break;
         }
     }
