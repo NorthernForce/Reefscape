@@ -28,13 +28,13 @@ public class Wrist extends SubsystemBase
     }
 
     /**
-     * Sets the wrist to run at the desired speed
+     * Gets the command to run the wrist at the desired speed
      * 
      * @param speed (0.0 - 1.0) The speed to run the motor at
      */
-    public void set(double speed)
+    public Command getSetSpeedCommand(double speed)
     {
-        io.set(speed);
+        return Commands.runOnce(() -> io.set(speed));
     }
 
     /**

@@ -41,11 +41,11 @@ public class BlennyProgrammerOI implements BlennyOI
         container.getSuperstructure().getWrist()
                 .setDefaultCommand(container.getSuperstructure().getWrist().getStopCommand());
 
-        manipulatorController.leftBumper().whileTrue(Commands.runOnce(() -> container.getSuperstructure().getWrist()
-                .set(-BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED)));
+        manipulatorController.leftBumper().whileTrue(container.getSuperstructure().getWrist()
+                .getSetSpeedCommand(-BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
 
-        manipulatorController.rightBumper().whileTrue(Commands.runOnce(() -> container.getSuperstructure().getWrist()
-                .set(BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED)));
+        manipulatorController.rightBumper().whileTrue(container.getSuperstructure().getWrist()
+                .getSetSpeedCommand(BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
     }
 
 }
