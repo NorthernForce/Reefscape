@@ -94,36 +94,29 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
         {
             inputs.reefLocations = ReefLocations.PROCESSOR_STATION;
         }
-        if (selected == 0 || selected == 4 || selected == 9 || selected == 13 || selected == 18 || selected == 22
-                || selected == 27 || selected == 31 || selected == 36 || selected == 40 || selected == 45
-                || selected == 49)
+        if (selected % 9 == 0 || selected % 9 == 4)
         {
             inputs.level = 1;
-        } else if (selected == 1 || selected == 5 || selected == 10 || selected == 14 || selected == 19
-                || selected == 23 || selected == 28 || selected == 32 || selected == 37 || selected == 41
-                || selected == 46 || selected == 50)
+        } else if (selected % 9 == 1 || selected % 9 == 5)
         {
             inputs.level = 2;
-        } else if (selected == 2 || selected == 6 || selected == 11 || selected == 15 || selected == 20
-                || selected == 24 || selected == 29 || selected == 33 || selected == 38 || selected == 42
-                || selected == 47 || selected == 51)
+        } else if (selected % 9 == 2 || selected % 9 == 6)
         {
             inputs.level = 3;
-        } else if (selected == 3 || selected == 7 || selected == 12 || selected == 16 || selected == 21
-                || selected == 25 || selected == 30 || selected == 34 || selected == 39 || selected == 43
-                || selected == 48 || selected == 52)
+        } else if (selected % 9 == 3 || selected % 9 == 7)
         {
             inputs.level = 4;
-        } else if (selected == 8 || selected == 26 || selected == 44)
+        } else if (selected % 18 == 8)
         {
             inputs.level = 5;
-        } else if (selected == 17 || selected == 35 || selected == 53)
+        } else if (selected % 18 == 17)
         {
             inputs.level = 6;
-        } else if (selected == 54 || selected == 55)
+        }
+        if (selected == 54 || selected == 55)
         {
             inputs.level = 7;
-        } else
+        } else if (selected == 56)
         {
             inputs.level = 8;
         }
