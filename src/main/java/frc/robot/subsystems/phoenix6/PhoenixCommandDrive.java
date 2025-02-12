@@ -32,8 +32,11 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     private final LinearVelocity maxSpeed;
     private final AngularVelocity maxAngularSpeed;
     private final Alert motorDisconnectedAlert;
-    private ArrayList<Integer> disconnectedArray;
-    private String alertString = "";
+    private final Alert encoderDisconnectedAlert;
+    private ArrayList<Integer> disconnectedMotorArray;
+    private ArrayList<Integer> disconnectedEncoderArray;
+    private String motorAlertString = "";
+    private String encoderAlertString = "";
 
     /**
      * Create a new PhoenixCommandDrive
@@ -51,6 +54,9 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         this.maxSpeed = maxSpeed;
         this.maxAngularSpeed = maxAngularSpeed;
         motorDisconnectedAlert = new Alert("", Alert.AlertType.kWarning);
+        encoderDisconnectedAlert = new Alert("", Alert.AlertType.kWarning);
+        disconnectedMotorArray = new ArrayList<>();
+        disconnectedEncoderArray = new ArrayList<>();
     }
 
     /**
@@ -151,31 +157,53 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     public void setCoastMode()
     {
-        periodic();
         configNeutralMode(NeutralModeValue.Coast);
     }
 
     @Override
     public void periodic()
     {
-        disconnectedArray = new ArrayList<>();
+        disconnectedMotorArray.clear();
         for (SwerveModule<TalonFX, TalonFX, ?> module : getModules())
         {
             if (!module.getDriveMotor().isConnected())
             {
-                disconnectedArray.add(module.getDriveMotor().getDeviceID());
+                disconnectedMotorArray.add(module.getDriveMotor().getDeviceID());
+            }
+
+            if (!module.getSteerMotor().isConnected())
+            {
+                disconnectedMotorArray.add(module.getSteerMotor().getDeviceID());
+            }
+
+            if (!module.getEncoder().isConnected())
+            {
+                disconnectedEncoderArray.add(module.getEncoder().getDeviceID());
             }
         }
 
-        if (!disconnectedArray.isEmpty())
+        if (!disconnectedMotorArray.isEmpty())
         {
-            alertString = "The motors with the following IDs are disconnected: "
-                    + disconnectedArray.stream().map(String::valueOf).collect(Collectors.joining(", "));
-            motorDisconnectedAlert.setText(alertString);
+            motorAlertString = "The motors with the following IDs are disconnected: "
+                    + disconnectedMotorArray.stream().map(String::valueOf).collect(Collectors.joining(", "));
+
+            motorDisconnectedAlert.setText(motorAlertString);
             motorDisconnectedAlert.set(true);
         } else
         {
             motorDisconnectedAlert.set(false);
+        }
+
+        if (!disconnectedEncoderArray.isEmpty())
+        {
+            encoderAlertString = "The encoders with the following IDs are disconnected: "
+                    + disconnectedEncoderArray.stream().map(String::valueOf).collect(Collectors.joining(", "));
+
+            encoderDisconnectedAlert.setText(encoderAlertString);
+            encoderDisconnectedAlert.set(true);
+        } else
+        {
+            encoderDisconnectedAlert.set(false);
         }
     }
 
