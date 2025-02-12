@@ -127,9 +127,9 @@ public class BlennyConstants
     public static class ClimberConstants
     {
         public static final int ID = 17;
-        public static final boolean INVERTED = true;
+        public static final boolean INVERTED = false;
         public static final int ENCODER_ID = 23;
-        public static final Angle LOWER_LIMIT = Degrees.of(0);
-        public static final Angle UPPER_LIMIT = Degrees.of(0);
+        public static final Angle LOWER_LIMIT = Rotations.of(-0.03);
+        public static final Angle UPPER_LIMIT = Rotations.of(0.22);
     }
 }

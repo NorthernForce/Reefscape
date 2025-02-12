@@ -33,7 +33,7 @@ public class Climber extends SubsystemBase
 
     public void climbUp(double climbSpeed)
     {
-        io.climbUp(climbSpeed);
+        io.run(-climbSpeed);
     }
 
     /**
@@ -44,7 +44,7 @@ public class Climber extends SubsystemBase
 
     public void climbDown(double climbSpeed)
     {
-        io.climbDown(climbSpeed);
+        io.run(climbSpeed);
     }
 
     /**

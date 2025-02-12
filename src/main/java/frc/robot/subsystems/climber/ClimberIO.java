@@ -21,9 +21,9 @@ public interface ClimberIO
     @AutoLog
     public static class ClimberIOInputs
     {
-        public Angle position = Rotations.of(0);
+        public Angle position = Degrees.of(0);
         public boolean present = false;
-        public Temperature temperature = Fahrenheit.of(0);
+        public Temperature temperature = Celsius.of(0);
         public Current current = Amps.of(0);
     }
 
@@ -33,17 +33,7 @@ public interface ClimberIO
      * @param climbSpeed speed to climb up
      */
 
-    public default void climbUp(double climbSpeed)
-    {
-    }
-
-    /**
-     * climb down method for the ClimberIO class.
-     * 
-     * @param climbSpeed speed to climb down
-     */
-
-    public default void climbDown(double climbSpeed)
+    public default void run(double speed)
     {
     }
 

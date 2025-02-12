@@ -1,16 +1,18 @@
 package frc.robot.subsystems.climber;
 
-import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.Rotations;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
@@ -42,19 +44,22 @@ public class ClimberIOTalonFX implements ClimberIO
         m_encoder = new CANcoder(encoderID);
         m_motor = new TalonFX(id);
         TalonFXConfiguration config = new TalonFXConfiguration();
+        CANcoderConfiguration cc = new CANcoderConfiguration();
+        cc.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0;
         config.MotorOutput.Inverted = (inverted ? InvertedValue.Clockwise_Positive
                 : InvertedValue.CounterClockwise_Positive);
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         if (m_encoder.isConnected())
         {
             config.Feedback.FeedbackRemoteSensorID = m_encoder.getDeviceID();
             config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
             config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
             config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-            config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = lowerLimit.in(Rotations);
-            config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = upperLimit.in(Rotations);
+            config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = upperLimit.in(Rotations);
+            config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = lowerLimit.in(Rotations);
         }
 
-        m_motor.getConfigurator().refresh(config);
+        m_motor.getConfigurator().apply(config);
         m_position = m_encoder.getAbsolutePosition();
         m_present = () -> m_motor.isConnected();
         m_temperature = m_motor.getDeviceTemp();
@@ -68,9 +73,9 @@ public class ClimberIOTalonFX implements ClimberIO
      */
 
     @Override
-    public void climbUp(double climbSpeed)
+    public void run(double speed)
     {
-        m_motor.set(Math.abs(climbSpeed));
+        m_motor.set(speed);
     }
 
     /**
@@ -84,18 +89,6 @@ public class ClimberIOTalonFX implements ClimberIO
     }
 
     /**
-     * climb down method for the ClimberIOTalonFX class.
-     * 
-     * @param climbSpeed speed to climb down
-     */
-
-    @Override
-    public void climbDown(double climbSpeed)
-    {
-        m_motor.set(-Math.abs(climbSpeed));
-    }
-
-    /**
      * update inputs method for the ClimberIOTalonFX class.
      * 
      * @param inputs ClimberIOInputs inputs to update
@@ -104,7 +97,8 @@ public class ClimberIOTalonFX implements ClimberIO
     @Override
     public void updateInputs(ClimberIOInputs inputs)
     {
-        inputs.position = Rotations.of(m_position.getValue().in(Rotation));
+        BaseStatusSignal.refreshAll(m_position, m_current, m_temperature);
+        inputs.position = m_position.getValue();
         inputs.current = m_current.getValue();
         inputs.present = m_present.get();
         inputs.temperature = m_temperature.getValue();
