@@ -63,10 +63,10 @@ public class BlennyContainer implements NFRRobotContainer
                     new Elevator("OuterElevator",
                             new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
                             new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2));
-            climber = new Climber(
-                    new ClimberIOTalonFX(BlennyConstants.ClimberConstants.ID, BlennyConstants.ClimberConstants.INVERTED,
-                            BlennyConstants.ClimberConstants.ENCODER_ID,
-                            BlennyConstants.ClimberConstants.LOWER_LIMIT, BlennyConstants.ClimberConstants.UPPER_LIMIT));
+            climber = new Climber(new ClimberIOTalonFX(BlennyConstants.ClimberConstants.ID,
+                    BlennyConstants.ClimberConstants.INVERTED, BlennyConstants.ClimberConstants.ENCODER_ID,
+                    BlennyConstants.ClimberConstants.LOWER_LIMIT, BlennyConstants.ClimberConstants.UPPER_LIMIT));
+            climber.setDefaultCommand(climber.getStopCommand());
             break;
         case REPLAY:
         default:
@@ -79,7 +79,8 @@ public class BlennyContainer implements NFRRobotContainer
             }, 0.2), new Elevator("OuterElevator",
                     new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
                     new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2));
-            climber = new Climber(new ClimberIO() {
+            climber = new Climber(new ClimberIO()
+            {
             });
             break;
         }

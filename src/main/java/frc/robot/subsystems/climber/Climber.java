@@ -56,20 +56,7 @@ public class Climber extends SubsystemBase
 
     public Command getClimbUpCommand(double climbSpeed)
     {
-        return new Command()
-        {
-            @Override
-            public void execute()
-            {
-                climbUp(climbSpeed);
-            }
-
-            @Override
-            public boolean isFinished()
-            {
-                return true;
-            }
-        };
+        return run(() -> climbUp(climbSpeed));
     }
 
     /**
@@ -81,20 +68,7 @@ public class Climber extends SubsystemBase
 
     public Command getClimbDownCommand(double climbSpeed)
     {
-        return new Command()
-        {
-            @Override
-            public void execute()
-            {
-                climbDown(climbSpeed);
-            }
-
-            @Override
-            public boolean isFinished()
-            {
-                return true;
-            }
-        };
+        return run(() -> climbDown(climbSpeed));
     }
 
     /**
@@ -114,20 +88,7 @@ public class Climber extends SubsystemBase
 
     public Command getStopCommand()
     {
-        return new Command()
-        {
-            @Override
-            public void execute()
-            {
-                stop();
-            }
-
-            @Override
-            public boolean isFinished()
-            {
-                return true;
-            }
-        };
+        return run(this::stop);
     }
 
     /**

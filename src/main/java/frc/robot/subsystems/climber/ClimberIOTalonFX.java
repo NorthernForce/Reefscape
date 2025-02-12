@@ -37,8 +37,7 @@ public class ClimberIOTalonFX implements ClimberIO
      * @param encoderID CANcoder ID
      */
 
-    public ClimberIOTalonFX(int id, boolean inverted, int encoderID, Angle lowerLimit,
-            Angle upperLimit)
+    public ClimberIOTalonFX(int id, boolean inverted, int encoderID, Angle lowerLimit, Angle upperLimit)
     {
         m_encoder = new CANcoder(encoderID);
         m_motor = new TalonFX(id);
