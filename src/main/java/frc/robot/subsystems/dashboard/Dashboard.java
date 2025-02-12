@@ -6,6 +6,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
+import frc.robot.blenny.constants.BlennyConstants.SuperstructureGoal;
 import frc.robot.subsystems.reefscape.ReefDisplayIO;
 import frc.robot.subsystems.reefscape.ReefDisplayIOInputsAutoLogged;
 import frc.robot.util.AutoRoutine;
@@ -40,6 +41,30 @@ public class Dashboard extends SubsystemBase
     public Pose2d getTargetPose()
     {
         return FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.reefLocations);
+    }
+
+    @AutoLogOutput
+    public SuperstructureGoal getSuperstructureGoal()
+    {
+        switch (reefDisplayInputs.level)
+        {
+        case 1:
+            return SuperstructureGoal.L1;
+        case 2:
+            return SuperstructureGoal.L2;
+        case 3:
+            return SuperstructureGoal.L3;
+        case 4:
+            return SuperstructureGoal.L4;
+        case 5:
+            return SuperstructureGoal.LOWER_ALGAE;
+        case 6:
+            return SuperstructureGoal.CORAL_STATION;
+        case 7:
+            return SuperstructureGoal.PROCESSOR_STATION;
+        default:
+            return SuperstructureGoal.L1;
+        }
     }
 
     public void addAutoRoutine(String name, AutoRoutine command)
