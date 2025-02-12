@@ -59,8 +59,10 @@ public class Dashboard extends SubsystemBase
         case 5:
             return SuperstructureGoal.LOWER_ALGAE;
         case 6:
-            return SuperstructureGoal.CORAL_STATION;
+            return SuperstructureGoal.HIGHER_ALGAE;
         case 7:
+            return SuperstructureGoal.CORAL_STATION;
+        case 8:
             return SuperstructureGoal.PROCESSOR_STATION;
         default:
             return SuperstructureGoal.L1;

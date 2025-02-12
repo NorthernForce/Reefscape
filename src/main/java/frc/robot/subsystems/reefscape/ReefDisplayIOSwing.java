@@ -114,16 +114,18 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
                 || selected == 48 || selected == 52)
         {
             inputs.level = 4;
-        } else if (selected == 8 || selected == 17 || selected == 26 || selected == 35 || selected == 44
-                || selected == 53)
+        } else if (selected == 8 || selected == 26 || selected == 44)
         {
             inputs.level = 5;
-        } else if (selected == 54 || selected == 55)
+        } else if (selected == 17 || selected == 35 || selected == 53)
         {
             inputs.level = 6;
-        } else
+        } else if (selected == 54 || selected == 55)
         {
             inputs.level = 7;
+        } else
+        {
+            inputs.level = 8;
         }
         inputs.isConnected = false;
         for (var connection : NetworkTableInstance.getDefault().getConnections())
