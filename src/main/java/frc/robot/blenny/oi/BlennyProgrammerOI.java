@@ -5,7 +5,6 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.FieldConstants;
 import frc.robot.blenny.BlennyContainer;
@@ -40,7 +39,7 @@ public class BlennyProgrammerOI implements BlennyOI
 
         driverController.x().whileTrue(container.getDrive().getXLockCommand());
 
-        driverController.rightTrigger().onTrue(new ParallelCommandGroup(Commands.defer(() ->
+        driverController.rightBumper().whileTrue(Commands.parallel(Commands.defer(() ->
         {
             return container.getDrive().driveToPose(container.getDashboard().getTargetPose());
         }, Set.of(container.getDrive())), Commands.defer(() ->
