@@ -34,9 +34,11 @@ public class ClimberIOTalonFX implements ClimberIO
     /**
      * Constructor for the ClimberIOTalonFX class.
      * 
-     * @param id        motor controller ID
-     * @param inverted  whether the motor is inverted
-     * @param encoderID CANcoder ID
+     * @param id         id of the motor controller
+     * @param inverted   whether the motor controller is inverted
+     * @param encoderID  id of the encoder
+     * @param lowerLimit lower limit of the climber
+     * @param upperLimit upper limit of the climber
      */
 
     public ClimberIOTalonFX(int id, boolean inverted, int encoderID, Angle lowerLimit, Angle upperLimit)
@@ -67,9 +69,9 @@ public class ClimberIOTalonFX implements ClimberIO
     }
 
     /**
-     * climb up method for the ClimberIOTalonFX class.
+     * run method for the ClimberIOTalonFX class at a certain speed.
      * 
-     * @param climbSpeed speed to climb up
+     * @param speed speed to run the climber at
      */
 
     @Override

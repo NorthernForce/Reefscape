@@ -28,9 +28,9 @@ public interface ClimberIO
     }
 
     /**
-     * climb up method for the ClimberIO class.
+     * run method for the ClimberIO class at a certain speed.
      * 
-     * @param climbSpeed speed to climb up
+     * @param speed
      */
 
     public default void run(double speed)
@@ -38,10 +38,7 @@ public interface ClimberIO
     }
 
     /**
-     * get climb up command method for the ClimberIO class.
-     * 
-     * @param climbSpeed speed to climb up
-     * @return command to climb up
+     * stop method for the ClimberIO class.
      */
 
     public default void stop()
