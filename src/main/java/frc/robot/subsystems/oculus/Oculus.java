@@ -16,70 +16,70 @@ import edu.wpi.first.wpilibj.RobotController;
 
 public class Oculus extends SubsystemBase
 {
-	private final OculusIO io;
+    private final OculusIO io;
 
-	public Oculus(OculusIO io)
-	{
-		this.io = io;
-	}
+    public Oculus(OculusIO io)
+    {
+        this.io = io;
+    }
 
-	@Override
-	public void periodic()
-	{
-	}
+    @Override
+    public void periodic()
+    {
+    }
 
-	public Pose2d getPose()
-	{
-		return io.getPose();
-	}
+    public Pose2d getPose()
+    {
+        return io.getPose();
+    }
 
-	public double getBatteryPercent()
-	{
-		return io.getBatteryPercent();
-	}
+    public double getBatteryPercent()
+    {
+        return io.getBatteryPercent();
+    }
 
-	public boolean isConnected()
-	{
-		return io.isConnected();
-	}
+    public boolean isConnected()
+    {
+        return io.isConnected();
+    }
 
-	public Quaternion getOrientation()
-	{
-		return io.getOrientation();
-	}
+    public Quaternion getOrientation()
+    {
+        return io.getOrientation();
+    }
 
-	public double timestamp()
-	{
-		return io.timestamp();
-	}
+    public double timestamp()
+    {
+        return io.timestamp();
+    }
 
-	public void zeroHeading()
-	{
-		io.zeroHeading();
-	}
+    public void zeroHeading()
+    {
+        io.zeroHeading();
+    }
 
-	public void zeroPosition()
-	{
-		io.zeroPosition();
-	}
+    public void zeroPosition()
+    {
+        io.zeroPosition();
+    }
 
-	public void cleanUpQuestNavMessages()
-	{
-		io.cleanUpQuestNavMessages();
-	}
+    public void cleanUpQuestNavMessages()
+    {
+        io.cleanUpQuestNavMessages();
+    }
 
-	public float getOculusYaw()
-	{
-		return io.getOculusYaw();
-	}
+    public float getOculusYaw()
+    {
+        return io.getOculusYaw();
+    }
 
-	public Translation2d getQuestNavTranslation()
-	{
-		return io.getQuestNavTranslation();
-	}
+    public Translation2d getQuestNavTranslation()
+    {
+        return io.getQuestNavTranslation();
+    }
 
-	public Pose2d getQuestNavPose()
-	{
-		return io.getQuestNavPose();
-	}
+    public Pose2d getQuestNavPose()
+    {
+        return io.getQuestNavPose();
+    }
 }
