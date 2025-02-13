@@ -40,18 +40,20 @@ public class Rollers extends SubsystemBase
      * Runs motors to intake piece.
      */
 
-    public void intake()
+    public void intake(double speed)
     {
-        m_intakeIO.set(1);
+        m_intakeIO.set(Math.abs(speed));
     }
 
     /**
      * Runs motors to outtake piece.
+     * 
+     * @param speed The speed to outtake at.
      */
 
-    public void outtake()
+    public void outtake(double speed)
     {
-        m_intakeIO.set(-1);
+        m_intakeIO.set(-Math.abs(speed));
     }
 
     /**
@@ -66,85 +68,36 @@ public class Rollers extends SubsystemBase
     /**
      * Returns a command that intakes a piece.
      * 
+     * @param speed The speed to intake at.
      * @return The command.
      */
 
-    public Command getIntakeCommand()
+    public Command getIntakeCommand(double speed)
     {
-        return new Command()
-        {
-            @Override
-            public void execute()
-            {
-                intake();
-            }
-
-            @Override
-            public boolean isFinished()
-            {
-                return m_sensorIOAlgaeInputs.hasPiece || m_sensorIOCoralInputs.hasPiece;
-            }
-
-            @Override
-            public void end(boolean interrupted)
-            {
-                stop();
-            }
-        };
+        return run(() -> intake(speed));
     }
 
     /**
      * Returns a command that outtakes a piece.
      * 
+     * @param speed The speed to outtake at.
      * @return The command.
      */
 
-    public Command getOuttakeCommand()
+    public Command getOuttakeCommand(double speed)
     {
-        return new Command()
-        {
-            @Override
-            public void execute()
-            {
-                outtake();
-            }
-
-            @Override
-            public boolean isFinished()
-            {
-                return true;
-            }
-
-            @Override
-            public void end(boolean interrupted)
-            {
-                stop();
-            }
-        };
+        return run(() -> outtake(speed));
     }
+
+    /**
+     * Returns a command that stops the rollers.
+     * 
+     * @return The command.
+     */
 
     public Command getStopCommand()
     {
-        return new Command()
-        {
-            @Override
-            public void execute()
-            {
-                stop();
-            }
-
-            @Override
-            public boolean isFinished()
-            {
-                return true;
-            }
-
-            @Override
-            public void end(boolean interrupted)
-            {
-                stop();
-            }
-        };
+        return run(this::stop);
     }
 
     /**

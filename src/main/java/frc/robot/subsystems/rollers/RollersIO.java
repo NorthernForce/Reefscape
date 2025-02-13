@@ -29,7 +29,9 @@ public interface RollersIO
      * @param speed The speed to set the rollers to.
      */
 
-    public void set(double speed);
+    public default void set(double speed)
+    {
+    }
 
     /**
      * Updates the inputs for the rollers.
@@ -37,5 +39,7 @@ public interface RollersIO
      * @param inputs The inputs to update.
      */
 
-    public void updateInputs(IntakeIOInputs inputs);
+    public default void updateInputs(IntakeIOInputs inputs)
+    {
+    }
 }

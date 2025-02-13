@@ -40,5 +40,7 @@ public class BlennyDriverOI implements BlennyOI
                 .getResetOrientationCommand(FieldConstants.getFieldRotation(FieldConstants.getAlliance())));
 
         driverController.x().whileTrue(container.getDrive().getXLockCommand());
+        driverController.leftTrigger().whileTrue(container.getRollers().getIntakeCommand(1));
+        driverController.rightTrigger().whileTrue(container.getRollers().getOuttakeCommand(1));
     }
 }

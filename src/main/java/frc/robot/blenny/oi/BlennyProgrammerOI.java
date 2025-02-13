@@ -36,10 +36,8 @@ public class BlennyProgrammerOI implements BlennyOI
 
         driverController.x().whileTrue(container.getDrive().getXLockCommand());
 
-        driverController.axisGreaterThan(Axis.kLeftTrigger.value, 0.5)
-                .whileTrue(container.getRollers().getIntakeCommand());
-        driverController.axisGreaterThan(Axis.kRightTrigger.value, 0.5)
-                .whileTrue(container.getRollers().getOuttakeCommand());
+        driverController.leftTrigger().whileTrue(container.getRollers().getIntakeCommand(1));
+        driverController.rightTrigger().whileTrue(container.getRollers().getOuttakeCommand(1));
     }
 
 }
