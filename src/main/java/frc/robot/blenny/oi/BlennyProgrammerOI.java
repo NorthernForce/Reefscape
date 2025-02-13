@@ -6,6 +6,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.FieldConstants;
 import frc.robot.blenny.BlennyContainer;
+import frc.robot.blenny.constants.BlennyConstants;
 
 /**
  * Blenny OI for the programmers
@@ -25,6 +26,7 @@ public class BlennyProgrammerOI implements BlennyOI
     public void bindOI(BlennyContainer container)
     {
         CommandXboxController driverController = new CommandXboxController(0);
+        CommandXboxController manipulatorController = new CommandXboxController(1);
 
         container.getDrive().setDefaultCommand(container.getDrive().getDriveByJoystickCommand(
                 processJoystickInput(driverController::getLeftY), processJoystickInput(driverController::getLeftX),
@@ -34,6 +36,15 @@ public class BlennyProgrammerOI implements BlennyOI
                 .getResetOrientationCommand(FieldConstants.getFieldRotation(FieldConstants.getAlliance())));
 
         driverController.x().whileTrue(container.getDrive().getXLockCommand());
+
+        container.getSuperstructure().getWrist()
+                .setDefaultCommand(container.getSuperstructure().getWrist().getStopCommand());
+
+        manipulatorController.leftBumper().whileTrue(container.getSuperstructure().getWrist()
+                .getSetSpeedCommand(-BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
+
+        manipulatorController.rightBumper().whileTrue(container.getSuperstructure().getWrist()
+                .getSetSpeedCommand(BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
     }
 
 }
