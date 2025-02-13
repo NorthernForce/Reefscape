@@ -147,4 +147,13 @@ public class BlennyConstants
             return wristAngle;
         }
     }
+
+    public static class ClimberConstants
+    {
+        public static final int ID = 17;
+        public static final boolean INVERTED = false;
+        public static final int ENCODER_ID = 23;
+        public static final Angle LOWER_LIMIT = Rotations.of(-0.03);
+        public static final Angle UPPER_LIMIT = Rotations.of(0.22);
+    }
 }
