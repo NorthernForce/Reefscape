@@ -1,7 +1,9 @@
+import DriveWidget from './DriveWidget';
+import './Settings.css';
 function Settings() {
     return (
-        <div>
-            <h1>Settings</h1>
+        <div className="settings-container">
+            <DriveWidget />
         </div>
     );
 }

@@ -70,7 +70,7 @@ public class Dashboard extends SubsystemBase
 
     public void setResetEncodersCommand(Command command)
     {
-        m_io.addCommand("ResetEncoders", command);
+        m_io.addCommand("swerve/resetEncoders", command);
     }
 
     @Override

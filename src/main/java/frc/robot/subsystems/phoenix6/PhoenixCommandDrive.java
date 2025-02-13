@@ -108,6 +108,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * Lets the swerve drive idle
+     * 
      * @return a command that lets the swerve drive idle
      */
     public Command getIdleCommand()
