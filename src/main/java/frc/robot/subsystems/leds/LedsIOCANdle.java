@@ -24,6 +24,7 @@ public class LedsIOCANdle implements LedsIO
 	private boolean animating = false;
 	private double speed = 1.0;
 	private int animationIndex = 0;
+    private int currentLED = 0;
 
 	/**
 	 * Initializes the CANdle for leds
@@ -266,5 +267,6 @@ public class LedsIOCANdle implements LedsIO
 		inputs.b = b;
 		inputs.animating = animating;
 		inputs.animationIndex = animationIndex;
+        inputs.currentLED = currentLED;
 	}
 }

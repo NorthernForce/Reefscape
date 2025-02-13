@@ -24,6 +24,7 @@ public interface LedsIO
 		public double speed;
 		public boolean animating;
 		public int animationIndex;
+        public int currentLED;
 	}
 
 	public default void setColours(int r, int g, int b)
