@@ -66,8 +66,8 @@ public class Robot extends LoggedRobot
             break;
         }
 
-        final NFRRobotChooser chooser = new NFRRobotChooser(() -> new BlennyContainer(),
-                Map.of("0316d7d7", () -> new ZippyContainer(), "", () -> new BlennyContainer()));
+        final NFRRobotChooser chooser = new NFRRobotChooser(() -> new ZippyContainer(),
+                Map.of("0316d7d7", () -> new ZippyContainer(), "???", () -> new BlennyContainer()));
 
         Logger.recordMetadata("RoboRIO ID", NFRRobotChooser.getRoborioID());
 
@@ -140,6 +140,7 @@ public class Robot extends LoggedRobot
         {
             autoSelected.cancel();
         }
+        container.teleopInit();
     }
 
     /** This function is called periodically during operator control. */
@@ -153,6 +154,7 @@ public class Robot extends LoggedRobot
     @Override
     public void disabledInit()
     {
+        container.disabledInit();
     }
 
     /** This function is called periodically when disabled. */
