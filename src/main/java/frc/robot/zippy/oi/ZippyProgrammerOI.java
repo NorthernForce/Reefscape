@@ -41,11 +41,11 @@ public class ZippyProgrammerOI implements ZippyOI
 
         driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
 
-		driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
-				.resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
-						DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
-				container.getDrive()));
-		driverJoystick.y().whileTrue(container.getLEDs().getSetColour(255, 0, 0));
-		driverJoystick.b().whileTrue(container.getLEDs().getIncrementAnimation());
-	}
+        driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
+                .resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
+                        DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
+                container.getDrive()));
+        driverJoystick.y().whileTrue(container.getLEDs().getSetColour(255, 0, 0));
+        driverJoystick.b().whileTrue(container.getLEDs().getIncrementAnimation());
+    }
 }

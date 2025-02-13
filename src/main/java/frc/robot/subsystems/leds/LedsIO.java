@@ -14,63 +14,63 @@ import org.littletonrobotics.junction.AutoLog;
  */
 public interface LedsIO
 {
-	@AutoLog
-	public static class LedIOInputs
-	{
-		public boolean on = false;
-		public int r, g, b;
-		public double brightness;
-		public int ledCount;
-		public double speed;
-		public boolean animating;
-		public int animationIndex;
-	}
+    @AutoLog
+    public static class LedIOInputs
+    {
+        public boolean on = false;
+        public int r, g, b;
+        public double brightness;
+        public int ledCount;
+        public double speed;
+        public boolean animating;
+        public int animationIndex;
+    }
 
-	public default void setColours(int r, int g, int b)
-	{
-	}
+    public default void setColours(int r, int g, int b)
+    {
+    }
 
-	public default void setOn(boolean on)
-	{
-	}
+    public default void setOn(boolean on)
+    {
+    }
 
-	public default void setBrightness(double brightness)
-	{
-	}
+    public default void setBrightness(double brightness)
+    {
+    }
 
-	public default void updateInputs(LedIOInputs inputs)
-	{
-	}
+    public default void updateInputs(LedIOInputs inputs)
+    {
+    }
 
-	public default void updateAnimating(boolean on)
-	{
-	}
+    public default void updateAnimating(boolean on)
+    {
+    }
 
-	public default void rainbowAnimation(int ledCount, double speed, double brightness)
-	{
-	}
+    public default void rainbowAnimation(int ledCount, double speed, double brightness)
+    {
+    }
 
-	public default void twinkleAnimation(int r, int g, int b, double speed)
-	{
-	}
+    public default void twinkleAnimation(int r, int g, int b, double speed)
+    {
+    }
 
-	public default void colourFlow(int r, int g, int b, double speed, boolean direction, int offSet)
-	{
-	}
+    public default void colourFlow(int r, int g, int b, double speed, boolean direction, int offSet)
+    {
+    }
 
-	public default void strobeAnimation(int r, int g, int b, double speed)
-	{
-	}
+    public default void strobeAnimation(int r, int g, int b, double speed)
+    {
+    }
 
-	public default void setSpecificLEDs(int startIdx, int endIdx, int r, int g, int b)
-	{
-	}
+    public default void setSpecificLEDs(int startIdx, int endIdx, int r, int g, int b)
+    {
+    }
 
-	public default void incrementAnimation()
-	{
-	}
+    public default void incrementAnimation()
+    {
+    }
 
-	public default void clearAnimationBuffer()
-	{
-	}
+    public default void clearAnimationBuffer()
+    {
+    }
 }

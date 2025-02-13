@@ -51,10 +51,10 @@ public class ZippyContainer implements NFRRobotContainer
         return drive;
     }
 
-	public LEDS getLEDs()
-	{
-		return leds;
-	}
+    public LEDS getLEDs()
+    {
+        return leds;
+    }
 
     public Dashboard getDashboard()
     {
