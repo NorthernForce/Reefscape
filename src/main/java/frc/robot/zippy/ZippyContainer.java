@@ -96,6 +96,11 @@ public class ZippyContainer implements NFRRobotContainer
         dashboard.setTeleopStage();
     }
 
+    public LEDS getLEDs()
+    {
+        return leds;
+    }
+
     @Override
     public void disabledInit()
     {
