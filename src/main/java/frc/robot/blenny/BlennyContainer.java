@@ -34,8 +34,17 @@ public class BlennyContainer implements NFRRobotContainer
                 BlennyTunerConstants.FrontLeft, BlennyTunerConstants.FrontRight, BlennyTunerConstants.BackLeft,
                 BlennyTunerConstants.BackRight);
 
-        rollers = new Rollers(new RollersIOTalonFXS(30, 31, false), new RollersSensorIOUltrasonic(0, 1, 50),
-                new RollersSensorIOUltrasonic(2, 3, 50)); // TODO: FIX THESE IDS
+        rollers = new Rollers(
+                new RollersIOTalonFXS(BlennyConstants.RollersConstants.ROLLER_MOTOR_ONE_ID,
+                        BlennyConstants.RollersConstants.ROLLER_MOTOR_TWO_ID,
+                        BlennyConstants.RollersConstants.ROLLER_MOTORS_INVERTED),
+                new RollersSensorIOUltrasonic(BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ONE_TRIGGER,
+                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ONE_ECHO,
+                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ONE_MAX_DISTANCE),
+                new RollersSensorIOUltrasonic(BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_TWO_TRIGGER,
+                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_TWO_ECHO,
+                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_TWO_MAX_DISTANCE)); // TODO: FIX
+                                                                                                        // THESE IDS
     }
 
     /**
