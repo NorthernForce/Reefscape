@@ -8,6 +8,7 @@ import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import frc.robot.subsystems.superstructure.Superstructure.GenericSuperstructureGoal;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX.ElevatorConstants;
+import frc.robot.subsystems.superstructure.wrist.WristIOTalonFX.WristConstants;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -108,6 +109,29 @@ public class BlennyConstants
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD,
                 MetersPerSecond.of(CRUISE_VELOCITY), MetersPerSecondPerSecond.of(ACCELERATION), JERK,
                 Meters.of(SPROCKET_CIRCUMFERENCE), GEAR_RATIO, false, UPPER_LIMIT);
+    }
+
+    public static class WristJointConstants
+    {
+        public static final double kS = 0.25;
+        public static final double kV = 0.12;
+        public static final double kA = 0.02;
+        public static final double kP = 4.8;
+        public static final double kI = 0.0;
+        public static final double kD = 0.1;
+        public static final double CRUISE_VELOCITY = 80;
+        public static final double ACCELERATION = 160;
+        public static final double JERK = 1600;
+        public static final boolean INVERTED = false;
+        public static final Angle UPPER_LIMIT = Degrees.of(60);
+        public static final Angle LOWER_LIMIT = Degrees.of(0);
+        public static final double SENSOR_TO_MECHANISM_RATIO = 1.0;
+        public static final double ROTOR_TO_SENSOR_RATIO = 20.0;
+        public static final double MANUAL_MOVE_SPEED = 0.8;
+
+        public static final WristConstants WRIST_CONSTANTS = new WristConstants(kS, kV, kA, kP, kI, kD, CRUISE_VELOCITY,
+                ACCELERATION, JERK, INVERTED, UPPER_LIMIT, LOWER_LIMIT, SENSOR_TO_MECHANISM_RATIO,
+                ROTOR_TO_SENSOR_RATIO);
     }
 
     /**

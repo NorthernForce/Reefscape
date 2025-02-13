@@ -1,0 +1,16 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+.header #lock-switch {
+  align-self: flex-end;
+}
+.header .header-status {
+  font: 20px 'Roboto', sans-serif;
+  align-content: center;
+  margin-right: 0;
+}
