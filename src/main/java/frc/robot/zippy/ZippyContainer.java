@@ -23,13 +23,8 @@ import frc.robot.zippy.oi.ZippyProgrammerOI;
 public class ZippyContainer implements NFRRobotContainer
 {
 	private final PhoenixCommandDrive drive;
-<<<<<<< HEAD
-	private final Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Red);
-	private final Oculus oculus = new Oculus(new OculusIONet("questnav"));
-=======
 	private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
 	private Alliance alliance = allianceSupplier.get();
->>>>>>> origin/devel
 
 	public ZippyContainer()
 	{
