@@ -80,7 +80,7 @@ public class BlennyContainer implements NFRRobotContainer
             break;
         }
         testCommand = Commands.parallel(drive.getIdleCommand());
-        dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders));
+        dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
     }
 
     private void addAutonomousRoutines()

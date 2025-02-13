@@ -48,7 +48,7 @@ public class ZippyContainer implements NFRRobotContainer
         dashboard.addDefaultAutoRoutine("Do Nothing", new AutoRoutine(new InstantCommand(), new Translation2d[]
         { new Translation2d(), new Translation2d() }, new Pose2d()));
         testCommand = Commands.parallel(drive.getIdleCommand());
-        dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders));
+        dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
     }
 
     public PhoenixCommandDrive getDrive()
