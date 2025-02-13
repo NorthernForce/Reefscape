@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.awt.Color;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
@@ -46,10 +47,6 @@ public class ReefscapeFrame extends JFrame
     {
         super("Reef Display");
 
-        NetworkTableInstance.getDefault().setServerTeam(172);
-        NetworkTableInstance.getDefault().setServer(new String[]
-        { "roborio-172-frc.local", "localhost" });
-        NetworkTableInstance.getDefault().startClient4("ReefscapeDisplay");
         table = NetworkTableInstance.getDefault().getTable("ReefscapeDisplay");
         choicePublisher = table.getIntegerTopic("choice").publish();
         boolean state[] = new boolean[48];
@@ -58,6 +55,7 @@ public class ReefscapeFrame extends JFrame
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1280, 800);
+        setBackground(Color.WHITE);
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] graphicsDevices = ge.getScreenDevices();
@@ -155,6 +153,7 @@ public class ReefscapeFrame extends JFrame
                         grayedOut[i] = m[i + hexagonSelector.getSelectedTrapezoid().get() * 8];
                     }
                     levelSelector.setGrayedOut(grayedOut);
+                    levelSelector.setSelectedTrapezoid(hexagonSelector.getSelectedTrapezoid().get());
                 }
             }
         });
@@ -190,20 +189,48 @@ public class ReefscapeFrame extends JFrame
         rightPanel.add(rightCoral);
         add(rightPanel);
         setVisible(true);
+        Thread tr = new Thread(() ->
+        {
+            startNetworkTables();
+            while (true)
+            {
+                try
+                {
+                    Thread.sleep(1000);
+                    hexagonSelector.setConnected(NetworkTableInstance.getDefault().isConnected());
+                } catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
+        tr.start();
+    }
+
+    private static void startNetworkTables()
+    {
+        NetworkTableInstance.getDefault().setServerTeam(172);
+        NetworkTableInstance.getDefault().startClient4("ReefscapeDisplay");
+        NetworkTableInstance.getDefault().startDSClient();
     }
 
     public static void main(String[] args) throws IOException
     {
-        NetworkTablesJNI.Helper.setExtractOnStaticLoad(false);
-        WPIUtilJNI.Helper.setExtractOnStaticLoad(false);
-        EigenJNI.Helper.setExtractOnStaticLoad(false);
-        CameraServerJNI.Helper.setExtractOnStaticLoad(false);
-        OpenCvLoader.Helper.setExtractOnStaticLoad(false);
-
-        CombinedRuntimeLoader.loadLibraries(ReefscapeFrame.class, "wpiutiljni", "wpimathjni", "ntcorejni",
-                Core.NATIVE_LIBRARY_NAME, "cscorejni");
         SwingUtilities.invokeLater(() ->
         {
+            NetworkTablesJNI.Helper.setExtractOnStaticLoad(false);
+            WPIUtilJNI.Helper.setExtractOnStaticLoad(false);
+            EigenJNI.Helper.setExtractOnStaticLoad(false);
+            CameraServerJNI.Helper.setExtractOnStaticLoad(false);
+            OpenCvLoader.Helper.setExtractOnStaticLoad(false);
+            try
+            {
+                CombinedRuntimeLoader.loadLibraries(ReefscapeFrame.class, "wpiutiljni", "wpimathjni", "ntcorejni",
+                        Core.NATIVE_LIBRARY_NAME, "cscorejni");
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
             new ReefscapeFrame();
         });
     }

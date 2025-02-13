@@ -24,9 +24,11 @@ public class DashboardIOFWC implements DashboardIO
     private final DoubleArrayPublisher autoPathPublisher;
 
     /**
-     * Creates a new DashboardIOFWC. This connects to the FWC dashboard using "FWC" as the network table name.
-     * The dashboard will be hosted on port 5800. The path to the dashboard files is either "./npm-dash/dist" if
-     * the code is running in simulation, or "/home/lvuser/npm-dash" if the code is running on the robot.
+     * Creates a new DashboardIOFWC. This connects to the FWC dashboard using "FWC"
+     * as the network table name. The dashboard will be hosted on port 5800. The
+     * path to the dashboard files is either "./npm-dash/dist" if the code is
+     * running in simulation, or "/home/lvuser/npm-dash" if the code is running on
+     * the robot.
      */
     public DashboardIOFWC()
     {

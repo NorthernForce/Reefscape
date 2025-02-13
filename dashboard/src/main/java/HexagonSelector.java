@@ -1,4 +1,5 @@
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import java.awt.*;
@@ -16,14 +17,23 @@ public class HexagonSelector extends JComponent implements MouseListener
 {
     private final Polygon[] trapezoids;
     private Optional<Integer> selectedTrapezoid;
+    private final Point[] points;
     private Action action = null;
+    private boolean connected = false;
+    private final ImageIcon connectedIcon;
+    private final ImageIcon disconnectedIcon;
 
     /**
      * Creates a new HexagonSelector.
      */
     public HexagonSelector()
     {
+        var largeDisconnectedIcon = new ImageIcon(getClass().getResource("/disconnected.png"));
+        disconnectedIcon = new ImageIcon(largeDisconnectedIcon.getImage().getScaledInstance(50, 50, 0));
+        var largeConnectedIcon = new ImageIcon(getClass().getResource("/connected.png"));
+        connectedIcon = new ImageIcon(largeConnectedIcon.getImage().getScaledInstance(50, 50, 0));
         trapezoids = new Polygon[6];
+        points = new Point[6];
         selectedTrapezoid = Optional.empty();
         addMouseListener(this);
     }
@@ -39,6 +49,17 @@ public class HexagonSelector extends JComponent implements MouseListener
     }
 
     /**
+     * Sets whether the display is connected or not.
+     * 
+     * @param connected whether the display is connected
+     */
+    public void setConnected(boolean connected)
+    {
+        this.connected = connected;
+        repaint();
+    }
+
+    /**
      * Fills the hexagon with trapezoids.
      */
     private void fillHexagons()
@@ -50,7 +71,7 @@ public class HexagonSelector extends JComponent implements MouseListener
         Point[] innerPoints = new Point[6];
         for (int i = 0; i < 6; i++)
         {
-            double angle = Math.PI / 3.0 * i;
+            double angle = Math.PI * 2 - Math.PI / 3.0 * i;
             double x = centerX + radius * Math.cos(angle);
             double y = centerY + radius * Math.sin(angle);
             points[i] = new Point((int) x, (int) y);
@@ -58,6 +79,11 @@ public class HexagonSelector extends JComponent implements MouseListener
             x = centerX + innerRadius * Math.cos(angle);
             y = centerY + innerRadius * Math.sin(angle);
             innerPoints[i] = new Point((int) x, (int) y);
+            double averageRadius = (radius + innerRadius) / 2.0;
+            angle -= Math.PI / 6.0;
+            x = centerX + averageRadius * Math.cos(angle);
+            y = centerY + averageRadius * Math.sin(angle);
+            this.points[i] = new Point((int) x, (int) y);
         }
         for (int i = 0; i < 6; i++)
         {
@@ -73,8 +99,11 @@ public class HexagonSelector extends JComponent implements MouseListener
     @Override
     protected void paintComponent(Graphics g)
     {
+        var g2d = (Graphics2D) g;
         super.paintComponent(g);
         fillHexagons();
+        var originalFont = g.getFont();
+        g.setFont(g.getFont().deriveFont(20.0f));
         for (int i = 0; i < 6; i++)
         {
             if (selectedTrapezoid.isPresent() && selectedTrapezoid.get() == i)
@@ -85,7 +114,26 @@ public class HexagonSelector extends JComponent implements MouseListener
                 g.setColor(Color.BLACK);
             }
             g.fillPolygon(trapezoids[i]);
+            int i2 = (i + 2) % 6;
+            String toDisplay = String.format("%c        %c", (char) ('A' + i2 * 2), (char) ('A' + i2 * 2 + 1));
+            var originalTransform = ((Graphics2D) g).getTransform();
+            var fontMetrics = g.getFontMetrics();
+            var textHeight = fontMetrics.getHeight();
+            var textWidth = fontMetrics.stringWidth(toDisplay);
+            g.translate(this.points[i].x, this.points[i].y);
+            g2d.rotate(-i * Math.PI / 3.0 + Math.PI / 6.0 - Math.PI / 2.0 - Math.PI / 3.0);
+            g.setColor(Color.WHITE);
+            g.drawString(toDisplay, -textWidth / 2, -textHeight / 2);
+            g2d.setTransform(originalTransform);
         }
+        if (connected)
+        {
+            connectedIcon.paintIcon(this, g, 0, 0);
+        } else
+        {
+            disconnectedIcon.paintIcon(this, g, 0, 0);
+        }
+        g.setFont(originalFont);
     }
 
     /**

@@ -21,6 +21,7 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
 
     /**
      * Creates a new ReefDisplayIOSwing
+     * 
      * @param name the name of the network table to use
      */
     public ReefDisplayIOSwing(String name)
