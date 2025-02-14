@@ -42,5 +42,8 @@ public class BlennyDriverOI implements BlennyOI
         driverController.x().whileTrue(container.getDrive().getXLockCommand());
         driverController.leftTrigger().whileTrue(container.getRollers().getIntakeCommand(1));
         driverController.rightTrigger().whileTrue(container.getRollers().getOuttakeCommand(1));
+
+        driverController.leftBumper().whileTrue(container.getClimber().getClimbUpCommand(0.5));
+        driverController.rightBumper().whileTrue(container.getClimber().getClimbDownCommand(0.5));
     }
 }

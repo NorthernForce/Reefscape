@@ -26,6 +26,7 @@ public class BlennyProgrammerOI implements BlennyOI
     public void bindOI(BlennyContainer container)
     {
         CommandXboxController driverController = new CommandXboxController(0);
+        CommandXboxController manipulatorController = new CommandXboxController(1);
 
         container.getDrive().setDefaultCommand(container.getDrive().getDriveByJoystickCommand(
                 processJoystickInput(driverController::getLeftY), processJoystickInput(driverController::getLeftX),
@@ -40,6 +41,14 @@ public class BlennyProgrammerOI implements BlennyOI
                 .whileTrue(container.getRollers().getIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED));
         driverController.rightTrigger()
                 .whileTrue(container.getRollers().getOuttakeCommand(BlennyConstants.RollersConstants.OUTTAKE_SPEED));
+        container.getSuperstructure().getWrist()
+                .setDefaultCommand(container.getSuperstructure().getWrist().getStopCommand());
+
+        manipulatorController.leftBumper().whileTrue(container.getSuperstructure().getWrist()
+                .getSetSpeedCommand(-BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
+
+        manipulatorController.rightBumper().whileTrue(container.getSuperstructure().getWrist()
+                .getSetSpeedCommand(BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
     }
 
 }
