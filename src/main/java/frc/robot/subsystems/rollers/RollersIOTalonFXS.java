@@ -5,7 +5,9 @@ import java.util.function.Supplier;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.signals.BrushedMotorWiringValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorArrangementValue;
 
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -42,12 +44,16 @@ public class RollersIOTalonFXS implements RollersIO
         configMotorLeft.MotorOutput.Inverted = inverted ? InvertedValue.CounterClockwise_Positive
                 : InvertedValue.Clockwise_Positive;
 
+        configMotorLeft.Commutation.MotorArrangement = MotorArrangementValue.NEO550_JST;
+
         TalonFXSConfiguration configMotorRight = new TalonFXSConfiguration();
         configMotorRight.MotorOutput.Inverted = !inverted ? InvertedValue.CounterClockwise_Positive
                 : InvertedValue.Clockwise_Positive;
 
-        intakeMotorLeft.getConfigurator().refresh(configMotorLeft);
-        intakeMotorRight.getConfigurator().refresh(configMotorRight);
+        configMotorRight.Commutation.MotorArrangement = MotorArrangementValue.NEO550_JST;
+
+        intakeMotorLeft.getConfigurator().apply(configMotorLeft);
+        intakeMotorRight.getConfigurator().apply(configMotorRight);
 
         motorLeftTemperature = intakeMotorLeft.getDeviceTemp();
         motorLeftPresent = () -> intakeMotorLeft.isConnected();
