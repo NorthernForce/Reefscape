@@ -10,7 +10,14 @@
 }
 .auto-field-container {
     grid-area: field;
+    justify-items: center;
+    width: 800px;
 }
 .auto-field {
     width: 800px;
+}
+.auto-alerts
+{
+    width: 100%;
+    min-width: 500px;
 }

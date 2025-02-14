@@ -2,6 +2,7 @@ package frc.robot.subsystems.dashboard;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.util.AutoRoutine;
 
 /**
@@ -59,5 +60,9 @@ public interface DashboardIO
     public default AutoRoutine getSelectedRoutine()
     {
         return null;
+    }
+
+    public default void addCommand(String name, Command command)
+    {
     }
 }

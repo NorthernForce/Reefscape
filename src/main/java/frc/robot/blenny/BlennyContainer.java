@@ -1,9 +1,14 @@
 package frc.robot.blenny;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Rotations;
+
 import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
@@ -43,6 +48,7 @@ public class BlennyContainer implements NFRRobotContainer
     private final Superstructure superstructure;
     private final Climber climber;
     private final Dashboard dashboard;
+    private final Command testCommand;
 
     /**
      * Create a new BlennyContainer
@@ -90,6 +96,8 @@ public class BlennyContainer implements NFRRobotContainer
             });
             break;
         }
+        testCommand = Commands.parallel(drive.getIdleCommand());
+        dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
     }
 
     private void addAutonomousRoutines()
@@ -161,4 +169,36 @@ public class BlennyContainer implements NFRRobotContainer
                 FieldConstants.convertPoseByAlliance(dashboard.getRoutine().startPose(), FieldConstants.getAlliance()));
     }
 
+    @Override
+    public void teleopInit()
+    {
+        dashboard.setTeleopStage();
+    }
+
+    @Override
+    public void disabledInit()
+    {
+        if (testCommand.isScheduled())
+        {
+            testCommand.cancel();
+        }
+        dashboard.setAutoStage();
+    }
+
+    private void resetDriveEncoders()
+    {
+        final var offsets = drive.resetEncoderAngles(new Angle[]
+        { Degrees.of(0), Degrees.of(0), Degrees.of(0), Degrees.of(0) });
+        Preferences.setDouble("kSwerveOffsetFrontLeft", offsets[0].in(Rotations));
+        Preferences.setDouble("kSwerveOffsetFrontRight", offsets[1].in(Rotations));
+        Preferences.setDouble("kSwerveOffsetBackLeft", offsets[2].in(Rotations));
+        Preferences.setDouble("kSwerveOffsetBackRight", offsets[3].in(Rotations));
+    }
+
+    @Override
+    public void testInit()
+    {
+        testCommand.schedule();
+        dashboard.setSettingsStage();
+    }
 }
