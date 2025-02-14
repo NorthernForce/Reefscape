@@ -25,7 +25,7 @@ public class LevelSelector extends JComponent implements MouseListener
      */
     public static enum Level
     {
-        L1, R1, L2, R2, L3, R3, L4, R4, ALGAE
+        L1, L2, L3, L4, R1, R2, R3, R4, ALGAE
     }
 
     private final Rectangle[] levelRectangles;
@@ -128,9 +128,62 @@ public class LevelSelector extends JComponent implements MouseListener
         fillLevels();
         for (int i = 0; i < 8; i++)
         {
-            if (selectedLevel.isPresent() && selectedLevel.get() == Level.values()[i])
+            if (selectedLevel.isPresent())
             {
-                g.setColor(Color.RED);
+                g.setColor(Color.BLUE);
+                switch (selectedLevel.get())
+                {
+                case L1:
+                    if (i == 6)
+                    {
+                        g.setColor(Color.RED);
+                    }
+                    break;
+                case R1:
+                    if (i == 7)
+                    {
+                        g.setColor(Color.RED);
+                    }
+                    break;
+                case L2:
+                    if (i == 4)
+                    {
+                        g.setColor(Color.RED);
+                    }
+                    break;
+                case R2:
+                    if (i == 5)
+                    {
+                        g.setColor(Color.RED);
+                    }
+                    break;
+                case L3:
+                    if (i == 2)
+                    {
+                        g.setColor(Color.RED);
+                    }
+                    break;
+                case R3:
+                    if (i == 3)
+                    {
+                        g.setColor(Color.RED);
+                    }
+                    break;
+                case L4:
+                    if (i == 0)
+                    {
+                        g.setColor(Color.RED);
+                    }
+                    break;
+                case R4:
+                    if (i == 1)
+                    {
+                        g.setColor(Color.RED);
+                    }
+                    break;
+                default:
+                    break;
+                }
             } else
             {
                 g.setColor(Color.BLUE);
@@ -178,7 +231,33 @@ public class LevelSelector extends JComponent implements MouseListener
         {
             if (levelRectangles[i].contains(x, y))
             {
-                selectedLevel = Optional.of(Level.values()[i]);
+                switch (i)
+                {
+                case 6:
+                    selectedLevel = Optional.of(Level.L1);
+                    break;
+                case 7:
+                    selectedLevel = Optional.of(Level.R1);
+                    break;
+                case 4:
+                    selectedLevel = Optional.of(Level.L2);
+                    break;
+                case 5:
+                    selectedLevel = Optional.of(Level.R2);
+                    break;
+                case 2:
+                    selectedLevel = Optional.of(Level.L3);
+                    break;
+                case 3:
+                    selectedLevel = Optional.of(Level.R3);
+                    break;
+                case 0:
+                    selectedLevel = Optional.of(Level.L4);
+                    break;
+                case 1:
+                    selectedLevel = Optional.of(Level.R4);
+                    break;
+                }
                 repaint();
                 if (action != null)
                 {

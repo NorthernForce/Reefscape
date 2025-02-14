@@ -1,5 +1,4 @@
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import java.awt.*;
@@ -19,19 +18,12 @@ public class HexagonSelector extends JComponent implements MouseListener
     private Optional<Integer> selectedTrapezoid;
     private final Point[] points;
     private Action action = null;
-    private boolean connected = false;
-    private final ImageIcon connectedIcon;
-    private final ImageIcon disconnectedIcon;
 
     /**
      * Creates a new HexagonSelector.
      */
     public HexagonSelector()
     {
-        var largeDisconnectedIcon = new ImageIcon(getClass().getResource("/disconnected.png"));
-        disconnectedIcon = new ImageIcon(largeDisconnectedIcon.getImage().getScaledInstance(50, 50, 0));
-        var largeConnectedIcon = new ImageIcon(getClass().getResource("/connected.png"));
-        connectedIcon = new ImageIcon(largeConnectedIcon.getImage().getScaledInstance(50, 50, 0));
         trapezoids = new Polygon[6];
         points = new Point[6];
         selectedTrapezoid = Optional.empty();
@@ -46,17 +38,6 @@ public class HexagonSelector extends JComponent implements MouseListener
     public void setAction(Action action)
     {
         this.action = action;
-    }
-
-    /**
-     * Sets whether the display is connected or not.
-     * 
-     * @param connected whether the display is connected
-     */
-    public void setConnected(boolean connected)
-    {
-        this.connected = connected;
-        repaint();
     }
 
     /**
@@ -125,13 +106,6 @@ public class HexagonSelector extends JComponent implements MouseListener
             g.setColor(Color.WHITE);
             g.drawString(toDisplay, -textWidth / 2, -textHeight / 2);
             g2d.setTransform(originalTransform);
-        }
-        if (connected)
-        {
-            connectedIcon.paintIcon(this, g, 0, 0);
-        } else
-        {
-            disconnectedIcon.paintIcon(this, g, 0, 0);
         }
         g.setFont(originalFont);
     }
