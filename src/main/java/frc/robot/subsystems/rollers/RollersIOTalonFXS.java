@@ -16,14 +16,14 @@ import edu.wpi.first.units.measure.Temperature;
 
 public class RollersIOTalonFXS implements RollersIO
 {
-    private final TalonFXS intakeMotorOne;
-    private final TalonFXS intakeMotorTwo;
-    private final StatusSignal<Temperature> motorOneTemperature;
-    private final Supplier<Boolean> motorOnePresent;
-    private final StatusSignal<Current> motorOneCurrent;
-    private final StatusSignal<Temperature> motorTwoTemperature;
-    private final Supplier<Boolean> motorTwoPresent;
-    private final StatusSignal<Current> motorTwoCurrent;
+    private final TalonFXS intakeMotorLeft;
+    private final TalonFXS intakeMotorRight;
+    private final StatusSignal<Temperature> motorLeftTemperature;
+    private final Supplier<Boolean> motorLeftPresent;
+    private final StatusSignal<Current> motorLeftCurrent;
+    private final StatusSignal<Temperature> motorRightTemperature;
+    private final Supplier<Boolean> motorRightPresent;
+    private final StatusSignal<Current> motorRightCurrent;
 
     /**
      * Constructs a new RollersIOTalonFX.
@@ -33,28 +33,28 @@ public class RollersIOTalonFXS implements RollersIO
      * @param inverted Whether the mechanism is inverted or not.
      */
 
-    public RollersIOTalonFXS(int id1, int id2, boolean inverted)
+    public RollersIOTalonFXS(int idLeft, int idRight, boolean inverted)
     {
-        intakeMotorOne = new TalonFXS(id1);
-        intakeMotorTwo = new TalonFXS(id2);
+        intakeMotorLeft = new TalonFXS(idLeft);
+        intakeMotorRight = new TalonFXS(idRight);
 
-        TalonFXSConfiguration configMotorOne = new TalonFXSConfiguration();
-        configMotorOne.MotorOutput.Inverted = inverted ? InvertedValue.CounterClockwise_Positive
+        TalonFXSConfiguration configMotorLeft = new TalonFXSConfiguration();
+        configMotorLeft.MotorOutput.Inverted = inverted ? InvertedValue.CounterClockwise_Positive
                 : InvertedValue.Clockwise_Positive;
 
-        TalonFXSConfiguration configMotorTwo = new TalonFXSConfiguration();
-        configMotorTwo.MotorOutput.Inverted = !inverted ? InvertedValue.CounterClockwise_Positive
+        TalonFXSConfiguration configMotorRight = new TalonFXSConfiguration();
+        configMotorRight.MotorOutput.Inverted = !inverted ? InvertedValue.CounterClockwise_Positive
                 : InvertedValue.Clockwise_Positive;
 
-        intakeMotorOne.getConfigurator().refresh(configMotorOne);
-        intakeMotorTwo.getConfigurator().refresh(configMotorTwo);
+        intakeMotorLeft.getConfigurator().refresh(configMotorLeft);
+        intakeMotorRight.getConfigurator().refresh(configMotorRight);
 
-        motorOneTemperature = intakeMotorOne.getDeviceTemp();
-        motorOnePresent = () -> intakeMotorOne.isConnected();
-        motorOneCurrent = intakeMotorOne.getTorqueCurrent();
-        motorTwoTemperature = intakeMotorTwo.getDeviceTemp();
-        motorTwoPresent = () -> intakeMotorTwo.isConnected();
-        motorTwoCurrent = intakeMotorTwo.getTorqueCurrent();
+        motorLeftTemperature = intakeMotorLeft.getDeviceTemp();
+        motorLeftPresent = () -> intakeMotorLeft.isConnected();
+        motorLeftCurrent = intakeMotorLeft.getTorqueCurrent();
+        motorRightTemperature = intakeMotorRight.getDeviceTemp();
+        motorRightPresent = () -> intakeMotorRight.isConnected();
+        motorRightCurrent = intakeMotorRight.getTorqueCurrent();
     }
 
     /**
@@ -66,8 +66,8 @@ public class RollersIOTalonFXS implements RollersIO
     @Override
     public void set(double speed)
     {
-        intakeMotorOne.set(speed);
-        intakeMotorTwo.set(speed);
+        intakeMotorLeft.set(speed);
+        intakeMotorRight.set(speed);
     }
 
     /**
@@ -79,11 +79,11 @@ public class RollersIOTalonFXS implements RollersIO
     @Override
     public void updateInputs(IntakeIOInputs inputs)
     {
-        inputs.motorOneTemperature = motorOneTemperature.getValue();
-        inputs.motorOnePresent = motorOnePresent.get();
-        inputs.motorOneCurrent = motorOneCurrent.getValue();
-        inputs.motorTwoTemperature = motorTwoTemperature.getValue();
-        inputs.motorTwoPresent = motorTwoPresent.get();
-        inputs.motorTwoCurrent = motorTwoCurrent.getValue();
+        inputs.motorLeftTemperature = motorLeftTemperature.getValue();
+        inputs.motorLeftPresent = motorLeftPresent.get();
+        inputs.motorLeftCurrent = motorLeftCurrent.getValue();
+        inputs.motorRightTemperature = motorRightTemperature.getValue();
+        inputs.motorRightPresent = motorRightPresent.get();
+        inputs.motorRightCurrent = motorRightCurrent.getValue();
     }
 }

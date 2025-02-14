@@ -15,12 +15,12 @@ public interface RollersIO
     @AutoLog
     public static class IntakeIOInputs
     {
-        public Temperature motorOneTemperature;
-        public boolean motorOnePresent;
-        public Current motorOneCurrent;
-        public Temperature motorTwoTemperature;
-        public boolean motorTwoPresent;
-        public Current motorTwoCurrent;
+        public Temperature motorLeftTemperature;
+        public boolean motorLeftPresent;
+        public Current motorLeftCurrent;
+        public Temperature motorRightTemperature;
+        public boolean motorRightPresent;
+        public Current motorRightCurrent;
     }
 
     /**
