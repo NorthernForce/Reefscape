@@ -1,4 +1,4 @@
-package frc.robot.subsystems.reefscape;
+package frc.robot.subsystems.dashboard.reefscape;
 
 import java.util.Arrays;
 

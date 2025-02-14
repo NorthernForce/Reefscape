@@ -7,8 +7,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
-import frc.robot.subsystems.reefscape.ReefDisplayIO;
-import frc.robot.subsystems.reefscape.ReefDisplayIOInputsAutoLogged;
+import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIO;
+import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOInputsAutoLogged;
 import frc.robot.util.AutoRoutine;
 
 /**
