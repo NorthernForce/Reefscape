@@ -21,8 +21,8 @@ public class BlennyConstants
     {
         public static final double INTAKE_SPEED = 1;
         public static final double OUTTAKE_SPEED = 1;
-        public static final int ROLLER_MOTOR_ONE_ID = 30;
-        public static final int ROLLER_MOTOR_TWO_ID = 31;
+        public static final int ROLLER_MOTOR_LEFT_ID = 1;
+        public static final int ROLLER_MOTOR_RIGHT_ID = 2;
         public static final boolean ROLLER_MOTORS_INVERTED = false;
 
         public static class SensorConstants

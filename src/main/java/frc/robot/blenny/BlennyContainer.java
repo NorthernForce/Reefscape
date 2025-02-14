@@ -35,8 +35,8 @@ public class BlennyContainer implements NFRRobotContainer
                 BlennyTunerConstants.BackRight);
 
         rollers = new Rollers(
-                new RollersIOTalonFXS(BlennyConstants.RollersConstants.ROLLER_MOTOR_ONE_ID,
-                        BlennyConstants.RollersConstants.ROLLER_MOTOR_TWO_ID,
+                new RollersIOTalonFXS(BlennyConstants.RollersConstants.ROLLER_MOTOR_LEFT_ID,
+                        BlennyConstants.RollersConstants.ROLLER_MOTOR_RIGHT_ID,
                         BlennyConstants.RollersConstants.ROLLER_MOTORS_INVERTED),
                 new RollersSensorIOUltrasonic(BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ONE_TRIGGER,
                         BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ONE_ECHO,
