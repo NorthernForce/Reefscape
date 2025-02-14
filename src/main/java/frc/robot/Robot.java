@@ -170,6 +170,7 @@ public class Robot extends LoggedRobot
     {
         CommandScheduler.getInstance().cancelAll();
         CommandScheduler.getInstance().getActiveButtonLoop().clear();
+        container.bindProgrammerOI();
     }
 
     /** This function is called periodically during test mode. */
