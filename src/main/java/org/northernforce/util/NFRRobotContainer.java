@@ -48,6 +48,11 @@ public interface NFRRobotContainer
     {
     }
 
+    /** Runs at the start of test */
+    public default void testInit()
+    {
+    }
+
     /**
      * Get the selected autonomous command
      * 
