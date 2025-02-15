@@ -93,7 +93,7 @@ public class LEDS extends SubsystemBase
 
     public Command getRainbowAnimation(int ledCount, double speed, double brightness)
     {
-        return runOnce(() -> rainbowAnimation(ledCount, speed, brightness));
+        return run(() -> rainbowAnimation(ledCount, speed, brightness)).ignoringDisable(true);
     }
 
     public Command getIncrementAnimation()

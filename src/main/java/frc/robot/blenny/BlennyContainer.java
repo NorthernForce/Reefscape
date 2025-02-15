@@ -14,6 +14,8 @@ import frc.robot.blenny.oi.BlennyDriverOI;
 import frc.robot.blenny.oi.BlennyProgrammerOI;
 import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
+import frc.robot.subsystems.leds.LEDS;
+import frc.robot.subsystems.leds.LedsIOCANdle;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 import frc.robot.subsystems.reefscape.ReefDisplayIOSwing;
 import frc.robot.subsystems.superstructure.Superstructure;
@@ -40,6 +42,8 @@ public class BlennyContainer implements NFRRobotContainer
     private final Superstructure superstructure;
     private final Dashboard dashboard;
 
+
+    private final LEDS leds = new LEDS(new LedsIOCANdle(BlennyConstants.LedConstants.LED_CAN_ID));
     /**
      * Create a new BlennyContainer
      */
@@ -79,6 +83,7 @@ public class BlennyContainer implements NFRRobotContainer
                     }, 2.0));
             break;
         }
+        leds.setDefaultCommand(leds.getRainbowAnimation(BlennyConstants.LedConstants.LED_LENGTH, BlennyConstants.LedConstants.LED_ANIMATION_SPEED, BlennyConstants.LedConstants.LED_BRIGHTNESS));
     }
 
     private void addAutonomousRoutines()

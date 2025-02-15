@@ -98,6 +98,14 @@ public class BlennyConstants
                 ROTOR_TO_SENSOR_RATIO);
     }
 
+    public static class LedConstants
+    {
+        public static final int LED_CAN_ID = 30;
+        public static final int LED_LENGTH = 85;
+        public static final double LED_BRIGHTNESS = 0.5;
+        public static final double LED_ANIMATION_SPEED = 0.5;
+    }
+
     /**
      * Superstructure states for the coral and algae
      */

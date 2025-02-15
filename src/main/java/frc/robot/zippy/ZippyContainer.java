@@ -44,6 +44,7 @@ public class ZippyContainer implements NFRRobotContainer
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
         dashboard.addDefaultAutoRoutine("Do Nothing", new AutoRoutine(new InstantCommand(), new Translation2d[]
         { new Translation2d(), new Translation2d() }, new Pose2d()));
+        leds.setDefaultCommand(leds.getRainbowAnimation(500, 0.5, 0.9));
     }
 
     public PhoenixCommandDrive getDrive()
