@@ -9,6 +9,8 @@ import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.FieldConstants;
 import frc.robot.util.AutoRoutine;
 
@@ -74,5 +76,11 @@ public class DashboardIOFWC implements DashboardIO
     public AutoRoutine getSelectedRoutine()
     {
         return autoChooser.get();
+    }
+
+    @Override
+    public void addCommand(String name, Command command)
+    {
+        SmartDashboard.putData("/FWC/" + name, command);
     }
 }

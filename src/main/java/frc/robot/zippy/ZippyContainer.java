@@ -1,14 +1,20 @@
 package frc.robot.zippy;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Rotations;
+
 import java.util.function.Supplier;
 
 import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
@@ -31,6 +37,7 @@ public class ZippyContainer implements NFRRobotContainer
     private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
     private Alliance alliance = allianceSupplier.get();
     private final Dashboard dashboard;
+    private final Command testCommand;
 
     private final LEDS leds = new LEDS(new LedsIOCANdle(30));
 
@@ -44,6 +51,8 @@ public class ZippyContainer implements NFRRobotContainer
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
         dashboard.addDefaultAutoRoutine("Do Nothing", new AutoRoutine(new InstantCommand(), new Translation2d[]
         { new Translation2d(), new Translation2d() }, new Pose2d()));
+        testCommand = Commands.parallel(drive.getIdleCommand());
+        dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
     }
 
     public PhoenixCommandDrive getDrive()
@@ -104,6 +113,10 @@ public class ZippyContainer implements NFRRobotContainer
     @Override
     public void disabledInit()
     {
+        if (testCommand.isScheduled())
+        {
+            testCommand.cancel();
+        }
         dashboard.setAutoStage();
     }
 
@@ -111,6 +124,23 @@ public class ZippyContainer implements NFRRobotContainer
     public Command getAutonomousCommand()
     {
         return dashboard.getRoutine().command();
+    }
+
+    private void resetDriveEncoders()
+    {
+        final var offsets = drive.resetEncoderAngles(new Angle[]
+        { Degrees.of(0), Degrees.of(0), Degrees.of(0), Degrees.of(0) });
+        Preferences.setDouble("kSwerveOffsetFrontLeft", offsets[0].in(Rotations));
+        Preferences.setDouble("kSwerveOffsetFrontRight", offsets[1].in(Rotations));
+        Preferences.setDouble("kSwerveOffsetBackLeft", offsets[2].in(Rotations));
+        Preferences.setDouble("kSwerveOffsetBackRight", offsets[3].in(Rotations));
+    }
+
+    @Override
+    public void testInit()
+    {
+        testCommand.schedule();
+        dashboard.setSettingsStage();
     }
 
 }
