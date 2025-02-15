@@ -1,5 +1,6 @@
 package frc.robot.subsystems.leds;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -83,10 +84,25 @@ public class LEDS extends SubsystemBase
         io.clearAnimationBuffer();
     }
 
+    public void compassAnimation(Angle degree, int leds, int r, int g, int b)
+    {
+        io.compassAnimation(degree, leds, r, g, b);
+    }
+
+    public void test(int r, int g, int b)
+    {
+        io.test(r, g, b);
+    }
+
     public Command getSetColour(int r, int g, int b)
     {
 
         return runOnce(() -> setLEDColour(r, g, b));
+    }
+
+    public Command gettest(int r, int g, int b)
+    {
+        return runOnce(() -> test(r, g, b));
     }
 
     public Command getRainbowAnimation(int ledCount, double speed, double brightness)

@@ -2,6 +2,8 @@ package frc.robot.subsystems.leds;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import edu.wpi.first.units.measure.Angle;
+
 /**
  * @see frc.robot.subsystems.LedsIO
  * @param setColours    sets the colours of the LED
@@ -72,6 +74,14 @@ public interface LedsIO
     }
 
     public default void clearAnimationBuffer()
+    {
+    }
+
+    public default void compassAnimation(Angle degree, int leds, int r, int g, int b)
+    {
+    }
+
+    public default void test(int r, int g, int b)
     {
     }
 }

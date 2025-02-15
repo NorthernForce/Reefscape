@@ -1,5 +1,9 @@
 package frc.robot.subsystems.leds;
 
+import static edu.wpi.first.units.Units.Degrees;
+
+import org.northernforce.util.NFRRobotContainer;
+
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdleConfiguration;
@@ -10,7 +14,15 @@ import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.TwinkleAnimation;
 import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 
+import edu.wpi.first.units.measure.Angle;
 import frc.robot.blenny.constants.BlennyConstants;
+
+/*
+ * 1: 22
+ * 2: 20
+ * 3: 20
+ * 4: 23
+ */
 
 public class LedsIOCANdle implements LedsIO
 {
@@ -26,6 +38,15 @@ public class LedsIOCANdle implements LedsIO
     private double ledSpeed;
     private int ledLength;
 
+    private int[] seg1 =
+    { 0, 0 };
+    private int[] seg2 =
+    { 0, 0 };
+    private int[] seg3 =
+    { 0, 0 };
+    private int[] seg4 =
+    { 0, 0 };
+
     private boolean animating = false;
     private int animationIndex = 0;
     private int currentLED = 0;
@@ -33,7 +54,8 @@ public class LedsIOCANdle implements LedsIO
     /**
      * Initializes the CANdle for leds
      * 
-     * @param id id of the CANdle on the rio
+     * @param id    id of the CANdle on the rio
+     * @param robot the robot name
      */
     // Constructor
     public LedsIOCANdle(int id, String robot)
@@ -50,6 +72,11 @@ public class LedsIOCANdle implements LedsIO
             ledLength = BlennyConstants.LedConstants.LED_LENGTH;
             ledBrightness = BlennyConstants.LedConstants.LED_BRIGHTNESS;
             ledSpeed = BlennyConstants.LedConstants.LED_ANIMATION_SPEED;
+            config.brightnessScalar = ledBrightness;
+            seg1 = BlennyConstants.LedConstants.LED_SEGMENT_1;
+            seg2 = BlennyConstants.LedConstants.LED_SEGMENT_2;
+            seg3 = BlennyConstants.LedConstants.LED_SEGMENT_3;
+            seg4 = BlennyConstants.LedConstants.LED_SEGMENT_4;
             break;
         case "Zippy":
             animationIndex = 1;
@@ -215,6 +242,47 @@ public class LedsIOCANdle implements LedsIO
     }
 
     /**
+     * @param angle the angle of the compass
+     * @param leds  the amount of leds can only be an odd number
+     * @param r     the red value of the leds
+     * @param g     the green value of the leds
+     * @param b     the blue value of the leds
+     */
+    @Override
+    public void compassAnimation(Angle degree, int leds, int r, int g, int b)
+    {
+        int corispondingLed = (int) Math.round(ledLength / 360.0 * degree.in(Degrees));
+        int startLed = corispondingLed - ((leds - 1) / 2);
+        int endLed = corispondingLed + ((leds - 1) / 2);
+
+        if (degree.in(Degrees) < 27.25 && degree.in(Degrees) > 332.75)
+        {
+            if (degree.in(Degrees) > 0 && degree.in(Degrees) < 27.25)
+            {
+                candle.setLEDs(r, g, b, 0, seg1[0], 2);
+                candle.setLEDs(r, g, b, 0, seg4[1], 1);
+            } else if (degree.in(Degrees) > 332.75 && degree.in(Degrees) < 360)
+            {
+                candle.setLEDs(r, g, b, 0, seg4[1] - 1, 2);
+                candle.setLEDs(r, g, b, 0, seg1[0], 1);
+            } else
+            {
+                candle.setLEDs(r, g, b, 0, seg4[1], 1);
+                candle.setLEDs(r, g, b, 0, seg1[0], 1);
+            }
+        }
+        if (startLed < 0)
+        {
+            startLed = ledLength + startLed;
+        }
+        if (endLed > ledLength)
+        {
+            endLed = endLed - ledLength;
+        }
+        setSpecificLEDs(startLed, endLed, r, g, b);
+    }
+
+    /**
      * changes the current state of the ledsto the next one so they can be cycled
      * through automaticaly
      */
@@ -284,5 +352,11 @@ public class LedsIOCANdle implements LedsIO
         inputs.animating = animating;
         inputs.animationIndex = animationIndex;
         inputs.currentLED = currentLED;
+    }
+
+    public void test(int r, int g, int b)
+    {
+        candle.setLEDs(r, g, b, 0, 0, 1);
+        candle.setLEDs(r, g, b, 0, 3, 1);
     }
 }

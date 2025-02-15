@@ -104,6 +104,14 @@ public class BlennyConstants
         public static final int LED_LENGTH = 85;
         public static final double LED_BRIGHTNESS = 0.5;
         public static final double LED_ANIMATION_SPEED = 0.5;
+        public static final int[] LED_SEGMENT_1 =
+        { 0, 21 };
+        public static final int[] LED_SEGMENT_2 =
+        { 22, 41 };
+        public static final int[] LED_SEGMENT_3 =
+        { 42, 62 };
+        public static final int[] LED_SEGMENT_4 =
+        { 63, 85 };
     }
 
     /**
