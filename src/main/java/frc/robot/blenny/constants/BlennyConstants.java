@@ -165,4 +165,9 @@ public class BlennyConstants
         public static final Angle LOWER_LIMIT = Rotations.of(-0.03);
         public static final Angle UPPER_LIMIT = Rotations.of(0.22);
     }
+
+    public static class LedConstants
+    {
+
+    }
 }
