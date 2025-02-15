@@ -42,8 +42,8 @@ public class BlennyContainer implements NFRRobotContainer
     private final Superstructure superstructure;
     private final Dashboard dashboard;
 
+    private final LEDS leds = new LEDS(new LedsIOCANdle(BlennyConstants.LedConstants.LED_CAN_ID, "Blenny"));
 
-    private final LEDS leds = new LEDS(new LedsIOCANdle(BlennyConstants.LedConstants.LED_CAN_ID));
     /**
      * Create a new BlennyContainer
      */
@@ -83,7 +83,8 @@ public class BlennyContainer implements NFRRobotContainer
                     }, 2.0));
             break;
         }
-        leds.setDefaultCommand(leds.getRainbowAnimation(BlennyConstants.LedConstants.LED_LENGTH, BlennyConstants.LedConstants.LED_ANIMATION_SPEED, BlennyConstants.LedConstants.LED_BRIGHTNESS));
+        leds.setDefaultCommand(leds.getRainbowAnimation(BlennyConstants.LedConstants.LED_LENGTH,
+                BlennyConstants.LedConstants.LED_ANIMATION_SPEED, BlennyConstants.LedConstants.LED_BRIGHTNESS));
     }
 
     private void addAutonomousRoutines()

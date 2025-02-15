@@ -10,19 +10,23 @@ import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.TwinkleAnimation;
 import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 
+import frc.robot.blenny.constants.BlennyConstants;
+
 public class LedsIOCANdle implements LedsIO
 {
     // Variables
     CANdle candle;
     CANdleConfiguration config;
 
-    private final int ledCount = 64;
-
     private int r = 0;
     private int g = 0;
     private int b = 0;
+
+    private double ledBrightness;
+    private double ledSpeed;
+    private int ledLength;
+
     private boolean animating = false;
-    private double speed = 1.0;
     private int animationIndex = 0;
     private int currentLED = 0;
 
@@ -32,13 +36,28 @@ public class LedsIOCANdle implements LedsIO
      * @param id id of the CANdle on the rio
      */
     // Constructor
-    public LedsIOCANdle(int id)
+    public LedsIOCANdle(int id, String robot)
     {
         candle = new CANdle(id);
         config = new CANdleConfiguration();
         config.stripType = LEDStripType.RGB;
         config.brightnessScalar = 1.0;
         candle.configAllSettings(config);
+
+        switch (robot)
+        {
+        case "Blenny":
+            ledLength = BlennyConstants.LedConstants.LED_LENGTH;
+            ledBrightness = BlennyConstants.LedConstants.LED_BRIGHTNESS;
+            ledSpeed = BlennyConstants.LedConstants.LED_ANIMATION_SPEED;
+            break;
+        case "Zippy":
+            animationIndex = 1;
+            break;
+        default:
+            animationIndex = 0;
+            break;
+        }
     }
 
     /**
@@ -134,7 +153,7 @@ public class LedsIOCANdle implements LedsIO
     @Override
     public void twinkleAnimation(int r, int g, int b, double speed)
     {
-        TwinkleAnimation twinkleAnim = new TwinkleAnimation(r, g, b, 0, speed, ledCount, TwinklePercent.Percent64);
+        TwinkleAnimation twinkleAnim = new TwinkleAnimation(r, g, b, 0, speed, ledLength, TwinklePercent.Percent64);
         candle.animate(twinkleAnim);
         animating = true;
     }
@@ -154,12 +173,12 @@ public class LedsIOCANdle implements LedsIO
     {
         if (direction)
         {
-            ColorFlowAnimation colorFlowAnim = new ColorFlowAnimation(r, g, b, 0, speed, ledCount, Direction.Forward,
+            ColorFlowAnimation colorFlowAnim = new ColorFlowAnimation(r, g, b, 0, speed, ledLength, Direction.Forward,
                     offSet);
             candle.animate(colorFlowAnim);
         } else
         {
-            ColorFlowAnimation colorFlowAnim = new ColorFlowAnimation(r, g, b, 0, speed, ledCount, Direction.Backward,
+            ColorFlowAnimation colorFlowAnim = new ColorFlowAnimation(r, g, b, 0, speed, ledLength, Direction.Backward,
                     offSet);
             candle.animate(colorFlowAnim);
         }
@@ -177,7 +196,7 @@ public class LedsIOCANdle implements LedsIO
     @Override
     public void strobeAnimation(int r, int g, int b, double speed)
     {
-        StrobeAnimation strobeAnim = new StrobeAnimation(r, g, b, 0, speed, ledCount);
+        StrobeAnimation strobeAnim = new StrobeAnimation(r, g, b, 0, speed, ledLength);
         candle.animate(strobeAnim);
         animating = true;
     }
@@ -188,7 +207,7 @@ public class LedsIOCANdle implements LedsIO
     @Override
     public void clearAnimationBuffer()
     {
-        for (int i = 0; i < ledCount; i++)
+        for (int i = 0; i < ledLength; i++)
         {
             candle.clearAnimation(i);
         }
@@ -227,7 +246,7 @@ public class LedsIOCANdle implements LedsIO
             setColours(255, 255, 255);
             break;
         case 7:
-            rainbowAnimation(ledCount, 0.5, 1.0);
+            rainbowAnimation(ledLength, 0.5, 1.0);
             break;
         case 8:
             twinkleAnimation(255, 0, 0, 0.1);
@@ -241,9 +260,6 @@ public class LedsIOCANdle implements LedsIO
         case 11:
             setColours(0, 0, 0);
             clearAnimationBuffer();
-        case 12:
-            setSpecificLEDs(0, 10, 255, 0, 0);
-            break;
         default:
             animationIndex = 0;
             break;

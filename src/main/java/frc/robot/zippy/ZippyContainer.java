@@ -32,7 +32,7 @@ public class ZippyContainer implements NFRRobotContainer
     private Alliance alliance = allianceSupplier.get();
     private final Dashboard dashboard;
 
-    private final LEDS leds = new LEDS(new LedsIOCANdle(30));
+    private final LEDS leds = new LEDS(new LedsIOCANdle(30, "Zippy"));
 
     public ZippyContainer()
     {
