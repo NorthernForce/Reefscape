@@ -100,8 +100,6 @@ public class Robot extends LoggedRobot
         // Start AdvantageKit logger
         Logger.start();
         container = chooser.getNFRRobotContainer();
-
-        container.bindOI();
     }
 
     /** This function is called periodically during all modes. */
@@ -136,6 +134,9 @@ public class Robot extends LoggedRobot
     @Override
     public void teleopInit()
     {
+        CommandScheduler.getInstance().cancelAll();
+        CommandScheduler.getInstance().getActiveButtonLoop().clear();
+        container.bindDriverOI();
         if (autoSelected != null && autoSelected.isScheduled())
         {
             autoSelected.cancel();
@@ -167,6 +168,9 @@ public class Robot extends LoggedRobot
     @Override
     public void testInit()
     {
+        CommandScheduler.getInstance().cancelAll();
+        CommandScheduler.getInstance().getActiveButtonLoop().clear();
+        container.bindProgrammerOI();
         container.testInit();
     }
 

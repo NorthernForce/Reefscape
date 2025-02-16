@@ -8,8 +8,15 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public interface NFRRobotContainer
 {
-    /** Binds the commands from subsystems to the operator interfaces. */
-    public void bindOI();
+    /**
+     * Bind the driver OI to the commands
+     */
+    public void bindDriverOI();
+
+    /**
+     * Bind the programmer OI to the commands
+     */
+    public void bindProgrammerOI();
 
     /** Runs periodically (every 20 ms) regardless of mode. */
     public default void periodic()

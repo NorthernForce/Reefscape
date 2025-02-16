@@ -142,18 +142,15 @@ public class BlennyContainer implements NFRRobotContainer
     }
 
     @Override
-    public void bindOI()
+    public void bindDriverOI()
     {
-        switch (Constants.kOI)
-        {
-        case PROGRAMMER:
-            new BlennyProgrammerOI().bindOI(this);
-            break;
-        case DRIVER:
-        default:
-            new BlennyDriverOI().bindOI(this);
-            break;
-        }
+        new BlennyDriverOI().bindOI(this);
+    }
+
+    @Override
+    public void bindProgrammerOI()
+    {
+        new BlennyProgrammerOI().bindOI(this);
     }
 
     @Override
