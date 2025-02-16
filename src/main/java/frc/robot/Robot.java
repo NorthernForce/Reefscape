@@ -68,8 +68,8 @@ public class Robot extends LoggedRobot
             break;
         }
 
-        final NFRRobotChooser chooser = new NFRRobotChooser(() -> new ZippyContainer(),
-                Map.of("0316d7d7", () -> new ZippyContainer(), "???", () -> new BlennyContainer()));
+        final NFRRobotChooser chooser = new NFRRobotChooser(() -> new BlennyContainer(),
+                Map.of("0316d7d7", () -> new ZippyContainer(), "023C3578", () -> new BlennyContainer()));
 
         // Set up data receivers & replay source
         switch (Constants.kCurrentMode)
@@ -139,6 +139,9 @@ public class Robot extends LoggedRobot
     @Override
     public void teleopInit()
     {
+        CommandScheduler.getInstance().cancelAll();
+        CommandScheduler.getInstance().getActiveButtonLoop().clear();
+        container.bindDriverOI();
         if (autoSelected != null && autoSelected.isScheduled())
         {
             autoSelected.cancel();
@@ -170,6 +173,10 @@ public class Robot extends LoggedRobot
     @Override
     public void testInit()
     {
+        CommandScheduler.getInstance().cancelAll();
+        CommandScheduler.getInstance().getActiveButtonLoop().clear();
+        container.bindProgrammerOI();
+        container.testInit();
     }
 
     /** This function is called periodically during test mode. */
