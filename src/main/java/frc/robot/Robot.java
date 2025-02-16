@@ -48,8 +48,7 @@ public class Robot extends LoggedRobot
      */
     @Override
     public void robotInit()
-    {
-        // Record metadata
+    {// Record metadata
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
         Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
         Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
@@ -70,6 +69,8 @@ public class Robot extends LoggedRobot
 
         final NFRRobotChooser chooser = new NFRRobotChooser(() -> new BlennyContainer(),
                 Map.of("0316d7d7", () -> new ZippyContainer(), "023C3578", () -> new BlennyContainer()));
+
+        Logger.recordMetadata("RoboRIO ID", NFRRobotChooser.getRoborioID());
 
         // Set up data receivers & replay source
         switch (Constants.kCurrentMode)
@@ -99,12 +100,7 @@ public class Robot extends LoggedRobot
 
         // Start AdvantageKit logger
         Logger.start();
-
         container = chooser.getNFRRobotContainer();
-
-        container.bindOI();
-
-        notifier.startPeriodic(0.5);
     }
 
     /** This function is called periodically during all modes. */
