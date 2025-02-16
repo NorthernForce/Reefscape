@@ -12,11 +12,11 @@ public interface WristIO
     @AutoLog
     public static class WristIOInputs
     {
-        public Angle encoderAngle;
-        public Angle targetAngle;
-        public Current motorCurrent;
-        public Temperature motorTemperature;
-        public boolean motorPresent;
+        public Angle encoderAngle = Degrees.of(0);
+        public Angle targetAngle = Degrees.of(0);
+        public Current motorCurrent = Amps.of(0);
+        public Temperature motorTemperature = Celsius.of(0);
+        public boolean motorPresent = false;
     }
 
     public default void updateInputs(WristIOInputs inputs)
