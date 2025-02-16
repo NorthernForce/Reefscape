@@ -73,3 +73,7 @@ npm_run_build {
 task runDev(type: NpmTask, dependsOn: 'npm_run_build') {
     args = ['run', 'dev']
 }
+
+task runAudit(type: NpmTask) {
+    args = ['audit', 'fix', '--force']
+}
