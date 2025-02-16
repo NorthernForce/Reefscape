@@ -41,7 +41,8 @@ public class Dashboard extends SubsystemBase
     @AutoLogOutput
     public Pose2d getTargetPose()
     {
-        return FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.reefLocations);
+        return FieldConstants.convertPoseByAlliance(FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.reefLocations),
+                FieldConstants.getAlliance());
     }
 
     @AutoLogOutput
