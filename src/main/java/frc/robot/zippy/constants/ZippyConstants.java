@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.units.measure.Angle;

@@ -80,13 +80,15 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     }
 
     public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
-            AngularVelocity maxAngularSpeed, Angle[] moduleOffsets, SwerveModuleConstants<?, ?, ?>... moduleConstants)
+            AngularVelocity maxAngularSpeed, Angle[] moduleOffsets, PIDConstants linearPIDConstants,
+            PIDConstants angularPIDConstants, SwerveModuleConstants<?, ?, ?>... moduleConstants)
     {
-        this(drivetrainConstants, maxSpeed, maxAngularSpeed, new SwerveModuleConstants[]
-        { moduleConstants[0].withEncoderOffset(moduleOffsets[0]),
-                moduleConstants[1].withEncoderOffset(moduleOffsets[1]),
-                moduleConstants[2].withEncoderOffset(moduleOffsets[2]),
-                moduleConstants[3].withEncoderOffset(moduleOffsets[3]) });
+        this(drivetrainConstants, maxSpeed, maxAngularSpeed, linearPIDConstants, angularPIDConstants,
+                new SwerveModuleConstants[]
+                { moduleConstants[0].withEncoderOffset(moduleOffsets[0]),
+                        moduleConstants[1].withEncoderOffset(moduleOffsets[1]),
+                        moduleConstants[2].withEncoderOffset(moduleOffsets[2]),
+                        moduleConstants[3].withEncoderOffset(moduleOffsets[3]) });
     }
 
     /**
