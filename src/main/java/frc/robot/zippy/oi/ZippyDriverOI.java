@@ -44,5 +44,8 @@ public class ZippyDriverOI implements ZippyOI
                 .resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
                         DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
                 container.getDrive()));
+
+        driverJoystick.start().onTrue(Commands.runOnce(() -> container.getDrive().resetPose(FieldConstants
+                .convertPoseByAlliance(FieldConstants.ReefPositions.AB_ALGAE, FieldConstants.getAlliance()))));
     }
 }

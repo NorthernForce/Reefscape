@@ -52,7 +52,7 @@ public class ZippyContainer implements NFRRobotContainer
         vision = new PhotonVision(ZippyConstants.VisionConstants.cameraNames(),
                 ZippyConstants.VisionConstants.cameraTransforms(), ZippyConstants.VisionConstants.APRILTAG_LAYOUT,
                 ZippyConstants.VisionConstants.MAX_Y_COORDINATE, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
-                ZippyConstants.VisionConstants.CAMERA_WIDTH);
+                ZippyConstants.DrivetrainConstants.MAX_LINEAR_SPEED, ZippyConstants.VisionConstants.CAMERA_WIDTH);
         LoggedPowerDistribution.getInstance(40, ModuleType.kRev);
         dashboard.addDefaultAutoRoutine("Do Nothing", new AutoRoutine(new InstantCommand(), new Translation2d[]
         { new Translation2d(), new Translation2d() }, new Pose2d()));
@@ -90,7 +90,7 @@ public class ZippyContainer implements NFRRobotContainer
             alliance = allianceSupplier.get();
             drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
         }
-        vision.setLastKnownRobotRotation(drive.getPose().getRotation());
+        vision.setLastKnownRobotPose(drive.getPose());
         for (var poseEstimate : vision.getPoseEstimates())
         {
             drive.addVisionMeasurement(poseEstimate.pose(), Utils.fpgaToCurrentTime(poseEstimate.timestamp()));

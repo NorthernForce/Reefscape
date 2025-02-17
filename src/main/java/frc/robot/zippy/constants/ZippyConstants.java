@@ -20,6 +20,7 @@ public class ZippyConstants
     {
         public static final LinearVelocity MAX_SPEED = MetersPerSecond.of(3.0);
         public static final AngularVelocity MAX_ANGULAR_SPEED = RotationsPerSecond.of(0.7);
+        public static final LinearVelocity MAX_LINEAR_SPEED = MetersPerSecond.of(4.0);
         public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(3.0);
         public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
         public static final Angle[] SWERVE_MODULE_OFFSETS =
@@ -35,7 +36,7 @@ public class ZippyConstants
     public static class VisionConstants
     {
         public static final AprilTagFieldLayout APRILTAG_LAYOUT = AprilTagFieldLayout
-                .loadField(AprilTagFields.k2025Reefscape);
+                .loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
         private static final String FL_CAMERA_NAME = "front_left_camera";
         private static final String FR_CAMERA_NAME = "front_right_camera";

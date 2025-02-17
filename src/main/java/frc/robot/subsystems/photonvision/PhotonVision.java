@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static edu.wpi.first.units.Units.*;
@@ -29,7 +30,7 @@ public class PhotonVision extends SubsystemBase
 {
     public static enum RejectionReason
     {
-        OUT_OF_BOUNDS, TARGET_OUTSIDE_USABLE_AREA, ROBOT_ANGLE_TOO_LARGE
+        OUT_OF_BOUNDS, TARGET_OUTSIDE_USABLE_AREA, ROBOT_ANGLE_TOO_LARGE, DISTANCE_TOO_FAR
     }
 
     public static record RejectedPoseEstimate(RejectionReason reason, PoseEstimate pose) {
@@ -40,8 +41,9 @@ public class PhotonVision extends SubsystemBase
     private final ArrayList<PoseEstimate> poseEstimates;
     private final ArrayList<RejectedPoseEstimate> rejectedEstimates;
     private final double maxYCoordinate;
-    private Rotation2d lastKnownRobotRotation;
+    private Pose2d lastKnownRobotPose;
     private final AngularVelocity maxAngularVelocity;
+    private final LinearVelocity maxLinearVelocity;
     private final AprilTagFieldLayout layout;
     private final double cameraWidth;
 
@@ -54,7 +56,8 @@ public class PhotonVision extends SubsystemBase
      * @param layout      The apriltag field layout to use.
      */
     public PhotonVision(String[] cameraNames, Transform3d[] cameraPoses, AprilTagFieldLayout layout,
-            double maxYCoordinate, AngularVelocity maxAngularVelocity, double cameraWidth)
+            double maxYCoordinate, AngularVelocity maxAngularVelocity, LinearVelocity maxLinearVelocity,
+            double cameraWidth)
     {
         cameras = new PhotonCamera[cameraNames.length];
         poseEstimators = new PhotonPoseEstimator[cameraNames.length];
@@ -68,6 +71,7 @@ public class PhotonVision extends SubsystemBase
         rejectedEstimates = new ArrayList<>();
         this.maxYCoordinate = maxYCoordinate;
         this.maxAngularVelocity = maxAngularVelocity;
+        this.maxLinearVelocity = maxLinearVelocity;
         this.layout = layout;
         this.cameraWidth = cameraWidth;
     }
@@ -79,9 +83,9 @@ public class PhotonVision extends SubsystemBase
         return y;
     }
 
-    public void setLastKnownRobotRotation(Rotation2d rotation)
+    public void setLastKnownRobotPose(Pose2d pose)
     {
-        lastKnownRobotRotation = rotation;
+        lastKnownRobotPose = pose;
     }
 
     private boolean testYCoordinate(PhotonPipelineResult result)
@@ -98,14 +102,26 @@ public class PhotonVision extends SubsystemBase
 
     private boolean testRobotRotation(EstimatedRobotPose pose)
     {
-        if (lastKnownRobotRotation == null)
+        if (lastKnownRobotPose == null)
         {
             return true;
         }
         double maxDegreesDifference = maxAngularVelocity.in(DegreesPerSecond) * 0.02 * 5;
         double difference = pose.estimatedPose.toPose2d().getRotation().getDegrees()
-                - lastKnownRobotRotation.getDegrees();
+                - lastKnownRobotPose.getRotation().getDegrees();
         return Math.abs(difference) < maxDegreesDifference;
+    }
+
+    private boolean testRobotDistance(EstimatedRobotPose pose)
+    {
+        if (lastKnownRobotPose == null)
+        {
+            return true;
+        }
+        double maxDistanceDifference = maxLinearVelocity.in(MetersPerSecond) * 0.02 * 3;
+        double difference = pose.estimatedPose.toPose2d().getTranslation()
+                .getDistance(lastKnownRobotPose.getTranslation());
+        return Math.abs(difference) < maxDistanceDifference;
     }
 
     private boolean testWithinField(EstimatedRobotPose pose)
@@ -142,6 +158,11 @@ public class PhotonVision extends SubsystemBase
                 // valid = false;
                 // reason = RejectionReason.ROBOT_ANGLE_TOO_LARGE;
                 // }
+                if (!testRobotDistance(opt.get()))
+                {
+                    valid = false;
+                    reason = RejectionReason.DISTANCE_TOO_FAR;
+                }
                 if (!testWithinField(opt.get()))
                 {
                     valid = false;

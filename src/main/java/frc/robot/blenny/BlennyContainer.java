@@ -69,7 +69,7 @@ public class BlennyContainer implements NFRRobotContainer
         vision = new PhotonVision(BlennyConstants.VisionConstants.cameraNames(),
                 BlennyConstants.VisionConstants.cameraTransforms(), BlennyConstants.VisionConstants.APRILTAG_LAYOUT,
                 BlennyConstants.VisionConstants.MAX_Y_COORDINATE, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
-                BlennyConstants.VisionConstants.CAMERA_WIDTH);
+                BlennyConstants.DrivetrainConstants.MAX_LINEAR_SPEED, BlennyConstants.VisionConstants.CAMERA_WIDTH);
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefDisplay"), new DashboardIOFWC());
         addAutonomousRoutines();
         switch (Constants.kCurrentMode)
