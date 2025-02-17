@@ -63,6 +63,7 @@ public class LedsIOCANdle implements LedsIO
     @Override
     public void setOn(boolean on)
     {
+        this.on = on;
         if (!on)
         {
             config.brightnessScalar = 0.0;
@@ -81,6 +82,7 @@ public class LedsIOCANdle implements LedsIO
     {
         if (brightness >= 0.0 && brightness <= 1.0)
         {
+            this.brightness = brightness;
             config.brightnessScalar = brightness;
             candle.configAllSettings(config);
         }
@@ -96,6 +98,9 @@ public class LedsIOCANdle implements LedsIO
     @Override
     public void setColours(int rInput, int gInput, int bInput)
     {
+        r = rInput;
+        g = gInput;
+        b = bInput;
         candle.setLEDs(rInput, gInput, bInput);
         animating = false;
     }
@@ -112,6 +117,9 @@ public class LedsIOCANdle implements LedsIO
     @Override
     public void setSpecificLEDs(int startIdx, int endIdx, int r, int g, int b)
     {
+        this.r = r;
+        this.g = g;
+        this.b = b;
         candle.setLEDs(r, g, b, 0, startIdx, Math.abs(endIdx - startIdx));
         animating = false;
     }
@@ -139,6 +147,9 @@ public class LedsIOCANdle implements LedsIO
     @Override
     public void twinkleAnimation(int r, int g, int b)
     {
+        this.r = r;
+        this.g = g;
+        this.b = b;
         TwinkleAnimation twinkleAnim = new TwinkleAnimation(r, g, b, 0, animationSpeed, ledCount,
                 TwinklePercent.Percent64);
         candle.animate(twinkleAnim);
@@ -157,6 +168,9 @@ public class LedsIOCANdle implements LedsIO
     @Override
     public void colourFlow(int r, int g, int b, boolean direction, int offSet)
     {
+        this.r = r;
+        this.g = g;
+        this.b = b;
         if (direction)
         {
             ColorFlowAnimation colorFlowAnim = new ColorFlowAnimation(r, g, b, 0, animationSpeed, ledCount,
@@ -181,6 +195,9 @@ public class LedsIOCANdle implements LedsIO
     @Override
     public void strobeAnimation(int r, int g, int b)
     {
+        this.r = r;
+        this.g = g;
+        this.b = b;
         StrobeAnimation strobeAnim = new StrobeAnimation(r, g, b, 0, animationSpeed, ledCount);
         candle.animate(strobeAnim);
         animating = true;
