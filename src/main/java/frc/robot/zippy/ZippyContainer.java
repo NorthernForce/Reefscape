@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.FieldConstants;
+import frc.robot.subsystems.leds.LEDS;
+import frc.robot.subsystems.leds.LedsIOCANdle;
 import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOSwing;
@@ -35,6 +37,9 @@ public class ZippyContainer implements NFRRobotContainer
     private final Dashboard dashboard;
     private final Command testCommand;
 
+    private final LEDS leds = new LEDS(
+            new LedsIOCANdle(ZippyConstants.LedConstants.CanID, ZippyConstants.LedConstants.ledInputs));
+
     public ZippyContainer()
     {
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
@@ -52,6 +57,11 @@ public class ZippyContainer implements NFRRobotContainer
     public PhoenixCommandDrive getDrive()
     {
         return drive;
+    }
+
+    public LEDS getLEDs()
+    {
+        return leds;
     }
 
     public Dashboard getDashboard()
