@@ -29,7 +29,6 @@ import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIO;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.superstructure.elevator.brake.BrakeIO;
-import frc.robot.subsystems.superstructure.elevator.brake.BrakeIORelay;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIO;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIOLimitSwitch;
 import frc.robot.subsystems.superstructure.wrist.Wrist;
@@ -65,13 +64,15 @@ public class BlennyContainer implements NFRRobotContainer
         {
         case SIM:
         case REAL:
-            superstructure = new Superstructure(
-                    new Elevator("InnerElevator",
-                            new ElevatorIOTalonFX(14, BlennyConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS),
-                            new BrakeIORelay(0), new ElevatorSensorIOLimitSwitch(0), 0.2),
+            superstructure = new Superstructure(new Elevator("InnerElevator",
+                    new ElevatorIOTalonFX(14, BlennyConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
+                    {
+                    }, new ElevatorSensorIOLimitSwitch(0), 0.2),
                     new Elevator("OuterElevator",
                             new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
-                            new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2),
+                            new BrakeIO()
+                            {
+                            }, new ElevatorSensorIOLimitSwitch(1), 0.2),
                     new Wrist(new WristIOTalonFX(16, 17, BlennyConstants.WristJointConstants.WRIST_CONSTANTS), 2.0));
             climber = new Climber(new ClimberIOTalonFX(BlennyConstants.ClimberConstants.ID,
                     BlennyConstants.ClimberConstants.INVERTED, BlennyConstants.ClimberConstants.ENCODER_ID,
@@ -87,8 +88,9 @@ public class BlennyContainer implements NFRRobotContainer
             }, new ElevatorSensorIO()
             {
             }, 0.2), new Elevator("OuterElevator",
-                    new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
-                    new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2), new Wrist(new WristIO()
+                    new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
+                    {
+                    }, new ElevatorSensorIOLimitSwitch(1), 0.2), new Wrist(new WristIO()
                     {
                     }, 2.0));
             climber = new Climber(new ClimberIO()
