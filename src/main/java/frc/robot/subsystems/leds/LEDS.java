@@ -1,5 +1,8 @@
 package frc.robot.subsystems.leds;
 
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -7,6 +10,7 @@ public class LEDS extends SubsystemBase
 {
 
     private final LedsIO io;
+    LedIOInputsAutoLogged inputs = new LedIOInputsAutoLogged();
 
     public LEDS(LedsIO io)
     {
@@ -16,8 +20,8 @@ public class LEDS extends SubsystemBase
     @Override
     public void periodic()
     {
-        LedsIO.LedIOInputs inputs = new LedsIO.LedIOInputs();
         io.updateInputs(inputs);
+        Logger.processInputs(getName(), inputs);
     }
 
     public void setLEDColour(int r, int g, int b)
@@ -68,6 +72,11 @@ public class LEDS extends SubsystemBase
     public void clearAnimationBuffer()
     {
         io.clearAnimationBuffer();
+    }
+
+    public void compassEffect(Angle degrees)
+    {
+        io.compassEffect(degrees);
     }
 
     public Command getSetColour(int r, int g, int b)

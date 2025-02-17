@@ -52,9 +52,9 @@ public class BlennyContainer implements NFRRobotContainer
     private final Climber climber;
     private final Dashboard dashboard;
     private final Command testCommand;
-    private final LedsIO.LedConstantsRecord ledInputs = new LedsIO.LedConstantsRecord(85, 0.5, 0.1, true, 0);
 
-    private final LEDS leds = new LEDS(new LedsIOCANdle(BlennyConstants.LedConstants.CANid, ledInputs));
+    private final LEDS leds = new LEDS(
+            new LedsIOCANdle(BlennyConstants.LedConstants.CANid, BlennyConstants.LedConstants.initSettings));
 
     /**
      * Create a new BlennyContainer

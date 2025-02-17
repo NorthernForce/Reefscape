@@ -7,6 +7,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Preferences;
+import frc.robot.subsystems.leds.LedsIO;
 import frc.robot.subsystems.superstructure.Superstructure.GenericSuperstructureGoal;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX.ElevatorConstants;
 import frc.robot.subsystems.superstructure.wrist.WristIOTalonFX.WristConstants;
@@ -109,7 +110,9 @@ public class BlennyConstants
 
     public static class LedConstants
     {
-        public static final int CANid = 30;
+        public static final int CANid = 22;
+
+        public static LedsIO.LedConstantsRecord initSettings = new LedsIO.LedConstantsRecord(85, 0.5, 0.5, true, -1);
     }
 
     /**

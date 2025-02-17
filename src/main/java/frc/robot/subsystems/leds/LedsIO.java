@@ -1,63 +1,26 @@
 package frc.robot.subsystems.leds;
 
+import org.littletonrobotics.junction.AutoLog;
+
+import edu.wpi.first.units.measure.Angle;
+
 public interface LedsIO
 {
     public record LedConstantsRecord(int ledCount, double ledBrightness, double animationSpeed, boolean animating,
             int animationIndex) {
     }
 
-    static class LedIOInputs
+    @AutoLog
+    public static class LedIOInputs
     {
-        public LedConstantsRecord ledIOSettings;
-
-        public LedIOInputs(LedConstantsRecord ledIOSettings)
-        {
-            this.ledIOSettings = ledIOSettings;
-        }
-
-        public LedIOInputs()
-        {
-        }
-
-        public void setLedCount(int ledCount)
-        {
-            ledIOSettings = new LedConstantsRecord(ledCount, ledIOSettings.ledBrightness(),
-                    ledIOSettings.animationSpeed(), ledIOSettings.animating(), ledIOSettings.animationIndex());
-        }
-
-        public void setLedBrightness(double ledBrightness)
-        {
-            ledIOSettings = new LedConstantsRecord(ledIOSettings.ledCount(), ledBrightness,
-                    ledIOSettings.animationSpeed(), ledIOSettings.animating(), ledIOSettings.animationIndex());
-        }
-
-        public void setAnimationSpeed(double animationSpeed)
-        {
-            ledIOSettings = new LedConstantsRecord(ledIOSettings.ledCount(), ledIOSettings.ledBrightness(),
-                    animationSpeed, ledIOSettings.animating(), ledIOSettings.animationIndex());
-        }
-
-        public void setAnimating(boolean animating)
-        {
-            ledIOSettings = new LedConstantsRecord(ledIOSettings.ledCount(), ledIOSettings.ledBrightness(),
-                    ledIOSettings.animationSpeed(), animating, ledIOSettings.animationIndex());
-        }
-
-        public void setAnimationIndex(int animationIndex)
-        {
-            ledIOSettings = new LedConstantsRecord(ledIOSettings.ledCount(), ledIOSettings.ledBrightness(),
-                    ledIOSettings.animationSpeed(), ledIOSettings.animating(), animationIndex);
-        }
-
-        public void setLedIOSettings(LedConstantsRecord ledIOSettings)
-        {
-            this.ledIOSettings = ledIOSettings;
-        }
-
-        public LedConstantsRecord getLedIOSettings()
-        {
-            return ledIOSettings;
-        }
+        public int r = 0;
+        public int g = 0;
+        public int b = 0;
+        public boolean on = true;
+        public int ledCount = 0;
+        public double brightness = 0;
+        public boolean animating = true;
+        public int animationIndex = -1;
     }
 
     public default void setColours(int r, int g, int b)
@@ -97,6 +60,10 @@ public interface LedsIO
     }
 
     public default void setSpecificLEDs(int startIdx, int endIdx, int r, int g, int b)
+    {
+    }
+
+    public default void compassEffect(Angle degrees)
     {
     }
 
