@@ -14,6 +14,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.FieldConstants;
 import frc.robot.util.AutoRoutine;
 
+/**
+ * Dashboard IO for the FWC dashboard.
+ */
 public class DashboardIOFWC implements DashboardIO
 {
     private final NetworkTable table;
@@ -22,6 +25,13 @@ public class DashboardIOFWC implements DashboardIO
     private final DoubleArrayPublisher autoPosePublisher;
     private final DoubleArrayPublisher autoPathPublisher;
 
+    /**
+     * Creates a new DashboardIOFWC. This connects to the FWC dashboard using "FWC"
+     * as the network table name. The dashboard will be hosted on port 5800. The
+     * path to the dashboard files is either "./npm-dash/dist" if the code is
+     * running in simulation, or "/home/lvuser/npm-dash" if the code is running on
+     * the robot.
+     */
     public DashboardIOFWC()
     {
         WebServer.start(5800, Utils.isSimulation() ? "./npm-dash/dist" : "/home/lvuser/npm-dash");
