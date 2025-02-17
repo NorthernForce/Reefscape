@@ -39,7 +39,7 @@ public class BlennyProgrammerOI implements BlennyOI
 
         driverController.x().whileTrue(container.getDrive().getXLockCommand());
 
-        driverController.rightBumper().whileTrue(Commands.parallel(Commands.defer(() ->
+        driverController.rightTrigger().whileTrue(Commands.parallel(Commands.defer(() ->
         {
             return container.getDrive().driveToPose(container.getDashboard().getTargetPose());
         }, Set.of(container.getDrive())), Commands.defer(() ->

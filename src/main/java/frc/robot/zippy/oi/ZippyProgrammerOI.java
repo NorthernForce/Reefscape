@@ -45,7 +45,7 @@ public class ZippyProgrammerOI implements ZippyOI
                         DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
                 container.getDrive()));
 
-        driverController.rightTrigger().onTrue(Commands.defer(() ->
+        driverController.rightBumper().whileTrue(Commands.defer(() ->
         {
             return container.getDrive().driveToPose(container.getDashboard().getTargetPose());
         }, Set.of(container.getDrive())));

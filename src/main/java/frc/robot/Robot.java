@@ -66,7 +66,7 @@ public class Robot extends LoggedRobot
             break;
         }
 
-        final NFRRobotChooser chooser = new NFRRobotChooser(() -> new ZippyContainer(),
+        final NFRRobotChooser chooser = new NFRRobotChooser(() -> new BlennyContainer(),
                 Map.of("0316d7d7", () -> new ZippyContainer(), "???", () -> new BlennyContainer()));
 
         Logger.recordMetadata("RoboRIO ID", NFRRobotChooser.getRoborioID());
