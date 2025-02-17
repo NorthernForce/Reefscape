@@ -16,7 +16,7 @@ public class LedsIOCANdle implements LedsIO
     private CANdle candle;
     private CANdleConfiguration config;
 
-    LedIOInputs ioInputs = new LedIOInputs();
+    LedIOInputs ioInputs;
 
     /**
      * Initializes the CANdle for leds
@@ -29,7 +29,7 @@ public class LedsIOCANdle implements LedsIO
 
     public LedsIOCANdle(int id, LedConstantsRecord ledConstants)
     {
-        ioInputs.setLedIOSettings(ledConstants);
+        ioInputs = new LedIOInputs(ledConstants);
         ledSettings = ledConstants;
         initCANdle(id);
     }
