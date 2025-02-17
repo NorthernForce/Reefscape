@@ -37,7 +37,7 @@ public class ZippyDriverOI implements ZippyOI
                 .setDefaultCommand(container.getDrive().getDriveByJoystickCommand(
                         processJoystickInput(driverJoystick::getLeftY), processJoystickInput(driverJoystick::getLeftX),
                         processJoystickInput(driverJoystick::getRightX)));
-        
+
         driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
 
         driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
