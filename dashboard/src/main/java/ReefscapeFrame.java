@@ -1,15 +1,16 @@
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.awt.Color;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 
-import javax.swing.SwingUtilities;
 import org.opencv.core.Core;
 
 import edu.wpi.first.cscore.CameraServerJNI;
@@ -46,10 +47,6 @@ public class ReefscapeFrame extends JFrame
     {
         super("Reef Display");
 
-        NetworkTableInstance.getDefault().setServerTeam(172);
-        NetworkTableInstance.getDefault().setServer(new String[]
-        { "roborio-172-frc.local", "localhost" });
-        NetworkTableInstance.getDefault().startClient4("ReefscapeDisplay");
         table = NetworkTableInstance.getDefault().getTable("ReefscapeDisplay");
         choicePublisher = table.getIntegerTopic("choice").publish();
         boolean state[] = new boolean[48];
@@ -58,6 +55,7 @@ public class ReefscapeFrame extends JFrame
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1280, 800);
+        setBackground(Color.WHITE);
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] graphicsDevices = ge.getScreenDevices();
@@ -155,6 +153,7 @@ public class ReefscapeFrame extends JFrame
                         grayedOut[i] = m[i + hexagonSelector.getSelectedTrapezoid().get() * 8];
                     }
                     levelSelector.setGrayedOut(grayedOut);
+                    levelSelector.setSelectedTrapezoid(hexagonSelector.getSelectedTrapezoid().get());
                 }
             }
         });
@@ -167,7 +166,7 @@ public class ReefscapeFrame extends JFrame
             {
                 if (hexagonSelector.getSelectedTrapezoid().isPresent() && levelSelector.getSelectedLevel().isPresent())
                 {
-                    choicePublisher.set(hexagonSelector.getSelectedTrapezoid().get() * 6
+                    choicePublisher.set(hexagonSelector.getSelectedTrapezoid().get() * 9
                             + levelSelector.getSelectedLevel().get().ordinal());
                 }
                 if (leftCoral.isSelected())
@@ -190,21 +189,68 @@ public class ReefscapeFrame extends JFrame
         rightPanel.add(rightCoral);
         add(rightPanel);
         setVisible(true);
+        Thread tr = new Thread(() ->
+        {
+            startNetworkTables();
+            while (true)
+            {
+                try
+                {
+                    if (NetworkTableInstance.getDefault().isConnected())
+                    {
+                        setTitle("Reef Display - Connected to Robot");
+                    } else
+                    {
+                        setTitle("Reef Display - NOT Connected to Robot");
+                    }
+                    Thread.sleep(1000);
+                } catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
+        tr.start();
     }
 
-    public static void main(String[] args) throws IOException
+    private static void startNetworkTables()
+    {
+        NetworkTableInstance.getDefault().setServerTeam(172);
+        NetworkTableInstance.getDefault().startClient4("ReefscapeDisplay");
+        NetworkTableInstance.getDefault().setServer(new String[]
+        { "localhost", "10.1.72.2" });
+        NetworkTableInstance.getDefault().startDSClient();
+    }
+
+    public static void main(String[] args)
+    {
+        SwingUtilities.invokeLater(() ->
+        {
+            try
+            {
+                _main(args);
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public static void _main(String[] args) throws IOException
     {
         NetworkTablesJNI.Helper.setExtractOnStaticLoad(false);
         WPIUtilJNI.Helper.setExtractOnStaticLoad(false);
         EigenJNI.Helper.setExtractOnStaticLoad(false);
         CameraServerJNI.Helper.setExtractOnStaticLoad(false);
         OpenCvLoader.Helper.setExtractOnStaticLoad(false);
-
-        CombinedRuntimeLoader.loadLibraries(ReefscapeFrame.class, "wpiutiljni", "wpimathjni", "ntcorejni",
-                Core.NATIVE_LIBRARY_NAME, "cscorejni");
-        SwingUtilities.invokeLater(() ->
+        try
         {
-            new ReefscapeFrame();
-        });
+            CombinedRuntimeLoader.loadLibraries(ReefscapeFrame.class, "wpiutiljni", "wpimathjni", "ntcorejni",
+                    Core.NATIVE_LIBRARY_NAME, "cscorejni");
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        new ReefscapeFrame();
     }
 }

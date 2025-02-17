@@ -67,7 +67,7 @@ public class Robot extends LoggedRobot
         }
 
         final NFRRobotChooser chooser = new NFRRobotChooser(() -> new BlennyContainer(),
-                Map.of("0316d7d7", () -> new ZippyContainer(), "???", () -> new BlennyContainer()));
+                Map.of("0316d7d7", () -> new ZippyContainer(), "023C3578", () -> new BlennyContainer()));
 
         Logger.recordMetadata("RoboRIO ID", NFRRobotChooser.getRoborioID());
 
@@ -100,8 +100,6 @@ public class Robot extends LoggedRobot
         // Start AdvantageKit logger
         Logger.start();
         container = chooser.getNFRRobotContainer();
-
-        container.bindOI();
     }
 
     /** This function is called periodically during all modes. */
@@ -136,6 +134,9 @@ public class Robot extends LoggedRobot
     @Override
     public void teleopInit()
     {
+        CommandScheduler.getInstance().cancelAll();
+        CommandScheduler.getInstance().getActiveButtonLoop().clear();
+        container.bindDriverOI();
         if (autoSelected != null && autoSelected.isScheduled())
         {
             autoSelected.cancel();
@@ -167,6 +168,10 @@ public class Robot extends LoggedRobot
     @Override
     public void testInit()
     {
+        CommandScheduler.getInstance().cancelAll();
+        CommandScheduler.getInstance().getActiveButtonLoop().clear();
+        container.bindProgrammerOI();
+        container.testInit();
     }
 
     /** This function is called periodically during test mode. */

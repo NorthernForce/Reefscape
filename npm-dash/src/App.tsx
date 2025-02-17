@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useEntry } from '@frc-web-components/react';
 import Teleop from './teleop/Teleop';
 import Auto from './auto/Auto';
+import Settings from './settings/Settings';
 
 function TabPanel(props: { children?: React.ReactNode, selected: number, index: number }) {
     return <div hidden={props.selected !== props.index}>
@@ -45,7 +46,7 @@ function App(props: { targetIp: string }) {
                     <Auto />
                 </TabPanel>
                 <TabPanel selected={tabsLocked ? tabEntry : selected} index={2}>
-                    Settings
+                    <Settings />
                 </TabPanel>
             </div>
         </>
