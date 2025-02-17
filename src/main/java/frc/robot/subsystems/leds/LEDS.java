@@ -82,16 +82,16 @@ public class LEDS extends SubsystemBase
     public Command getSetColour(int r, int g, int b)
     {
 
-        return runOnce(() -> setLEDColour(r, g, b));
+        return run(() -> setLEDColour(r, g, b));
     }
 
     public Command getRainbowAnimation()
     {
-        return runOnce(() -> rainbowAnimation());
+        return run(() -> rainbowAnimation());
     }
 
     public Command getIncrementAnimation()
     {
-        return runOnce(() -> incrementAnimation());
+        return run(() -> incrementAnimation());
     }
 }

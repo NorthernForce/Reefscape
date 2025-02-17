@@ -9,6 +9,7 @@ import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Preferences;
 import frc.robot.blenny.constants.BlennyTunerConstants;
+import frc.robot.subsystems.leds.LedsIO;
 
 public class ZippyConstants
 {
@@ -31,5 +32,6 @@ public class ZippyConstants
     public static class LedConstants
     {
         public static int CanID = 30;
+        public static LedsIO.LedConstantsRecord ledInputs = new LedsIO.LedConstantsRecord(85, 0.5, 0.1, false, 0);
     }
 }

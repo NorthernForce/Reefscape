@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.FieldConstants;
 import frc.robot.subsystems.leds.LEDS;
-import frc.robot.subsystems.leds.LedsIO;
 import frc.robot.subsystems.leds.LedsIOCANdle;
 import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
@@ -37,9 +36,9 @@ public class ZippyContainer implements NFRRobotContainer
     private Alliance alliance = allianceSupplier.get();
     private final Dashboard dashboard;
     private final Command testCommand;
-    private final LedsIO.LedConstantsRecord ledInputs = new LedsIO.LedConstantsRecord(85, 0.5, 0.1, false, 0);
 
-    private final LEDS leds = new LEDS(new LedsIOCANdle(ZippyConstants.LedConstants.CanID, ledInputs));
+    private final LEDS leds = new LEDS(
+            new LedsIOCANdle(ZippyConstants.LedConstants.CanID, ZippyConstants.LedConstants.ledInputs));
 
     public ZippyContainer()
     {

@@ -24,7 +24,6 @@ import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOSwing;
 import frc.robot.subsystems.leds.LEDS;
-import frc.robot.subsystems.leds.LedsIO;
 import frc.robot.subsystems.leds.LedsIOCANdle;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 import frc.robot.subsystems.superstructure.Superstructure;
