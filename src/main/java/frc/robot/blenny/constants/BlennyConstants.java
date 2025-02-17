@@ -107,6 +107,11 @@ public class BlennyConstants
                 ROTOR_TO_SENSOR_RATIO);
     }
 
+    public static class LedConstants
+    {
+        public static final int CANid = 30;
+    }
+
     /**
      * Superstructure states for the coral and algae
      */
@@ -166,8 +171,4 @@ public class BlennyConstants
         public static final Angle UPPER_LIMIT = Rotations.of(0.22);
     }
 
-    public static class LedConstants
-    {
-
-    }
 }

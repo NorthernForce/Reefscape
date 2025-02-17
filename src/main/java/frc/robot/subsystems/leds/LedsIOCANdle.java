@@ -13,17 +13,10 @@ import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 public class LedsIOCANdle implements LedsIO
 {
     // Variables
-    CANdle candle;
-    CANdleConfiguration config;
+    private CANdle candle;
+    private CANdleConfiguration config;
 
-    private final int ledCount = 64;
-
-    private int r = 0;
-    private int g = 0;
-    private int b = 0;
-    private boolean animating = false;
-    private double speed = 1.0;
-    private int animationIndex = 0;
+    LedIOInputs ioInputs = new LedIOInputs();
 
     /**
      * Initializes the CANdle for leds
@@ -31,12 +24,22 @@ public class LedsIOCANdle implements LedsIO
      * @param id id of the CANdle on the rio
      */
     // Constructor
-    public LedsIOCANdle(int id)
+
+    private LedConstantsRecord ledSettings;
+
+    public LedsIOCANdle(int id, LedConstantsRecord ledConstants)
+    {
+        ioInputs.setLedIOSettings(ledConstants);
+        ledSettings = ledConstants;
+        initCANdle(id);
+    }
+
+    public void initCANdle(int id)
     {
         candle = new CANdle(id);
         config = new CANdleConfiguration();
         config.stripType = LEDStripType.RGB;
-        config.brightnessScalar = 1.0;
+        config.brightnessScalar = ledSettings.ledBrightness();
         candle.configAllSettings(config);
     }
 
@@ -69,7 +72,6 @@ public class LedsIOCANdle implements LedsIO
             config.brightnessScalar = brightness;
             candle.configAllSettings(config);
         }
-        animating = false;
     }
 
     /**
@@ -82,11 +84,8 @@ public class LedsIOCANdle implements LedsIO
     @Override
     public void setColours(int rInput, int gInput, int bInput)
     {
-        r = rInput;
-        g = gInput;
-        b = bInput;
-        candle.setLEDs(r, g, b);
-        animating = false;
+        candle.setLEDs(rInput, gInput, bInput);
+        ioInputs.setAnimating(false);
     }
 
     /**
@@ -102,40 +101,37 @@ public class LedsIOCANdle implements LedsIO
     public void setSpecificLEDs(int startIdx, int endIdx, int r, int g, int b)
     {
         candle.setLEDs(r, g, b, 0, startIdx, Math.abs(endIdx - startIdx));
+        ioInputs.setAnimating(false);
     }
 
     /**
      * Uses CANdles built in rainbow animation to create a rainbow effect for the
      * leds
-     * 
-     * @param ledCount   the amount of leds this takes effect upon
-     * @param speed      a double 0.0 to 1.0 determining how fast the animation
-     *                   happens
-     * @param brightness a double 0.0 to 1.0 determining how bright the leds are
      */
     @Override
-    public void rainbowAnimation(int ledCount, double speed, double brightness)
+    public void rainbowAnimation()
     {
-        RainbowAnimation rainbowAnim = new RainbowAnimation(brightness, speed, ledCount);
+        RainbowAnimation rainbowAnim = new RainbowAnimation(ledSettings.ledBrightness(), ledSettings.animationSpeed(),
+                ledSettings.ledCount());
         candle.animate(rainbowAnim);
-        animating = true;
+        ioInputs.setAnimating(true);
     }
 
     /**
      * Uses CANdles built in twinkle animation to create a twinkle effect for the
      * leds
      * 
-     * @param r     sets the red colour of the leds
-     * @param g     sets the green colour of the leds
-     * @param b     sets the blue colour of the leds
-     * @param speed a double 0.0 to 1.0 that determines the speed of the animation
+     * @param r sets the red colour of the leds
+     * @param g sets the green colour of the leds
+     * @param b sets the blue colour of the leds
      */
     @Override
-    public void twinkleAnimation(int r, int g, int b, double speed)
+    public void twinkleAnimation(int r, int g, int b)
     {
-        TwinkleAnimation twinkleAnim = new TwinkleAnimation(r, g, b, 0, speed, ledCount, TwinklePercent.Percent64);
+        TwinkleAnimation twinkleAnim = new TwinkleAnimation(r, g, b, 0, ledSettings.animationSpeed(),
+                ledSettings.ledCount(), TwinklePercent.Percent64);
         candle.animate(twinkleAnim);
-        animating = true;
+        ioInputs.setAnimating(true);
     }
 
     /**
@@ -144,41 +140,40 @@ public class LedsIOCANdle implements LedsIO
      * @param r         sets the red colour of the leds
      * @param g         sets the green colour of the leds
      * @param b         sets the blue colour of the leds
-     * @param speed     sets the speed of the flow effect 0.0 to 1.0
      * @param direction boolean true: flows forwards false: flows backwards
      * @param offset    offset of the flow animation
      */
     @Override
-    public void colourFlow(int r, int g, int b, double speed, boolean direction, int offSet)
+    public void colourFlow(int r, int g, int b, boolean direction, int offSet)
     {
         if (direction)
         {
-            ColorFlowAnimation colorFlowAnim = new ColorFlowAnimation(r, g, b, 0, speed, ledCount, Direction.Forward,
-                    offSet);
+            ColorFlowAnimation colorFlowAnim = new ColorFlowAnimation(r, g, b, 0, ledSettings.animationSpeed(),
+                    ledSettings.ledCount(), Direction.Forward, offSet);
             candle.animate(colorFlowAnim);
         } else
         {
-            ColorFlowAnimation colorFlowAnim = new ColorFlowAnimation(r, g, b, 0, speed, ledCount, Direction.Backward,
-                    offSet);
+            ColorFlowAnimation colorFlowAnim = new ColorFlowAnimation(r, g, b, 0, ledSettings.animationSpeed(),
+                    ledSettings.ledCount(), Direction.Backward, offSet);
             candle.animate(colorFlowAnim);
         }
-        animating = true;
+        ioInputs.setAnimating(true);
     }
 
     /**
      * uses CANdle srobe animation to create a strobe effect with the leds
      * 
-     * @param r     sets the red colour of the leds
-     * @param g     sets the green colour of the leds
-     * @param b     sets the blue colour of the leds
-     * @param speed double 0.0 to 1.0 controls the speed of the strobe
+     * @param r sets the red colour of the leds
+     * @param g sets the green colour of the leds
+     * @param b sets the blue colour of the leds
      */
     @Override
-    public void strobeAnimation(int r, int g, int b, double speed)
+    public void strobeAnimation(int r, int g, int b)
     {
-        StrobeAnimation strobeAnim = new StrobeAnimation(r, g, b, 0, speed, ledCount);
+        StrobeAnimation strobeAnim = new StrobeAnimation(r, g, b, 0, ledSettings.animationSpeed(),
+                ledSettings.ledCount());
         candle.animate(strobeAnim);
-        animating = true;
+        ioInputs.setAnimating(true);
     }
 
     /**
@@ -187,11 +182,10 @@ public class LedsIOCANdle implements LedsIO
     @Override
     public void clearAnimationBuffer()
     {
-        for (int i = 0; i < ledCount; i++)
+        for (int i = 0; i < ledSettings.ledCount(); i++)
         {
             candle.clearAnimation(i);
         }
-        animating = false;
     }
 
     /**
@@ -201,51 +195,54 @@ public class LedsIOCANdle implements LedsIO
     @Override
     public void incrementAnimation()
     {
-        animationIndex++;
-        switch (animationIndex)
+        if (ledSettings.animating())
         {
-        case 0:
-            setColours(255, 0, 0);
-            break;
-        case 1:
-            setColours(0, 255, 0);
-            break;
-        case 2:
-            setColours(0, 0, 255);
-            break;
-        case 3:
-            setColours(255, 255, 0);
-            break;
-        case 4:
-            setColours(0, 255, 255);
-            break;
-        case 5:
-            setColours(255, 0, 255);
-            break;
-        case 6:
-            setColours(255, 255, 255);
-            break;
-        case 7:
-            rainbowAnimation(ledCount, 0.5, 1.0);
-            break;
-        case 8:
-            twinkleAnimation(255, 0, 0, 0.1);
-            break;
-        case 9:
-            colourFlow(255, 0, 0, 0.1, true, 0);
-            break;
-        case 10:
-            strobeAnimation(255, 0, 0, 0.1);
-            break;
-        case 11:
-            setColours(0, 0, 0);
-            clearAnimationBuffer();
-        case 12:
-            setSpecificLEDs(0, 10, 255, 0, 0);
-            break;
-        default:
-            animationIndex = 0;
-            break;
+            int currentAnimationIndex = ledSettings.animationIndex();
+            ioInputs.setAnimationIndex(currentAnimationIndex + 1);
+            switch (ledSettings.animationIndex())
+            {
+            case 0:
+                setColours(255, 0, 0);
+                break;
+            case 1:
+                setColours(0, 255, 0);
+                break;
+            case 2:
+                setColours(0, 0, 255);
+                break;
+            case 3:
+                setColours(255, 255, 0);
+                break;
+            case 4:
+                setColours(0, 255, 255);
+                break;
+            case 5:
+                setColours(255, 0, 255);
+                break;
+            case 6:
+                setColours(255, 255, 255);
+                break;
+            case 7:
+                rainbowAnimation();
+                break;
+            case 8:
+                twinkleAnimation(255, 0, 0);
+                break;
+            case 9:
+                colourFlow(255, 0, 0, true, 0);
+                break;
+            case 10:
+                strobeAnimation(255, 0, 0);
+                break;
+            case 11:
+                setColours(0, 0, 0);
+                clearAnimationBuffer();
+            case 12:
+                setSpecificLEDs(0, 10, 255, 0, 0);
+                break;
+            default:
+                break;
+            }
         }
     }
 
@@ -253,18 +250,10 @@ public class LedsIOCANdle implements LedsIO
     public void updateInputs(LedIOInputs inputs)
     {
         candle.getAllConfigs(config);
-        inputs.brightness = config.brightnessScalar;
-        if (config.brightnessScalar > 0.0)
+        ledSettings = inputs.getLedIOSettings();
+        if (!ledSettings.animating())
         {
-            inputs.on = true;
-        } else
-        {
-            inputs.on = false;
+            clearAnimationBuffer();
         }
-        inputs.r = r;
-        inputs.g = g;
-        inputs.b = b;
-        inputs.animating = animating;
-        inputs.animationIndex = animationIndex;
     }
 }

@@ -27,4 +27,9 @@ public class ZippyConstants
                 Rotations.of(Preferences.getDouble("kSwerveOffestBackRight",
                         BlennyTunerConstants.BackRight.EncoderOffset)) };
     }
+
+    public static class LedConstants
+    {
+        public static int CanID = 30;
+    }
 }

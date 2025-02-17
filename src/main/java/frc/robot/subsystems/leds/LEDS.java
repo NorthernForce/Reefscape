@@ -1,22 +1,7 @@
 package frc.robot.subsystems.leds;
 
-import com.ctre.phoenix.led.Animation;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-/**
- * @see frc.robot.subsystems.leds.LEDS
- * @param setLEDColour     sets the colour of the LED
- * @param switchLEDs       switches the LED on or off
- * @param setLEDBrightness sets the brightness of the LED
- * @param getSetColour     gets the colour of the LED
- * @param io               sets the LED IO
- * @param periodic         updates the LED IO
- * @param r                sets the red value of the LED
- * @param g                sets the green value of the LED
- * @param b                sets the blue value of the LED
- */
 
 public class LEDS extends SubsystemBase
 {
@@ -55,24 +40,24 @@ public class LEDS extends SubsystemBase
         io.setSpecificLEDs(startIdx, endIdx, r, g, b);
     }
 
-    public void rainbowAnimation(int ledCount, double speed, double brightness)
+    public void rainbowAnimation()
     {
-        io.rainbowAnimation(ledCount, speed, brightness);
+        io.rainbowAnimation();
     }
 
-    public void twinkleAnimation(int r, int g, int b, double speed)
+    public void twinkleAnimation(int r, int g, int b)
     {
-        io.twinkleAnimation(r, g, b, speed);
+        io.twinkleAnimation(r, g, b);
     }
 
-    public void colourFlow(int r, int g, int b, double speed, boolean direction, int offSet)
+    public void colourFlow(int r, int g, int b, boolean direction, int offSet)
     {
-        io.colourFlow(r, g, b, speed, direction, offSet);
+        io.colourFlow(r, g, b, direction, offSet);
     }
 
-    public void strobeAnimation(int r, int g, int b, double speed)
+    public void strobeAnimation(int r, int g, int b)
     {
-        io.strobeAnimation(r, g, b, speed);
+        io.strobeAnimation(r, g, b);
     }
 
     public void incrementAnimation()
@@ -91,9 +76,9 @@ public class LEDS extends SubsystemBase
         return runOnce(() -> setLEDColour(r, g, b));
     }
 
-    public Command getRainbowAnimation(int ledCount, double speed, double brightness)
+    public Command getRainbowAnimation()
     {
-        return runOnce(() -> rainbowAnimation(ledCount, speed, brightness));
+        return runOnce(() -> rainbowAnimation());
     }
 
     public Command getIncrementAnimation()

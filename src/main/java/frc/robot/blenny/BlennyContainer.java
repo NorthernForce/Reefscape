@@ -23,6 +23,9 @@ import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOSwing;
+import frc.robot.subsystems.leds.LEDS;
+import frc.robot.subsystems.leds.LedsIO;
+import frc.robot.subsystems.leds.LedsIOCANdle;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
@@ -49,6 +52,9 @@ public class BlennyContainer implements NFRRobotContainer
     private final Climber climber;
     private final Dashboard dashboard;
     private final Command testCommand;
+    private final LedsIO.LedConstantsRecord ledInputs = new LedsIO.LedConstantsRecord(85, 0.5, 0.1, true, 0);
+
+    private final LEDS leds = new LEDS(new LedsIOCANdle(BlennyConstants.LedConstants.CANid, ledInputs));
 
     /**
      * Create a new BlennyContainer
@@ -95,15 +101,22 @@ public class BlennyContainer implements NFRRobotContainer
             {
             });
             break;
+
         }
         testCommand = Commands.parallel(drive.getIdleCommand());
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
+        leds.setDefaultCommand(leds.getRainbowAnimation().ignoringDisable(true));
     }
 
     private void addAutonomousRoutines()
     {
         dashboard.addDefaultAutoRoutine("Do Nothing", new AutoRoutine(Commands.none(), new Translation2d[]
         { new Translation2d(), new Translation2d() }, new Pose2d()));
+    }
+
+    public LEDS getLEDs()
+    {
+        return leds;
     }
 
     /**

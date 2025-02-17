@@ -45,6 +45,8 @@ public class BlennyProgrammerOI implements BlennyOI
 
         manipulatorController.rightBumper().whileTrue(container.getSuperstructure().getWrist()
                 .getSetSpeedCommand(BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
+
+        driverController.b().whileTrue(container.getLEDs().getSetColour(255, 0, 0));
     }
 
 }
