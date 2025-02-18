@@ -3,12 +3,16 @@ package frc.robot.blenny;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 
+import java.util.function.Supplier;
+
 import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
@@ -48,7 +52,8 @@ public class BlennyContainer implements NFRRobotContainer
     private final Superstructure superstructure;
     private final Climber climber;
     private final Dashboard dashboard;
-    private final Command testCommand;
+    private Alliance alliance = Alliance.Red;
+    private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(alliance);
 
     /**
      * Create a new BlennyContainer
@@ -96,7 +101,6 @@ public class BlennyContainer implements NFRRobotContainer
             });
             break;
         }
-        testCommand = Commands.parallel(drive.getIdleCommand());
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
     }
 
@@ -175,10 +179,6 @@ public class BlennyContainer implements NFRRobotContainer
     @Override
     public void disabledInit()
     {
-        if (testCommand.isScheduled())
-        {
-            testCommand.cancel();
-        }
         dashboard.setAutoStage();
     }
 
@@ -195,7 +195,17 @@ public class BlennyContainer implements NFRRobotContainer
     @Override
     public void testInit()
     {
-        testCommand.schedule();
         dashboard.setSettingsStage();
+    }
+
+    @Override
+    public void periodic()
+    {
+        if (alliance != allianceSupplier.get())
+        {
+            alliance = allianceSupplier.get();
+            drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
+        }
+        dashboard.updatePose(drive.getPose());
     }
 }

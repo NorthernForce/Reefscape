@@ -73,6 +73,11 @@ public class Dashboard extends SubsystemBase
         m_io.addCommand("swerve/resetEncoders", command);
     }
 
+    public void updatePose(Pose2d pose)
+    {
+        m_io.updatePose(pose);
+    }
+
     @Override
     public void periodic()
     {
