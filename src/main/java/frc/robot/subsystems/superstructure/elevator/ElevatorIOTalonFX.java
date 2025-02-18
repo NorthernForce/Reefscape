@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -33,6 +34,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
     private final double gearRatio;
     private final Distance sprocketCircumference;
     private final MotionMagicVoltage m_motionMagicVoltage;
+    private final DutyCycleOut m_duty = new DutyCycleOut(0);
 
     /**
      * Converts rotations to distance
@@ -185,6 +187,12 @@ public class ElevatorIOTalonFX implements ElevatorIO
     public void setTargetPosition(Distance height)
     {
         m_motor.setControl(m_motionMagicVoltage.withPosition(convertDistanceToRotations(height)));
+    }
+
+    @Override
+    public void setSpeed(double speed, boolean overrideLowerLimit)
+    {
+        m_motor.setControl(m_duty.withOutput(speed).withLimitReverseMotion(overrideLowerLimit));
     }
 
     /**

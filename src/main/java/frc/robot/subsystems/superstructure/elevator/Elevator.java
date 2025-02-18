@@ -2,6 +2,8 @@ package frc.robot.subsystems.superstructure.elevator;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Distance;
@@ -77,6 +79,26 @@ public class Elevator extends SubsystemBase
         }).until(() -> isAtTargetPosition()).andThen(() ->
         {
             stop();
+        });
+    }
+
+    public Command getMoveByJoystick(DoubleSupplier joystick)
+    {
+        return run(() ->
+        {
+            m_motor.setSpeed(joystick.getAsDouble(), false);
+        });
+    }
+
+    public Command getHomingCommand(double homingSpeed)
+    {
+        return runOnce(() ->
+        {
+            m_motor.setSpeed(-homingSpeed, true);
+        }).until(() -> m_sensorInputs.isAtBottom).andThen(() ->
+        {
+            m_motor.stop();
+            m_motor.resetPosition();
         });
     }
 

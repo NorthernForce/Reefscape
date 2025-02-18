@@ -50,6 +50,7 @@ public class Robot extends LoggedRobot
         return DriverStation.isFMSAttached();
     }
 
+    @SuppressWarnings("unused")
     private final Notifier notifier = new Notifier(() -> System.gc());
 
     /**

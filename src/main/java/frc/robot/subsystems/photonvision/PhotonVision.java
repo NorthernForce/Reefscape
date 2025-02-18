@@ -99,6 +99,7 @@ public class PhotonVision extends SubsystemBase
         return true;
     }
 
+    @SuppressWarnings("unused")
     private boolean testRobotRotation(EstimatedRobotPose pose)
     {
         if (lastKnownRobotPose == null)

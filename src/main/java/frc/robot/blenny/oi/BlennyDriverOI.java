@@ -6,6 +6,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.FieldConstants;
 import frc.robot.blenny.BlennyContainer;
+import frc.robot.blenny.constants.BlennyConstants;
 
 /**
  * Blenny OI for the driver and operator
@@ -43,5 +44,10 @@ public class BlennyDriverOI implements BlennyOI
 
         driverController.leftBumper().whileTrue(container.getClimber().getClimbUpCommand(0.5));
         driverController.rightBumper().whileTrue(container.getClimber().getClimbDownCommand(0.5));
+
+        driverController.start()
+                .whileTrue(container.getSuperstructure().getHomingCommand(
+                        BlennyConstants.InnerElevatorConstants.HOMING_SPEED,
+                        BlennyConstants.OuterElevatorConstants.HOMING_SPEED));
     }
 }

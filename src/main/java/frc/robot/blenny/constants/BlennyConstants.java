@@ -93,6 +93,8 @@ public class BlennyConstants
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD,
                 MetersPerSecond.of(CRUISE_VELOCITY), MetersPerSecondPerSecond.of(ACCELERATION), JERK,
                 Meters.of(SPROCKET_CIRCUMFERENCE), GEAR_RATIO, false, UPPER_LIMIT);
+
+        public static final double HOMING_SPEED = 0.5;
     }
 
     public static class OuterElevatorConstants
@@ -119,6 +121,8 @@ public class BlennyConstants
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD,
                 MetersPerSecond.of(CRUISE_VELOCITY), MetersPerSecondPerSecond.of(ACCELERATION), JERK,
                 Meters.of(SPROCKET_CIRCUMFERENCE), GEAR_RATIO, false, UPPER_LIMIT);
+
+        public static final double HOMING_SPEED = 0.5;
     }
 
     public static class WristJointConstants
