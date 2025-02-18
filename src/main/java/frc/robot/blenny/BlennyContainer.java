@@ -4,8 +4,6 @@ import java.util.function.Supplier;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 
-import java.util.function.Supplier;
-
 import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -13,9 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
@@ -58,8 +54,6 @@ public class BlennyContainer implements NFRRobotContainer
     private Alliance alliance = allianceSupplier.get();
     private final Climber climber;
     private final Dashboard dashboard;
-    private Alliance alliance = Alliance.Red;
-    private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(alliance);
 
     /**
      * Create a new BlennyContainer
@@ -195,6 +189,7 @@ public class BlennyContainer implements NFRRobotContainer
         {
             drive.addVisionMeasurement(poseEstimate.pose(), poseEstimate.timestamp());
         }
+        dashboard.updatePose(drive.getPose());
     }
 
     public void teleopInit()
@@ -222,16 +217,5 @@ public class BlennyContainer implements NFRRobotContainer
     public void testInit()
     {
         dashboard.setSettingsStage();
-    }
-
-    @Override
-    public void periodic()
-    {
-        if (alliance != allianceSupplier.get())
-        {
-            alliance = allianceSupplier.get();
-            drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
-        }
-        dashboard.updatePose(drive.getPose());
     }
 }
