@@ -58,6 +58,7 @@ public class BlennyContainer implements NFRRobotContainer
     private Alliance alliance = allianceSupplier.get();
     private final Climber climber;
     private final Dashboard dashboard;
+    private boolean inAlgaeState = false;
 
     /**
      * Create a new BlennyContainer
@@ -73,13 +74,13 @@ public class BlennyContainer implements NFRRobotContainer
                 new RollersIOTalonFXS(BlennyConstants.RollersConstants.ROLLER_MOTOR_LEFT_ID,
                         BlennyConstants.RollersConstants.ROLLER_MOTOR_RIGHT_ID,
                         BlennyConstants.RollersConstants.ROLLER_MOTORS_INVERTED),
-                new RollersSensorIOUltrasonic(BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ONE_TRIGGER,
-                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ONE_ECHO,
-                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ONE_MAX_DISTANCE),
-                new RollersSensorIOUltrasonic(BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_TWO_TRIGGER,
-                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_TWO_ECHO,
-                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_TWO_MAX_DISTANCE)); // TODO: FIX
-                                                                                                        // THESE IDS
+                new RollersSensorIOUltrasonic(BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ALGAE_TRIGGER,
+                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ALGAE_ECHO,
+                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ALGAE_MAX_DISTANCE),
+                new RollersSensorIOUltrasonic(BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_TRIGGER,
+                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_TRIGGER,
+                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_MAX_DISTANCE));
+        
         vision = new PhotonVision(BlennyConstants.VisionConstants.cameraNames(),
                 BlennyConstants.VisionConstants.cameraTransforms(), BlennyConstants.VisionConstants.APRILTAG_LAYOUT,
                 BlennyConstants.VisionConstants.MAX_Y_COORDINATE, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
@@ -239,5 +240,10 @@ public class BlennyContainer implements NFRRobotContainer
     public void testInit()
     {
         dashboard.setSettingsStage();
+    }
+
+    public boolean isInAlgaeState()
+    {
+        return inAlgaeState;
     }
 }

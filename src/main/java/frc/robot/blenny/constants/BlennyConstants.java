@@ -213,12 +213,12 @@ public class BlennyConstants
 
         public static class SensorConstants
         {
-            public static final int ULTRASONIC_ONE_TRIGGER = 0;
-            public static final int ULTRASONIC_ONE_ECHO = 1;
-            public static final int ULTRASONIC_TWO_TRIGGER = 2;
-            public static final int ULTRASONIC_TWO_ECHO = 3;
-            public static final double ULTRASONIC_ONE_MAX_DISTANCE = 50;
-            public static final double ULTRASONIC_TWO_MAX_DISTANCE = 50;
+            public static final int ULTRASONIC_CORAL_TRIGGER = 2;
+            public static final int ULTRASONIC_CORAL_ECHO = 3;
+            public static final int ULTRASONIC_ALGAE_TRIGGER = 4;
+            public static final int ULTRASONIC_ALGAE_ECHO = 5;
+            public static final Distance ULTRASONIC_CORAL_MAX_DISTANCE = Inches.of(2);
+            public static final Distance ULTRASONIC_ALGAE_MAX_DISTANCE = Inches.of(2);
         }
     }
 }

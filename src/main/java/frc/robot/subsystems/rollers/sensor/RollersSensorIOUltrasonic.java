@@ -1,6 +1,9 @@
 package frc.robot.subsystems.rollers.sensor;
 
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Ultrasonic;
+
+import static edu.wpi.first.units.Units.Millimeters;
 
 /**
  * The IO for the rollers ultrasonic sensor.
@@ -9,7 +12,7 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 public class RollersSensorIOUltrasonic implements RollersSensorIO
 {
     private final Ultrasonic m_sonar;
-    private final double m_mmToObject;
+    private final Distance m_distToObject;
 
     /**
      * Constructs a new RollersSensorIOUltrasonic.
@@ -19,10 +22,10 @@ public class RollersSensorIOUltrasonic implements RollersSensorIO
      * @param mmToObject  the distance in mm to the object to mark as having a piece
      */
 
-    public RollersSensorIOUltrasonic(int trigChannel, int echoChannel, double mmToObject)
+    public RollersSensorIOUltrasonic(int trigChannel, int echoChannel, Distance distToObject)
     {
         m_sonar = new Ultrasonic(trigChannel, echoChannel);
-        m_mmToObject = mmToObject;
+        m_distToObject = distToObject;
     }
 
     /**
@@ -45,7 +48,7 @@ public class RollersSensorIOUltrasonic implements RollersSensorIO
     @Override
     public void updateInputs(RollersSensorIOInputs inputs)
     {
-        inputs.hasPiece = getRange() <= m_mmToObject;
+        inputs.hasPiece = getRange() <= m_distToObject.in(Millimeters);
     }
 
 }

@@ -1,5 +1,6 @@
 package frc.robot.subsystems.rollers;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -65,16 +66,40 @@ public class Rollers extends SubsystemBase
         m_intakeIO.set(0);
     }
 
+    @AutoLogOutput
+    public boolean hasAlgae()
+    {
+        return m_sensorIOAlgaeInputs.hasPiece;
+    }
+
+    @AutoLogOutput
+    public boolean hasCoral()
+    {
+        return m_sensorIOCoralInputs.hasPiece;
+    }
+
     /**
-     * Returns a command that intakes a piece.
+     * Returns a command that intakes a coral.
      * 
      * @param speed The speed to intake at.
      * @return The command.
      */
 
-    public Command getIntakeCommand(double speed)
+    public Command getCoralIntakeCommand(double speed)
     {
-        return run(() -> intake(speed));
+        return run(() -> intake(speed)).until(() -> hasCoral());
+    }
+
+    /**
+     * Returns a command that intakes an algae.
+     * 
+     * @param speed The speed to intake at.
+     * @return The command.
+     */
+
+    public Command getAlgaeIntakeCommand(double speed)
+    {
+        return run(() -> intake(speed)).until(() -> hasAlgae());
     }
 
     /**
@@ -86,7 +111,7 @@ public class Rollers extends SubsystemBase
 
     public Command getOuttakeCommand(double speed)
     {
-        return run(() -> outtake(speed));
+        return run(() -> outtake(speed)).until(() -> !hasAlgae() && !hasCoral());
     }
 
     /**
