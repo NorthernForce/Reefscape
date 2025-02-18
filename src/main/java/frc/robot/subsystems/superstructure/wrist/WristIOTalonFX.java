@@ -11,6 +11,9 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+
+import static edu.wpi.first.units.Units.Degrees;
+
 import java.util.function.Supplier;
 
 /**
@@ -24,7 +27,7 @@ public class WristIOTalonFX implements WristIO
     private final StatusSignal<Temperature> motorTemperature;
     private final StatusSignal<Current> motorCurrent;
     private final Supplier<Boolean> motorPresent;
-    private Angle targetAngle;
+    private Angle targetAngle = Degrees.of(0);
     private MotionMagicVoltage motorControl;
 
     /**
@@ -41,7 +44,7 @@ public class WristIOTalonFX implements WristIO
         motorTemperature = motor.getDeviceTemp();
         motorCurrent = motor.getTorqueCurrent();
         motorPresent = () -> motor.isConnected();
-        targetAngle = null;
+        targetAngle = Degrees.of(0);
 
         configureMotor(motorid, cancoderid, wristConstants);
     }

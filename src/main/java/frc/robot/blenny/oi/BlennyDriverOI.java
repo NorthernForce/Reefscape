@@ -3,9 +3,11 @@ package frc.robot.blenny.oi;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.FieldConstants;
 import frc.robot.blenny.BlennyContainer;
+import frc.robot.blenny.constants.BlennyConstants;
 
 /**
  * Blenny OI for the driver and operator
@@ -40,5 +42,19 @@ public class BlennyDriverOI implements BlennyOI
                 .getResetOrientationCommand(FieldConstants.getFieldRotation(FieldConstants.getAlliance())));
 
         driverController.x().whileTrue(container.getDrive().getXLockCommand());
+
+        driverController.leftTrigger()
+                .whileTrue(Commands.either(
+                        container.getRollers().getAlgaeIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
+                        container.getRollers().getCoralIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
+                        () -> container.isInAlgaeState()));
+
+        driverController.rightTrigger().whileTrue(container.getRollers().getOuttakeCommand(1));
+
+        driverController.leftBumper().whileTrue(container.getClimber().getClimbUpCommand(0.5));
+        driverController.rightBumper().whileTrue(container.getClimber().getClimbDownCommand(0.5));
+
+        container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
+
     }
 }

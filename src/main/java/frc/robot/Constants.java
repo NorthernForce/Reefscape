@@ -13,6 +13,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.Utils;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean constants. This class should not be used for any other
@@ -25,7 +27,6 @@ package frc.robot;
  */
 public final class Constants
 {
-    public static final Mode kCurrentMode = Mode.SIM;
 
     public static enum Mode
     {
@@ -39,10 +40,17 @@ public final class Constants
         REPLAY
     }
 
-    public static enum OI
+    public static Mode getMode()
     {
-        PROGRAMMER, DRIVER
+        if (Utils.isSimulation())
+        {
+            return Mode.SIM;
+        } else if (Utils.isReplay())
+        {
+            return Mode.REPLAY;
+        } else
+        {
+            return Mode.REAL;
+        }
     }
-
-    public static final OI kOI = OI.PROGRAMMER;
 }
