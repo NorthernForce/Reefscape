@@ -87,7 +87,7 @@ public class BlennyContainer implements NFRRobotContainer
                 BlennyConstants.DrivetrainConstants.MAX_LINEAR_SPEED, BlennyConstants.VisionConstants.CAMERA_WIDTH);
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefDisplay"), new DashboardIOFWC());
         addAutonomousRoutines();
-        switch (Constants.kCurrentMode)
+        switch (Constants.getMode())
         {
         case SIM:
         case REAL:
