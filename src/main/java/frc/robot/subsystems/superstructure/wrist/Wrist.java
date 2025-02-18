@@ -34,7 +34,7 @@ public class Wrist extends SubsystemBase
      */
     public Command getSetSpeedCommand(double speed)
     {
-        return Commands.runOnce(() -> io.set(speed));
+        return run(() -> io.set(speed));
     }
 
     /**
@@ -45,7 +45,7 @@ public class Wrist extends SubsystemBase
      */
     public Command getMoveToAngleCommand(Angle angle)
     {
-        return Commands.runOnce(() -> io.moveToAngle(angle));
+        return run(() -> io.moveToAngle(angle)).until(this::isAtTargetPosition);
     }
 
     /**
@@ -55,7 +55,7 @@ public class Wrist extends SubsystemBase
      */
     public Command getStopCommand()
     {
-        return Commands.runOnce(() -> io.set(0));
+        return getSetSpeedCommand(0);
     }
 
     /**

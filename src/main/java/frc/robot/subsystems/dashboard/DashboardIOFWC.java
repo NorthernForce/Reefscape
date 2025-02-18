@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.ctre.phoenix6.Utils;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -14,6 +15,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.FieldConstants;
 import frc.robot.util.AutoRoutine;
 
+/**
+ * Dashboard IO for the FWC dashboard.
+ */
 public class DashboardIOFWC implements DashboardIO
 {
     private final NetworkTable table;
@@ -21,7 +25,15 @@ public class DashboardIOFWC implements DashboardIO
     private final DoublePublisher stagePublisher;
     private final DoubleArrayPublisher autoPosePublisher;
     private final DoubleArrayPublisher autoPathPublisher;
+    private final DoubleArrayPublisher posePublisher;
 
+    /**
+     * Creates a new DashboardIOFWC. This connects to the FWC dashboard using "FWC"
+     * as the network table name. The dashboard will be hosted on port 5800. The
+     * path to the dashboard files is either "./npm-dash/dist" if the code is
+     * running in simulation, or "/home/lvuser/npm-dash" if the code is running on
+     * the robot.
+     */
     public DashboardIOFWC()
     {
         WebServer.start(5800, Utils.isSimulation() ? "./npm-dash/dist" : "/home/lvuser/npm-dash");
@@ -31,6 +43,7 @@ public class DashboardIOFWC implements DashboardIO
         table.getBooleanTopic("connected").publish().set(true);
         autoPosePublisher = table.getDoubleArrayTopic("AutoPose").publish();
         autoPathPublisher = table.getDoubleArrayTopic("AutoPath").publish();
+        posePublisher = table.getDoubleArrayTopic("Pose").publish();
     }
 
     @Override
@@ -49,6 +62,13 @@ public class DashboardIOFWC implements DashboardIO
     public void setStage(DashboardIOStage stage)
     {
         stagePublisher.set(stage.ordinal());
+    }
+
+    @Override
+    public void updatePose(Pose2d pose)
+    {
+        posePublisher.set(new double[]
+        { pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getRotation().getRadians() });
     }
 
     @Override
