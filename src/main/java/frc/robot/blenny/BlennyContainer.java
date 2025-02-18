@@ -1,5 +1,6 @@
 package frc.robot.blenny;
 
+import java.util.function.Supplier;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 
@@ -7,6 +8,8 @@ import java.util.function.Supplier;
 
 import org.northernforce.util.NFRRobotContainer;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
@@ -26,14 +29,14 @@ import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
+import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOSwing;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
-import frc.robot.subsystems.reefscape.ReefDisplayIOSwing;
+import frc.robot.subsystems.photonvision.PhotonVision;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIO;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.superstructure.elevator.brake.BrakeIO;
-import frc.robot.subsystems.superstructure.elevator.brake.BrakeIORelay;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIO;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIOLimitSwitch;
 import frc.robot.subsystems.superstructure.wrist.Wrist;
@@ -50,6 +53,9 @@ public class BlennyContainer implements NFRRobotContainer
 {
     private final PhoenixCommandDrive drive;
     private final Superstructure superstructure;
+    private final PhotonVision vision;
+    private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
+    private Alliance alliance = allianceSupplier.get();
     private final Climber climber;
     private final Dashboard dashboard;
     private Alliance alliance = Alliance.Red;
@@ -64,19 +70,25 @@ public class BlennyContainer implements NFRRobotContainer
                 BlennyConstants.DrivetrainConstants.MAX_SPEED, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 BlennyTunerConstants.FrontLeft, BlennyTunerConstants.FrontRight, BlennyTunerConstants.BackLeft,
                 BlennyTunerConstants.BackRight);
+        vision = new PhotonVision(BlennyConstants.VisionConstants.cameraNames(),
+                BlennyConstants.VisionConstants.cameraTransforms(), BlennyConstants.VisionConstants.APRILTAG_LAYOUT,
+                BlennyConstants.VisionConstants.MAX_Y_COORDINATE, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                BlennyConstants.DrivetrainConstants.MAX_LINEAR_SPEED, BlennyConstants.VisionConstants.CAMERA_WIDTH);
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefDisplay"), new DashboardIOFWC());
         addAutonomousRoutines();
         switch (Constants.kCurrentMode)
         {
         case SIM:
         case REAL:
-            superstructure = new Superstructure(
-                    new Elevator("InnerElevator",
-                            new ElevatorIOTalonFX(14, BlennyConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS),
-                            new BrakeIORelay(0), new ElevatorSensorIOLimitSwitch(0), 0.2),
+            superstructure = new Superstructure(new Elevator("InnerElevator",
+                    new ElevatorIOTalonFX(14, BlennyConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
+                    {
+                    }, new ElevatorSensorIOLimitSwitch(0), 0.2),
                     new Elevator("OuterElevator",
                             new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
-                            new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2),
+                            new BrakeIO()
+                            {
+                            }, new ElevatorSensorIOLimitSwitch(1), 0.2),
                     new Wrist(new WristIOTalonFX(16, 17, BlennyConstants.WristJointConstants.WRIST_CONSTANTS), 2.0));
             climber = new Climber(new ClimberIOTalonFX(BlennyConstants.ClimberConstants.ID,
                     BlennyConstants.ClimberConstants.INVERTED, BlennyConstants.ClimberConstants.ENCODER_ID,
@@ -92,8 +104,9 @@ public class BlennyContainer implements NFRRobotContainer
             }, new ElevatorSensorIO()
             {
             }, 0.2), new Elevator("OuterElevator",
-                    new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
-                    new BrakeIORelay(1), new ElevatorSensorIOLimitSwitch(1), 0.2), new Wrist(new WristIO()
+                    new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
+                    {
+                    }, new ElevatorSensorIOLimitSwitch(1), 0.2), new Wrist(new WristIO()
                     {
                     }, 2.0));
             climber = new Climber(new ClimberIO()
@@ -171,6 +184,19 @@ public class BlennyContainer implements NFRRobotContainer
     }
 
     @Override
+    public void periodic()
+    {
+        if (alliance != allianceSupplier.get())
+        {
+            alliance = allianceSupplier.get();
+            drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
+        }
+        for (var poseEstimate : vision.getPoseEstimates())
+        {
+            drive.addVisionMeasurement(poseEstimate.pose(), poseEstimate.timestamp());
+        }
+    }
+
     public void teleopInit()
     {
         dashboard.setTeleopStage();

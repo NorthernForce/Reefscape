@@ -7,8 +7,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
-import frc.robot.subsystems.reefscape.ReefDisplayIO;
-import frc.robot.subsystems.reefscape.ReefDisplayIOInputsAutoLogged;
+import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIO;
+import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOInputsAutoLogged;
 import frc.robot.util.AutoRoutine;
 
 /**
@@ -43,26 +43,50 @@ public class Dashboard extends SubsystemBase
         return FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.reefLocations);
     }
 
+    /**
+     * Adds an auto routine to the dashboard.
+     * 
+     * @param name    Auto routine name (Descriptive for drivers please)
+     * @param command Auto routine command
+     */
     public void addAutoRoutine(String name, AutoRoutine command)
     {
         m_io.addRoutine(name, command, false);
     }
 
+    /**
+     * Adds a default auto routine to the dashboard.
+     * 
+     * @param name    Auto routine name (Descriptive for drivers please)
+     * @param command Auto routine command
+     */
     public void addDefaultAutoRoutine(String name, AutoRoutine command)
     {
         m_io.addRoutine(name, command, true);
     }
 
+    /**
+     * Sets the stage of the dashboard to auto. This only changes the display stage
+     * when toggle is on.
+     */
     public void setAutoStage()
     {
         m_io.setStage(DashboardIO.DashboardIOStage.AUTO);
     }
 
+    /**
+     * Sets the stage of the dashboard to teleop. This only changes the display
+     * stage when toggle is on.
+     */
     public void setTeleopStage()
     {
         m_io.setStage(DashboardIO.DashboardIOStage.TELEOP);
     }
 
+    /**
+     * Sets the stage of the dashboard to settings. This only changes the display
+     * stage when toggle is on.
+     */
     public void setSettingsStage()
     {
         m_io.setStage(DashboardIO.DashboardIOStage.SETTINGS);
@@ -87,6 +111,12 @@ public class Dashboard extends SubsystemBase
         Logger.processInputs(getName() + "/ReefDisplayIO", reefDisplayInputs);
     }
 
+    /**
+     * Gets the selected auto routine. It will return the default auto routine if no
+     * routine is selected.
+     * 
+     * @return The selected auto routine.
+     */
     public AutoRoutine getRoutine()
     {
         return m_io.getSelectedRoutine();

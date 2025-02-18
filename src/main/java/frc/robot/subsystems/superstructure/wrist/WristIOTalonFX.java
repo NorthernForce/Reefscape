@@ -27,7 +27,7 @@ public class WristIOTalonFX implements WristIO
     private final StatusSignal<Temperature> motorTemperature;
     private final StatusSignal<Current> motorCurrent;
     private final Supplier<Boolean> motorPresent;
-    private Angle targetAngle;
+    private Angle targetAngle = Degrees.of(0);
     private MotionMagicVoltage motorControl;
 
     /**
