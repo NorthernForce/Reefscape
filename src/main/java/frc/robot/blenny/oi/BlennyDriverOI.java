@@ -43,11 +43,12 @@ public class BlennyDriverOI implements BlennyOI
 
         driverController.x().whileTrue(container.getDrive().getXLockCommand());
 
-        driverController.leftTrigger().whileTrue(Commands.either(
-            container.getRollers().getAlgaeIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
-            container.getRollers().getCoralIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
-            () -> container.isInAlgaeState()));
-        
+        driverController.leftTrigger()
+                .whileTrue(Commands.either(
+                        container.getRollers().getAlgaeIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
+                        container.getRollers().getCoralIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
+                        () -> container.isInAlgaeState()));
+
         driverController.rightTrigger().whileTrue(container.getRollers().getOuttakeCommand(1));
 
         driverController.leftBumper().whileTrue(container.getClimber().getClimbUpCommand(0.5));
