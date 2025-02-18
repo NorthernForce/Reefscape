@@ -1,16 +1,20 @@
 package frc.robot.subsystems.phoenix6;
 
+import java.util.ArrayList;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -22,6 +26,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -31,6 +36,12 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 {
     private final LinearVelocity maxSpeed;
     private final AngularVelocity maxAngularSpeed;
+    private final Alert motorDisconnectedAlert;
+    private final Alert encoderDisconnectedAlert;
+    private ArrayList<Integer> disconnectedMotorArray;
+    private ArrayList<Integer> disconnectedEncoderArray;
+    private String motorAlertString = "";
+    private String encoderAlertString = "";
 
     /**
      * Create a new PhoenixCommandDrive
@@ -47,6 +58,10 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         CommandScheduler.getInstance().registerSubsystem(this);
         this.maxSpeed = maxSpeed;
         this.maxAngularSpeed = maxAngularSpeed;
+        motorDisconnectedAlert = new Alert("", Alert.AlertType.kWarning);
+        encoderDisconnectedAlert = new Alert("", Alert.AlertType.kWarning);
+        disconnectedMotorArray = new ArrayList<>();
+        disconnectedEncoderArray = new ArrayList<>();
     }
 
     public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
@@ -171,12 +186,59 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         configNeutralMode(NeutralModeValue.Coast);
     }
 
+    @Override
+    public void periodic()
+    {
+        disconnectedMotorArray.clear();
+        for (SwerveModule<TalonFX, TalonFX, ?> module : getModules())
+        {
+            if (!module.getDriveMotor().isConnected())
+            {
+                disconnectedMotorArray.add(module.getDriveMotor().getDeviceID());
+            }
+
+            if (!module.getSteerMotor().isConnected())
+            {
+                disconnectedMotorArray.add(module.getSteerMotor().getDeviceID());
+            }
+
+            if (!module.getEncoder().isConnected())
+            {
+                disconnectedEncoderArray.add(module.getEncoder().getDeviceID());
+            }
+        }
+
+        if (!disconnectedMotorArray.isEmpty())
+
+        {
+            motorAlertString = "The motors with the following IDs are disconnected: "
+                    + disconnectedMotorArray.stream().map(String::valueOf).collect(Collectors.joining(", "));
+
+            motorDisconnectedAlert.setText(motorAlertString);
+            motorDisconnectedAlert.set(true);
+        } else
+        {
+            motorDisconnectedAlert.set(false);
+        }
+
+        if (!disconnectedEncoderArray.isEmpty())
+        {
+            encoderAlertString = "The encoders with the following IDs are disconnected: "
+                    + disconnectedEncoderArray.stream().map(String::valueOf).collect(Collectors.joining(", "));
+
+            encoderDisconnectedAlert.setText(encoderAlertString);
+            encoderDisconnectedAlert.set(true);
+        } else
+        {
+            encoderDisconnectedAlert.set(false);
+        }
+    }
+
     /**
      * Reset the encoder angle to a target angle
      * 
      * @param moduleIdx   the module index
      * @param targetAngle the target angle
-     * @return the new offset
      */
     private Angle resetEncoderAngle(int moduleIdx, Angle targetAngle)
     {
