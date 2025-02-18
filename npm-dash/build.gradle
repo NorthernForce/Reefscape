@@ -75,5 +75,13 @@ task runDev(type: NpmTask, dependsOn: 'npm_run_build') {
 }
 
 task runAudit(type: NpmTask) {
+    args = ['audit']
+}
+
+task runAuditFix(type: NpmTask) {
+    args = ['audit', 'fix']
+}
+
+task runAuditFixForce(type: NpmTask) {
     args = ['audit', 'fix', '--force']
 }

@@ -44,6 +44,7 @@ public class WristIOTalonFX implements WristIO
         motorTemperature = motor.getDeviceTemp();
         motorCurrent = motor.getTorqueCurrent();
         motorPresent = () -> motor.isConnected();
+        targetAngle = Degrees.of(0);
 
         configureMotor(motorid, cancoderid, wristConstants);
     }

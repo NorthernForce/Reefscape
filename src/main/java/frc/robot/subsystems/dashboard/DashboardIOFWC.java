@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.ctre.phoenix6.Utils;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -24,6 +25,7 @@ public class DashboardIOFWC implements DashboardIO
     private final DoublePublisher stagePublisher;
     private final DoubleArrayPublisher autoPosePublisher;
     private final DoubleArrayPublisher autoPathPublisher;
+    private final DoubleArrayPublisher posePublisher;
 
     /**
      * Creates a new DashboardIOFWC. This connects to the FWC dashboard using "FWC"
@@ -41,6 +43,7 @@ public class DashboardIOFWC implements DashboardIO
         table.getBooleanTopic("connected").publish().set(true);
         autoPosePublisher = table.getDoubleArrayTopic("AutoPose").publish();
         autoPathPublisher = table.getDoubleArrayTopic("AutoPath").publish();
+        posePublisher = table.getDoubleArrayTopic("Pose").publish();
     }
 
     @Override
@@ -59,6 +62,13 @@ public class DashboardIOFWC implements DashboardIO
     public void setStage(DashboardIOStage stage)
     {
         stagePublisher.set(stage.ordinal());
+    }
+
+    @Override
+    public void updatePose(Pose2d pose)
+    {
+        posePublisher.set(new double[]
+        { pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getRotation().getRadians() });
     }
 
     @Override

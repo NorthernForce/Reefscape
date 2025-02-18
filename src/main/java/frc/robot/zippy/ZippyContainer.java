@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.FieldConstants;
 import frc.robot.subsystems.dashboard.Dashboard;
@@ -39,7 +38,6 @@ public class ZippyContainer implements NFRRobotContainer
     private Alliance alliance = allianceSupplier.get();
     private final PhotonVision vision;
     private final Dashboard dashboard;
-    private final Command testCommand;
 
     public ZippyContainer()
     {
@@ -56,7 +54,6 @@ public class ZippyContainer implements NFRRobotContainer
         LoggedPowerDistribution.getInstance(40, ModuleType.kRev);
         dashboard.addDefaultAutoRoutine("Do Nothing", new AutoRoutine(new InstantCommand(), new Translation2d[]
         { new Translation2d(), new Translation2d() }, new Pose2d()));
-        testCommand = Commands.parallel(drive.getIdleCommand());
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
     }
 
@@ -90,6 +87,7 @@ public class ZippyContainer implements NFRRobotContainer
             alliance = allianceSupplier.get();
             drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
         }
+        dashboard.updatePose(drive.getPose());
         vision.setLastKnownRobotPose(drive.getPose());
         for (var poseEstimate : vision.getPoseEstimates())
         {
@@ -113,10 +111,6 @@ public class ZippyContainer implements NFRRobotContainer
     @Override
     public void disabledInit()
     {
-        if (testCommand.isScheduled())
-        {
-            testCommand.cancel();
-        }
         dashboard.setAutoStage();
     }
 
@@ -139,7 +133,6 @@ public class ZippyContainer implements NFRRobotContainer
     @Override
     public void testInit()
     {
-        testCommand.schedule();
         dashboard.setSettingsStage();
     }
 

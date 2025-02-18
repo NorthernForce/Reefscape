@@ -54,7 +54,6 @@ public class BlennyContainer implements NFRRobotContainer
     private Alliance alliance = allianceSupplier.get();
     private final Climber climber;
     private final Dashboard dashboard;
-    private final Command testCommand;
 
     /**
      * Create a new BlennyContainer
@@ -109,7 +108,6 @@ public class BlennyContainer implements NFRRobotContainer
             });
             break;
         }
-        testCommand = Commands.parallel(drive.getIdleCommand());
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
     }
 
@@ -191,6 +189,7 @@ public class BlennyContainer implements NFRRobotContainer
         {
             drive.addVisionMeasurement(poseEstimate.pose(), poseEstimate.timestamp());
         }
+        dashboard.updatePose(drive.getPose());
     }
 
     public void teleopInit()
@@ -201,10 +200,6 @@ public class BlennyContainer implements NFRRobotContainer
     @Override
     public void disabledInit()
     {
-        if (testCommand.isScheduled())
-        {
-            testCommand.cancel();
-        }
         dashboard.setAutoStage();
     }
 
@@ -221,7 +216,6 @@ public class BlennyContainer implements NFRRobotContainer
     @Override
     public void testInit()
     {
-        testCommand.schedule();
         dashboard.setSettingsStage();
     }
 }
