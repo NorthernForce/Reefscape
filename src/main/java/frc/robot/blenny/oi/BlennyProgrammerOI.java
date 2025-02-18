@@ -3,6 +3,7 @@ package frc.robot.blenny.oi;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.FieldConstants;
 import frc.robot.blenny.BlennyContainer;
@@ -37,6 +38,14 @@ public class BlennyProgrammerOI implements BlennyOI
 
         driverController.x().whileTrue(container.getDrive().getXLockCommand());
 
+        driverController.leftTrigger()
+                .whileTrue(Commands.either(
+                        container.getRollers().getAlgaeIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
+                        container.getRollers().getCoralIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
+                        () -> container.isInAlgaeState()));
+
+        driverController.rightTrigger()
+                .whileTrue(container.getRollers().getOuttakeCommand(BlennyConstants.RollersConstants.OUTTAKE_SPEED));
         container.getSuperstructure().getWrist()
                 .setDefaultCommand(container.getSuperstructure().getWrist().getStopCommand());
 
@@ -45,6 +54,8 @@ public class BlennyProgrammerOI implements BlennyOI
 
         manipulatorController.rightBumper().whileTrue(container.getSuperstructure().getWrist()
                 .getSetSpeedCommand(BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
+
+        container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
     }
 
 }
