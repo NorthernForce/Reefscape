@@ -27,6 +27,9 @@ import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOSwing;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
+import frc.robot.subsystems.rollers.Rollers;
+import frc.robot.subsystems.rollers.RollersIOTalonFXS;
+import frc.robot.subsystems.rollers.sensor.RollersSensorIOUltrasonic;
 import frc.robot.subsystems.photonvision.PhotonVision;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
@@ -48,12 +51,14 @@ import frc.robot.util.AutoRoutine;
 public class BlennyContainer implements NFRRobotContainer
 {
     private final PhoenixCommandDrive drive;
+    private final Rollers rollers;
     private final Superstructure superstructure;
     private final PhotonVision vision;
     private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
     private Alliance alliance = allianceSupplier.get();
     private final Climber climber;
     private final Dashboard dashboard;
+    private boolean inAlgaeState = false;
 
     /**
      * Create a new BlennyContainer
@@ -64,6 +69,18 @@ public class BlennyContainer implements NFRRobotContainer
                 BlennyConstants.DrivetrainConstants.MAX_SPEED, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 BlennyTunerConstants.FrontLeft, BlennyTunerConstants.FrontRight, BlennyTunerConstants.BackLeft,
                 BlennyTunerConstants.BackRight);
+
+        rollers = new Rollers(
+                new RollersIOTalonFXS(BlennyConstants.RollersConstants.ROLLER_MOTOR_LEFT_ID,
+                        BlennyConstants.RollersConstants.ROLLER_MOTOR_RIGHT_ID,
+                        BlennyConstants.RollersConstants.ROLLER_MOTORS_INVERTED),
+                new RollersSensorIOUltrasonic(BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ALGAE_TRIGGER,
+                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ALGAE_ECHO,
+                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ALGAE_MAX_DISTANCE),
+                new RollersSensorIOUltrasonic(BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_TRIGGER,
+                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_TRIGGER,
+                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_MAX_DISTANCE));
+
         vision = new PhotonVision(BlennyConstants.VisionConstants.cameraNames(),
                 BlennyConstants.VisionConstants.cameraTransforms(), BlennyConstants.VisionConstants.APRILTAG_LAYOUT,
                 BlennyConstants.VisionConstants.MAX_Y_COORDINATE, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
@@ -128,10 +145,16 @@ public class BlennyContainer implements NFRRobotContainer
     }
 
     /**
-     * Get the superstructure subsystem
+     * Get the rollers subsystem from the container
      * 
-     * @return the superstructure subsystem (Superstructure)
+     * @return the drive subsystem
      */
+
+    public Rollers getRollers()
+    {
+        return rollers;
+    }
+
     public Superstructure getSuperstructure()
     {
         return superstructure;
@@ -217,5 +240,10 @@ public class BlennyContainer implements NFRRobotContainer
     public void testInit()
     {
         dashboard.setSettingsStage();
+    }
+
+    public boolean isInAlgaeState()
+    {
+        return inAlgaeState;
     }
 }

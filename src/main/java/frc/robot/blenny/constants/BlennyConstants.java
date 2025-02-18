@@ -22,7 +22,7 @@ public class BlennyConstants
 {
     public static class DrivetrainConstants
     {
-        /** TODO */
+
         public static final LinearVelocity MAX_SPEED = MetersPerSecond.of(3.0);
         public static final AngularVelocity MAX_ANGULAR_SPEED = RotationsPerSecond.of(0.7);
         public static final LinearVelocity MAX_LINEAR_SPEED = MetersPerSecond.of(4.0);
@@ -205,5 +205,24 @@ public class BlennyConstants
         public static final int ENCODER_ID = 23;
         public static final Angle LOWER_LIMIT = Rotations.of(-0.03);
         public static final Angle UPPER_LIMIT = Rotations.of(0.22);
+    }
+
+    public static class RollersConstants
+    {
+        public static final double INTAKE_SPEED = 1;
+        public static final double OUTTAKE_SPEED = 1;
+        public static final int ROLLER_MOTOR_LEFT_ID = 1;
+        public static final int ROLLER_MOTOR_RIGHT_ID = 2;
+        public static final boolean ROLLER_MOTORS_INVERTED = false;
+
+        public static class SensorConstants
+        {
+            public static final int ULTRASONIC_CORAL_TRIGGER = 2;
+            public static final int ULTRASONIC_CORAL_ECHO = 3;
+            public static final int ULTRASONIC_ALGAE_TRIGGER = 4;
+            public static final int ULTRASONIC_ALGAE_ECHO = 5;
+            public static final Distance ULTRASONIC_CORAL_MAX_DISTANCE = Inches.of(2);
+            public static final Distance ULTRASONIC_ALGAE_MAX_DISTANCE = Inches.of(2);
+        }
     }
 }
