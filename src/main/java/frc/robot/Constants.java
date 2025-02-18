@@ -28,36 +28,29 @@ import com.ctre.phoenix6.Utils;
 public final class Constants
 {
 
-	public static enum Mode
-	{
-		/** Running on a real robot. */
-		REAL,
+    public static enum Mode
+    {
+        /** Running on a real robot. */
+        REAL,
 
-		/** Running a physics simulator. */
-		SIM,
+        /** Running a physics simulator. */
+        SIM,
 
-		/** Replaying from a log file. */
-		REPLAY
-	}
+        /** Replaying from a log file. */
+        REPLAY
+    }
 
-	public static Mode getMode()
-	{
-		if (Utils.isSimulation())
-		{
-			return Mode.SIM;
-		} else if (Utils.isReplay())
-		{
-			return Mode.REPLAY;
-		} else
-		{
-			return Mode.REAL;
-		}
-	}
-
-	public static enum OI
-	{
-		PROGRAMMER, DRIVER
-	}
-
-	public static final OI kOI = OI.PROGRAMMER;
+    public static Mode getMode()
+    {
+        if (Utils.isSimulation())
+        {
+            return Mode.SIM;
+        } else if (Utils.isReplay())
+        {
+            return Mode.REPLAY;
+        } else
+        {
+            return Mode.REAL;
+        }
+    }
 }

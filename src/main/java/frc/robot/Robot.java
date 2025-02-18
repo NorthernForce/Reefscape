@@ -13,8 +13,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.blenny.BlennyContainer;
 import frc.robot.zippy.ZippyContainer;
 
 import java.util.Map;
@@ -36,151 +40,167 @@ import org.northernforce.util.NFRRobotContainer;
  */
 public class Robot extends LoggedRobot
 {
-	private Command autoSelected = null;
-	private NFRRobotContainer container = null;
+    private Command autoSelected = null;
+    private NFRRobotContainer container = null;
+    private final Alert competitionCodeAlert = new Alert("Code has not been deployed from event branch",
+            Alert.AlertType.kWarning);
 
-	/**
-	 * This function is run when the robot is first started up and should be used
-	 * for any initialization code.
-	 */
-	@Override
-	public void robotInit()
-	{
-		// Record metadata
-		Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
-		Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
-		Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-		Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
-		Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
-		switch (BuildConstants.DIRTY)
-		{
-		case 0:
-			Logger.recordMetadata("GitDirty", "All changes committed");
-			break;
-		case 1:
-			Logger.recordMetadata("GitDirty", "Uncomitted changes");
-			break;
-		default:
-			Logger.recordMetadata("GitDirty", "Unknown");
-			break;
-		}
+    public static boolean isCompetition()
+    {
+        return DriverStation.isFMSAttached();
+    }
 
-		final NFRRobotChooser chooser = new NFRRobotChooser(() -> new ZippyContainer(),
-				Map.of("0316d7d7", () -> new ZippyContainer()));
+    private final Notifier notifier = new Notifier(() -> System.gc());
 
-		Logger.recordMetadata("RoboRIO ID", NFRRobotChooser.getRoborioID());
+    /**
+     * This function is run when the robot is first started up and should be used
+     * for any initialization code.
+     */
+    @Override
+    public void robotInit()
+    {// Record metadata
+        Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+        Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+        Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+        Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
+        Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+        switch (BuildConstants.DIRTY)
+        {
+        case 0:
+            Logger.recordMetadata("GitDirty", "All changes committed");
+            break;
+        case 1:
+            Logger.recordMetadata("GitDirty", "Uncomitted changes");
+            break;
+        default:
+            Logger.recordMetadata("GitDirty", "Unknown");
+            break;
+        }
 
-		// Set up data receivers & replay source
-		switch (Constants.getMode())
-		{
-		case REAL:
-			// Running on a real robot, log to a USB stick ("/U/logs")
-			Logger.addDataReceiver(new WPILOGWriter());
-			Logger.addDataReceiver(new NT4Publisher());
-			break;
+        final NFRRobotChooser chooser = new NFRRobotChooser(() -> new BlennyContainer(),
+                Map.of("0316d7d7", () -> new ZippyContainer(), "023C3578", () -> new BlennyContainer()));
 
-		case SIM:
-			// Running a physics simulator, log to NT
-			Logger.addDataReceiver(new NT4Publisher());
-			break;
+        Logger.recordMetadata("RoboRIO ID", NFRRobotChooser.getRoborioID());
 
-		case REPLAY:
-			// Replaying a log, set up replay source
-			setUseTiming(false); // Run as fast as possible
-			String logPath = LogFileUtil.findReplayLog();
-			Logger.setReplaySource(new WPILOGReader(logPath));
-			Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
-			break;
-		}
+        // Set up data receivers & replay source
+        switch (Constants.getMode())
+        {
+        case REAL:
+            // Running on a real robot, log to a USB stick ("/U/logs")
+            Logger.addDataReceiver(new WPILOGWriter());
+            Logger.addDataReceiver(new NT4Publisher());
+            break;
 
-		// See http://bit.ly/3YIzFZ6 for more information on timestamps in AdvantageKit.
-		// Logger.disableDeterministicTimestamps()
+        case SIM:
+            // Running a physics simulator, log to NT
+            Logger.addDataReceiver(new NT4Publisher());
+            break;
 
-		// Start AdvantageKit logger
-		Logger.start();
-		container = chooser.getNFRRobotContainer();
+        case REPLAY:
+            // Replaying a log, set up replay source
+            setUseTiming(false); // Run as fast as possible
+            String logPath = LogFileUtil.findReplayLog();
+            Logger.setReplaySource(new WPILOGReader(logPath));
+            Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+            break;
+        }
 
-		container.bindOI();
-	}
+        // See http://bit.ly/3YIzFZ6 for more information on timestamps in AdvantageKit.
+        // Logger.disableDeterministicTimestamps()
 
-	/** This function is called periodically during all modes. */
-	@Override
-	public void robotPeriodic()
-	{
-		CommandScheduler.getInstance().run();
-		container.periodic();
-	}
+        // Start AdvantageKit logger
+        Logger.start();
+        container = chooser.getNFRRobotContainer();
+    }
 
-	/** This function is called once when autonomous is enabled. */
-	@Override
-	public void autonomousInit()
-	{
-		container.autonomousInit();
-		autoSelected = container.getAutonomousCommand();
-		if (autoSelected != null)
-		{
-			System.out.println("Auto selected: " + autoSelected.getName());
-			autoSelected.schedule();
-		}
-	}
+    /** This function is called periodically during all modes. */
+    @Override
+    public void robotPeriodic()
+    {
+        CommandScheduler.getInstance().run();
+        container.periodic();
+        competitionCodeAlert.set(isCompetition() && !BuildConstants.GIT_BRANCH.startsWith("event"));
+    }
 
-	/** This function is called periodically during autonomous. */
-	@Override
-	public void autonomousPeriodic()
-	{
-		container.autonomousPeriodic();
-	}
+    /** This function is called once when autonomous is enabled. */
+    @Override
+    public void autonomousInit()
+    {
+        container.autonomousInit();
+        autoSelected = container.getAutonomousCommand();
+        if (autoSelected != null)
+        {
+            System.out.println("Auto selected: " + autoSelected.getName());
+            autoSelected.schedule();
+        }
+    }
 
-	/** This function is called once when teleop is enabled. */
-	@Override
-	public void teleopInit()
-	{
-		if (autoSelected != null && autoSelected.isScheduled())
-		{
-			autoSelected.cancel();
-		}
-	}
+    /** This function is called periodically during autonomous. */
+    @Override
+    public void autonomousPeriodic()
+    {
+        container.autonomousPeriodic();
+    }
 
-	/** This function is called periodically during operator control. */
-	@Override
-	public void teleopPeriodic()
-	{
-		container.teleopPeroidic();
-	}
+    /** This function is called once when teleop is enabled. */
+    @Override
+    public void teleopInit()
+    {
+        CommandScheduler.getInstance().cancelAll();
+        CommandScheduler.getInstance().getActiveButtonLoop().clear();
+        container.bindDriverOI();
+        if (autoSelected != null && autoSelected.isScheduled())
+        {
+            autoSelected.cancel();
+        }
+        container.teleopInit();
+    }
 
-	/** This function is called once when the robot is disabled. */
-	@Override
-	public void disabledInit()
-	{
-	}
+    /** This function is called periodically during operator control. */
+    @Override
+    public void teleopPeriodic()
+    {
+        container.teleopPeroidic();
+    }
 
-	/** This function is called periodically when disabled. */
-	@Override
-	public void disabledPeriodic()
-	{
-	}
+    /** This function is called once when the robot is disabled. */
+    @Override
+    public void disabledInit()
+    {
+        container.disabledInit();
+    }
 
-	/** This function is called once when test mode is enabled. */
-	@Override
-	public void testInit()
-	{
-	}
+    /** This function is called periodically when disabled. */
+    @Override
+    public void disabledPeriodic()
+    {
+    }
 
-	/** This function is called periodically during test mode. */
-	@Override
-	public void testPeriodic()
-	{
-	}
+    /** This function is called once when test mode is enabled. */
+    @Override
+    public void testInit()
+    {
+        CommandScheduler.getInstance().cancelAll();
+        CommandScheduler.getInstance().getActiveButtonLoop().clear();
+        container.bindProgrammerOI();
+        container.testInit();
+    }
 
-	/** This function is called once when the robot is first started up. */
-	@Override
-	public void simulationInit()
-	{
-	}
+    /** This function is called periodically during test mode. */
+    @Override
+    public void testPeriodic()
+    {
+    }
 
-	/** This function is called periodically whilst in simulation. */
-	@Override
-	public void simulationPeriodic()
-	{
-	}
+    /** This function is called once when the robot is first started up. */
+    @Override
+    public void simulationInit()
+    {
+    }
+
+    /** This function is called periodically whilst in simulation. */
+    @Override
+    public void simulationPeriodic()
+    {
+    }
 }
