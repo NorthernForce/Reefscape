@@ -4,6 +4,8 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
@@ -97,6 +99,41 @@ public class Dashboard extends SubsystemBase
         m_io.addCommand("swerve/resetEncoders", command);
     }
 
+    public void setResetWristEncoderCommand(Command command)
+    {
+        m_io.addCommand("Wrist/ResetEncoder", command);
+    }
+
+    public void setInnerElevatorGoToPosition(Command command)
+    {
+        m_io.addCommand("InnerElevator/GoToPosition", command);
+    }
+
+    public void setOuterElevatorGoToPosition(Command command)
+    {
+        m_io.addCommand("OuterElevator/GoToPosition", command);
+    }
+
+    public void setInnerElevatorPosition(Distance position)
+    {
+        m_io.setInnerElevatorPosition(position);
+    }
+
+    public void setOuterElevatorPosition(Distance position)
+    {
+        m_io.setOuterElevatorPosition(position);
+    }
+    
+    public Distance getInnerElevatorTargetPosition()
+    {
+        return m_input.innerElevatorTargetPosition;
+    }
+
+    public Distance getOuterElevatorTargetPosition()
+    {
+        return m_input.outerElevatorTargetPosition;
+    }
+
     public void updatePose(Pose2d pose)
     {
         m_io.updatePose(pose);
@@ -109,6 +146,7 @@ public class Dashboard extends SubsystemBase
         Logger.processInputs(getName() + "/Dashboard", m_input);
         reefDisplayIO.updateInputs(reefDisplayInputs);
         Logger.processInputs(getName() + "/ReefDisplayIO", reefDisplayInputs);
+        m_io.setTime(DriverStation.getMatchTime());
     }
 
     /**

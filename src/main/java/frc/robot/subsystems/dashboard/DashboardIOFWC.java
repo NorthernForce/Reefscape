@@ -1,5 +1,7 @@
 package frc.robot.subsystems.dashboard;
 
+import static edu.wpi.first.units.Units.Inches;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.ctre.phoenix6.Utils;
@@ -8,8 +10,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.FieldConstants;
@@ -26,6 +30,11 @@ public class DashboardIOFWC implements DashboardIO
     private final DoubleArrayPublisher autoPosePublisher;
     private final DoubleArrayPublisher autoPathPublisher;
     private final DoubleArrayPublisher posePublisher;
+    private final DoublePublisher matchTimePublisher;
+    private final DoubleSubscriber innerElevatorTargetPosition;
+    private final DoubleSubscriber outerElevatorTargetPosition;
+    private final DoublePublisher innerElevatorPosition;
+    private final DoublePublisher outerElevatorPosition;
 
     /**
      * Creates a new DashboardIOFWC. This connects to the FWC dashboard using "FWC"
@@ -44,6 +53,11 @@ public class DashboardIOFWC implements DashboardIO
         autoPosePublisher = table.getDoubleArrayTopic("AutoPose").publish();
         autoPathPublisher = table.getDoubleArrayTopic("AutoPath").publish();
         posePublisher = table.getDoubleArrayTopic("Pose").publish();
+        matchTimePublisher = table.getDoubleTopic("MatchTime").publish();
+        innerElevatorTargetPosition = table.getDoubleTopic("InnerElevator/TargetPosition").subscribe(0);
+        outerElevatorTargetPosition = table.getDoubleTopic("OuterElevator/TargetPosition").subscribe(0);
+        innerElevatorPosition = table.getDoubleTopic("InnerElevator/Position").publish();
+        outerElevatorPosition = table.getDoubleTopic("OuterElevator/Position").publish();
     }
 
     @Override
@@ -90,6 +104,8 @@ public class DashboardIOFWC implements DashboardIO
             pathArray[i * 2 + 1] = path[i].getY();
         }
         autoPathPublisher.set(pathArray);
+        inputs.innerElevatorTargetPosition = Inches.of(innerElevatorTargetPosition.get());
+        inputs.outerElevatorTargetPosition = Inches.of(outerElevatorTargetPosition.get());
     }
 
     @Override
@@ -102,5 +118,23 @@ public class DashboardIOFWC implements DashboardIO
     public void addCommand(String name, Command command)
     {
         SmartDashboard.putData("/FWC/" + name, command);
+    }
+
+    @Override
+    public void setTime(double time)
+    {
+        matchTimePublisher.set(time);
+    }
+
+    @Override
+    public void setInnerElevatorPosition(Distance position)
+    {
+        innerElevatorPosition.set(position.in(Inches));
+    }
+
+    @Override
+    public void setOuterElevatorPosition(Distance position)
+    {
+        outerElevatorPosition.set(position.in(Inches));
     }
 }

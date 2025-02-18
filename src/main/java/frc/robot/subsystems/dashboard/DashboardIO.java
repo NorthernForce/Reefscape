@@ -3,6 +3,7 @@ package frc.robot.subsystems.dashboard;
 import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.util.AutoRoutine;
 
@@ -22,6 +23,8 @@ public interface DashboardIO
     @AutoLog
     public static class DashboardIOInputs
     {
+        public Distance innerElevatorTargetPosition;
+        public Distance outerElevatorTargetPosition;
     }
 
     /**
@@ -68,6 +71,18 @@ public interface DashboardIO
     }
 
     public default void addCommand(String name, Command command)
+    {
+    }
+
+    public default void setTime(double time)
+    {
+    }
+
+    public default void setInnerElevatorPosition(Distance position)
+    {
+    }
+
+    public default void setOuterElevatorPosition(Distance position)
     {
     }
 }
