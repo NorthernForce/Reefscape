@@ -123,7 +123,7 @@ public class Dashboard extends SubsystemBase
     {
         m_io.setOuterElevatorPosition(position);
     }
-    
+
     public Distance getInnerElevatorTargetPosition()
     {
         return m_input.innerElevatorTargetPosition;
