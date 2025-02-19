@@ -112,6 +112,7 @@ public class LedsIOCANdle implements LedsIO
     @Override
     public void setColours(int rInput, int gInput, int bInput)
     {
+        clearAnimationBuffer();
         SmartDashboard.putBoolean("setting leds", true);
         System.out.println("setting led Colour");
         r = rInput;

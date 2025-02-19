@@ -91,15 +91,12 @@ public class LEDS extends SubsystemBase
 
     public Command getSetColour(int r, int g, int b)
     {
-        run(() -> clearAnimationBuffer());
-        SmartDashboard.putNumber("Second", (Instant.now().getEpochSecond()));
-        SmartDashboard.putBoolean("B button", !SmartDashboard.getBoolean("B button", false));
         return run(() -> setLEDColour(r, g, b));
     }
 
     public Command getRainbowAnimation()
     {
-        return run(() -> rainbowAnimation());
+        return run(() -> rainbowAnimation()).ignoringDisable(true);
     }
 
     public Command getIncrementAnimation()
