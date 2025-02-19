@@ -5,7 +5,7 @@ function WristWidget() {
     const [angle] = useEntry("/FWC/Wrist/Angle", 0);
     return (
         <div className="wrist-widget-container">
-            <RobotCommand className="reset-wrist" name="Reset Encoder" source-key="/SmartDashboard/ResetWrist" />
+            <RobotCommand className="reset-wrist" name="Reset Encoder" source-key="/FWC/Wrist/ResetEncoder" />
             <Gauge className="wrist-angle" value={angle} min={0} max={360} />
         </div>
     );

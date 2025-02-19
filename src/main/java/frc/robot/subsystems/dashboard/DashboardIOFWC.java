@@ -137,4 +137,22 @@ public class DashboardIOFWC implements DashboardIO
     {
         outerElevatorPosition.set(position.in(Inches));
     }
+
+    @Override
+    public void setTime(double time)
+    {
+        matchTimePublisher.set(time);
+    }
+
+    @Override
+    public void setInnerElevatorPosition(Distance position)
+    {
+        innerElevatorPosition.set(position.in(Inches));
+    }
+
+    @Override
+    public void setOuterElevatorPosition(Distance position)
+    {
+        outerElevatorPosition.set(position.in(Inches));
+    }
 }

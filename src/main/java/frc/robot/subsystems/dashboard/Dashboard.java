@@ -134,6 +134,41 @@ public class Dashboard extends SubsystemBase
         return m_input.outerElevatorTargetPosition;
     }
 
+    public void setResetWristEncoderCommand(Command command)
+    {
+        m_io.addCommand("Wrist/ResetEncoder", command);
+    }
+
+    public void setInnerElevatorGoToPosition(Command command)
+    {
+        m_io.addCommand("InnerElevator/GoToPosition", command);
+    }
+
+    public void setOuterElevatorGoToPosition(Command command)
+    {
+        m_io.addCommand("OuterElevator/GoToPosition", command);
+    }
+
+    public void setInnerElevatorPosition(Distance position)
+    {
+        m_io.setInnerElevatorPosition(position);
+    }
+
+    public void setOuterElevatorPosition(Distance position)
+    {
+        m_io.setOuterElevatorPosition(position);
+    }
+
+    public Distance getInnerElevatorTargetPosition()
+    {
+        return m_input.innerElevatorTargetPosition;
+    }
+
+    public Distance getOuterElevatorTargetPosition()
+    {
+        return m_input.outerElevatorTargetPosition;
+    }
+
     public void updatePose(Pose2d pose)
     {
         m_io.updatePose(pose);
