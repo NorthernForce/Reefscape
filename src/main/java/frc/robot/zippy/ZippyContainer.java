@@ -52,6 +52,7 @@ public class ZippyContainer implements NFRRobotContainer
         { new Translation2d(), new Translation2d() }, new Pose2d()));
         testCommand = Commands.parallel(drive.getIdleCommand());
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
+        leds.setDefaultCommand(leds.getRainbowAnimation().ignoringDisable(true));
     }
 
     public PhoenixCommandDrive getDrive()

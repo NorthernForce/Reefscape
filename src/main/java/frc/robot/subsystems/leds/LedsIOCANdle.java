@@ -278,6 +278,14 @@ public class LedsIOCANdle implements LedsIO
         }
     }
 
+    public void lightList(int[] leds, int r, int g, int b)
+    {
+        for (int i = 0; i < leds.length; i++)
+        {
+            candle.setLEDs(r, g, b,0, leds[i], 1);
+        }
+    }
+
     @Override
     public void updateInputs(LedIOInputs inputs)
     {

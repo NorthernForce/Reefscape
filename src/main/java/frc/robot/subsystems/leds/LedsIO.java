@@ -74,4 +74,8 @@ public interface LedsIO
     public default void clearAnimationBuffer()
     {
     }
+
+    public default void lightList(int[] leds, int r, int g, int b)
+    {
+    }
 }

@@ -79,6 +79,10 @@ public class LEDS extends SubsystemBase
         io.compassEffect(degrees);
     }
 
+    public void lightList(int[] leds, int r, int g, int b) {
+        io.lightList(leds, r, g, b);
+    }
+
     public Command getSetColour(int r, int g, int b)
     {
 
