@@ -110,7 +110,7 @@ public class BlennyConstants
 
     public static class LedConstants
     {
-        public static final int CANid = 22;
+        public static final int CANid = 30;
 
         public static LedsIO.LedConstantsRecord initSettings = new LedsIO.LedConstantsRecord(85, 0.5, 0.5, true, -1);
     }

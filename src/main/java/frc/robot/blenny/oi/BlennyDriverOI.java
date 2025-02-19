@@ -43,5 +43,7 @@ public class BlennyDriverOI implements BlennyOI
 
         driverController.leftBumper().whileTrue(container.getClimber().getClimbUpCommand(0.5));
         driverController.rightBumper().whileTrue(container.getClimber().getClimbDownCommand(0.5));
+        driverController.b().whileTrue(container.getLEDs().getSetColour(0, 255, 0));
+        driverController.y().whileTrue(container.getLEDs().getIncrementAnimation());
     }
 }

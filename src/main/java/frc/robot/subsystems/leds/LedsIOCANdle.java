@@ -1,5 +1,7 @@
 package frc.robot.subsystems.leds;
 
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdleConfiguration;
@@ -10,7 +12,11 @@ import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.TwinkleAnimation;
 import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LedsIOCANdle implements LedsIO
 {
@@ -31,28 +37,36 @@ public class LedsIOCANdle implements LedsIO
     private int b = 0;
     private boolean on = true;
     private int ledCount = 0;
-    private double brightness = 0;
-    private double animationSpeed = 0;
+    private double brightness = 0.0;
+    private double animationSpeed = 0.0;
     private boolean animating = true;
     private int animationIndex = 0;
 
     public LedsIOCANdle(int id, LedConstantsRecord ledSettings)
     {
-        initCANdle(id);
         ledCount = ledSettings.ledCount();
         brightness = ledSettings.ledBrightness();
         animationSpeed = ledSettings.animationSpeed();
         animating = ledSettings.animating();
         animationIndex = ledSettings.animationIndex();
+        initCANdle(id);
+    }
+
+    @Override
+    public CANdle getCANdle()
+    {
+        return candle;
     }
 
     public void initCANdle(int id)
     {
+        SmartDashboard.putBoolean("leds", true);
         candle = new CANdle(id);
         config = new CANdleConfiguration();
         config.stripType = LEDStripType.RGB;
         config.brightnessScalar = brightness;
         candle.configAllSettings(config);
+        setColours(225, 0, 0);
     }
 
     /**
@@ -98,6 +112,8 @@ public class LedsIOCANdle implements LedsIO
     @Override
     public void setColours(int rInput, int gInput, int bInput)
     {
+        SmartDashboard.putBoolean("setting leds", true);
+        System.out.println("setting led Colour");
         r = rInput;
         g = gInput;
         b = bInput;
@@ -209,7 +225,7 @@ public class LedsIOCANdle implements LedsIO
     @Override
     public void clearAnimationBuffer()
     {
-        for (int i = 0; i < ledCount; i++)
+        for (int i = 0; i < candle.getMaxSimultaneousAnimationCount(); i++)
         {
             candle.clearAnimation(i);
         }
@@ -282,7 +298,7 @@ public class LedsIOCANdle implements LedsIO
     {
         for (int i = 0; i < leds.length; i++)
         {
-            candle.setLEDs(r, g, b,0, leds[i], 1);
+            candle.setLEDs(r, g, b, 0, leds[i], 1);
         }
     }
 

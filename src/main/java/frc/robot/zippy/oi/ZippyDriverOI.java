@@ -39,6 +39,8 @@ public class ZippyDriverOI implements ZippyOI
                         processJoystickInput(driverJoystick::getRightX)));
 
         driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
+        driverJoystick.b().whileTrue(container.getLEDs().getSetColour(0, 255, 0));
+        //getLeds().setDefaultCommand(leds.getRainbowAnimation().ignoringDisable(true));
 
         driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
                 .resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
@@ -46,5 +48,6 @@ public class ZippyDriverOI implements ZippyOI
                 container.getDrive()));
 
         driverJoystick.b().whileTrue(container.getLEDs().getSetColour(255, 0, 0));
+        driverJoystick.y().whileTrue(container.getLEDs().getIncrementAnimation());
     }
 }

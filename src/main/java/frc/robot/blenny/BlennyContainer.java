@@ -9,6 +9,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
@@ -51,6 +54,7 @@ public class BlennyContainer implements NFRRobotContainer
     private final Climber climber;
     private final Dashboard dashboard;
     private final Command testCommand;
+    private final Alert testAlert = new Alert("This is a test alert", AlertType.kError);
 
     private final LEDS leds = new LEDS(
             new LedsIOCANdle(BlennyConstants.LedConstants.CANid, BlennyConstants.LedConstants.initSettings));
@@ -60,6 +64,8 @@ public class BlennyContainer implements NFRRobotContainer
      */
     public BlennyContainer()
     {
+        SmartDashboard.putBoolean("B button", false);
+
         drive = new PhoenixCommandDrive(BlennyTunerConstants.DrivetrainConstants,
                 BlennyConstants.DrivetrainConstants.MAX_SPEED, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 BlennyTunerConstants.FrontLeft, BlennyTunerConstants.FrontRight, BlennyTunerConstants.BackLeft,
@@ -104,7 +110,8 @@ public class BlennyContainer implements NFRRobotContainer
         }
         testCommand = Commands.parallel(drive.getIdleCommand());
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
-        leds.setDefaultCommand(leds.getRainbowAnimation().ignoringDisable(true));
+        // leds.setDefaultCommand(leds.getRainbowAnimation().ignoringDisable(true));
+        testAlert.set(true);
     }
 
     private void addAutonomousRoutines()

@@ -2,6 +2,8 @@ package frc.robot.subsystems.leds;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import com.ctre.phoenix.led.CANdle;
+
 import edu.wpi.first.units.measure.Angle;
 
 public interface LedsIO
@@ -78,4 +80,6 @@ public interface LedsIO
     public default void lightList(int[] leds, int r, int g, int b)
     {
     }
+
+    public CANdle getCANdle();
 }

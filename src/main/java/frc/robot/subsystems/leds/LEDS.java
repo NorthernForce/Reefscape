@@ -1,14 +1,19 @@
 package frc.robot.subsystems.leds;
 
+import java.time.Instant;
+import java.time.temporal.TemporalField;
+import java.util.Date;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDS extends SubsystemBase
 {
-
+    private int timeStamp = (int) Instant.now().getEpochSecond();
     private final LedsIO io;
     LedIOInputsAutoLogged inputs = new LedIOInputsAutoLogged();
 
@@ -79,13 +84,16 @@ public class LEDS extends SubsystemBase
         io.compassEffect(degrees);
     }
 
-    public void lightList(int[] leds, int r, int g, int b) {
+    public void lightList(int[] leds, int r, int g, int b)
+    {
         io.lightList(leds, r, g, b);
     }
 
     public Command getSetColour(int r, int g, int b)
     {
-
+        run(() -> clearAnimationBuffer());
+        SmartDashboard.putNumber("Second", (Instant.now().getEpochSecond()));
+        SmartDashboard.putBoolean("B button", !SmartDashboard.getBoolean("B button", false));
         return run(() -> setLEDColour(r, g, b));
     }
 

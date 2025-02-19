@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.zippy.ZippyContainer;
 import frc.robot.FieldConstants;
-import frc.robot.subsystems.leds.LEDS;
 
 public class ZippyProgrammerOI implements ZippyOI
 {
@@ -40,11 +39,12 @@ public class ZippyProgrammerOI implements ZippyOI
                         processJoystickInput(driverJoystick::getRightX)));
 
         driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
-
+        container.getLEDs().setDefaultCommand(container.getLEDs().getRainbowAnimation().ignoringDisable(true));
         driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
                 .resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
                         DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
                 container.getDrive()));
-        driverJoystick.b().whileTrue(container.getLEDs().getSetColour(255, 0, 0));
+        driverJoystick.b().whileTrue(container.getLEDs().getSetColour(0, 255, 0));
+        driverJoystick.y().whileTrue(container.getLEDs().getIncrementAnimation());
     }
 }
