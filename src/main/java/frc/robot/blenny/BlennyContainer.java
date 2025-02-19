@@ -213,6 +213,8 @@ public class BlennyContainer implements NFRRobotContainer
             drive.addVisionMeasurement(poseEstimate.pose(), poseEstimate.timestamp());
         }
         dashboard.updatePose(drive.getPose());
+        dashboard.setInnerElevatorPosition(superstructure.getInnerElevator().getPosition());
+        dashboard.setOuterElevatorPosition(superstructure.getOuterElevator().getPosition());
     }
 
     public void teleopInit()

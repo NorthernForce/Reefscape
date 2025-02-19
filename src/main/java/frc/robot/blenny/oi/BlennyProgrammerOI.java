@@ -83,6 +83,11 @@ public class BlennyProgrammerOI implements BlennyOI
         manipulatorController.x().whileTrue(
                 container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.HIGHER_ALGAE));
         container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
+
+        container.getDashboard().setInnerElevatorGoToPosition(container.getSuperstructure().getInnerElevator()
+                .getMoveToPositionCommand(container.getDashboard().getInnerElevatorTargetPosition()));
+        container.getDashboard().setOuterElevatorGoToPosition(container.getSuperstructure().getOuterElevator()
+                .getMoveToPositionCommand(container.getDashboard().getOuterElevatorTargetPosition()));
     }
 
 }
