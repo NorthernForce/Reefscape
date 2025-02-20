@@ -33,6 +33,7 @@ public class BlennyDriverOI implements BlennyOI
     public void bindOI(BlennyContainer container)
     {
         CommandXboxController driverController = new CommandXboxController(0);
+        CommandXboxController manipulatorController = new CommandXboxController(1);
 
         container.getDrive().setDefaultCommand(container.getDrive().getDriveByJoystickCommand(
                 processJoystickInput(driverController::getLeftY), processJoystickInput(driverController::getLeftX),
@@ -51,14 +52,46 @@ public class BlennyDriverOI implements BlennyOI
 
         driverController.rightTrigger().whileTrue(container.getRollers().getOuttakeCommand(1));
 
-        driverController.leftBumper().whileTrue(container.getClimber().getClimbUpCommand(0.5));
-        driverController.rightBumper().whileTrue(container.getClimber().getClimbDownCommand(0.5));
+        driverController.a().whileTrue(container.getClimber().getClimbUpCommand(0.5));
+        driverController.b().whileTrue(container.getClimber().getClimbDownCommand(0.5));
 
         driverController.start()
                 .whileTrue(container.getSuperstructure().getHomingCommand(
                         BlennyConstants.InnerElevatorConstants.HOMING_SPEED,
                         BlennyConstants.OuterElevatorConstants.HOMING_SPEED));
+        
         container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
 
+        container.getSuperstructure().getWrist()
+                .setDefaultCommand(container.getSuperstructure().getWrist().getStopCommand());
+
+        manipulatorController.povLeft()
+                .whileTrue(container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.L1));
+        manipulatorController.povUp()
+                .whileTrue(container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.L2));
+        manipulatorController.povRight()
+                .whileTrue(container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.L3));
+        manipulatorController.povDown()
+                .whileTrue(container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.L4));
+        manipulatorController.a().whileTrue(
+                container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.CORAL_STATION));
+        manipulatorController.b().whileTrue(
+                container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.PROCESSOR_STATION));
+        manipulatorController.y().whileTrue(
+                container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.LOWER_ALGAE));
+        manipulatorController.x().whileTrue(
+                container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.HIGHER_ALGAE));
+        
+        manipulatorController.leftBumper().whileTrue(container.getSuperstructure().getWrist()
+                .getSetSpeedCommand(-BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
+
+        manipulatorController.rightBumper().whileTrue(container.getSuperstructure().getWrist()
+                .getSetSpeedCommand(BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
+        
+        container.getSuperstructure().getInnerElevator().setDefaultCommand(container.getSuperstructure()
+                .getInnerElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getRightY)));
+
+        container.getSuperstructure().getOuterElevator().setDefaultCommand(container.getSuperstructure()
+                .getOuterElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getLeftY)));
     }
 }

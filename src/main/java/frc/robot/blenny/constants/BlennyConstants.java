@@ -221,8 +221,10 @@ public class BlennyConstants
             public static final int ULTRASONIC_CORAL_ECHO = 3;
             public static final int ULTRASONIC_ALGAE_TRIGGER = 4;
             public static final int ULTRASONIC_ALGAE_ECHO = 5;
-            public static final Distance ULTRASONIC_CORAL_MAX_DISTANCE = Inches.of(2);
-            public static final Distance ULTRASONIC_ALGAE_MAX_DISTANCE = Inches.of(2);
+            public static final Distance CORAL_MAX_DISTANCE = Inches.of(2);
+            public static final Distance ALGAE_MAX_DISTANCE = Inches.of(2);
+            public static final int ANALOG_CORAL = 0;
+            public static final int ANALOG_ALGAE = 1;
         }
     }
 }

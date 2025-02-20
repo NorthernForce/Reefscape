@@ -46,6 +46,7 @@ public class BlennyProgrammerOI implements BlennyOI
 
         driverController.rightTrigger()
                 .whileTrue(container.getRollers().getOuttakeCommand(BlennyConstants.RollersConstants.OUTTAKE_SPEED));
+        
         container.getSuperstructure().getWrist()
                 .setDefaultCommand(container.getSuperstructure().getWrist().getStopCommand());
 
@@ -82,7 +83,10 @@ public class BlennyProgrammerOI implements BlennyOI
                 container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.LOWER_ALGAE));
         manipulatorController.x().whileTrue(
                 container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.HIGHER_ALGAE));
+        
         container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
+
+        container.getClimber().setDefaultCommand(container.getClimber().getStopCommand());
 
         container.getDashboard().setInnerElevatorGoToPosition(container.getSuperstructure().getInnerElevator()
                 .getMoveToPositionCommand(container.getDashboard().getInnerElevatorTargetPosition()));
