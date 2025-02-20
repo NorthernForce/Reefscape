@@ -78,7 +78,7 @@ public class BlennyContainer implements NFRRobotContainer
                         BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ALGAE_ECHO,
                         BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ALGAE_MAX_DISTANCE),
                 new RollersSensorIOUltrasonic(BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_TRIGGER,
-                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_TRIGGER,
+                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_ECHO,
                         BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_MAX_DISTANCE));
 
         vision = new PhotonVision(BlennyConstants.VisionConstants.cameraNames(),
@@ -126,6 +126,9 @@ public class BlennyContainer implements NFRRobotContainer
             break;
         }
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
+        dashboard.setResetWristEncoderCommand(superstructure.getWrist().runOnce(
+                () -> superstructure.getWrist().resetEncoderAngle(Degrees.of(0)))
+                .ignoringDisable(true));
     }
 
     private void addAutonomousRoutines()

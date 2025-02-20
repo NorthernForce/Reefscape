@@ -117,7 +117,7 @@ public class DashboardIOFWC implements DashboardIO
     @Override
     public void addCommand(String name, Command command)
     {
-        SmartDashboard.putData("/FWC/" + name, command);
+        SmartDashboard.putData(name, command);
     }
 
     @Override
