@@ -1,4 +1,4 @@
-import { Field, FieldPath, FieldRobot, useEntry } from "@frc-web-components/react";
+import { Field, FieldPath, FieldRobot, NetworkAlerts, useEntry } from "@frc-web-components/react";
 import AutoSelector from "./AutoSelector";
 
 import './Auto.css';
@@ -31,6 +31,7 @@ function Auto() {
                         <FieldRobot pose={autoPose} />
                         <FieldPath translations={autoPath} />
                     </Field>
+                    <NetworkAlerts className="auto-alerts" />
                 </div>
             </div>
         </>

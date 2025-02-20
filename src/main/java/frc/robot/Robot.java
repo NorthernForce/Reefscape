@@ -13,6 +13,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.blenny.BlennyContainer;
@@ -39,6 +42,16 @@ public class Robot extends LoggedRobot
 {
     private Command autoSelected = null;
     private NFRRobotContainer container = null;
+    private final Alert competitionCodeAlert = new Alert("Code has not been deployed from event branch",
+            Alert.AlertType.kWarning);
+
+    public static boolean isCompetition()
+    {
+        return DriverStation.isFMSAttached();
+    }
+
+    @SuppressWarnings("unused")
+    private final Notifier notifier = new Notifier(() -> System.gc());
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -46,8 +59,7 @@ public class Robot extends LoggedRobot
      */
     @Override
     public void robotInit()
-    {
-        // Record metadata
+    {// Record metadata
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
         Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
         Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
@@ -72,7 +84,7 @@ public class Robot extends LoggedRobot
         Logger.recordMetadata("RoboRIO ID", NFRRobotChooser.getRoborioID());
 
         // Set up data receivers & replay source
-        switch (Constants.kCurrentMode)
+        switch (Constants.getMode())
         {
         case REAL:
             // Running on a real robot, log to a USB stick ("/U/logs")
@@ -100,8 +112,6 @@ public class Robot extends LoggedRobot
         // Start AdvantageKit logger
         Logger.start();
         container = chooser.getNFRRobotContainer();
-
-        container.bindOI();
     }
 
     /** This function is called periodically during all modes. */
@@ -110,6 +120,7 @@ public class Robot extends LoggedRobot
     {
         CommandScheduler.getInstance().run();
         container.periodic();
+        competitionCodeAlert.set(isCompetition() && !BuildConstants.GIT_BRANCH.startsWith("event"));
     }
 
     /** This function is called once when autonomous is enabled. */
@@ -136,6 +147,9 @@ public class Robot extends LoggedRobot
     @Override
     public void teleopInit()
     {
+        CommandScheduler.getInstance().cancelAll();
+        CommandScheduler.getInstance().getActiveButtonLoop().clear();
+        container.bindDriverOI();
         if (autoSelected != null && autoSelected.isScheduled())
         {
             autoSelected.cancel();
@@ -167,6 +181,10 @@ public class Robot extends LoggedRobot
     @Override
     public void testInit()
     {
+        CommandScheduler.getInstance().cancelAll();
+        CommandScheduler.getInstance().getActiveButtonLoop().clear();
+        container.bindProgrammerOI();
+        container.testInit();
     }
 
     /** This function is called periodically during test mode. */

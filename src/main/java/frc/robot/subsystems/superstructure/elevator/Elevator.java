@@ -2,9 +2,12 @@ package frc.robot.subsystems.superstructure.elevator;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.superstructure.elevator.brake.BrakeIO;
@@ -27,6 +30,7 @@ public class Elevator extends SubsystemBase
     private final ElevatorSensorIOInputsAutoLogged m_sensorInputs = new ElevatorSensorIOInputsAutoLogged();
     private final double m_errorTolerance;
     private Distance targetState;
+    private Alert m_motorNotFoundAlert;
 
     /**
      * Creates a new Elevator
@@ -43,6 +47,8 @@ public class Elevator extends SubsystemBase
         m_sensor = sensor;
         m_errorTolerance = errorTolerance;
         targetState = Meters.of(0);
+        m_motorNotFoundAlert = new Alert("Elevator motor not found with name: " + getName(), Alert.AlertType.kWarning);
+
     }
 
     /**
@@ -80,6 +86,26 @@ public class Elevator extends SubsystemBase
         });
     }
 
+    public Command getMoveByJoystick(DoubleSupplier joystick)
+    {
+        return run(() ->
+        {
+            m_motor.setSpeed(joystick.getAsDouble(), false);
+        });
+    }
+
+    public Command getHomingCommand(double homingSpeed)
+    {
+        return runOnce(() ->
+        {
+            m_motor.setSpeed(-homingSpeed, true);
+        }).until(() -> m_sensorInputs.isAtBottom).andThen(() ->
+        {
+            m_motor.stop();
+            m_motor.resetPosition();
+        });
+    }
+
     /**
      * Gets the command to stop the elevator
      * 
@@ -110,6 +136,8 @@ public class Elevator extends SubsystemBase
         {
             m_motor.resetPosition();
         }
+
+        m_motorNotFoundAlert.set(!m_inputs.present);
     }
 
     /**
