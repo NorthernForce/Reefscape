@@ -96,12 +96,12 @@ public class Dashboard extends SubsystemBase
 
     public void setResetEncodersCommand(Command command)
     {
-        m_io.addCommand("swerve/resetEncoders", command);
+        m_io.addCommand("ResetSwerveWheels", command);
     }
 
     public void setResetWristEncoderCommand(Command command)
     {
-        m_io.addCommand("Wrist/ResetEncoder", command);
+        m_io.addCommand("ResetWrist", command);
     }
 
     public void setInnerElevatorGoToPosition(Command command)

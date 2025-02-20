@@ -4,7 +4,7 @@ function DriveWidget()
 {
     return (
         <div className="drive-widget">
-            <RobotCommand className="reset-encoders" name="Reset Encoders" source-key="/FWC/swerve/resetEncoders" />
+            <RobotCommand className="reset-encoders" name="Reset Encoders" source-key="/SmartDashboard/ResetSwerveWheels" />
         </div>
     );
 }
