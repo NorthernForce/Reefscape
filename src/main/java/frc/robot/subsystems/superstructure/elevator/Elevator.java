@@ -94,16 +94,45 @@ public class Elevator extends SubsystemBase
         });
     }
 
-    public Command getHomingCommand(double homingSpeed)
+    public class ElevatorHomingCommand extends Command
     {
-        return runOnce(() ->
+        private double speed;
+
+        public ElevatorHomingCommand(double speed)
         {
-            m_motor.setSpeed(-homingSpeed, true);
-        }).until(() -> m_sensorInputs.isAtBottom).andThen(() ->
+            this.speed = speed;
+        }
+
+        @Override
+        public void initialize()
+        {
+            m_motor.setLowerLimitEnable(false);
+        }
+
+        @Override
+        public void execute()
+        {
+            m_motor.setSpeed(-speed, true);
+        }
+
+        @Override
+        public boolean isFinished()
+        {
+            return m_sensorInputs.isAtBottom;
+        }
+
+        @Override
+        public void end(boolean isFinished)
         {
             m_motor.stop();
             m_motor.resetPosition();
-        });
+            m_motor.setLowerLimitEnable(true);
+        }
+    }
+
+    public Command getHomingCommand(double homingSpeed)
+    {
+        return new ElevatorHomingCommand(homingSpeed);
     }
 
     /**

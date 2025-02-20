@@ -4,20 +4,18 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearAcceleration;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Temperature;
 
 /**
@@ -31,56 +29,8 @@ public class ElevatorIOTalonFX implements ElevatorIO
     private final StatusSignal<Temperature> m_temperature;
     private final StatusSignal<Current> m_current;
     private final Supplier<Boolean> m_isPresent;
-    private final double gearRatio;
-    private final Distance sprocketCircumference;
     private final MotionMagicVoltage m_motionMagicVoltage;
     private final DutyCycleOut m_duty = new DutyCycleOut(0);
-
-    /**
-     * Converts rotations to distance
-     * 
-     * @param rotations the rotations to convert
-     * @return the distance
-     */
-    private final Distance convertRotationsToDistance(Angle rotations)
-    {
-        return Meters.of(rotations.in(Rotations) / gearRatio * sprocketCircumference.in(Meters));
-    }
-
-    /**
-     * Converts distance to rotations
-     * 
-     * @param distance the distance to convert
-     * @return the rotations
-     */
-    private final Angle convertDistanceToRotations(Distance distance)
-    {
-        return Rotations.of(distance.in(Meters) / sprocketCircumference.in(Meters) * gearRatio);
-    }
-
-    /**
-     * Converts linear velocity to angular velocity
-     * 
-     * @param linearVelocity the linear velocity to convert
-     * @return the angular velocity
-     */
-    private final AngularVelocity convertLinearVelocityToAngularVelocity(LinearVelocity linearVelocity)
-    {
-        return RotationsPerSecond.of(linearVelocity.in(MetersPerSecond) * gearRatio / sprocketCircumference.in(Meters));
-    }
-
-    /**
-     * Converts linear acceleration to angular acceleration
-     * 
-     * @param linearAcceleration the linear acceleration to convert
-     * @return the angular acceleration
-     */
-    private final AngularAcceleration convertLinearAccelerationToAngularAcceleration(
-            LinearAcceleration linearAcceleration)
-    {
-        return RotationsPerSecondPerSecond
-                .of(linearAcceleration.in(MetersPerSecondPerSecond) * gearRatio / sprocketCircumference.in(Meters));
-    }
 
     /**
      * Constants for the elevator
@@ -100,8 +50,8 @@ public class ElevatorIOTalonFX implements ElevatorIO
      * @param upperLimit            the upper limit
      */
     public static record ElevatorConstants(double kS, double kV, double kA, double kP, double kI, double kD,
-            LinearVelocity cruiseVelocity, LinearAcceleration acceleration, double jerk, Distance sprocketCircumference,
-            double gearRatio, boolean inverted, Distance upperLimit) {
+            double cruiseVelocity, double acceleration, double jerk, Distance sprocketCircumference, double gearRatio,
+            boolean inverted, Distance upperLimit) {
     }
 
     /**
@@ -136,13 +86,11 @@ public class ElevatorIOTalonFX implements ElevatorIO
      * @param upperLimit            the upper limit
      */
     public ElevatorIOTalonFX(int id, double kS, double kV, double kA, double kP, double kI, double kD,
-            LinearVelocity cruiseVelocity, LinearAcceleration acceleration, double jerk, Distance sprocketCircumference,
-            double gearRatio, boolean inverted, Distance upperLimit)
+            double cruiseVelocity, double acceleration, double jerk, Distance sprocketCircumference, double gearRatio,
+            boolean inverted, Distance upperLimit)
     {
         m_motor = new TalonFX(id);
         TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
-        this.gearRatio = gearRatio;
-        this.sprocketCircumference = sprocketCircumference;
 
         var slot0Configs = talonFXConfigs.Slot0;
         slot0Configs.kS = kS;
@@ -153,17 +101,17 @@ public class ElevatorIOTalonFX implements ElevatorIO
         slot0Configs.kD = kD;
 
         var motionMagicConfigs = talonFXConfigs.MotionMagic;
-        motionMagicConfigs.MotionMagicCruiseVelocity = convertLinearVelocityToAngularVelocity(cruiseVelocity)
-                .in(RotationsPerSecond);
-        motionMagicConfigs.MotionMagicAcceleration = convertLinearAccelerationToAngularAcceleration(acceleration)
-                .in(RotationsPerSecondPerSecond);
+        motionMagicConfigs.MotionMagicCruiseVelocity = motionMagicConfigs.MotionMagicAcceleration = 160;
         motionMagicConfigs.MotionMagicJerk = jerk;
-        talonFXConfigs.MotorOutput.Inverted = inverted ? InvertedValue.CounterClockwise_Positive
-                : InvertedValue.Clockwise_Positive;
+        talonFXConfigs.MotorOutput.Inverted = inverted ? InvertedValue.Clockwise_Positive
+                : InvertedValue.CounterClockwise_Positive;
+        talonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+        talonFXConfigs.Feedback.RotorToSensorRatio = 1;
+        talonFXConfigs.Feedback.SensorToMechanismRatio = gearRatio / sprocketCircumference.in(Inches);
 
         talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = convertDistanceToRotations(upperLimit)
-                .in(Rotations);
+        talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = upperLimit.in(Inches);
         talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
@@ -186,13 +134,23 @@ public class ElevatorIOTalonFX implements ElevatorIO
     @Override
     public void setTargetPosition(Distance height)
     {
-        m_motor.setControl(m_motionMagicVoltage.withPosition(convertDistanceToRotations(height)));
+        m_motor.setControl(m_motionMagicVoltage.withPosition(height.in(Inches)));
+    }
+
+    @Override
+    public void setLowerLimitEnable(boolean enableLowerLimit)
+    {
+
+        TalonFXConfiguration config = new TalonFXConfiguration();
+        m_motor.getConfigurator().refresh(config);
+        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = enableLowerLimit;
+        m_motor.getConfigurator().apply(config);
     }
 
     @Override
     public void setSpeed(double speed, boolean overrideLowerLimit)
     {
-        m_motor.setControl(m_duty.withOutput(speed).withLimitReverseMotion(overrideLowerLimit));
+        m_motor.setControl(m_duty.withOutput(speed));
     }
 
     /**
@@ -222,8 +180,9 @@ public class ElevatorIOTalonFX implements ElevatorIO
     @Override
     public void updateInputs(ElevatorIO.ElevatorIOInputs inputs)
     {
+        BaseStatusSignal.refreshAll(m_temperature, m_position, m_current);
         inputs.temperature = m_temperature.getValue();
-        inputs.position = convertRotationsToDistance(m_position.getValue());
+        inputs.position = Inches.of(m_position.getValue().in(Rotations));
         inputs.current = m_current.getValue();
         inputs.present = m_isPresent.get();
     }

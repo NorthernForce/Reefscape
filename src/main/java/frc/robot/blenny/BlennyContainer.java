@@ -78,7 +78,7 @@ public class BlennyContainer implements NFRRobotContainer
                         BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ALGAE_ECHO,
                         BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ALGAE_MAX_DISTANCE),
                 new RollersSensorIOUltrasonic(BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_TRIGGER,
-                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_TRIGGER,
+                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_ECHO,
                         BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_MAX_DISTANCE));
 
         vision = new PhotonVision(BlennyConstants.VisionConstants.cameraNames(),
@@ -92,15 +92,16 @@ public class BlennyContainer implements NFRRobotContainer
         case SIM:
         case REAL:
             superstructure = new Superstructure(new Elevator("InnerElevator",
-                    new ElevatorIOTalonFX(14, BlennyConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
+                    new ElevatorIOTalonFX(15, BlennyConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
                     {
-                    }, new ElevatorSensorIOLimitSwitch(0), 0.2),
+                    }, new ElevatorSensorIOLimitSwitch(1), 0.2),
                     new Elevator("OuterElevator",
-                            new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
+                            new ElevatorIOTalonFX(14, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
                             new BrakeIO()
                             {
-                            }, new ElevatorSensorIOLimitSwitch(1), 0.2),
-                    new Wrist(new WristIOTalonFX(16, 17, BlennyConstants.WristJointConstants.WRIST_CONSTANTS), 2.0));
+                            }, new ElevatorSensorIOLimitSwitch(0), 0.2),
+                    new Wrist(new WristIOTalonFX(16, 20, BlennyConstants.WristJointConstants.WRIST_CONSTANTS),
+                            Degrees.of(2.0)));
             climber = new Climber(new ClimberIOTalonFX(BlennyConstants.ClimberConstants.ID,
                     BlennyConstants.ClimberConstants.INVERTED, BlennyConstants.ClimberConstants.ENCODER_ID,
                     BlennyConstants.ClimberConstants.LOWER_LIMIT, BlennyConstants.ClimberConstants.UPPER_LIMIT));
@@ -119,7 +120,7 @@ public class BlennyContainer implements NFRRobotContainer
                     {
                     }, new ElevatorSensorIOLimitSwitch(1), 0.2), new Wrist(new WristIO()
                     {
-                    }, 2.0));
+                    }, Degrees.of(2.0)));
             climber = new Climber(new ClimberIO()
             {
             });

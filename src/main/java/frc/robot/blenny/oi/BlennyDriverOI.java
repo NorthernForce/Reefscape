@@ -33,6 +33,7 @@ public class BlennyDriverOI implements BlennyOI
     public void bindOI(BlennyContainer container)
     {
         CommandXboxController driverController = new CommandXboxController(0);
+        CommandXboxController manipulatorController = new CommandXboxController(1);
 
         container.getDrive().setDefaultCommand(container.getDrive().getDriveByJoystickCommand(
                 processJoystickInput(driverController::getLeftY), processJoystickInput(driverController::getLeftX),
@@ -49,7 +50,8 @@ public class BlennyDriverOI implements BlennyOI
                         container.getRollers().getCoralIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
                         () -> container.isInAlgaeState()));
 
-        driverController.rightTrigger().whileTrue(container.getRollers().getOuttakeCommand(1));
+        driverController.rightTrigger()
+                .whileTrue(container.getRollers().getOuttakeCommand(BlennyConstants.RollersConstants.OUTTAKE_SPEED));
 
         driverController.leftBumper().whileTrue(container.getClimber().getClimbUpCommand(0.5));
         driverController.rightBumper().whileTrue(container.getClimber().getClimbDownCommand(0.5));
@@ -59,6 +61,35 @@ public class BlennyDriverOI implements BlennyOI
                         BlennyConstants.InnerElevatorConstants.HOMING_SPEED,
                         BlennyConstants.OuterElevatorConstants.HOMING_SPEED));
         container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
+
+        container.getSuperstructure().getWrist()
+                .setDefaultCommand(container.getSuperstructure().getWrist().getStopCommand());
+
+        manipulatorController.leftBumper().whileTrue(container.getSuperstructure().getWrist()
+                .getSetSpeedCommand(-BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
+
+        manipulatorController.rightBumper().whileTrue(container.getSuperstructure().getWrist()
+                .getSetSpeedCommand(BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
+
+        manipulatorController.leftTrigger()
+                .whileTrue(Commands.either(
+                        container.getRollers().getAlgaeIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
+                        container.getRollers().getCoralIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
+                        () -> container.isInAlgaeState()));
+
+        manipulatorController.rightTrigger()
+                .whileTrue(container.getRollers().getOuttakeCommand(BlennyConstants.RollersConstants.OUTTAKE_SPEED));
+
+        manipulatorController.start()
+                .whileTrue(container.getSuperstructure().getHomingCommand(
+                        BlennyConstants.InnerElevatorConstants.HOMING_SPEED,
+                        BlennyConstants.OuterElevatorConstants.HOMING_SPEED));
+
+        container.getSuperstructure().getInnerElevator().setDefaultCommand(container.getSuperstructure()
+                .getInnerElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getRightY)));
+
+        container.getSuperstructure().getOuterElevator().setDefaultCommand(container.getSuperstructure()
+                .getOuterElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getLeftY)));
 
     }
 }

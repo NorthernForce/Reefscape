@@ -72,11 +72,8 @@ public class BlennyConstants
     public static class InnerElevatorConstants
     {
         // outer ratios
-        public static final double GEAR_BOX_RATIO = 20.0;
-        public static final double SPROCKET_DIAM = 1.44;
-        public static final double SPROCKET_TEETH = 18;
-        public static final double GEAR_RATIO = GEAR_BOX_RATIO * SPROCKET_TEETH / SPROCKET_DIAM;
-        public static final double SPROCKET_CIRCUMFERENCE = Math.PI * SPROCKET_DIAM;
+        public static final double GEAR_BOX_RATIO = 25.0;
+        public static final Distance SPROCKET_CIRCUMFERENCE = Inches.of(4.0);
 
         // talon configs
         public static final double kS = 0.25;
@@ -88,60 +85,55 @@ public class BlennyConstants
         public static final double CRUISE_VELOCITY = 80;
         public static final double ACCELERATION = 160;
         public static final double JERK = 1600;
-        public static final Distance UPPER_LIMIT = Inches.of(0);
+        public static final Distance UPPER_LIMIT = Inches.of(25.8);
 
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD,
-                MetersPerSecond.of(CRUISE_VELOCITY), MetersPerSecondPerSecond.of(ACCELERATION), JERK,
-                Meters.of(SPROCKET_CIRCUMFERENCE), GEAR_RATIO, false, UPPER_LIMIT);
+                CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, true, UPPER_LIMIT);
 
-        public static final double HOMING_SPEED = 0.5;
+        public static final double HOMING_SPEED = 0.05;
     }
 
     public static class OuterElevatorConstants
     {
         // outer ratios
-        public static final double GEAR_BOX_RATIO = 20.0;
-        public static final double SPROCKET_DIAM = 1.44;
-        public static final double SPROCKET_TEETH = 18;
-        public static final double GEAR_RATIO = GEAR_BOX_RATIO * SPROCKET_TEETH / SPROCKET_DIAM;
-        public static final double SPROCKET_CIRCUMFERENCE = Math.PI * SPROCKET_DIAM;
+        public static final double GEAR_BOX_RATIO = 27.0;
+        public static final Distance SPROCKET_CIRCUMFERENCE = Inches.of(4.5);
 
         // talon configs
         public static final double kS = 0.25;
         public static final double kV = 0.12;
         public static final double kA = 0.02;
-        public static final double kP = 4.8;
+        public static final double kP = 4;
         public static final double kI = 0.0;
         public static final double kD = 0.1;
         public static final double CRUISE_VELOCITY = 80;
         public static final double ACCELERATION = 160;
         public static final double JERK = 1600;
-        public static final Distance UPPER_LIMIT = Inches.of(0);
+        public static final Distance UPPER_LIMIT = Inches.of(26.7);
 
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD,
-                MetersPerSecond.of(CRUISE_VELOCITY), MetersPerSecondPerSecond.of(ACCELERATION), JERK,
-                Meters.of(SPROCKET_CIRCUMFERENCE), GEAR_RATIO, false, UPPER_LIMIT);
+                CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, false, UPPER_LIMIT);
 
-        public static final double HOMING_SPEED = 0.5;
+        public static final double HOMING_SPEED = 0.05;
     }
 
     public static class WristJointConstants
     {
-        public static final double kS = 0.25;
-        public static final double kV = 0.12;
-        public static final double kA = 0.02;
-        public static final double kP = 4.8;
+        public static final double kS = 0.2;
+        public static final double kV = 20;
+        public static final double kA = 30;
+        public static final double kP = 15;
         public static final double kI = 0.0;
-        public static final double kD = 0.1;
-        public static final double CRUISE_VELOCITY = 80;
-        public static final double ACCELERATION = 160;
-        public static final double JERK = 1600;
+        public static final double kD = 0.0;
+        public static final double CRUISE_VELOCITY = 700;
+        public static final double ACCELERATION = 300;
+        public static final double JERK = 600;
         public static final boolean INVERTED = false;
-        public static final Angle UPPER_LIMIT = Degrees.of(60);
-        public static final Angle LOWER_LIMIT = Degrees.of(0);
+        public static final Angle UPPER_LIMIT = Rotations.of(0.098);
+        public static final Angle LOWER_LIMIT = Degrees.of(0.252);
         public static final double SENSOR_TO_MECHANISM_RATIO = 1.0;
-        public static final double ROTOR_TO_SENSOR_RATIO = 20.0;
-        public static final double MANUAL_MOVE_SPEED = 0.8;
+        public static final double ROTOR_TO_SENSOR_RATIO = 192.0;
+        public static final double MANUAL_MOVE_SPEED = 0.05;
 
         public static final WristConstants WRIST_CONSTANTS = new WristConstants(kS, kV, kA, kP, kI, kD, CRUISE_VELOCITY,
                 ACCELERATION, JERK, INVERTED, UPPER_LIMIT, LOWER_LIMIT, SENSOR_TO_MECHANISM_RATIO,
@@ -209,10 +201,10 @@ public class BlennyConstants
 
     public static class RollersConstants
     {
-        public static final double INTAKE_SPEED = 1;
-        public static final double OUTTAKE_SPEED = 1;
-        public static final int ROLLER_MOTOR_LEFT_ID = 1;
-        public static final int ROLLER_MOTOR_RIGHT_ID = 2;
+        public static final double INTAKE_SPEED = 0.4;
+        public static final double OUTTAKE_SPEED = 0.4;
+        public static final int ROLLER_MOTOR_LEFT_ID = 18;
+        public static final int ROLLER_MOTOR_RIGHT_ID = 19;
         public static final boolean ROLLER_MOTORS_INVERTED = false;
 
         public static class SensorConstants
