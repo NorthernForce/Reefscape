@@ -126,9 +126,8 @@ public class BlennyContainer implements NFRRobotContainer
             break;
         }
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
-        dashboard.setResetWristEncoderCommand(superstructure.getWrist().runOnce(
-                () -> superstructure.getWrist().resetEncoderAngle(Degrees.of(0)))
-                .ignoringDisable(true));
+        dashboard.setResetWristEncoderCommand(superstructure.getWrist()
+                .runOnce(() -> superstructure.getWrist().resetEncoderAngle(Degrees.of(0))).ignoringDisable(true));
     }
 
     private void addAutonomousRoutines()
