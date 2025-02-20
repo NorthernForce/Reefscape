@@ -64,4 +64,9 @@ public class ZippyProgrammerOI implements ZippyOI
                         container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kForward),
                         container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kReverse)));
     }
+		driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
+				.resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
+						DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
+				container.getDrive()));
+	}
 }
