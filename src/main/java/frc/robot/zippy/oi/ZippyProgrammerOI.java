@@ -5,6 +5,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -63,7 +64,6 @@ public class ZippyProgrammerOI implements ZippyOI
                         container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kReverse),
                         container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kForward),
                         container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kReverse)));
-    }
 		driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
 				.resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
 						DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
