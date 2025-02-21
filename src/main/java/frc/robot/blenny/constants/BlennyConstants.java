@@ -29,12 +29,12 @@ public class BlennyConstants
         public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(3.0);
         public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
         public static final Angle[] SWERVE_MODULE_OFFSETS =
-        { Rotations.of(Preferences.getDouble("kSwerveOffestFrontLeft", BlennyTunerConstants.FrontLeft.EncoderOffset)),
-                Rotations.of(Preferences.getDouble("kSwerveOffestFrontRight",
+        { Rotations.of(Preferences.getDouble("kSwerveOffsetFrontLeft", BlennyTunerConstants.FrontLeft.EncoderOffset)),
+                Rotations.of(Preferences.getDouble("kSwerveOffsetFrontRight",
                         BlennyTunerConstants.FrontRight.EncoderOffset)),
                 Rotations.of(
-                        Preferences.getDouble("kSwerveOffestBackLeft", BlennyTunerConstants.BackLeft.EncoderOffset)),
-                Rotations.of(Preferences.getDouble("kSwerveOffestBackRight",
+                        Preferences.getDouble("kSwerveOffsetBackLeft", BlennyTunerConstants.BackLeft.EncoderOffset)),
+                Rotations.of(Preferences.getDouble("kSwerveOffsetBackRight",
                         BlennyTunerConstants.BackRight.EncoderOffset)) };
     }
 
@@ -76,19 +76,22 @@ public class BlennyConstants
         public static final Distance SPROCKET_CIRCUMFERENCE = Inches.of(4.0);
 
         // talon configs
-        public static final double kS = 0.25;
-        public static final double kV = 0.12;
-        public static final double kA = 0.02;
-        public static final double kP = 4.8;
+        public static final double kS = 0.12;
+        public static final double kV = 0.7;
+        public static final double kA = 0.5;
+        public static final double kP = 1.0;
         public static final double kI = 0.0;
-        public static final double kD = 0.1;
-        public static final double CRUISE_VELOCITY = 80;
-        public static final double ACCELERATION = 160;
-        public static final double JERK = 1600;
+        public static final double kD = 0.0;
+        public static final double CRUISE_VELOCITY = 1;
+        public static final double ACCELERATION = 0.008;
+        public static final double JERK = 0;
+        public static final double EXPO_kV = 0.12;
+        public static final double EXPO_kA = 0.1;
         public static final Distance UPPER_LIMIT = Inches.of(25.8);
 
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD,
-                CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, true, UPPER_LIMIT);
+                CRUISE_VELOCITY, ACCELERATION, JERK, EXPO_kV, EXPO_kA, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, true,
+                UPPER_LIMIT);
 
         public static final double HOMING_SPEED = 0.05;
     }
@@ -100,19 +103,22 @@ public class BlennyConstants
         public static final Distance SPROCKET_CIRCUMFERENCE = Inches.of(4.5);
 
         // talon configs
-        public static final double kS = 0.25;
-        public static final double kV = 0.12;
-        public static final double kA = 0.02;
-        public static final double kP = 4;
+        public static final double kS = 0.12;
+        public static final double kV = 0.7;
+        public static final double kA = 0.5;
+        public static final double kP = 1.0;
         public static final double kI = 0.0;
-        public static final double kD = 0.1;
-        public static final double CRUISE_VELOCITY = 80;
-        public static final double ACCELERATION = 160;
-        public static final double JERK = 1600;
+        public static final double kD = 0.0;
+        public static final double CRUISE_VELOCITY = 1;
+        public static final double ACCELERATION = 0.008;
+        public static final double JERK = 0;
+        public static final double EXPO_kV = 0.12;
+        public static final double EXPO_kA = 0.1;
         public static final Distance UPPER_LIMIT = Inches.of(26.7);
 
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD,
-                CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, false, UPPER_LIMIT);
+                CRUISE_VELOCITY, ACCELERATION, JERK, EXPO_kV, EXPO_kA, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, false,
+                UPPER_LIMIT);
 
         public static final double HOMING_SPEED = 0.05;
     }
@@ -146,8 +152,9 @@ public class BlennyConstants
 
     public static enum SuperstructureGoal implements GenericSuperstructureGoal
     {
-        L1(Inches.of(0), Inches.of(0), Degrees.of(0)), L2(Inches.of(0), Inches.of(0), Degrees.of(0)),
-        L3(Inches.of(0), Inches.of(0), Degrees.of(0)), L4(Inches.of(0), Inches.of(0), Degrees.of(0)),
+        L1(Inches.of(0), Inches.of(0), Degrees.of(0)), L2(Inches.of(4.69), Inches.of(5.55), Rotations.of(-0.095)),
+        L3(Inches.of(13.72), Inches.of(12.13), Rotations.of(-0.095)),
+        L4(Inches.of(26.6), Inches.of(25.6), Rotations.of(-0.083)),
         CORAL_STATION(Inches.of(0), Inches.of(0), Degrees.of(0)),
         PROCESSOR_STATION(Inches.of(0), Inches.of(0), Degrees.of(0)),
         LOWER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)), HIGHER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0));
@@ -201,11 +208,11 @@ public class BlennyConstants
 
     public static class RollersConstants
     {
-        public static final double INTAKE_SPEED = 0.4;
-        public static final double OUTTAKE_SPEED = 0.4;
+        public static final double INTAKE_SPEED = 0.8;
+        public static final double OUTTAKE_SPEED = 0.8;
         public static final int ROLLER_MOTOR_LEFT_ID = 18;
         public static final int ROLLER_MOTOR_RIGHT_ID = 19;
-        public static final boolean ROLLER_MOTORS_INVERTED = false;
+        public static final boolean ROLLER_MOTORS_INVERTED = true;
 
         public static class SensorConstants
         {

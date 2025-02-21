@@ -69,6 +69,35 @@ public class Elevator extends SubsystemBase
         m_motor.stop();
     }
 
+    public class ElevatorMoveToPositionCommand extends Command
+    {
+        private Distance position;
+
+        public ElevatorMoveToPositionCommand(Distance position)
+        {
+            addRequirements(Elevator.this);
+            this.position = position;
+        }
+
+        @Override
+        public void initialize()
+        {
+            setTargetPosition(position);
+        }
+
+        @Override
+        public boolean isFinished()
+        {
+            return isAtTargetPosition();
+        }
+
+        @Override
+        public void end(boolean interrupted)
+        {
+            stop();
+        }
+    }
+
     /**
      * Gets the command to move the elevator
      * 
@@ -77,13 +106,7 @@ public class Elevator extends SubsystemBase
      */
     public Command getMoveToPositionCommand(Distance position)
     {
-        return runOnce(() ->
-        {
-            setTargetPosition(position);
-        }).until(() -> isAtTargetPosition()).andThen(() ->
-        {
-            stop();
-        });
+        return new ElevatorMoveToPositionCommand(position);
     }
 
     public Command getMoveByJoystick(DoubleSupplier joystick)
@@ -100,6 +123,7 @@ public class Elevator extends SubsystemBase
 
         public ElevatorHomingCommand(double speed)
         {
+            addRequirements(Elevator.this);
             this.speed = speed;
         }
 

@@ -8,7 +8,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -29,7 +29,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
     private final StatusSignal<Temperature> m_temperature;
     private final StatusSignal<Current> m_current;
     private final Supplier<Boolean> m_isPresent;
-    private final MotionMagicVoltage m_motionMagicVoltage;
+    private final MotionMagicExpoVoltage m_motionMagicExpoVoltage;
     private final DutyCycleOut m_duty = new DutyCycleOut(0);
 
     /**
@@ -50,8 +50,8 @@ public class ElevatorIOTalonFX implements ElevatorIO
      * @param upperLimit            the upper limit
      */
     public static record ElevatorConstants(double kS, double kV, double kA, double kP, double kI, double kD,
-            double cruiseVelocity, double acceleration, double jerk, Distance sprocketCircumference, double gearRatio,
-            boolean inverted, Distance upperLimit) {
+            double cruiseVelocity, double acceleration, double jerk, double expoKv, double expoKa,
+            Distance sprocketCircumference, double gearRatio, boolean inverted, Distance upperLimit) {
     }
 
     /**
@@ -63,8 +63,9 @@ public class ElevatorIOTalonFX implements ElevatorIO
     public ElevatorIOTalonFX(int id, ElevatorConstants constants)
     {
         this(id, constants.kS(), constants.kV(), constants.kA(), constants.kP(), constants.kI(), constants.kD(),
-                constants.cruiseVelocity(), constants.acceleration(), constants.jerk(),
-                constants.sprocketCircumference(), constants.gearRatio(), constants.inverted(), constants.upperLimit());
+                constants.cruiseVelocity(), constants.acceleration(), constants.jerk(), constants.expoKv(),
+                constants.expoKa(), constants.sprocketCircumference(), constants.gearRatio(), constants.inverted(),
+                constants.upperLimit());
     }
 
     /**
@@ -86,8 +87,8 @@ public class ElevatorIOTalonFX implements ElevatorIO
      * @param upperLimit            the upper limit
      */
     public ElevatorIOTalonFX(int id, double kS, double kV, double kA, double kP, double kI, double kD,
-            double cruiseVelocity, double acceleration, double jerk, Distance sprocketCircumference, double gearRatio,
-            boolean inverted, Distance upperLimit)
+            double cruiseVelocity, double acceleration, double jerk, double expoKv, double expoKa,
+            Distance sprocketCircumference, double gearRatio, boolean inverted, Distance upperLimit)
     {
         m_motor = new TalonFX(id);
         TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
@@ -103,6 +104,9 @@ public class ElevatorIOTalonFX implements ElevatorIO
         var motionMagicConfigs = talonFXConfigs.MotionMagic;
         motionMagicConfigs.MotionMagicCruiseVelocity = motionMagicConfigs.MotionMagicAcceleration = 160;
         motionMagicConfigs.MotionMagicJerk = jerk;
+        motionMagicConfigs.MotionMagicExpo_kA = expoKa;
+        motionMagicConfigs.MotionMagicExpo_kV = expoKv;
+
         talonFXConfigs.MotorOutput.Inverted = inverted ? InvertedValue.Clockwise_Positive
                 : InvertedValue.CounterClockwise_Positive;
         talonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -122,7 +126,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
         m_current = m_motor.getTorqueCurrent();
         m_isPresent = () -> m_motor.isConnected();
 
-        m_motionMagicVoltage = new MotionMagicVoltage(0);
+        m_motionMagicExpoVoltage = new MotionMagicExpoVoltage(0);
     }
 
     /**
@@ -134,7 +138,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
     @Override
     public void setTargetPosition(Distance height)
     {
-        m_motor.setControl(m_motionMagicVoltage.withPosition(height.in(Inches)));
+        m_motor.setControl(m_motionMagicExpoVoltage.withPosition(height.in(Inches)));
     }
 
     @Override
