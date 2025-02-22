@@ -47,5 +47,8 @@ public class ZippyDriverOI implements ZippyOI
 
         driverJoystick.start().onTrue(Commands.runOnce(() -> container.getDrive().resetPose(FieldConstants
                 .convertPoseByAlliance(FieldConstants.ReefPositions.AB_ALGAE, FieldConstants.getAlliance()))));
+        driverJoystick.rightBumper()
+                .whileTrue(container.getDrive().driveToPose(container.getDashboard().getTargetPose()));
+
     }
 }
