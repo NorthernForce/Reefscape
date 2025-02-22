@@ -2,6 +2,8 @@ package frc.robot.zippy.oi;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.SignalLogger;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -47,8 +49,9 @@ public class ZippyProgrammerOI implements ZippyOI
                         DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
                 container.getDrive()));
 
-                driverJoystick.b()
+        driverJoystick.b()
                 .whileTrue(Commands.sequence(
+                        Commands.runOnce(() -> SignalLogger.start()),
                         container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kForward),
                         container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kReverse),
                         container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kForward),
@@ -62,7 +65,8 @@ public class ZippyProgrammerOI implements ZippyOI
                         container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kForward),
                         container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kReverse),
                         container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kForward),
-                        container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kReverse)));
+                        container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kReverse),
+                        Commands.runOnce(() -> SignalLogger.stop())));
         driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
                 .resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
                         DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
