@@ -2,6 +2,8 @@ package frc.robot.zippy.oi;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.SignalLogger;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -48,6 +50,8 @@ public class ZippyDriverOI implements ZippyOI
 
         driverJoystick.b()
                 .whileTrue(Commands.sequence(
+                    Commands.runOnce(() -> SignalLogger.start()),
+
                         container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kForward),
                         container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kReverse),
                         container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kForward),
@@ -61,7 +65,9 @@ public class ZippyDriverOI implements ZippyOI
                         container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kForward),
                         container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kReverse),
                         container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kForward),
-                        container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kReverse)));
+                        container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kReverse),
+                    Commands.runOnce(() -> SignalLogger.stop())
+                        ));
 
         driverJoystick.start().onTrue(Commands.runOnce(() -> container.getDrive().resetPose(FieldConstants
                 .convertPoseByAlliance(FieldConstants.ReefPositions.AB_ALGAE, FieldConstants.getAlliance()))));
