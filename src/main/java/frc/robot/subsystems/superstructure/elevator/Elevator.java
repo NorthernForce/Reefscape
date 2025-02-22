@@ -229,9 +229,10 @@ public class Elevator extends SubsystemBase
 
     private SysIdRoutine getSysIdRoutine()
     {
-        return new SysIdRoutine(new SysIdRoutine.Config(null, Volts.of(4), null,
-            state -> Logger.recordOutput(getName() + "/SysIdState", state)),
-            new SysIdRoutine.Mechanism(volts -> m_motor.setVoltage(volts), null, this));
+        return new SysIdRoutine(
+                new SysIdRoutine.Config(null, Volts.of(4), null,
+                        state -> Logger.recordOutput(getName() + "/SysIdState", state)),
+                new SysIdRoutine.Mechanism(volts -> m_motor.setVoltage(volts), null, this));
     }
 
     public Command getSysIdQuasistaicForward()
