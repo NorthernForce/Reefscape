@@ -1,5 +1,6 @@
 package frc.robot.blenny.oi;
 
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
@@ -88,6 +89,12 @@ public class BlennyProgrammerOI implements BlennyOI
                 .getMoveToPositionCommand(container.getDashboard().getInnerElevatorTargetPosition()));
         container.getDashboard().setOuterElevatorGoToPosition(container.getSuperstructure().getOuterElevator()
                 .getMoveToPositionCommand(container.getDashboard().getOuterElevatorTargetPosition()));
+        driverController.rightBumper()
+                .whileTrue(Commands.defer(
+                        () -> container.getDrive().driveToPose(container.getDashboard().getTargetPose())
+                                .alongWith(container.getSuperstructure()
+                                        .getGoToGoalCommand(container.getDashboard().getSuperstructureGoal())),
+                        Set.of(container.getSuperstructure())));
     }
 
 }

@@ -7,6 +7,7 @@ import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.FieldConstants.ReefLocations;
+import frc.robot.blenny.constants.BlennyConstants.SuperstructureGoal;
 
 /**
  * ReefDisplayIO for the Swing dashboard.
@@ -36,8 +37,17 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
     @Override
     public void updateInputs(ReefDisplayIOInputs inputs)
     {
-        grayedOutPublisher.accept(grayedOut);
         int selected = (int) selectedPoint.get();
+        SuperstructureGoal goal = (selected < 54
+                ? ((selected) % 9 == 0 || (selected) % 9 == 4) ? SuperstructureGoal.L1
+                        : (((selected) % 9 == 1 || (selected) % 9 == 5) ? SuperstructureGoal.L2
+                                : (((selected) % 9 == 2 || (selected) % 9 == 6) ? SuperstructureGoal.L3
+                                        : SuperstructureGoal.L4))
+                : (selected == 54 ? SuperstructureGoal.CORAL_STATION
+                        : (selected == 55 ? SuperstructureGoal.CORAL_STATION : SuperstructureGoal.PROCESSOR_STATION)));
+
+        inputs.goal = goal;
+        grayedOutPublisher.accept(grayedOut);
         if (selected >= 0 && selected < 4)
         {
             inputs.reefLocations = ReefLocations.E;
