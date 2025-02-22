@@ -49,9 +49,8 @@ public class ZippyProgrammerOI implements ZippyOI
                         DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
                 container.getDrive()));
 
-                driverJoystick.b()
-                .whileTrue(Commands.sequence(
-                    Commands.runOnce(() -> SignalLogger.start()),
+        driverJoystick.b()
+                .whileTrue(Commands.sequence(Commands.runOnce(() -> SignalLogger.start()),
                         container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kForward),
                         container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kReverse),
                         container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kForward),
