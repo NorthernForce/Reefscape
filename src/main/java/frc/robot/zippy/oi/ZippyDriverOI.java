@@ -4,6 +4,9 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.SignalLogger;
 
+import org.littletonrobotics.junction.console.RIOConsoleSource;
+
+import edu.wpi.first.hal.simulation.RoboRioDataJNI;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -47,6 +50,39 @@ public class ZippyDriverOI implements ZippyOI
                 .resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
                         DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
                 container.getDrive()));
+        driverJoystick.b()
+                .whileTrue(Commands.sequence(
+                        container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kReverse),
+
+                        container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kReverse),
+
+                        container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kReverse)));
+
+        driverJoystick.b()
+                .whileTrue(Commands.sequence(
+                        container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kReverse),
+
+                        container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kReverse),
+
+                        container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kReverse)));
 
         driverJoystick.b().whileTrue(Commands.sequence(Commands.runOnce(() -> SignalLogger.start()),
 
