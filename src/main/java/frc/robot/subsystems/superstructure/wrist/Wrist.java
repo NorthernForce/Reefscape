@@ -17,13 +17,13 @@ public class Wrist extends SubsystemBase
 {
     private final WristIO io;
     private final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
-    private final double errorTolerance;
+    private final Angle errorTolerance;
     private final Alert motorNotFoundAlert;
 
-    public Wrist(WristIO io, double errorToleranceDegrees)
+    public Wrist(WristIO io, Angle errorTolerance)
     {
         this.io = io;
-        errorTolerance = errorToleranceDegrees;
+        this.errorTolerance = errorTolerance;
         motorNotFoundAlert = new Alert("Wrist motor not found with name: " + getName(), Alert.AlertType.kError);
     }
 
@@ -87,7 +87,7 @@ public class Wrist extends SubsystemBase
      */
     public boolean isAtTargetPosition()
     {
-        return Math.abs(getAngle().in(Degrees) - getTargetAngle().in(Degrees)) < errorTolerance;
+        return Math.abs(getAngle().in(Degrees) - getTargetAngle().in(Degrees)) < errorTolerance.in(Degrees);
     }
 
     /**
@@ -100,7 +100,7 @@ public class Wrist extends SubsystemBase
      */
     public boolean isAtPosition(Angle angle)
     {
-        return Math.abs(getAngle().in(Degrees) - angle.in(Degrees)) < errorTolerance;
+        return Math.abs(getAngle().in(Degrees) - angle.in(Degrees)) < errorTolerance.in(Degrees);
     }
 
     /**

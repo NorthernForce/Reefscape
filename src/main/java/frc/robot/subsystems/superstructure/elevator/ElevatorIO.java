@@ -45,6 +45,10 @@ public interface ElevatorIO
     {
     }
 
+    public default void setLowerLimitEnable(boolean enableLowerLimit)
+    {
+    }
+
     public default void resetPosition()
     {
     }
