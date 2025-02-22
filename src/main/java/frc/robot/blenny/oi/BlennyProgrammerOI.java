@@ -88,6 +88,18 @@ public class BlennyProgrammerOI implements BlennyOI
                 .getMoveToPositionCommand(container.getDashboard().getInnerElevatorTargetPosition()));
         container.getDashboard().setOuterElevatorGoToPosition(container.getSuperstructure().getOuterElevator()
                 .getMoveToPositionCommand(container.getDashboard().getOuterElevatorTargetPosition()));
+        
+        manipulatorController.leftStick()
+            .whileTrue(Commands.sequence(container.getSuperstructure().getOuterElevator().getSysIdDynamicForward(),
+                container.getSuperstructure().getOuterElevator().getSysIdDynamicReverse(),
+                container.getSuperstructure().getOuterElevator().getSysIdQuasistaicForward(),
+                container.getSuperstructure().getOuterElevator().getSysIdQuasistaicReverse()));
+        
+        manipulatorController.rightStick()
+            .whileTrue(Commands.sequence(container.getSuperstructure().getInnerElevator().getSysIdDynamicForward(),
+                container.getSuperstructure().getInnerElevator().getSysIdDynamicReverse(),
+                container.getSuperstructure().getInnerElevator().getSysIdQuasistaicForward(),
+                container.getSuperstructure().getInnerElevator().getSysIdQuasistaicReverse()));
     }
 
 }
