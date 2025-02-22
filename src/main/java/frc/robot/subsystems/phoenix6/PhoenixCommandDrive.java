@@ -1,12 +1,20 @@
 package frc.robot.subsystems.phoenix6;
 
+import java.util.ArrayList;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
+
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -15,25 +23,33 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.subsystems.phoenix6.requests.XLockRequest;
 
 public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsystem
 {
     private final LinearVelocity maxSpeed;
     private final AngularVelocity maxAngularSpeed;
     private final SwerveRequest.ApplyRobotSpeeds applyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+    private final Alert motorDisconnectedAlert;
+    private final Alert encoderDisconnectedAlert;
+    private ArrayList<Integer> disconnectedMotorArray;
+    private ArrayList<Integer> disconnectedEncoderArray;
+    private String motorAlertString = "";
+    private String encoderAlertString = "";
 
     /**
      * Create a new PhoenixCommandDrive
@@ -51,7 +67,10 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         CommandScheduler.getInstance().registerSubsystem(this);
         this.maxSpeed = maxSpeed;
         this.maxAngularSpeed = maxAngularSpeed;
-
+        motorDisconnectedAlert = new Alert("", Alert.AlertType.kWarning);
+        encoderDisconnectedAlert = new Alert("", Alert.AlertType.kWarning);
+        disconnectedMotorArray = new ArrayList<>();
+        disconnectedEncoderArray = new ArrayList<>();
         // Configure the Pathplanner AutoBuilder for easier pathfinding
         configureAutoBuilder(linearPIDConstants, angularPIDConstants);
     }
@@ -72,6 +91,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         {
             e.printStackTrace();
         }
+
     }
 
     /**
@@ -129,8 +149,19 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      */
     public Command getXLockCommand()
     {
-        XLockRequest xLockRequest = new XLockRequest();
-        return applyRequest(() -> xLockRequest);
+        final var request = new SwerveRequest.SwerveDriveBrake();
+        return applyRequest(() -> request);
+    }
+
+    /**
+     * Lets the swerve drive idle
+     * 
+     * @return a command that lets the swerve drive idle
+     */
+    public Command getIdleCommand()
+    {
+        final var request = new SwerveRequest.Idle();
+        return applyRequest(() -> request);
     }
 
     /**
@@ -185,5 +216,91 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public void setCoastMode()
     {
         configNeutralMode(NeutralModeValue.Coast);
+    }
+
+    @Override
+    public void periodic()
+    {
+        disconnectedMotorArray.clear();
+        for (SwerveModule<TalonFX, TalonFX, ?> module : getModules())
+        {
+            if (!module.getDriveMotor().isConnected())
+            {
+                disconnectedMotorArray.add(module.getDriveMotor().getDeviceID());
+            }
+
+            if (!module.getSteerMotor().isConnected())
+            {
+                disconnectedMotorArray.add(module.getSteerMotor().getDeviceID());
+            }
+
+            if (!module.getEncoder().isConnected())
+            {
+                disconnectedEncoderArray.add(module.getEncoder().getDeviceID());
+            }
+        }
+
+        if (!disconnectedMotorArray.isEmpty())
+
+        {
+            motorAlertString = "The motors with the following IDs are disconnected: "
+                    + disconnectedMotorArray.stream().map(String::valueOf).collect(Collectors.joining(", "));
+
+            motorDisconnectedAlert.setText(motorAlertString);
+            motorDisconnectedAlert.set(true);
+        } else
+        {
+            motorDisconnectedAlert.set(false);
+        }
+
+        if (!disconnectedEncoderArray.isEmpty())
+        {
+            encoderAlertString = "The encoders with the following IDs are disconnected: "
+                    + disconnectedEncoderArray.stream().map(String::valueOf).collect(Collectors.joining(", "));
+
+            encoderDisconnectedAlert.setText(encoderAlertString);
+            encoderDisconnectedAlert.set(true);
+        } else
+        {
+            encoderDisconnectedAlert.set(false);
+        }
+    }
+
+    /**
+     * Reset the encoder angle to a target angle
+     * 
+     * @param moduleIdx   the module index
+     * @param targetAngle the target angle
+     */
+    private Angle resetEncoderAngle(int moduleIdx, Angle targetAngle)
+    {
+        final var module = getModule(moduleIdx);
+        final var currentAngle = Rotations.of(module.getCurrentState().angle.getRotations());
+        final var delta = targetAngle.minus(currentAngle);
+        final var cancoder = module.getEncoder();
+        final var config = new CANcoderConfiguration();
+        cancoder.getConfigurator().refresh(config);
+        final var currentOffest = Rotations.of(config.MagnetSensor.MagnetOffset);
+        var newOffset = currentOffest.plus(delta);
+        newOffset = Radians.of(MathUtil.angleModulus(newOffset.in(Radians)));
+        config.MagnetSensor.MagnetOffset = newOffset.in(Rotations);
+        cancoder.getConfigurator().apply(config);
+        return newOffset;
+    }
+
+    /**
+     * Reset the encoder angles to target angles
+     * 
+     * @param targetAngles the target angles
+     * @return the new offsets
+     */
+    public Angle[] resetEncoderAngles(Angle[] targetAngles)
+    {
+        final var newOffsets = new Angle[targetAngles.length];
+        for (int i = 0; i < targetAngles.length; i++)
+        {
+            newOffsets[i] = resetEncoderAngle(i, targetAngles[i]);
+        }
+        return newOffsets;
     }
 }

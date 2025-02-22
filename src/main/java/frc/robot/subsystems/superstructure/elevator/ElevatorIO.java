@@ -41,6 +41,14 @@ public interface ElevatorIO
     {
     }
 
+    public default void setSpeed(double speed, boolean overrideLowerLimit)
+    {
+    }
+
+    public default void setLowerLimitEnable(boolean enableLowerLimit)
+    {
+    }
+
     public default void resetPosition()
     {
     }
