@@ -44,8 +44,8 @@ public class ZippyContainer implements NFRRobotContainer
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
         drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants,
                 ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
-                ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,
-                ZippyTunerConstants.BackRight);
+                ZippyConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, ZippyTunerConstants.FrontLeft,
+                ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft, ZippyTunerConstants.BackRight);
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
         vision = new PhotonVision(ZippyConstants.VisionConstants.cameraNames(),
                 ZippyConstants.VisionConstants.cameraTransforms(), ZippyConstants.VisionConstants.APRILTAG_LAYOUT,
@@ -82,17 +82,18 @@ public class ZippyContainer implements NFRRobotContainer
     @Override
     public void periodic()
     {
-        if (alliance != allianceSupplier.get())
-        {
-            alliance = allianceSupplier.get();
-            drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
-        }
-        dashboard.updatePose(drive.getPose());
-        vision.setLastKnownRobotPose(drive.getPose());
-        for (var poseEstimate : vision.getPoseEstimates())
-        {
-            drive.addVisionMeasurement(poseEstimate.pose(), Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
-        }
+        // if (alliance != allianceSupplier.get())
+        // {
+        // alliance = allianceSupplier.get();
+        // drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
+        // }
+        // dashboard.updatePose(drive.getPose());
+        // vision.setLastKnownRobotPose(drive.getPose());
+        // for (var poseEstimate : vision.getPoseEstimates())
+        // {
+        // drive.addVisionMeasurement(poseEstimate.pose(),
+        // Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
+        // }
     }
 
     @Override
