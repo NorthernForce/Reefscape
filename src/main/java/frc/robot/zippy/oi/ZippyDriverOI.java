@@ -65,6 +65,23 @@ public class ZippyDriverOI implements ZippyOI
                         container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kForward),
                         container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kReverse)));
 
+        driverJoystick.b()
+                .whileTrue(Commands.sequence(
+                        container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kReverse),
+
+                        container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kReverse),
+
+                        container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kReverse)));
+
         driverJoystick.start().onTrue(Commands.runOnce(() -> container.getDrive().resetPose(FieldConstants
                 .convertPoseByAlliance(FieldConstants.ReefPositions.AB_ALGAE, FieldConstants.getAlliance()))));
     }
