@@ -48,25 +48,23 @@ public class BlennyProgrammerOI implements BlennyOI
                         container.getRollers().getCoralIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
                         () -> container.isInAlgaeState()));
 
-        
         driverController.b()
-        .whileTrue(Commands.sequence(
-                Commands.runOnce(() -> SignalLogger.start()),
-                container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kForward),
-                container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kReverse),
-                container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kForward),
-                container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kReverse),
+                .whileTrue(Commands.sequence(Commands.runOnce(() -> SignalLogger.start()),
+                        container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kReverse),
 
-                container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kForward),
-                container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kReverse),
-                container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kForward),
-                container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kReverse),
 
-                container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kForward),
-                container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kReverse),
-                container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kForward),
-                container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kReverse),
-                Commands.runOnce(() -> SignalLogger.stop())));
+                        container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kReverse),
+                        Commands.runOnce(() -> SignalLogger.stop())));
 
         driverController.rightTrigger()
                 .whileTrue(container.getRollers().getOuttakeCommand(BlennyConstants.RollersConstants.OUTTAKE_SPEED));
