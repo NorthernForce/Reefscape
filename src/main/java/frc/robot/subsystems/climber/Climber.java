@@ -2,8 +2,12 @@ package frc.robot.subsystems.climber;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.blenny.constants.BlennyConstants.ClimberConstants;
+
+import static edu.wpi.first.units.Units.*;
 
 /**
  * Climber subsystem for the robot.
@@ -69,6 +73,44 @@ public class Climber extends SubsystemBase
     public Command getClimbDownCommand(double climbSpeed)
     {
         return run(() -> climbDown(climbSpeed));
+    }
+
+    /**
+     * climb to perfect position
+     */
+
+    public Command climbToPosition(Angle position)
+    {
+        return run(() -> runTo(position));
+    }
+
+    /**
+     * returns a command that runs the climber to the sweet spot
+     */
+
+    public Command getRunToSweetSpotCommand()
+    {
+        return run(() -> runTo(Degrees.of(0))).andThen(run(() -> runTo(ClimberConstants.SWEET_ANGLE)));
+    }
+
+    /**
+     * returns a command that runs the climber to the top
+     */
+
+    public Command getClimbDown()
+    {
+        return run(() -> runTo(Degrees.of(0)));
+    }
+
+    /**
+     * runs to angle
+     * 
+     * @param angle angle to run to
+     */
+
+    public void runTo(Angle angle)
+    {
+        io.runTo(angle);
     }
 
     /**
