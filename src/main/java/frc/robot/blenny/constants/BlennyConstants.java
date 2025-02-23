@@ -219,6 +219,7 @@ public class BlennyConstants
         public static final int ENCODER_ID = 23;
         public static final Angle LOWER_LIMIT = Rotations.of(-0.03);
         public static final Angle UPPER_LIMIT = Rotations.of(0.22);
+        public static final Angle SWEET_ANGLE = Degrees.of(70.0);
     }
 
     public static class RollersConstants
