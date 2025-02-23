@@ -12,6 +12,7 @@ import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX.ElevatorCo
 import frc.robot.subsystems.superstructure.wrist.WristIOTalonFX.WristConstants;
 
 import static edu.wpi.first.units.Units.*;
+import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -199,6 +200,12 @@ public class BlennyConstants
         {
             return wristAngle;
         }
+    }
+
+    public static class PathplannerConstants
+    {
+        public static final PIDConstants linearPIDConstants = new PIDConstants(10.0, 0.0, 0.0);
+        public static final PIDConstants angularPIDConstants = new PIDConstants(5.0, 0.0, 0.0);
     }
 
     public static class ClimberConstants

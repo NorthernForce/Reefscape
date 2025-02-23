@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
+import frc.robot.blenny.constants.BlennyConstants.SuperstructureGoal;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIO;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOInputsAutoLogged;
 import frc.robot.util.AutoRoutine;
@@ -134,6 +135,23 @@ public class Dashboard extends SubsystemBase
         return m_input.outerElevatorTargetPosition;
     }
 
+    public SuperstructureGoal getGoal()
+    {
+        switch (reefDisplayInputs.level)
+        {
+        case 0:
+            return SuperstructureGoal.L1;
+        case 1:
+            return SuperstructureGoal.L2;
+        case 2:
+            return SuperstructureGoal.L3;
+        case 3:
+            return SuperstructureGoal.L4;
+        default:
+            return SuperstructureGoal.L1;
+        }
+    }
+
     public void updatePose(Pose2d pose)
     {
         m_io.updatePose(pose);
@@ -158,5 +176,10 @@ public class Dashboard extends SubsystemBase
     public AutoRoutine getRoutine()
     {
         return m_io.getSelectedRoutine();
+    }
+
+    public SuperstructureGoal getSuperstructureGoal()
+    {
+        return reefDisplayInputs.goal;
     }
 }

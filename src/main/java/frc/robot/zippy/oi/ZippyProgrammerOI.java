@@ -5,9 +5,11 @@ import java.util.function.DoubleSupplier;
 import com.ctre.phoenix6.SignalLogger;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.zippy.ZippyContainer;
@@ -44,11 +46,16 @@ public class ZippyProgrammerOI implements ZippyOI
 
         driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
 
+        driverJoystick.start()
+                .onTrue(container.getDrive().driveToPose(new Pose2d(new Translation2d(2, 2), Rotation2d.kZero)));
+
         driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
                 .resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
                         DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
                 container.getDrive()));
 
+        driverJoystick.rightBumper()
+                .whileTrue(container.getDrive().driveToPose(container.getDashboard().getTargetPose()));
         driverJoystick.b()
                 .whileTrue(Commands.sequence(Commands.runOnce(() -> SignalLogger.start()),
                         container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kForward),
