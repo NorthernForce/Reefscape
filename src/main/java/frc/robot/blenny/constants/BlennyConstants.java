@@ -101,7 +101,7 @@ public class BlennyConstants
     public static class OuterElevatorConstants
     {
         // outer ratios
-        public static final double GEAR_BOX_RATIO = 27.0;
+        public static final double GEAR_BOX_RATIO = 25.0;
         public static final double SPROCKET_TEETH = 22.0;
         public static final Distance SPROCKET_PITCH = Inches.of(0.25);
         public static final Distance SPROCKET_CIRCUMFERENCE = SPROCKET_PITCH.times(SPROCKET_TEETH);
@@ -156,14 +156,12 @@ public class BlennyConstants
 
     public static enum SuperstructureGoal implements GenericSuperstructureGoal
     {
-        L1(Inches.of(0), Inches.of(0), Degrees.of(0)),
-        L2(Inches.of(4.69), Inches.of(5.55), Rotations.of(-0.095)),
+        L1(Inches.of(0), Inches.of(0), Degrees.of(0)), L2(Inches.of(4.69), Inches.of(5.55), Rotations.of(-0.095)),
         L3(Inches.of(13.72), Inches.of(12.13), Rotations.of(-0.095)),
         L4(Inches.of(26.6), Inches.of(25.6), Rotations.of(-0.083)),
         CORAL_STATION(Inches.of(0), Inches.of(0), Degrees.of(0)),
         PROCESSOR_STATION(Inches.of(0), Inches.of(0), Degrees.of(0)),
-        LOWER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)),
-        HIGHER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0));
+        LOWER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)), HIGHER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0));
 
         private final Distance innerHeight;
         private final Distance outerHeight;
