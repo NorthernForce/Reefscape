@@ -12,7 +12,6 @@ import frc.robot.FieldConstants;
 import frc.robot.blenny.constants.BlennyConstants.SuperstructureGoal;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIO;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOInputsAutoLogged;
-import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.util.AutoRoutine;
 
 /**

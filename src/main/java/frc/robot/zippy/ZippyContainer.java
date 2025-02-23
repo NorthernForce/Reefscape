@@ -8,8 +8,6 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.northernforce.util.NFRRobotContainer;
 
-import com.ctre.phoenix6.Utils;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
@@ -53,9 +51,11 @@ public class ZippyContainer implements NFRRobotContainer
                 ZippyConstants.VisionConstants.MAX_Y_COORDINATE, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 ZippyConstants.DrivetrainConstants.MAX_LINEAR_SPEED, ZippyConstants.VisionConstants.CAMERA_WIDTH);
         LoggedPowerDistribution.getInstance(40, ModuleType.kRev);
+
+        dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
+
         dashboard.addDefaultAutoRoutine("Do Nothing", new AutoRoutine(new InstantCommand(), new Translation2d[]
         { new Translation2d(), new Translation2d() }, new Pose2d()));
-        dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
     }
 
     public PhoenixCommandDrive getDrive()
@@ -83,17 +83,18 @@ public class ZippyContainer implements NFRRobotContainer
     @Override
     public void periodic()
     {
-        if (alliance != allianceSupplier.get())
-        {
-            alliance = allianceSupplier.get();
-            drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
-        }
-        dashboard.updatePose(drive.getPose());
-        vision.setLastKnownRobotPose(drive.getPose());
-        for (var poseEstimate : vision.getPoseEstimates())
-        {
-            drive.addVisionMeasurement(poseEstimate.pose(), Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
-        }
+        // if (alliance != allianceSupplier.get())
+        // {
+        // alliance = allianceSupplier.get();
+        // drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
+        // }
+        // dashboard.updatePose(drive.getPose());
+        // vision.setLastKnownRobotPose(drive.getPose());
+        // for (var poseEstimate : vision.getPoseEstimates())
+        // {
+        // drive.addVisionMeasurement(poseEstimate.pose(),
+        // Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
+        // }
     }
 
     @Override
