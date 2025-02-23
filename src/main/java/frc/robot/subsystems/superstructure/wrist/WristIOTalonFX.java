@@ -6,11 +6,16 @@ import edu.wpi.first.units.measure.Temperature;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+
+import static edu.wpi.first.units.Units.Degrees;
+
 import java.util.function.Supplier;
 
 /**
@@ -24,7 +29,7 @@ public class WristIOTalonFX implements WristIO
     private final StatusSignal<Temperature> motorTemperature;
     private final StatusSignal<Current> motorCurrent;
     private final Supplier<Boolean> motorPresent;
-    private Angle targetAngle;
+    private Angle targetAngle = Degrees.of(0);
     private MotionMagicVoltage motorControl;
 
     /**
@@ -41,7 +46,7 @@ public class WristIOTalonFX implements WristIO
         motorTemperature = motor.getDeviceTemp();
         motorCurrent = motor.getTorqueCurrent();
         motorPresent = () -> motor.isConnected();
-        targetAngle = null;
+        targetAngle = Degrees.of(0);
 
         configureMotor(motorid, cancoderid, wristConstants);
     }
@@ -78,6 +83,7 @@ public class WristIOTalonFX implements WristIO
     @Override
     public void updateInputs(WristIOInputs inputs)
     {
+        BaseStatusSignal.refreshAll(cancoderAngle, motorTemperature, motorCurrent);
         inputs.encoderAngle = cancoderAngle.getValue();
         inputs.targetAngle = targetAngle;
         inputs.motorTemperature = motorTemperature.getValue();
@@ -107,12 +113,10 @@ public class WristIOTalonFX implements WristIO
     {
         var talonFXConfigs = new TalonFXConfiguration();
 
-        talonFXConfigs.Feedback.FeedbackRemoteSensorID = cancoderid;
-        talonFXConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-
         var slot0Configs = talonFXConfigs.Slot0;
         slot0Configs.kS = constants.kS();
         slot0Configs.kV = constants.kV();
+        slot0Configs.kA = constants.kA();
         slot0Configs.kP = constants.kP();
         slot0Configs.kI = constants.kI();
         slot0Configs.kD = constants.kD();
@@ -123,13 +127,21 @@ public class WristIOTalonFX implements WristIO
         motionMagicConfigs.MotionMagicJerk = constants.jerk();
 
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
-        cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-        cancoderConfigs.MagnetSensor.MagnetOffset = 0.4;
+        cancoder.getConfigurator().refresh(cancoderConfigs);
+        cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+        cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+
+        talonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         talonFXConfigs.Feedback.FeedbackRemoteSensorID = cancoder.getDeviceID();
-        talonFXConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
+        talonFXConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
         talonFXConfigs.Feedback.SensorToMechanismRatio = constants.sensorToMechanismRatio();
         talonFXConfigs.Feedback.RotorToSensorRatio = constants.rotorToSensorRatio();
+
+        talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.10315;
+        talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.25705;
+        talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
         motor.getConfigurator().apply(talonFXConfigs);
         cancoder.getConfigurator().apply(cancoderConfigs);

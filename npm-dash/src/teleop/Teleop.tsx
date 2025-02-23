@@ -11,17 +11,19 @@ function TimeDisplay(props: { time: number }) {
 }
 
 function Teleop() {
-    let [time] = useEntry("/FMSInfo/MatchTime", 0);
-    let remainingTime = () => 150 - time;
+    let [time] = useEntry("/FWC/MatchTime", 0);
+    let ip = new URLSearchParams(window.location.search).get("ip") || "10.1.72.2"
+    let ipBase = ip.split('.').slice(0, 3).join('.');
+    let visionCameraIp = `${ipBase}.15`;
 
     return <>
         <div className="teleop-container">
             <NetworkAlerts source-key="/Alerts" />
             <div className="time-display">
-                <TimeDisplay time={remainingTime()} />
+                <TimeDisplay time={time} />
             </div>
             <Canvas className="camera-feed">
-                <CanvasMjpgStream origin={[0,0]} crosshairColor="white" srcs={["http://10.1.72.15:1183/stream.mjpg"]} />
+                <CanvasMjpgStream origin={[0,0]} crosshairColor="white" srcs={[`http://${visionCameraIp}:1183/stream.mjpg`]} />
             </Canvas>
             <div></div>
         </div>

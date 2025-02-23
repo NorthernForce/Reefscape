@@ -7,6 +7,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.blenny.constants.BlennyConstants.SuperstructureGoal;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.superstructure.wrist.Wrist;
 
@@ -33,6 +34,7 @@ public class Superstructure extends SubsystemBase
     private final Elevator m_innerElevator;
     private final Elevator m_outerElevator;
     private final Wrist m_wrist;
+    private boolean m_goalIsAlgae = false;
 
     /**
      * Creates a new Superstructure
@@ -57,7 +59,11 @@ public class Superstructure extends SubsystemBase
     {
         return Commands.parallel(m_innerElevator.getMoveToPositionCommand(goal.getInnerElevatorGoal()),
                 m_outerElevator.getMoveToPositionCommand(goal.getOuterElevatorGoal()),
-                m_wrist.getMoveToAngleCommand(goal.getWristGoal()));
+                m_wrist.getMoveToAngleCommand(goal.getWristGoal()), Commands.runOnce(() ->
+                {
+                    m_goalIsAlgae = goal == SuperstructureGoal.HIGHER_ALGAE || goal == SuperstructureGoal.LOWER_ALGAE
+                            || goal == SuperstructureGoal.PROCESSOR_STATION;
+                }));
     }
 
     public Command getStopCommand()
@@ -106,5 +112,27 @@ public class Superstructure extends SubsystemBase
     public Wrist getWrist()
     {
         return m_wrist;
+    }
+
+    public Elevator getInnerElevator()
+    {
+        return m_innerElevator;
+    }
+
+    public Elevator getOuterElevator()
+    {
+        return m_outerElevator;
+    }
+
+    public Command getHomingCommand(double innerElevatorSpeed, double outerElevatorSpeed)
+    {
+        return Commands.parallel(m_innerElevator.getHomingCommand(innerElevatorSpeed),
+                m_outerElevator.getHomingCommand(outerElevatorSpeed));
+    }
+
+    @AutoLogOutput
+    public boolean isAlgaeGoal()
+    {
+        return m_goalIsAlgae;
     }
 }

@@ -2,9 +2,12 @@ package frc.robot.subsystems.superstructure.elevator;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.superstructure.elevator.brake.BrakeIO;
@@ -27,6 +30,7 @@ public class Elevator extends SubsystemBase
     private final ElevatorSensorIOInputsAutoLogged m_sensorInputs = new ElevatorSensorIOInputsAutoLogged();
     private final double m_errorTolerance;
     private Distance targetState;
+    private Alert m_motorNotFoundAlert;
 
     /**
      * Creates a new Elevator
@@ -43,6 +47,8 @@ public class Elevator extends SubsystemBase
         m_sensor = sensor;
         m_errorTolerance = errorTolerance;
         targetState = Meters.of(0);
+        m_motorNotFoundAlert = new Alert("Elevator motor not found with name: " + getName(), Alert.AlertType.kWarning);
+
     }
 
     /**
@@ -63,6 +69,35 @@ public class Elevator extends SubsystemBase
         m_motor.stop();
     }
 
+    public class ElevatorMoveToPositionCommand extends Command
+    {
+        private Distance position;
+
+        public ElevatorMoveToPositionCommand(Distance position)
+        {
+            addRequirements(Elevator.this);
+            this.position = position;
+        }
+
+        @Override
+        public void initialize()
+        {
+            setTargetPosition(position);
+        }
+
+        @Override
+        public boolean isFinished()
+        {
+            return isAtTargetPosition();
+        }
+
+        @Override
+        public void end(boolean interrupted)
+        {
+            stop();
+        }
+    }
+
     /**
      * Gets the command to move the elevator
      * 
@@ -71,13 +106,57 @@ public class Elevator extends SubsystemBase
      */
     public Command getMoveToPositionCommand(Distance position)
     {
-        return runOnce(() ->
+        return new ElevatorMoveToPositionCommand(position);
+    }
+
+    public Command getMoveByJoystick(DoubleSupplier joystick)
+    {
+        return run(() ->
         {
-            setTargetPosition(position);
-        }).until(() -> isAtTargetPosition()).andThen(() ->
-        {
-            stop();
+            m_motor.setSpeed(joystick.getAsDouble(), false);
         });
+    }
+
+    public class ElevatorHomingCommand extends Command
+    {
+        private double speed;
+
+        public ElevatorHomingCommand(double speed)
+        {
+            addRequirements(Elevator.this);
+            this.speed = speed;
+        }
+
+        @Override
+        public void initialize()
+        {
+            m_motor.setLowerLimitEnable(false);
+        }
+
+        @Override
+        public void execute()
+        {
+            m_motor.setSpeed(-speed, true);
+        }
+
+        @Override
+        public boolean isFinished()
+        {
+            return m_sensorInputs.isAtBottom;
+        }
+
+        @Override
+        public void end(boolean isFinished)
+        {
+            m_motor.stop();
+            m_motor.resetPosition();
+            m_motor.setLowerLimitEnable(true);
+        }
+    }
+
+    public Command getHomingCommand(double homingSpeed)
+    {
+        return new ElevatorHomingCommand(homingSpeed);
     }
 
     /**
@@ -110,6 +189,8 @@ public class Elevator extends SubsystemBase
         {
             m_motor.resetPosition();
         }
+
+        m_motorNotFoundAlert.set(!m_inputs.present);
     }
 
     /**
