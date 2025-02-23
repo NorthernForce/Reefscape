@@ -9,6 +9,7 @@ import org.littletonrobotics.junction.AutoLog;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
 
 /**
  * ElevatorIO is an interface that defines the methods that an elevator must
@@ -58,6 +59,10 @@ public interface ElevatorIO
      */
 
     public default void stop()
+    {
+    }
+
+    public default void setVoltage(Voltage voltage)
     {
     }
 

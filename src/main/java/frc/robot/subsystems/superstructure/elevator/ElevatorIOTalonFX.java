@@ -9,6 +9,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -17,6 +18,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
 
 /**
  * ElevatorIOTalon is a class that implements ElevatorIO using a TalonFX.
@@ -31,6 +33,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
     private final Supplier<Boolean> m_isPresent;
     private final MotionMagicExpoVoltage m_motionMagicExpoVoltage;
     private final DutyCycleOut m_duty = new DutyCycleOut(0);
+    private final VoltageOut m_voltage = new VoltageOut(0);
 
     /**
      * Constants for the elevator
@@ -189,6 +192,12 @@ public class ElevatorIOTalonFX implements ElevatorIO
         inputs.position = Inches.of(m_position.getValue().in(Rotations));
         inputs.current = m_current.getValue();
         inputs.present = m_isPresent.get();
+    }
+
+    @Override
+    public void setVoltage(Voltage voltage)
+    {
+        m_motor.setControl(m_voltage.withOutput(voltage));
     }
 
 }
