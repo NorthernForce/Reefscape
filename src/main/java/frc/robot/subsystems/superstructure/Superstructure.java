@@ -34,7 +34,7 @@ public class Superstructure extends SubsystemBase
     private final Elevator m_innerElevator;
     private final Elevator m_outerElevator;
     private final Wrist m_wrist;
-    private boolean m_goalIsAlgae = false;
+    private SuperstructureGoal m_goal;
 
     /**
      * Creates a new Superstructure
@@ -47,6 +47,7 @@ public class Superstructure extends SubsystemBase
         m_innerElevator = innerElevator;
         m_outerElevator = outerElevator;
         m_wrist = wrist;
+        m_goal = SuperstructureGoal.START;
     }
 
     /**
@@ -55,15 +56,11 @@ public class Superstructure extends SubsystemBase
      * @param goal the goal to move the superstructure to
      * @return the command to move the superstructure to the goal
      */
-    public Command getGoToGoalCommand(GenericSuperstructureGoal goal)
+    public Command getGoToGoalCommand(SuperstructureGoal goal)
     {
         return Commands.parallel(m_innerElevator.getMoveToPositionCommand(goal.getInnerElevatorGoal()),
                 m_outerElevator.getMoveToPositionCommand(goal.getOuterElevatorGoal()),
-                m_wrist.getMoveToAngleCommand(goal.getWristGoal()), Commands.runOnce(() ->
-                {
-                    m_goalIsAlgae = goal == SuperstructureGoal.HIGHER_ALGAE || goal == SuperstructureGoal.LOWER_ALGAE
-                            || goal == SuperstructureGoal.PROCESSOR_STATION;
-                }));
+                m_wrist.getMoveToAngleCommand(goal.getWristGoal()), Commands.runOnce(() -> m_goal = goal));
     }
 
     public Command getStopCommand()
@@ -133,6 +130,12 @@ public class Superstructure extends SubsystemBase
     @AutoLogOutput
     public boolean isAlgaeGoal()
     {
-        return m_goalIsAlgae;
+        return m_goal == SuperstructureGoal.LOWER_ALGAE || m_goal == SuperstructureGoal.PROCESSOR_STATION
+                || m_goal == SuperstructureGoal.HIGHER_ALGAE;
+    }
+
+    public SuperstructureGoal getGoal()
+    {
+        return m_goal;
     }
 }

@@ -16,6 +16,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static edu.wpi.first.units.Units.*;
@@ -45,6 +47,7 @@ public class PhotonVision extends SubsystemBase
     private final LinearVelocity maxLinearVelocity;
     private final AprilTagFieldLayout layout;
     private final double cameraWidth;
+    private final Alert[] alerts;
 
     /**
      * Constructs a new PhotonVision subsystem with the given camera names, poses,
@@ -60,11 +63,13 @@ public class PhotonVision extends SubsystemBase
     {
         cameras = new PhotonCamera[cameraNames.length];
         poseEstimators = new PhotonPoseEstimator[cameraNames.length];
+        alerts = new Alert[cameraNames.length];
         for (int i = 0; i < cameraNames.length; i++)
         {
             cameras[i] = new PhotonCamera(cameraNames[i]);
             poseEstimators[i] = new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                     cameraPoses[i]);
+            alerts[i] = new Alert("PhotonVision Camera " + cameraNames[i] + " disconnected", AlertType.kError);
         }
         poseEstimates = new ArrayList<>();
         rejectedEstimates = new ArrayList<>();
@@ -135,6 +140,10 @@ public class PhotonVision extends SubsystemBase
     @Override
     public void periodic()
     {
+        for (int i = 0; i < cameras.length; i++)
+        {
+            alerts[i].set(!cameras[i].isConnected());
+        }
         poseEstimates.clear();
         rejectedEstimates.clear();
         for (int i = 0; i < cameras.length; i++)

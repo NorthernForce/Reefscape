@@ -15,6 +15,7 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 
@@ -28,6 +29,7 @@ public class BlennyConstants
         public static final LinearVelocity MAX_LINEAR_SPEED = MetersPerSecond.of(4.0);
         public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(3.0);
         public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
+        public static final Distance SAFE_DISTANCE = Inches.of(10);
         public static final Angle[] SWERVE_MODULE_OFFSETS =
         { Rotations.of(Preferences.getDouble("kSwerveOffsetFrontLeft", BlennyTunerConstants.FrontLeft.EncoderOffset)),
                 Rotations.of(Preferences.getDouble("kSwerveOffsetFrontRight",
@@ -140,7 +142,7 @@ public class BlennyConstants
         public static final double JERK = 600;
         public static final boolean INVERTED = false;
         public static final Angle UPPER_LIMIT = Rotations.of(0.098);
-        public static final Angle LOWER_LIMIT = Degrees.of(0.252);
+        public static final Angle LOWER_LIMIT = Rotations.of(-0.252);
         public static final double SENSOR_TO_MECHANISM_RATIO = 1.0;
         public static final double ROTOR_TO_SENSOR_RATIO = 192.0;
         public static final double MANUAL_MOVE_SPEED = 0.05;
@@ -161,7 +163,8 @@ public class BlennyConstants
         L4(Inches.of(26.6), Inches.of(25.6), Rotations.of(-0.083)),
         CORAL_STATION(Inches.of(0), Inches.of(0), Degrees.of(0)),
         PROCESSOR_STATION(Inches.of(0), Inches.of(0), Degrees.of(0)),
-        LOWER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)), HIGHER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0));
+        LOWER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)), HIGHER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)),
+        START(Inches.of(0), Inches.of(0), WristJointConstants.LOWER_LIMIT);
 
         private final Distance innerHeight;
         private final Distance outerHeight;
@@ -229,5 +232,13 @@ public class BlennyConstants
             public static final int ANALOG_CORAL = 0;
             public static final int ANALOG_ALGAE = 1;
         }
+    }
+
+    public static class AutoConstants
+    {
+        // TODO: tuning
+        public static final PIDController xPID = new PIDController(10, 0, 0);
+        public static final PIDController yPID = new PIDController(10, 0, 0);
+        public static final PIDController rPID = new PIDController(7.5, 0, 0);
     }
 }
