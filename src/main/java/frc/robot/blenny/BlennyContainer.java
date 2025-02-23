@@ -73,8 +73,8 @@ public class BlennyContainer implements NFRRobotContainer
         hallDisconnectedAlert = new Alert("Hall sensor disconnected", AlertType.kError);
         drive = new PhoenixCommandDrive(BlennyTunerConstants.DrivetrainConstants,
                 BlennyConstants.DrivetrainConstants.MAX_SPEED, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
-                BlennyConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, BlennyTunerConstants.FrontLeft,
-                BlennyTunerConstants.FrontRight, BlennyTunerConstants.BackLeft, BlennyTunerConstants.BackRight);
+                BlennyConstants.PathplannerConstants.linearPIDConstants,
+                BlennyConstants.PathplannerConstants.angularPIDConstants);
 
         rollers = new Rollers(
                 new RollersIOTalonFXS(BlennyConstants.RollersConstants.ROLLER_MOTOR_LEFT_ID,

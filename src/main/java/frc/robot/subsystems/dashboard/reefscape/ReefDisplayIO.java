@@ -3,6 +3,7 @@ package frc.robot.subsystems.dashboard.reefscape;
 import org.littletonrobotics.junction.AutoLog;
 
 import frc.robot.FieldConstants.ReefLocations;
+import frc.robot.blenny.constants.BlennyConstants.SuperstructureGoal;
 
 /**
  * Reef display IO for the robot.
@@ -15,6 +16,7 @@ public interface ReefDisplayIO
         public ReefLocations reefLocations = ReefLocations.A;
         public int level = 0;
         public boolean isConnected = false;
+        public SuperstructureGoal goal = SuperstructureGoal.L1;
     }
 
     /**
