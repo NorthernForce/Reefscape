@@ -24,30 +24,35 @@ function App(props: { targetIp: string }) {
         setTabsLocked(checked);
     }
     let [connected] = useEntry('/FWC/connected', false);
+    let [hasCoral] = useEntry('/FWC/HasCoral', false);
+    let [hasAlgae] = useEntry('/FWC/HasAlgae', false);
+    let color = hasCoral ? "yellow" : (hasAlgae ? "turquoise" : "white");
     return (
         <>
-            <div className="header">
-                <Tabs id="header-tabs" value={tabsLocked ? tabEntry : selected} onChange={handleTabChange}>
-                    <Tab label="Teleop" />
-                    <Tab label="Autonomous" />
-                    <Tab label="Settings" />
-                </Tabs>
-                <span className="header-status"
-                    style={{ color: connected ? "green" : "#b5e349" }}>{connected ? "Connected to " : "Connecting to"} {props.targetIp}
-                </span>
-                <FormControlLabel control={<Switch id="lock-switch" value={tabsLocked} defaultChecked
-                    onChange={handleLockChange}/>} label="Lock tabs"/>
-            </div>
-            <div>
-                <TabPanel selected={tabsLocked ? tabEntry : selected} index={0}>
-                    <Teleop />
-                </TabPanel>
-                <TabPanel selected={tabsLocked ? tabEntry : selected} index={1}>
-                    <Auto />
-                </TabPanel>
-                <TabPanel selected={tabsLocked ? tabEntry : selected} index={2}>
-                    <Settings />
-                </TabPanel>
+            <div style={{ backgroundColor: color, overflow: "hidden" }}>
+                <div className="header">
+                    <Tabs id="header-tabs" value={tabsLocked ? tabEntry : selected} onChange={handleTabChange}>
+                        <Tab label="Teleop" />
+                        <Tab label="Autonomous" />
+                        <Tab label="Settings" />
+                    </Tabs>
+                    <span className="header-status"
+                        style={{ color: connected ? "green" : "#b5e349" }}>{connected ? "Connected to " : "Connecting to"} {props.targetIp}
+                    </span>
+                    <FormControlLabel control={<Switch id="lock-switch" value={tabsLocked} defaultChecked
+                        onChange={handleLockChange}/>} label="Lock tabs"/>
+                </div>
+                <div>
+                    <TabPanel selected={tabsLocked ? tabEntry : selected} index={0}>
+                        <Teleop />
+                    </TabPanel>
+                    <TabPanel selected={tabsLocked ? tabEntry : selected} index={1}>
+                        <Auto />
+                    </TabPanel>
+                    <TabPanel selected={tabsLocked ? tabEntry : selected} index={2}>
+                        <Settings />
+                    </TabPanel>
+                </div>
             </div>
         </>
     );

@@ -145,12 +145,12 @@ public class BlennyContainer implements NFRRobotContainer
     private void addAutonomousRoutines()
     {
         dashboard.addDefaultAutoRoutine("Do Nothing", new NFRAutoRoutine(Commands.none(), new Translation2d[]
-        { new Translation2d(), new Translation2d() }, new Pose2d()));
+        { new Translation2d(), new Translation2d() }, () -> new Pose2d()));
         dashboard.addAutoRoutine("Center_H4",
                 new NFRAutoRoutine(
                         Commands.parallel(superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
                                 drive.getFollowPathCommand("Center_H4")),
-                        drive.getWaypoints("Center_H4"), drive.getInitialPose("Center_H4")));
+                        drive.getWaypoints("Center_H4"), () -> drive.getInitialPose("Center_H4")));
     }
 
     /**
@@ -230,8 +230,7 @@ public class BlennyContainer implements NFRRobotContainer
     @Override
     public void autonomousInit()
     {
-        drive.resetPose(
-                FieldConstants.convertPoseByAlliance(dashboard.getRoutine().startPose(), FieldConstants.getAlliance()));
+        drive.resetPose(dashboard.getRoutine().startPose().get());
     }
 
     @Override
@@ -249,6 +248,8 @@ public class BlennyContainer implements NFRRobotContainer
         dashboard.updatePose(drive.getPose());
         dashboard.setInnerElevatorPosition(superstructure.getInnerElevator().getPosition());
         dashboard.setOuterElevatorPosition(superstructure.getOuterElevator().getPosition());
+        dashboard.setHasCoral(rollers.hasCoral());
+        dashboard.setHasAlgae(rollers.hasAlgae());
     }
 
     public void teleopInit()

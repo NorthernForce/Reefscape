@@ -85,4 +85,12 @@ public interface DashboardIO
     public default void setOuterElevatorPosition(Distance position)
     {
     }
+
+    public default void setHasCoral(boolean hasCoral)
+    {
+    }
+
+    public default void setHasAlgae(boolean hasAlgae)
+    {
+    }
 }

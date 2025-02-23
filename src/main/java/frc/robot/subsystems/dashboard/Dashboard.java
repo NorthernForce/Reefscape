@@ -159,4 +159,14 @@ public class Dashboard extends SubsystemBase
     {
         return m_io.getSelectedRoutine();
     }
+
+    public void setHasCoral(boolean hasCoral)
+    {
+        m_io.setHasCoral(hasCoral);
+    }
+
+    public void setHasAlgae(boolean hasVision)
+    {
+        m_io.setHasAlgae(hasVision);
+    }
 }

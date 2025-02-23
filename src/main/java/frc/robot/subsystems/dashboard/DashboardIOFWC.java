@@ -88,8 +88,7 @@ public class DashboardIOFWC implements DashboardIO
     @Override
     public void updateInputs(DashboardIOInputs inputs)
     {
-        var pose = autoChooser.get().startPose();
-        pose = FieldConstants.convertPoseByAlliance(pose, FieldConstants.getAlliance());
+        var pose = autoChooser.get().startPose().get();
         autoPosePublisher.set(new double[]
         { pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getRotation().getRadians() });
         var path = autoChooser.get().waypoints().clone();
@@ -106,6 +105,18 @@ public class DashboardIOFWC implements DashboardIO
         autoPathPublisher.set(pathArray);
         inputs.innerElevatorTargetPosition = Inches.of(innerElevatorTargetPosition.get());
         inputs.outerElevatorTargetPosition = Inches.of(outerElevatorTargetPosition.get());
+    }
+
+    @Override
+    public void setHasCoral(boolean hasCoral)
+    {
+        table.getBooleanTopic("HasCoral").publish().set(hasCoral);
+    }
+
+    @Override
+    public void setHasAlgae(boolean hasAlgae)
+    {
+        table.getBooleanTopic("HasAlgae").publish().set(hasAlgae);
     }
 
     @Override

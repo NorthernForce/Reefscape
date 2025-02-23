@@ -68,7 +68,7 @@ public class ZippyContainer implements NFRRobotContainer
                 ZippyConstants.DrivetrainConstants.MAX_LINEAR_SPEED, ZippyConstants.VisionConstants.CAMERA_WIDTH);
         LoggedPowerDistribution.getInstance(40, ModuleType.kRev);
         dashboard.addDefaultAutoRoutine("Do Nothing", new NFRAutoRoutine(new InstantCommand(), new Translation2d[]
-        { new Translation2d(), new Translation2d() }, new Pose2d()));
+        { new Translation2d(), new Translation2d() }, () -> new Pose2d()));
 
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
     }
@@ -115,8 +115,8 @@ public class ZippyContainer implements NFRRobotContainer
     @Override
     public void autonomousInit()
     {
-        drive.resetPose(
-                FieldConstants.convertPoseByAlliance(dashboard.getRoutine().startPose(), FieldConstants.getAlliance()));
+        drive.resetPose(FieldConstants.convertPoseByAlliance(dashboard.getRoutine().startPose().get(),
+                FieldConstants.getAlliance()));
         ZippyConstants.AutoConstants.xPID.reset();
         ZippyConstants.AutoConstants.yPID.reset();
         ZippyConstants.AutoConstants.rPID.reset();
