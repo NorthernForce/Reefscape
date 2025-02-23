@@ -24,7 +24,7 @@ public class BlennyDriverOI implements BlennyOI
     {
         return () ->
         {
-            double x = MathUtil.applyDeadband(input.getAsDouble(), 0.1, 1);
+            double x = MathUtil.applyDeadband(input.getAsDouble(), 0.0, 1);
             return -x * Math.abs(x);
         };
     }
@@ -50,7 +50,8 @@ public class BlennyDriverOI implements BlennyOI
                         container.getRollers().getCoralIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
                         () -> container.isInAlgaeState()));
 
-        driverController.rightTrigger().whileTrue(container.getRollers().getOuttakeCommand(1));
+        driverController.rightTrigger()
+                .whileTrue(container.getRollers().getOuttakeCommand(BlennyConstants.RollersConstants.OUTTAKE_SPEED));
 
         driverController.a().whileTrue(container.getClimber().getClimbUpCommand(0.5));
         driverController.b().whileTrue(container.getClimber().getClimbDownCommand(0.5));
@@ -87,7 +88,21 @@ public class BlennyDriverOI implements BlennyOI
 
         manipulatorController.rightBumper().whileTrue(container.getSuperstructure().getWrist()
                 .getSetSpeedCommand(BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
-        
+
+        manipulatorController.leftTrigger()
+                .whileTrue(Commands.either(
+                        container.getRollers().getAlgaeIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
+                        container.getRollers().getCoralIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
+                        () -> container.isInAlgaeState()));
+
+        manipulatorController.rightTrigger()
+                .whileTrue(container.getRollers().getOuttakeCommand(BlennyConstants.RollersConstants.OUTTAKE_SPEED));
+
+        manipulatorController.start()
+                .whileTrue(container.getSuperstructure().getHomingCommand(
+                        BlennyConstants.InnerElevatorConstants.HOMING_SPEED,
+                        BlennyConstants.OuterElevatorConstants.HOMING_SPEED));
+
         container.getSuperstructure().getInnerElevator().setDefaultCommand(container.getSuperstructure()
                 .getInnerElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getRightY)));
 

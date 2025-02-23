@@ -7,6 +7,7 @@ import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -42,14 +43,16 @@ public class RollersIOTalonFXS implements RollersIO
         TalonFXSConfiguration configMotorLeft = new TalonFXSConfiguration();
         configMotorLeft.MotorOutput.Inverted = inverted ? InvertedValue.CounterClockwise_Positive
                 : InvertedValue.Clockwise_Positive;
+        configMotorLeft.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        configMotorLeft.Commutation.MotorArrangement = MotorArrangementValue.NEO550_JST;
+        configMotorLeft.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
 
         TalonFXSConfiguration configMotorRight = new TalonFXSConfiguration();
         configMotorRight.MotorOutput.Inverted = !inverted ? InvertedValue.CounterClockwise_Positive
                 : InvertedValue.Clockwise_Positive;
+        configMotorRight.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        configMotorRight.Commutation.MotorArrangement = MotorArrangementValue.NEO550_JST;
+        configMotorRight.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
 
         intakeMotorLeft.getConfigurator().apply(configMotorLeft);
         intakeMotorRight.getConfigurator().apply(configMotorRight);

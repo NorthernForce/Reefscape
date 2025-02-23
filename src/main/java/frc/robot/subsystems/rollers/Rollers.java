@@ -87,7 +87,7 @@ public class Rollers extends SubsystemBase
 
     public Command getCoralIntakeCommand(double speed)
     {
-        return run(() -> intake(speed)).until(() -> hasCoral());
+        return run(() -> intake(speed));// .until(() -> hasCoral());
     }
 
     /**

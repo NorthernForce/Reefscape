@@ -69,6 +69,35 @@ public class Elevator extends SubsystemBase
         m_motor.stop();
     }
 
+    public class ElevatorMoveToPositionCommand extends Command
+    {
+        private Distance position;
+
+        public ElevatorMoveToPositionCommand(Distance position)
+        {
+            addRequirements(Elevator.this);
+            this.position = position;
+        }
+
+        @Override
+        public void initialize()
+        {
+            setTargetPosition(position);
+        }
+
+        @Override
+        public boolean isFinished()
+        {
+            return isAtTargetPosition();
+        }
+
+        @Override
+        public void end(boolean interrupted)
+        {
+            stop();
+        }
+    }
+
     /**
      * Gets the command to move the elevator
      * 
@@ -77,13 +106,7 @@ public class Elevator extends SubsystemBase
      */
     public Command getMoveToPositionCommand(Distance position)
     {
-        return runOnce(() ->
-        {
-            setTargetPosition(position);
-        }).until(() -> isAtTargetPosition()).andThen(() ->
-        {
-            stop();
-        });
+        return new ElevatorMoveToPositionCommand(position);
     }
 
     public Command getMoveByJoystick(DoubleSupplier joystick)
@@ -94,16 +117,46 @@ public class Elevator extends SubsystemBase
         });
     }
 
-    public Command getHomingCommand(double homingSpeed)
+    public class ElevatorHomingCommand extends Command
     {
-        return runOnce(() ->
+        private double speed;
+
+        public ElevatorHomingCommand(double speed)
         {
-            m_motor.setSpeed(-homingSpeed, true);
-        }).until(() -> m_sensorInputs.isAtBottom).andThen(() ->
+            addRequirements(Elevator.this);
+            this.speed = speed;
+        }
+
+        @Override
+        public void initialize()
+        {
+            m_motor.setLowerLimitEnable(false);
+        }
+
+        @Override
+        public void execute()
+        {
+            m_motor.setSpeed(-speed, true);
+        }
+
+        @Override
+        public boolean isFinished()
+        {
+            return m_sensorInputs.isAtBottom;
+        }
+
+        @Override
+        public void end(boolean isFinished)
         {
             m_motor.stop();
             m_motor.resetPosition();
-        });
+            m_motor.setLowerLimitEnable(true);
+        }
+    }
+
+    public Command getHomingCommand(double homingSpeed)
+    {
+        return new ElevatorHomingCommand(homingSpeed);
     }
 
     /**
