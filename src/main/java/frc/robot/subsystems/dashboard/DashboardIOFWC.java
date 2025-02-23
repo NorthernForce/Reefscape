@@ -8,6 +8,7 @@ import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.WebServer;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
@@ -35,6 +36,8 @@ public class DashboardIOFWC implements DashboardIO
     private final DoubleSubscriber outerElevatorTargetPosition;
     private final DoublePublisher innerElevatorPosition;
     private final DoublePublisher outerElevatorPosition;
+    private final BooleanPublisher hasCoralPublisher;
+    private final BooleanPublisher hasAlgaePublisher;
 
     /**
      * Creates a new DashboardIOFWC. This connects to the FWC dashboard using "FWC"
@@ -58,6 +61,8 @@ public class DashboardIOFWC implements DashboardIO
         outerElevatorTargetPosition = table.getDoubleTopic("OuterElevator/TargetPosition").subscribe(0);
         innerElevatorPosition = table.getDoubleTopic("InnerElevator/Position").publish();
         outerElevatorPosition = table.getDoubleTopic("OuterElevator/Position").publish();
+        hasCoralPublisher = table.getBooleanTopic("HasCoral").publish();
+        hasAlgaePublisher = table.getBooleanTopic("HasAlgae").publish();
     }
 
     @Override
@@ -110,13 +115,13 @@ public class DashboardIOFWC implements DashboardIO
     @Override
     public void setHasCoral(boolean hasCoral)
     {
-        table.getBooleanTopic("HasCoral").publish().set(hasCoral);
+        hasCoralPublisher.set(hasCoral);
     }
 
     @Override
     public void setHasAlgae(boolean hasAlgae)
     {
-        table.getBooleanTopic("HasAlgae").publish().set(hasAlgae);
+        hasAlgaePublisher.set(hasAlgae);
     }
 
     @Override
