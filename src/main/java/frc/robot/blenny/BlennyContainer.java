@@ -33,7 +33,7 @@ import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOSwing;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 import frc.robot.subsystems.rollers.Rollers;
 import frc.robot.subsystems.rollers.RollersIOTalonFXS;
-import frc.robot.subsystems.rollers.sensor.RollersSensorIOUltrasonic;
+import frc.robot.subsystems.rollers.sensor.RollersSensorIOAnalog;
 import frc.robot.subsystems.photonvision.PhotonVision;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
@@ -80,12 +80,10 @@ public class BlennyContainer implements NFRRobotContainer
                 new RollersIOTalonFXS(BlennyConstants.RollersConstants.ROLLER_MOTOR_LEFT_ID,
                         BlennyConstants.RollersConstants.ROLLER_MOTOR_RIGHT_ID,
                         BlennyConstants.RollersConstants.ROLLER_MOTORS_INVERTED),
-                new RollersSensorIOUltrasonic(BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ALGAE_TRIGGER,
-                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ALGAE_ECHO,
-                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_ALGAE_MAX_DISTANCE),
-                new RollersSensorIOUltrasonic(BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_TRIGGER,
-                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_ECHO,
-                        BlennyConstants.RollersConstants.SensorConstants.ULTRASONIC_CORAL_MAX_DISTANCE));
+                new RollersSensorIOAnalog(BlennyConstants.RollersConstants.SensorConstants.ANALOG_ALGAE,
+                        BlennyConstants.RollersConstants.SensorConstants.ALGAE_MAX_DISTANCE),
+                new RollersSensorIOAnalog(BlennyConstants.RollersConstants.SensorConstants.ANALOG_CORAL,
+                        BlennyConstants.RollersConstants.SensorConstants.CORAL_MAX_DISTANCE));
 
         vision = new PhotonVision(BlennyConstants.VisionConstants.cameraNames(),
                 BlennyConstants.VisionConstants.cameraTransforms(), BlennyConstants.VisionConstants.APRILTAG_LAYOUT,
@@ -111,7 +109,6 @@ public class BlennyContainer implements NFRRobotContainer
             climber = new Climber(new ClimberIOTalonFX(BlennyConstants.ClimberConstants.ID,
                     BlennyConstants.ClimberConstants.INVERTED, BlennyConstants.ClimberConstants.ENCODER_ID,
                     BlennyConstants.ClimberConstants.LOWER_LIMIT, BlennyConstants.ClimberConstants.UPPER_LIMIT));
-            climber.setDefaultCommand(climber.getStopCommand());
             break;
         case REPLAY:
         default:
@@ -156,7 +153,7 @@ public class BlennyContainer implements NFRRobotContainer
     /**
      * Get the rollers subsystem from the container
      * 
-     * @return the drive subsystem
+     * @return the rollers subsystem
      */
 
     public Rollers getRollers()
@@ -164,11 +161,21 @@ public class BlennyContainer implements NFRRobotContainer
         return rollers;
     }
 
+    /**
+     * Get the superstructure subsystem from the container
+     * 
+     * @return the superstructure subsystem
+     */
     public Superstructure getSuperstructure()
     {
         return superstructure;
     }
 
+    /**
+     * Get the climber subsystem from the container
+     * 
+     * @return the climber subsystem
+     */
     public Climber getClimber()
     {
         return climber;
