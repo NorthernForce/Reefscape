@@ -11,6 +11,7 @@ import frc.robot.FieldConstants;
 import frc.robot.blenny.BlennyContainer;
 import frc.robot.blenny.constants.BlennyConstants;
 import frc.robot.blenny.constants.BlennyConstants.SuperstructureGoal;
+import static edu.wpi.first.units.Units.*;
 
 /**
  * Blenny OI for the driver and operator
@@ -121,12 +122,14 @@ public class BlennyDriverOI implements BlennyOI
 
         container.getSuperstructure().getOuterElevator().setDefaultCommand(container.getSuperstructure()
                 .getOuterElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getLeftY)));
-        driverController.rightBumper()
-                .whileTrue(Commands.defer(
-                        () -> container.getDrive().driveToPose(container.getDashboard().getTargetPose())
-                                .alongWith(container.getSuperstructure()
-                                        .getGoToGoalCommand(container.getDashboard().getSuperstructureGoal())),
-                        Set.of(container.getSuperstructure())));
+        driverController.rightBumper().whileTrue(Commands.defer(
+                () -> container.getDrive()
+                        .driveToPose(FieldConstants.getReefBackupPosition(container.getDashboard().getTargetPose(),
+                                Feet.of(1)))
+                        .alongWith(container.getSuperstructure()
+                                .getGoToGoalCommand(container.getDashboard().getSuperstructureGoal()))
+                        .andThen(() -> container.getDrive().driveToPose(container.getDashboard().getTargetPose())),
+                Set.of(container.getSuperstructure())));
 
     }
 }

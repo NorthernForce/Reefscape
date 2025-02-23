@@ -35,21 +35,22 @@ public class FieldConstants
         public static final Rotation2d KL_ROTATION = Rotation2d.fromDegrees(300);
     }
 
+    public static Pose2d getReefBackupPosition(Pose2d original, Distance metersBackup)
+    {
+        double originalX = original.getX();
+        double originalY = original.getY();
+        Angle parallelAngle = Degrees.of(original.getRotation().getDegrees());
+        double[] result = new double[2];
+        result[0] = originalX + (-metersBackup.in(Meters)) * Math.cos((parallelAngle).in(Radians));
+        result[1] = originalY + (-metersBackup.in(Meters)) * Math.sin((parallelAngle).in(Radians));
+        return new Pose2d(result[0], result[1], original.getRotation());
+    }
+
     /**
      * All poses are BLUE relative
      */
     public static class ReefPositions
     {
-        public static Pose2d getReefBackupPosition(Pose2d original, Distance metersBackup)
-        {
-            double originalX = original.getX();
-            double originalY = original.getY();
-            Angle parallelAngle = Degrees.of(original.getRotation().getDegrees());
-            double[] result = new double[2];
-            result[0] = originalX + (-metersBackup.in(Meters)) * Math.cos((parallelAngle).in(Radians));
-            result[1] = originalY + (-metersBackup.in(Meters)) * Math.sin((parallelAngle).in(Radians));
-            return new Pose2d(result[0], result[1], original.getRotation());
-        }
 
         public static final Pose2d A = new Pose2d(3.15, 4.18, ReefRotations.AB_ROTATION);
         public static final Pose2d AB_ALGAE = new Pose2d(3.15, 4.02, ReefRotations.AB_ROTATION);
