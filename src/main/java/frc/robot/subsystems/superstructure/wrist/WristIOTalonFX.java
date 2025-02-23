@@ -15,6 +15,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Rotations;
 
 import java.util.function.Supplier;
 
@@ -138,8 +139,8 @@ public class WristIOTalonFX implements WristIO
         talonFXConfigs.Feedback.SensorToMechanismRatio = constants.sensorToMechanismRatio();
         talonFXConfigs.Feedback.RotorToSensorRatio = constants.rotorToSensorRatio();
 
-        talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.10315;
-        talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.25705;
+        talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = constants.upperLimit().in(Rotations);
+        talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = constants.lowerLimit().in(Rotations);
         talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 

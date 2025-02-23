@@ -3,6 +3,8 @@ package frc.robot.subsystems.rollers;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIO;
@@ -21,6 +23,8 @@ public class Rollers extends SubsystemBase
     private final IntakeIOInputsAutoLogged m_inputs = new IntakeIOInputsAutoLogged();
     private final RollersSensorIOInputsAutoLogged m_sensorIOAlgaeInputs = new RollersSensorIOInputsAutoLogged();
     private final RollersSensorIOInputsAutoLogged m_sensorIOCoralInputs = new RollersSensorIOInputsAutoLogged();
+    private final Alert m_intakeLeftMotorMissing = new Alert("Intake left motor is missing", AlertType.kError);
+    private final Alert m_intakeRightMotorMissing = new Alert("Intake right motor is missing", AlertType.kError);
 
     /**
      * Constructs a new Rollers subsystem.
@@ -138,5 +142,7 @@ public class Rollers extends SubsystemBase
         Logger.processInputs(getName() + "/Motor", m_inputs);
         Logger.processInputs(getName() + "/AlgaeSensor", m_sensorIOAlgaeInputs);
         Logger.processInputs(getName() + "/CoralSensor", m_sensorIOCoralInputs);
+        m_intakeLeftMotorMissing.set(!m_inputs.motorLeftPresent);
+        m_intakeRightMotorMissing.set(!m_inputs.motorRightPresent);
     }
 }

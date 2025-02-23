@@ -6,9 +6,11 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.FieldConstants;
 import frc.robot.blenny.BlennyContainer;
 import frc.robot.blenny.constants.BlennyConstants;
+import frc.robot.blenny.constants.BlennyConstants.SuperstructureGoal;
 
 /**
  * Blenny OI for the driver and operator
@@ -30,12 +32,8 @@ public class BlennyDriverOI implements BlennyOI
         };
     }
 
-    @Override
-    public void bindOI(BlennyContainer container)
+    private void bindDrive(CommandXboxController driverController, BlennyContainer container)
     {
-        CommandXboxController driverController = new CommandXboxController(0);
-        CommandXboxController manipulatorController = new CommandXboxController(1);
-
         container.getDrive().setDefaultCommand(container.getDrive().getDriveByJoystickCommand(
                 processJoystickInput(driverController::getLeftY), processJoystickInput(driverController::getLeftX),
                 processJoystickInput(driverController::getRightX)));
@@ -44,6 +42,20 @@ public class BlennyDriverOI implements BlennyOI
                 .getResetOrientationCommand(FieldConstants.getFieldRotation(FieldConstants.getAlliance())));
 
         driverController.x().whileTrue(container.getDrive().getXLockCommand());
+
+        new Trigger(() -> !container.getSuperstructure().isAtGoal()
+                || container.getSuperstructure().getGoal() == SuperstructureGoal.CORAL_STATION).onTrue(Commands.runOnce(
+                        () -> container.getDrive().enableSafeDrive(() -> container.getViewer().getCenterDistance())))
+                        .onFalse(Commands.runOnce(() -> container.getDrive().disableSafeDrive()));
+    }
+
+    @Override
+    public void bindOI(BlennyContainer container)
+    {
+        CommandXboxController driverController = new CommandXboxController(0);
+        CommandXboxController manipulatorController = new CommandXboxController(1);
+
+        bindDrive(driverController, container);
 
         driverController.leftTrigger()
                 .whileTrue(Commands.either(

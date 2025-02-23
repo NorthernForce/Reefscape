@@ -3,6 +3,7 @@ package frc.robot.zippy.constants;
 import static edu.wpi.first.units.Units.*;
 import com.pathplanner.lib.config.PIDConstants;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -74,5 +75,13 @@ public class ZippyConstants
     {
         public static final PIDConstants linearPIDConstants = new PIDConstants(10.0, 0.0, 0.0);
         public static final PIDConstants angularPIDConstants = new PIDConstants(5.0, 0.0, 0.0);
+    }
+
+    public static class AutoConstants
+    {
+        // TODO: tuning
+        public static final PIDController xPID = new PIDController(10, 0, 0);
+        public static final PIDController yPID = new PIDController(10, 0, 0);
+        public static final PIDController rPID = new PIDController(7.5, 0, 0);
     }
 }

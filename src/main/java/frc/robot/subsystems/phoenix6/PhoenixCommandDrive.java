@@ -20,13 +20,20 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 
+import choreo.auto.AutoFactory;
+import choreo.trajectory.SwerveSample;
+
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -34,6 +41,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -43,7 +51,9 @@ import com.ctre.phoenix6.SignalLogger;
 
 public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsystem
 {
+    @SuppressWarnings("unused")
     private final LinearVelocity maxSpeed;
+    @SuppressWarnings("unused")
     private final AngularVelocity maxAngularSpeed;
     private final SwerveRequest.ApplyRobotSpeeds applyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
     private final Alert motorDisconnectedAlert;
@@ -52,11 +62,18 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     private ArrayList<Integer> disconnectedEncoderArray;
     private String motorAlertString = "";
     private String encoderAlertString = "";
+    private Supplier<Distance> safeDriveSupplier;
+    private final Distance safeDriveDistance;
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
+
+    private final PIDController xPid;
+    private final PIDController yPid;
+    private final PIDController rPid;
+    private final AutoFactory factory;
 
     /**
      * Create a new PhoenixCommandDrive
@@ -68,6 +85,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      */
     public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
             AngularVelocity maxAngularSpeed, PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
+            Distance safeDriveDistance, PIDController xPid, PIDController yPid, PIDController rPid,
             SwerveModuleConstants<?, ?, ?>... moduleConstants)
     {
         super(drivetrainConstants, moduleConstants);
@@ -78,6 +96,20 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         encoderDisconnectedAlert = new Alert("", Alert.AlertType.kWarning);
         disconnectedMotorArray = new ArrayList<>();
         disconnectedEncoderArray = new ArrayList<>();
+        safeDriveSupplier = null;
+        this.safeDriveDistance = safeDriveDistance;
+        this.xPid = xPid;
+        this.yPid = yPid;
+        this.rPid = rPid;
+        factory = new AutoFactory(this::getPose, this::resetPose, (SwerveSample sample) ->
+        {
+            var pose = getPose();
+            var speeds = new ChassisSpeeds(sample.vx + xPid.calculate(pose.getX(), sample.x),
+                    sample.vy + yPid.calculate(pose.getY(), sample.y),
+                    sample.omega + rPid.calculate(pose.getRotation().getRadians(), sample.heading));
+            runVelocity(speeds);
+        }, true, this);
+        factory.newRoutine("routine");
         // Configure the Pathplanner AutoBuilder for easier pathfinding
         configureAutoBuilder(linearPIDConstants, angularPIDConstants);
     }
@@ -99,6 +131,19 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
             e.printStackTrace();
         }
 
+    }
+
+    public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
+            AngularVelocity maxAngularSpeed, PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
+            Distance safeDriveDistance, PIDController xPid, PIDController yPid, PIDController rPid,
+            Angle[] moduleOffsets, SwerveModuleConstants<?, ?, ?>... moduleConstants)
+    {
+        this(drivetrainConstants, maxSpeed, maxAngularSpeed, linearPIDConstants, angularPIDConstants, safeDriveDistance,
+                xPid, yPid, rPid, new SwerveModuleConstants[]
+                { moduleConstants[0].withEncoderOffset(moduleOffsets[0]),
+                        moduleConstants[1].withEncoderOffset(moduleOffsets[1]),
+                        moduleConstants[2].withEncoderOffset(moduleOffsets[2]),
+                        moduleConstants[3].withEncoderOffset(moduleOffsets[3]) });
     }
 
     /**
@@ -126,14 +171,33 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command getDriveByJoystickCommand(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
             DoubleSupplier omegaSupplier)
     {
-        SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric().withDeadband(maxSpeed.times(0.1))
-                .withRotationalDeadband(maxAngularSpeed.times(0.1));
+        SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric().withDeadband(0.1)
+                .withRotationalDeadband(0.1);
         return applyRequest(() ->
         {
-            return fieldCentric.withVelocityX(maxSpeed.times(xSupplier.getAsDouble()))
-                    .withVelocityY(maxSpeed.times(ySupplier.getAsDouble()))
-                    .withRotationalRate(maxAngularSpeed.times(omegaSupplier.getAsDouble()));
+            var x = xSupplier.getAsDouble();
+            var y = ySupplier.getAsDouble();
+            var omega = omegaSupplier.getAsDouble();
+            if (safeDriveSupplier != null && safeDriveSupplier.get().lte(safeDriveDistance))
+            {
+                var robotX = x * getState().Pose.getRotation().getCos() - y * getState().Pose.getRotation().getSin();
+                var robotY = x * getState().Pose.getRotation().getSin() + y * getState().Pose.getRotation().getCos();
+                robotX = Math.min(robotX, 0);
+                x = robotX * getState().Pose.getRotation().getCos() + robotY * getState().Pose.getRotation().getSin();
+                y = -robotX * getState().Pose.getRotation().getSin() + robotY * getState().Pose.getRotation().getCos();
+            }
+            return fieldCentric.withVelocityX(x).withVelocityY(y).withRotationalRate(omega);
         });
+    }
+
+    public void enableSafeDrive(Supplier<Distance> distanceSupplier)
+    {
+        safeDriveSupplier = distanceSupplier;
+    }
+
+    public void disableSafeDrive()
+    {
+        safeDriveSupplier = null;
     }
 
     /**
@@ -213,6 +277,13 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public ChassisSpeeds getChassisSpeeds()
     {
         return getState().Speeds;
+    }
+
+    public void runVelocity(ChassisSpeeds speeds)
+    {
+        setControl(new SwerveRequest.FieldCentric().withDriveRequestType(DriveRequestType.Velocity)
+                .withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond)
+                .withRotationalRate(speeds.omegaRadiansPerSecond));
     }
 
     public void setBrakeMode()
@@ -382,5 +453,32 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command getSysIdRotationDynamic(SysIdRoutine.Direction direction)
     {
         return m_sysIdRoutineRotation.dynamic(direction);
+    }
+
+    public Command getFollowPathCommand(String pathName)
+    {
+        return Commands.sequence(Commands.runOnce(() ->
+        {
+            xPid.reset();
+            yPid.reset();
+            rPid.reset();
+        }), factory.trajectoryCmd(pathName));
+    }
+
+    public Translation2d[] getWaypoints(String pathName)
+    {
+        var trajectory = factory.newRoutine("routine").trajectory(pathName).getRawTrajectory();
+        Translation2d[] waypoints = new Translation2d[trajectory.getPoses().length];
+        for (int i = 0; i < trajectory.getPoses().length; i++)
+        {
+            waypoints[i] = trajectory.getPoses()[i].getTranslation();
+        }
+        return waypoints;
+    }
+
+    public Pose2d getInitialPose(String pathName)
+    {
+        var trajectory = factory.newRoutine("routine").trajectory(pathName);
+        return trajectory.getInitialPose().orElse(new Pose2d(-1, -1, new Rotation2d()));
     }
 }

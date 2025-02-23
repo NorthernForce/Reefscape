@@ -1,6 +1,8 @@
 package frc.robot.zippy;
 
+import java.util.Map;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 
 import java.util.function.Supplier;
@@ -8,22 +10,32 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.northernforce.util.NFRRobotContainer;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
+import choreo.auto.AutoFactory;
+import choreo.auto.AutoRoutine;
+import choreo.trajectory.SwerveSample;
+import com.ctre.phoenix6.Utils;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.FieldConstants;
 import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOSwing;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
+import frc.robot.util.NFRAutoRoutine;
 import frc.robot.subsystems.photonvision.PhotonVision;
-import frc.robot.util.AutoRoutine;
 import frc.robot.zippy.constants.ZippyConstants;
 import frc.robot.zippy.constants.ZippyTunerConstants;
 import frc.robot.zippy.oi.ZippyDriverOI;
@@ -36,6 +48,9 @@ public class ZippyContainer implements NFRRobotContainer
     private Alliance alliance = allianceSupplier.get();
     private final PhotonVision vision;
     private final Dashboard dashboard;
+    private AutoFactory factory = null;
+    private Field2d field = null;
+    private AutoRoutine hi = null;
 
     public ZippyContainer()
     {
@@ -43,7 +58,9 @@ public class ZippyContainer implements NFRRobotContainer
         drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants,
                 ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 ZippyConstants.PathplannerConstants.linearPIDConstants,
-                ZippyConstants.PathplannerConstants.angularPIDConstants, ZippyTunerConstants.FrontLeft,
+                ZippyConstants.PathplannerConstants.angularPIDConstants, Meters.of(0),
+                ZippyConstants.AutoConstants.xPID, ZippyConstants.AutoConstants.yPID, ZippyConstants.AutoConstants.rPID,
+                ZippyConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, ZippyTunerConstants.FrontLeft,
                 ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft, ZippyTunerConstants.BackRight);
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
         vision = new PhotonVision(ZippyConstants.VisionConstants.cameraNames(),
@@ -51,11 +68,10 @@ public class ZippyContainer implements NFRRobotContainer
                 ZippyConstants.VisionConstants.MAX_Y_COORDINATE, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 ZippyConstants.DrivetrainConstants.MAX_LINEAR_SPEED, ZippyConstants.VisionConstants.CAMERA_WIDTH);
         LoggedPowerDistribution.getInstance(40, ModuleType.kRev);
+        dashboard.addDefaultAutoRoutine("Do Nothing", new NFRAutoRoutine(new InstantCommand(), new Translation2d[]
+        { new Translation2d(), new Translation2d() }, new Pose2d()));
 
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
-
-        dashboard.addDefaultAutoRoutine("Do Nothing", new AutoRoutine(new InstantCommand(), new Translation2d[]
-        { new Translation2d(), new Translation2d() }, new Pose2d()));
     }
 
     public PhoenixCommandDrive getDrive()
@@ -83,18 +99,18 @@ public class ZippyContainer implements NFRRobotContainer
     @Override
     public void periodic()
     {
-        // if (alliance != allianceSupplier.get())
-        // {
-        // alliance = allianceSupplier.get();
-        // drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
-        // }
-        // dashboard.updatePose(drive.getPose());
-        // vision.setLastKnownRobotPose(drive.getPose());
-        // for (var poseEstimate : vision.getPoseEstimates())
-        // {
-        // drive.addVisionMeasurement(poseEstimate.pose(),
-        // Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
-        // }
+        if (alliance != allianceSupplier.get())
+        {
+            alliance = allianceSupplier.get();
+            drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
+        }
+        field.setRobotPose(drive.getPose());
+        dashboard.updatePose(drive.getPose());
+        vision.setLastKnownRobotPose(drive.getPose());
+        for (var poseEstimate : vision.getPoseEstimates())
+        {
+            drive.addVisionMeasurement(poseEstimate.pose(), Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
+        }
     }
 
     @Override
@@ -102,6 +118,35 @@ public class ZippyContainer implements NFRRobotContainer
     {
         drive.resetPose(
                 FieldConstants.convertPoseByAlliance(dashboard.getRoutine().startPose(), FieldConstants.getAlliance()));
+        ZippyConstants.AutoConstants.xPID.reset();
+        ZippyConstants.AutoConstants.yPID.reset();
+        ZippyConstants.AutoConstants.rPID.reset();
+        factory = new AutoFactory(drive::getPose, drive::resetPose, (SwerveSample sample) ->
+        {
+            var speeds = new ChassisSpeeds(sample.vx, sample.vy, sample.omega);
+            drive.runVelocity(speeds);
+        }, true, drive);
+
+        NamedCommands.registerCommand("test", Commands.runOnce(() -> System.out.println("it works!")));
+        var routine = factory.newRoutine("test1");
+        var traj = routine.trajectory("testPath");
+        routine.active().onTrue(Commands.sequence(traj.resetOdometry(), traj.cmd()));
+        hi = routine;
+        // hicmd = factory.trajectoryCmd("testPath");
+        // RobotModeTriggers.autonomous().whileTrue(hicmd).whileTrue(Commands.run(() ->
+        // System.out.println("")));
+    }
+
+    @Override
+    public void autonomousPeriodic()
+    {
+        System.out.println("running auto...");
+        hi.poll();
+    }
+
+    public Map<String, Supplier<AutoRoutine>> getAutonomousCommands()
+    {
+        return Map.of("nothing", () -> factory.newRoutine("nothing"));
     }
 
     @Override

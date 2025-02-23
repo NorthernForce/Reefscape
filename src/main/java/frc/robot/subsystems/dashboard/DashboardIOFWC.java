@@ -17,7 +17,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.FieldConstants;
-import frc.robot.util.AutoRoutine;
+import frc.robot.util.NFRAutoRoutine;
 
 /**
  * Dashboard IO for the FWC dashboard.
@@ -25,7 +25,7 @@ import frc.robot.util.AutoRoutine;
 public class DashboardIOFWC implements DashboardIO
 {
     private final NetworkTable table;
-    private final LoggedDashboardChooser<AutoRoutine> autoChooser;
+    private final LoggedDashboardChooser<NFRAutoRoutine> autoChooser;
     private final DoublePublisher stagePublisher;
     private final DoubleArrayPublisher autoPosePublisher;
     private final DoubleArrayPublisher autoPathPublisher;
@@ -46,7 +46,7 @@ public class DashboardIOFWC implements DashboardIO
     public DashboardIOFWC()
     {
         WebServer.start(5800, Utils.isSimulation() ? "./npm-dash/dist" : "/home/lvuser/npm-dash");
-        autoChooser = new LoggedDashboardChooser<AutoRoutine>("AutoChooser");
+        autoChooser = new LoggedDashboardChooser<NFRAutoRoutine>("AutoChooser");
         table = NetworkTableInstance.getDefault().getTable("/FWC");
         stagePublisher = table.getDoubleTopic("selectedTab").publish();
         table.getBooleanTopic("connected").publish().set(true);
@@ -61,7 +61,7 @@ public class DashboardIOFWC implements DashboardIO
     }
 
     @Override
-    public void addRoutine(String name, AutoRoutine command, boolean defaultOption)
+    public void addRoutine(String name, NFRAutoRoutine command, boolean defaultOption)
     {
         if (defaultOption)
         {
@@ -109,7 +109,7 @@ public class DashboardIOFWC implements DashboardIO
     }
 
     @Override
-    public AutoRoutine getSelectedRoutine()
+    public NFRAutoRoutine getSelectedRoutine()
     {
         return autoChooser.get();
     }

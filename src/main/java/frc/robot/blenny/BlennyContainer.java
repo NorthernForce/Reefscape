@@ -7,21 +7,19 @@ import static edu.wpi.first.units.Units.Rotations;
 
 import org.northernforce.util.NFRRobotContainer;
 
-import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.blenny.constants.BlennyConstants;
 import frc.robot.blenny.constants.BlennyTunerConstants;
+import frc.robot.blenny.constants.BlennyConstants.SuperstructureGoal;
 import frc.robot.blenny.oi.BlennyDriverOI;
 import frc.robot.blenny.oi.BlennyProgrammerOI;
 import frc.robot.subsystems.climber.Climber;
@@ -45,7 +43,10 @@ import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIOLimit
 import frc.robot.subsystems.superstructure.wrist.Wrist;
 import frc.robot.subsystems.superstructure.wrist.WristIO;
 import frc.robot.subsystems.superstructure.wrist.WristIOTalonFX;
-import frc.robot.util.AutoRoutine;
+import frc.robot.subsystems.viewer.Viewer;
+import frc.robot.subsystems.viewer.ViewerIO;
+import frc.robot.subsystems.viewer.ViewerIOXavier;
+import frc.robot.util.NFRAutoRoutine;
 
 /**
  * 2025 Competition Robot Container. Name is still a work in progress and will
@@ -63,18 +64,21 @@ public class BlennyContainer implements NFRRobotContainer
     private final Climber climber;
     private final Dashboard dashboard;
     private boolean inAlgaeState = false;
-    private Alert hallDisconnectedAlert;
+    private final Viewer viewer;
 
     /**
      * Create a new BlennyContainer
      */
     public BlennyContainer()
     {
-        hallDisconnectedAlert = new Alert("Hall sensor disconnected", AlertType.kError);
         drive = new PhoenixCommandDrive(BlennyTunerConstants.DrivetrainConstants,
                 BlennyConstants.DrivetrainConstants.MAX_SPEED, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 BlennyConstants.PathplannerConstants.linearPIDConstants,
-                BlennyConstants.PathplannerConstants.angularPIDConstants);
+                BlennyConstants.PathplannerConstants.angularPIDConstants,
+                BlennyConstants.DrivetrainConstants.SAFE_DISTANCE, BlennyConstants.AutoConstants.xPID,
+                BlennyConstants.AutoConstants.yPID, BlennyConstants.AutoConstants.rPID,
+                BlennyConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, BlennyTunerConstants.FrontLeft,
+                BlennyTunerConstants.FrontRight, BlennyTunerConstants.BackLeft, BlennyTunerConstants.BackRight);
 
         rollers = new Rollers(
                 new RollersIOTalonFXS(BlennyConstants.RollersConstants.ROLLER_MOTOR_LEFT_ID,
@@ -89,8 +93,6 @@ public class BlennyContainer implements NFRRobotContainer
                 BlennyConstants.VisionConstants.cameraTransforms(), BlennyConstants.VisionConstants.APRILTAG_LAYOUT,
                 BlennyConstants.VisionConstants.MAX_Y_COORDINATE, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 BlennyConstants.DrivetrainConstants.MAX_LINEAR_SPEED, BlennyConstants.VisionConstants.CAMERA_WIDTH);
-        dashboard = new Dashboard(new ReefDisplayIOSwing("ReefDisplay"), new DashboardIOFWC());
-        addAutonomousRoutines();
         switch (Constants.getMode())
         {
         case SIM:
@@ -109,6 +111,9 @@ public class BlennyContainer implements NFRRobotContainer
             climber = new Climber(new ClimberIOTalonFX(BlennyConstants.ClimberConstants.ID,
                     BlennyConstants.ClimberConstants.INVERTED, BlennyConstants.ClimberConstants.ENCODER_ID,
                     BlennyConstants.ClimberConstants.LOWER_LIMIT, BlennyConstants.ClimberConstants.UPPER_LIMIT));
+
+            viewer = new Viewer(new ViewerIOXavier());
+
             break;
         case REPLAY:
         default:
@@ -127,8 +132,13 @@ public class BlennyContainer implements NFRRobotContainer
             climber = new Climber(new ClimberIO()
             {
             });
+            viewer = new Viewer(new ViewerIO()
+            {
+            });
             break;
         }
+        dashboard = new Dashboard(new ReefDisplayIOSwing("ReefDisplay"), new DashboardIOFWC());
+        addAutonomousRoutines();
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
         dashboard.setResetWristEncoderCommand(superstructure.getWrist()
                 .runOnce(() -> superstructure.getWrist().resetEncoderAngle(Degrees.of(0))).ignoringDisable(true));
@@ -136,8 +146,13 @@ public class BlennyContainer implements NFRRobotContainer
 
     private void addAutonomousRoutines()
     {
-        dashboard.addDefaultAutoRoutine("Do Nothing", new AutoRoutine(Commands.none(), new Translation2d[]
+        dashboard.addDefaultAutoRoutine("Do Nothing", new NFRAutoRoutine(Commands.none(), new Translation2d[]
         { new Translation2d(), new Translation2d() }, new Pose2d()));
+        dashboard.addAutoRoutine("Center_H4",
+                new NFRAutoRoutine(
+                        Commands.parallel(superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
+                                drive.getFollowPathCommand("Center_H4")),
+                        drive.getWaypoints("Center_H4"), drive.getInitialPose("Center_H4")));
     }
 
     /**
@@ -191,6 +206,11 @@ public class BlennyContainer implements NFRRobotContainer
         return dashboard;
     }
 
+    public Viewer getViewer()
+    {
+        return viewer;
+    }
+
     @Override
     public void bindDriverOI()
     {
@@ -231,7 +251,6 @@ public class BlennyContainer implements NFRRobotContainer
         dashboard.updatePose(drive.getPose());
         dashboard.setInnerElevatorPosition(superstructure.getInnerElevator().getPosition());
         dashboard.setOuterElevatorPosition(superstructure.getOuterElevator().getPosition());
-        hallDisconnectedAlert.set(HALUtil.getHALErrno() == 1);
     }
 
     public void teleopInit()

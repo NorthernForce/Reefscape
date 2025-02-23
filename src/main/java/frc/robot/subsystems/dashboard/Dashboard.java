@@ -12,7 +12,7 @@ import frc.robot.FieldConstants;
 import frc.robot.blenny.constants.BlennyConstants.SuperstructureGoal;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIO;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOInputsAutoLogged;
-import frc.robot.util.AutoRoutine;
+import frc.robot.util.NFRAutoRoutine;
 
 /**
  * Subsystem for the dashboard.
@@ -52,7 +52,7 @@ public class Dashboard extends SubsystemBase
      * @param name    Auto routine name (Descriptive for drivers please)
      * @param command Auto routine command
      */
-    public void addAutoRoutine(String name, AutoRoutine command)
+    public void addAutoRoutine(String name, NFRAutoRoutine command)
     {
         m_io.addRoutine(name, command, false);
     }
@@ -63,7 +63,7 @@ public class Dashboard extends SubsystemBase
      * @param name    Auto routine name (Descriptive for drivers please)
      * @param command Auto routine command
      */
-    public void addDefaultAutoRoutine(String name, AutoRoutine command)
+    public void addDefaultAutoRoutine(String name, NFRAutoRoutine command)
     {
         m_io.addRoutine(name, command, true);
     }
@@ -173,7 +173,7 @@ public class Dashboard extends SubsystemBase
      * 
      * @return The selected auto routine.
      */
-    public AutoRoutine getRoutine()
+    public NFRAutoRoutine getRoutine()
     {
         return m_io.getSelectedRoutine();
     }
