@@ -73,7 +73,9 @@ public class BlennyConstants
     {
         // outer ratios
         public static final double GEAR_BOX_RATIO = 25.0;
-        public static final Distance SPROCKET_CIRCUMFERENCE = Inches.of(4.0);
+        public static final double SPROCKET_TEETH = 16.0;
+        public static final Distance SPROCKET_PITCH = Inches.of(0.25);
+        public static final Distance SPROCKET_CIRCUMFERENCE = SPROCKET_PITCH.times(SPROCKET_TEETH);
 
         // talon configs
         public static final double kS = 0.12;
@@ -99,8 +101,10 @@ public class BlennyConstants
     public static class OuterElevatorConstants
     {
         // outer ratios
-        public static final double GEAR_BOX_RATIO = 27.0;
-        public static final Distance SPROCKET_CIRCUMFERENCE = Inches.of(4.5);
+        public static final double GEAR_BOX_RATIO = 25.0;
+        public static final double SPROCKET_TEETH = 22.0;
+        public static final Distance SPROCKET_PITCH = Inches.of(0.25);
+        public static final Distance SPROCKET_CIRCUMFERENCE = SPROCKET_PITCH.times(SPROCKET_TEETH);
 
         // talon configs
         public static final double kS = 0.12;
@@ -220,8 +224,10 @@ public class BlennyConstants
             public static final int ULTRASONIC_CORAL_ECHO = 3;
             public static final int ULTRASONIC_ALGAE_TRIGGER = 4;
             public static final int ULTRASONIC_ALGAE_ECHO = 5;
-            public static final Distance ULTRASONIC_CORAL_MAX_DISTANCE = Inches.of(2);
-            public static final Distance ULTRASONIC_ALGAE_MAX_DISTANCE = Inches.of(2);
+            public static final Distance CORAL_MAX_DISTANCE = Inches.of(2);
+            public static final Distance ALGAE_MAX_DISTANCE = Inches.of(2);
+            public static final int ANALOG_CORAL = 0;
+            public static final int ANALOG_ALGAE = 1;
         }
     }
 }

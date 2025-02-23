@@ -56,8 +56,8 @@ public class ZippyContainer implements NFRRobotContainer
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
         drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants,
                 ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
-                ZippyTunerConstants.FrontLeft, ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft,
-                ZippyTunerConstants.BackRight);
+                ZippyConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, ZippyTunerConstants.FrontLeft,
+                ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft, ZippyTunerConstants.BackRight);
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
         vision = new PhotonVision(ZippyConstants.VisionConstants.cameraNames(),
                 ZippyConstants.VisionConstants.cameraTransforms(), ZippyConstants.VisionConstants.APRILTAG_LAYOUT,
@@ -66,6 +66,7 @@ public class ZippyContainer implements NFRRobotContainer
         LoggedPowerDistribution.getInstance(40, ModuleType.kRev);
         dashboard.addDefaultAutoRoutine("Do Nothing", new NFRAutoRoutine(new InstantCommand(), new Translation2d[]
         { new Translation2d(), new Translation2d() }, new Pose2d()));
+
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
     }
 

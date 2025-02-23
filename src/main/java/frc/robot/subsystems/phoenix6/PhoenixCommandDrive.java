@@ -1,9 +1,6 @@
 package frc.robot.subsystems.phoenix6;
 
 import java.util.ArrayList;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Rotations;
-
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -34,6 +31,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import static edu.wpi.first.units.Units.*;
+
+import com.ctre.phoenix6.SignalLogger;
+
 public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsystem
 {
     private final LinearVelocity maxSpeed;
@@ -44,6 +47,11 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     private ArrayList<Integer> disconnectedEncoderArray;
     private String motorAlertString = "";
     private String encoderAlertString = "";
+
+    /* Swerve requests to apply during SysId characterization */
+    private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
+    private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
+    private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
     /**
      * Create a new PhoenixCommandDrive
@@ -280,5 +288,78 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
             newOffsets[i] = resetEncoderAngle(i, targetAngles[i]);
         }
         return newOffsets;
+    }
+
+    // SysIdRoutine stuff
+    private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(new SysIdRoutine.Config(null, // Use default
+                                                                                                          // ramp rate
+                                                                                                          // (1 V/s)
+            Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
+            Seconds.of(5.0), // Use default timeout (10 s)
+            // Log state with SignalLogger class
+            state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
+            new SysIdRoutine.Mechanism(output -> setControl(m_translationCharacterization.withVolts(output)), null,
+                    this));
+
+    public Command getSysIdTranslationQuasistatic(SysIdRoutine.Direction direction)
+    {
+        return m_sysIdRoutineTranslation.quasistatic(direction);
+    }
+
+    public Command getSysIdTranslationDynamic(SysIdRoutine.Direction direction)
+    {
+        return m_sysIdRoutineTranslation.dynamic(direction);
+    }
+
+    /**
+     * SysId routine for characterizing steer. This is used to find PID gains for
+     * the steer motors.
+     */
+    private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(new SysIdRoutine.Config(null, // Use default ramp
+                                                                                                    // rate (1 V/s)
+            Volts.of(7), // Use dynamic voltage of 7 V
+            Seconds.of(5.0), // Use default timeout (10 s)
+            // Log state with SignalLogger class
+            state -> SignalLogger.writeString("SysIdSteer_State", state.toString())),
+            new SysIdRoutine.Mechanism(volts -> setControl(m_steerCharacterization.withVolts(volts)), null, this));
+
+    public Command getSysIdSteerQuasistatic(SysIdRoutine.Direction direction)
+    {
+        return m_sysIdRoutineSteer.quasistatic(direction);
+    }
+
+    public Command getSysIdSteerDynamic(SysIdRoutine.Direction direction)
+    {
+        return m_sysIdRoutineSteer.dynamic(direction);
+    }
+
+    /**
+     * SysId routine for characterizing rotation. This is used to find PID gains for
+     * the FieldCentricFacingAngle HeadingController. See the documentation of
+     * SwerveRequest.SysIdSwerveRotation for info on importing the log to SysId.
+     */
+    private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(new SysIdRoutine.Config(
+            /* This is in radians per second², but SysId only supports "volts per second" */
+            Volts.of(Math.PI / 6).per(Second),
+            /* This is in radians per second, but SysId only supports "volts" */
+            Volts.of(Math.PI), Seconds.of(5.0), // Use default timeout (10 s)
+            // Log state with SignalLogger class
+            state -> SignalLogger.writeString("SysIdRotation_State", state.toString())),
+            new SysIdRoutine.Mechanism(output ->
+            {
+                /* output is actually radians per second, but SysId only supports "volts" */
+                setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
+                /* also log the requested output for SysId */
+                SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
+            }, null, this));
+
+    public Command getSysIdRotationQuasistatic(SysIdRoutine.Direction direction)
+    {
+        return m_sysIdRoutineRotation.quasistatic(direction);
+    }
+
+    public Command getSysIdRotationDynamic(SysIdRoutine.Direction direction)
+    {
+        return m_sysIdRoutineRotation.dynamic(direction);
     }
 }

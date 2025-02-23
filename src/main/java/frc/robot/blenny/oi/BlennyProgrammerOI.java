@@ -2,12 +2,16 @@ package frc.robot.blenny.oi;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.SignalLogger;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.FieldConstants;
 import frc.robot.blenny.BlennyContainer;
 import frc.robot.blenny.constants.BlennyConstants;
+
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 /**
  * Blenny OI for the programmers
@@ -44,8 +48,27 @@ public class BlennyProgrammerOI implements BlennyOI
                         container.getRollers().getCoralIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
                         () -> container.isInAlgaeState()));
 
+        driverController.b()
+                .whileTrue(Commands.sequence(Commands.runOnce(() -> SignalLogger.start()),
+                        container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdTranslationDynamic(SysIdRoutine.Direction.kReverse),
+
+                        container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdRotationQuasistatic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdRotationDynamic(SysIdRoutine.Direction.kReverse),
+
+                        container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdSteerQuasistatic(SysIdRoutine.Direction.kReverse),
+                        container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kForward),
+                        container.getDrive().getSysIdSteerDynamic(SysIdRoutine.Direction.kReverse),
+                        Commands.runOnce(() -> SignalLogger.stop())));
+
         driverController.rightTrigger()
                 .whileTrue(container.getRollers().getOuttakeCommand(BlennyConstants.RollersConstants.OUTTAKE_SPEED));
+
         container.getSuperstructure().getWrist()
                 .setDefaultCommand(container.getSuperstructure().getWrist().getStopCommand());
 
@@ -82,12 +105,27 @@ public class BlennyProgrammerOI implements BlennyOI
                 container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.LOWER_ALGAE));
         manipulatorController.x().whileTrue(
                 container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.HIGHER_ALGAE));
+
         container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
+
+        container.getClimber().setDefaultCommand(container.getClimber().getStopCommand());
 
         container.getDashboard().setInnerElevatorGoToPosition(container.getSuperstructure().getInnerElevator()
                 .getMoveToPositionCommand(container.getDashboard().getInnerElevatorTargetPosition()));
         container.getDashboard().setOuterElevatorGoToPosition(container.getSuperstructure().getOuterElevator()
                 .getMoveToPositionCommand(container.getDashboard().getOuterElevatorTargetPosition()));
+
+        manipulatorController.leftStick()
+                .whileTrue(Commands.sequence(container.getSuperstructure().getOuterElevator().getSysIdDynamicForward(),
+                        container.getSuperstructure().getOuterElevator().getSysIdDynamicReverse(),
+                        container.getSuperstructure().getOuterElevator().getSysIdQuasistaicForward(),
+                        container.getSuperstructure().getOuterElevator().getSysIdQuasistaicReverse()));
+
+        manipulatorController.rightStick()
+                .whileTrue(Commands.sequence(container.getSuperstructure().getInnerElevator().getSysIdDynamicForward(),
+                        container.getSuperstructure().getInnerElevator().getSysIdDynamicReverse(),
+                        container.getSuperstructure().getInnerElevator().getSysIdQuasistaicForward(),
+                        container.getSuperstructure().getInnerElevator().getSysIdQuasistaicReverse()));
     }
 
 }

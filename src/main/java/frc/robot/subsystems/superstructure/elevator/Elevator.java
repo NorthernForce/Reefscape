@@ -10,6 +10,8 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.subsystems.superstructure.elevator.brake.BrakeIO;
 import frc.robot.subsystems.superstructure.elevator.brake.BrakeIOInputsAutoLogged;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIO;
@@ -31,6 +33,7 @@ public class Elevator extends SubsystemBase
     private final double m_errorTolerance;
     private Distance targetState;
     private Alert m_motorNotFoundAlert;
+    private final SysIdRoutine m_sysIdRoutine;
 
     /**
      * Creates a new Elevator
@@ -48,7 +51,7 @@ public class Elevator extends SubsystemBase
         m_errorTolerance = errorTolerance;
         targetState = Meters.of(0);
         m_motorNotFoundAlert = new Alert("Elevator motor not found with name: " + getName(), Alert.AlertType.kWarning);
-
+        m_sysIdRoutine = getSysIdRoutine();
     }
 
     /**
@@ -222,5 +225,33 @@ public class Elevator extends SubsystemBase
     public boolean isAtPosition(Distance position)
     {
         return Math.abs(m_inputs.position.in(Meters) - position.in(Meters)) <= m_errorTolerance;
+    }
+
+    private SysIdRoutine getSysIdRoutine()
+    {
+        return new SysIdRoutine(
+                new SysIdRoutine.Config(null, Volts.of(4), null,
+                        state -> Logger.recordOutput(getName() + "/SysIdState", state)),
+                new SysIdRoutine.Mechanism(volts -> m_motor.setVoltage(volts), null, this));
+    }
+
+    public Command getSysIdQuasistaicForward()
+    {
+        return m_sysIdRoutine.quasistatic(Direction.kForward);
+    }
+
+    public Command getSysIdQuasistaicReverse()
+    {
+        return m_sysIdRoutine.quasistatic(Direction.kReverse);
+    }
+
+    public Command getSysIdDynamicForward()
+    {
+        return m_sysIdRoutine.dynamic(Direction.kForward);
+    }
+
+    public Command getSysIdDynamicReverse()
+    {
+        return m_sysIdRoutine.dynamic(Direction.kReverse);
     }
 }
