@@ -122,14 +122,14 @@ public class BlennyDriverOI implements BlennyOI
 
         container.getSuperstructure().getOuterElevator().setDefaultCommand(container.getSuperstructure()
                 .getOuterElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getLeftY)));
-        driverController.rightBumper().whileTrue(Commands.defer(
-                () -> container.getDrive()
-                        .driveToPose(FieldConstants.getReefBackupPosition(container.getDashboard().getTargetPose(),
-                                Feet.of(1)))
-                        .alongWith(container.getSuperstructure()
-                                .getGoToGoalCommand(container.getDashboard().getSuperstructureGoal()))
-                        .andThen(() -> container.getDrive().driveToPose(container.getDashboard().getTargetPose())),
-                Set.of(container.getSuperstructure())));
+        // driverController.rightBumper().whileTrue(Commands.defer(
+        //         () -> container.getDrive()
+        //                 .driveToPose(FieldConstants.getReefBackupPosition(container.getDashboard().getTargetPose(),
+        //                         Feet.of(1)))
+        //                 .alongWith(container.getSuperstructure()
+        //                         .getGoToGoalCommand(container.getDashboard().getSuperstructureGoal()))
+        //                 .andThen(() -> container.getDrive().driveToPose(container.getDashboard().getTargetPose())),
+        //         Set.of(container.getSuperstructure())));
 
     }
 }
