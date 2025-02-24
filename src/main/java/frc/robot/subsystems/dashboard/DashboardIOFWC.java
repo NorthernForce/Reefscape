@@ -8,6 +8,7 @@ import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.WebServer;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
@@ -35,6 +36,8 @@ public class DashboardIOFWC implements DashboardIO
     private final DoubleSubscriber outerElevatorTargetPosition;
     private final DoublePublisher innerElevatorPosition;
     private final DoublePublisher outerElevatorPosition;
+    private final BooleanPublisher hasCoralPublisher;
+    private final BooleanPublisher hasAlgaePublisher;
 
     /**
      * Creates a new DashboardIOFWC. This connects to the FWC dashboard using "FWC"
@@ -58,6 +61,8 @@ public class DashboardIOFWC implements DashboardIO
         outerElevatorTargetPosition = table.getDoubleTopic("OuterElevator/TargetPosition").subscribe(0);
         innerElevatorPosition = table.getDoubleTopic("InnerElevator/Position").publish();
         outerElevatorPosition = table.getDoubleTopic("OuterElevator/Position").publish();
+        hasCoralPublisher = table.getBooleanTopic("HasCoral").publish();
+        hasAlgaePublisher = table.getBooleanTopic("HasAlgae").publish();
     }
 
     @Override
@@ -88,8 +93,7 @@ public class DashboardIOFWC implements DashboardIO
     @Override
     public void updateInputs(DashboardIOInputs inputs)
     {
-        var pose = autoChooser.get().startPose();
-        pose = FieldConstants.convertPoseByAlliance(pose, FieldConstants.getAlliance());
+        var pose = autoChooser.get().startPose().get();
         autoPosePublisher.set(new double[]
         { pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getRotation().getRadians() });
         var path = autoChooser.get().waypoints().clone();
@@ -106,6 +110,18 @@ public class DashboardIOFWC implements DashboardIO
         autoPathPublisher.set(pathArray);
         inputs.innerElevatorTargetPosition = Inches.of(innerElevatorTargetPosition.get());
         inputs.outerElevatorTargetPosition = Inches.of(outerElevatorTargetPosition.get());
+    }
+
+    @Override
+    public void setHasCoral(boolean hasCoral)
+    {
+        hasCoralPublisher.set(hasCoral);
+    }
+
+    @Override
+    public void setHasAlgae(boolean hasAlgae)
+    {
+        hasAlgaePublisher.set(hasAlgae);
     }
 
     @Override
