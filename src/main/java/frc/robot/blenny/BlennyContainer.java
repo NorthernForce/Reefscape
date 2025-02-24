@@ -148,11 +148,11 @@ public class BlennyContainer implements NFRRobotContainer
     {
         dashboard.addDefaultAutoRoutine("Do Nothing", new NFRAutoRoutine(Commands.none(), new Translation2d[]
         { new Translation2d(), new Translation2d() }, () -> new Pose2d()));
-        dashboard.addAutoRoutine("Center_H4",
-                new NFRAutoRoutine(
-                        Commands.parallel(superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
-                                drive.getFollowPathCommand("Center_H4")),
-                        drive.getWaypoints("Center_H4"), () -> drive.getInitialPose("Center_H4")));
+        // dashboard.addAutoRoutine("Center_H4",
+        //         new NFRAutoRoutine(
+        //                 Commands.parallel(superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
+        //                         drive.getFollowPathCommand("Center_H4")),
+        //                 drive.getWaypoints("Center_H4"), () -> drive.getInitialPose("Center_H4")));
     }
 
     /**
