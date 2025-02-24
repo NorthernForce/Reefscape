@@ -1,12 +1,11 @@
 .teleop-container {
     display: grid;
     grid-template-columns: 1fr 3fr 1fr;
-    grid-template-rows: 1fr 10fr;
     grid-template-areas: "alert time nada"
         "alert camera nada";
     justify-items: center;
     padding: 1%;
-    overflow: hidden;
+    height: 100%;
 }
 .teleop-container NetworkAlerts {
     grid-area: alert;
