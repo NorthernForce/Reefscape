@@ -117,7 +117,7 @@ public class BlennyContainer implements NFRRobotContainer
                             BlennyConstants.RollersConstants.SensorConstants.ALGAE_MAX_DISTANCE),
                     new RollersSensorIOAnalog(BlennyConstants.RollersConstants.SensorConstants.ANALOG_CORAL,
                             BlennyConstants.RollersConstants.SensorConstants.CORAL_MAX_DISTANCE),
-                        BlennyConstants.RollersConstants.INTAKE_SPEED, BlennyConstants.RollersConstants.OUTTAKE_SPEED);
+                    BlennyConstants.RollersConstants.INTAKE_SPEED, BlennyConstants.RollersConstants.OUTTAKE_SPEED);
             break;
         case REPLAY:
         default:
@@ -170,30 +170,24 @@ public class BlennyContainer implements NFRRobotContainer
     public Command getCoralIntakeCommand()
     {
         return superstructure.getGoToGoalCommand(SuperstructureGoal.CORAL_STATION)
-            .andThen(rollers.getCoralIntakeCommand());
+                .andThen(rollers.getCoralIntakeCommand());
     }
 
     public Command getCoralOuttakeCommand()
     {
-        return rollers.getOuttakeCoralCommand()
-            .andThen(drive.getBackupCommand(0.5, 0.3));
+        return rollers.getOuttakeCoralCommand().andThen(drive.getBackupCommand(0.5, 0.3));
     }
-    
+
     public Command getAlgaeHighIntakeCommand()
     {
         return superstructure.getGoToGoalCommand(SuperstructureGoal.HIGHER_ALGAE)
-            .andThen(rollers.getAlgaeIntakeCommand());
+                .andThen(rollers.getAlgaeIntakeCommand());
     }
 
     public Command getCenter_H4Command()
     {
-        return Commands.sequence(
-            Commands.parallel(
-                superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
-                drive.getFollowPathCommand("Center_H4")
-            ),
-            getCoralOuttakeCommand()
-        );
+        return Commands.sequence(Commands.parallel(superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
+                drive.getFollowPathCommand("Center_H4")), getCoralOuttakeCommand());
     }
 
     /**

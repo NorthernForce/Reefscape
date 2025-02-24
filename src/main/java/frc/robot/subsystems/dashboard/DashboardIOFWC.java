@@ -48,7 +48,7 @@ public class DashboardIOFWC implements DashboardIO
      */
     public DashboardIOFWC()
     {
-        WebServer.start(5800, Utils.isSimulation() ? "./npm-dash/dist" : "/home/lvuser/npm-dash");
+        WebServer.start(5800, Utils.isSimulation() ? "./npm-dash/dist" : "/home/lvuser/deploy/npm-dash");
         autoChooser = new LoggedDashboardChooser<NFRAutoRoutine>("AutoChooser");
         table = NetworkTableInstance.getDefault().getTable("/FWC");
         stagePublisher = table.getDoubleTopic("selectedTab").publish();

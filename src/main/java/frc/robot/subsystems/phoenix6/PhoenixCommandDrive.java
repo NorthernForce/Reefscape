@@ -100,8 +100,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         this.yPid = yPid;
         this.rPid = rPid;
         rPid.enableContinuousInput(-Math.PI, Math.PI);
-        ApplyFieldSpeeds pathControl = new ApplyFieldSpeeds()
-            .withDriveRequestType(DriveRequestType.Velocity);
+        ApplyFieldSpeeds pathControl = new ApplyFieldSpeeds().withDriveRequestType(DriveRequestType.Velocity);
         factory = new AutoFactory(this::getPose, this::resetPose, (SwerveSample sample) ->
         {
             var pose = getPose();
@@ -504,7 +503,6 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command getBackupCommand(double time, double speed)
     {
         SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric();
-        return applyRequest(() -> robotCentric.withVelocityX(-speed))
-                .withTimeout(time);
+        return applyRequest(() -> robotCentric.withVelocityX(-speed)).withTimeout(time);
     }
 }

@@ -79,22 +79,20 @@ public class BlennyDriverOI implements BlennyOI
         container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
 
         driverController.leftTrigger()
-                .whileTrue(Commands.either(
-                        container.getRollers().getAlgaeIntakeCommand(),
-                        container.getRollers().getCoralIntakeCommand(),
-                        () -> container.isInAlgaeState()).andThen(rumble(driverController)));
+                .whileTrue(Commands
+                        .either(container.getRollers().getAlgaeIntakeCommand(),
+                                container.getRollers().getCoralIntakeCommand(), () -> container.isInAlgaeState())
+                        .andThen(rumble(driverController)));
 
-        driverController.rightTrigger()
-                .whileTrue(container.getRollers().getOuttakeCommand());
+        driverController.rightTrigger().whileTrue(container.getRollers().getOuttakeCommand());
 
         manipulatorController.leftTrigger()
-                .whileTrue(Commands.either(
-                        container.getRollers().getAlgaeIntakeCommand(),
-                        container.getRollers().getCoralIntakeCommand(),
-                        () -> container.isInAlgaeState()).andThen(rumble(manipulatorController)));
+                .whileTrue(Commands
+                        .either(container.getRollers().getAlgaeIntakeCommand(),
+                                container.getRollers().getCoralIntakeCommand(), () -> container.isInAlgaeState())
+                        .andThen(rumble(manipulatorController)));
 
-        manipulatorController.rightTrigger()
-                .whileTrue(container.getRollers().getOuttakeCommand());
+        manipulatorController.rightTrigger().whileTrue(container.getRollers().getOuttakeCommand());
     }
 
     static void bindClimber(CommandXboxController driverController, BlennyContainer container)

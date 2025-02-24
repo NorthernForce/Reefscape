@@ -36,8 +36,8 @@ public class Rollers extends SubsystemBase
      * @param sensorIOCoral The IO for the coral sensor.
      */
 
-    public Rollers(RollersIO intakeIO, RollersSensorIO sensorIOAlgae, RollersSensorIO sensorIOCoral,
-        double intakeSpeed, double outtakeSpeed)
+    public Rollers(RollersIO intakeIO, RollersSensorIO sensorIOAlgae, RollersSensorIO sensorIOCoral, double intakeSpeed,
+            double outtakeSpeed)
     {
         m_intakeIO = intakeIO;
         m_sensorIOAlgae = sensorIOAlgae;

@@ -70,6 +70,12 @@ npm_run_build {
     outputs.dir 'build'
 }
 
+task copyCode(type: Copy) {
+    from 'dist'
+    into '../src/main/deploy/npm-dash'
+}
+copyCode.dependsOn npm_run_build
+
 task runDev(type: NpmTask, dependsOn: 'npm_run_build') {
     args = ['run', 'dev']
 }
