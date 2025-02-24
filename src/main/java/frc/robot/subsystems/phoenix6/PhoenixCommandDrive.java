@@ -178,14 +178,14 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
             var x = xSupplier.getAsDouble();
             var y = ySupplier.getAsDouble();
             var omega = omegaSupplier.getAsDouble();
-            if (safeDriveSupplier != null && safeDriveSupplier.get().lte(safeDriveDistance))
-            {
-                var robotX = x * getState().Pose.getRotation().getCos() - y * getState().Pose.getRotation().getSin();
-                var robotY = x * getState().Pose.getRotation().getSin() + y * getState().Pose.getRotation().getCos();
-                robotX = Math.min(robotX, 0);
-                x = robotX * getState().Pose.getRotation().getCos() + robotY * getState().Pose.getRotation().getSin();
-                y = -robotX * getState().Pose.getRotation().getSin() + robotY * getState().Pose.getRotation().getCos();
-            }
+            // if (safeDriveSupplier != null && safeDriveSupplier.get().lte(safeDriveDistance))
+            // {
+            //     var robotX = x * getState().Pose.getRotation().getCos() - y * getState().Pose.getRotation().getSin();
+            //     var robotY = x * getState().Pose.getRotation().getSin() + y * getState().Pose.getRotation().getCos();
+            //     robotX = Math.min(robotX, 0);
+            //     x = robotX * getState().Pose.getRotation().getCos() + robotY * getState().Pose.getRotation().getSin();
+            //     y = -robotX * getState().Pose.getRotation().getSin() + robotY * getState().Pose.getRotation().getCos();
+            // }
             return fieldCentric.withVelocityX(x).withVelocityY(y).withRotationalRate(omega);
         });
     }
