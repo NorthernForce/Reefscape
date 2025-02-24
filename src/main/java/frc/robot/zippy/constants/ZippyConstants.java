@@ -1,6 +1,7 @@
 package frc.robot.zippy.constants;
 
 import static edu.wpi.first.units.Units.*;
+import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -68,6 +69,12 @@ public class ZippyConstants
         }
 
         public static final double CAMERA_WIDTH = 800;
+    }
+
+    public static class PathplannerConstants
+    {
+        public static final PIDConstants linearPIDConstants = new PIDConstants(10.0, 0.0, 0.0);
+        public static final PIDConstants angularPIDConstants = new PIDConstants(5.0, 0.0, 0.0);
     }
 
     public static class AutoConstants

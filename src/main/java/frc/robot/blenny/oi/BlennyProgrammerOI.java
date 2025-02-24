@@ -1,5 +1,6 @@
 package frc.robot.blenny.oi;
 
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -12,6 +13,8 @@ import frc.robot.blenny.BlennyContainer;
 import frc.robot.blenny.constants.BlennyConstants;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
+import static edu.wpi.first.units.Units.*;
 
 /**
  * Blenny OI for the programmers
@@ -114,6 +117,14 @@ public class BlennyProgrammerOI implements BlennyOI
                 .getMoveToPositionCommand(container.getDashboard().getInnerElevatorTargetPosition()));
         container.getDashboard().setOuterElevatorGoToPosition(container.getSuperstructure().getOuterElevator()
                 .getMoveToPositionCommand(container.getDashboard().getOuterElevatorTargetPosition()));
+        driverController.rightBumper().whileTrue(Commands.defer(
+                () -> container.getDrive()
+                        .driveToPose(FieldConstants.getReefBackupPosition(container.getDashboard().getTargetPose(),
+                                Feet.of(1)))
+                        .alongWith(container.getSuperstructure()
+                                .getGoToGoalCommand(container.getDashboard().getSuperstructureGoal()))
+                        .andThen(() -> container.getDrive().driveToPose(container.getDashboard().getTargetPose())),
+                Set.of(container.getSuperstructure())));
 
         manipulatorController.leftStick()
                 .whileTrue(Commands.sequence(container.getSuperstructure().getOuterElevator().getSysIdDynamicForward(),

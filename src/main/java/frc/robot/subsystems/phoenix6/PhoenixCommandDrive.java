@@ -14,6 +14,11 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 
 import choreo.auto.AutoFactory;
 import choreo.trajectory.SwerveSample;
@@ -30,6 +35,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -48,6 +55,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     private final LinearVelocity maxSpeed;
     @SuppressWarnings("unused")
     private final AngularVelocity maxAngularSpeed;
+    private final SwerveRequest.ApplyRobotSpeeds applyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
     private final Alert motorDisconnectedAlert;
     private final Alert encoderDisconnectedAlert;
     private ArrayList<Integer> disconnectedMotorArray;
@@ -75,9 +83,10 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      * @param maxAngularSpeed     the maximum speed of the robot rotationally
      * @param moduleConstants     the module constants
      */
-    private PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
-            AngularVelocity maxAngularSpeed, Distance safeDriveDistance, PIDController xPid, PIDController yPid,
-            PIDController rPid, SwerveModuleConstants<?, ?, ?>... moduleConstants)
+    public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
+            AngularVelocity maxAngularSpeed, PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
+            Distance safeDriveDistance, PIDController xPid, PIDController yPid, PIDController rPid,
+            SwerveModuleConstants<?, ?, ?>... moduleConstants)
     {
         super(drivetrainConstants, moduleConstants);
         CommandScheduler.getInstance().registerSubsystem(this);
@@ -101,14 +110,36 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
             runVelocity(speeds);
         }, true, this);
         factory.newRoutine("routine");
+        // Configure the Pathplanner AutoBuilder for easier pathfinding
+        configureAutoBuilder(linearPIDConstants, angularPIDConstants);
+    }
+
+    private void configureAutoBuilder(PIDConstants linear, PIDConstants angular)
+    {
+        try
+        {
+            RobotConfig config = RobotConfig.fromGUISettings();
+            AutoBuilder.configure(() -> getState().Pose, this::resetPose, () -> getState().Speeds,
+                    (speeds, feedforwards) -> setControl(applyRobotSpeeds.withSpeeds(speeds)
+                            .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+                            .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
+                    new PPHolonomicDriveController(new PIDConstants(linear.kP, linear.kI, linear.kD),
+                            new PIDConstants(angular.kP, angular.kI, angular.kD)),
+                    config, () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, this);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
     public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
-            AngularVelocity maxAngularSpeed, Distance safeDriveDistance, PIDController xPid, PIDController yPid,
-            PIDController rPid, Angle[] moduleOffsets, SwerveModuleConstants<?, ?, ?>... moduleConstants)
+            AngularVelocity maxAngularSpeed, PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
+            Distance safeDriveDistance, PIDController xPid, PIDController yPid, PIDController rPid,
+            Angle[] moduleOffsets, SwerveModuleConstants<?, ?, ?>... moduleConstants)
     {
-        this(drivetrainConstants, maxSpeed, maxAngularSpeed, safeDriveDistance, xPid, yPid, rPid,
-                new SwerveModuleConstants[]
+        this(drivetrainConstants, maxSpeed, maxAngularSpeed, linearPIDConstants, angularPIDConstants, safeDriveDistance,
+                xPid, yPid, rPid, new SwerveModuleConstants[]
                 { moduleConstants[0].withEncoderOffset(moduleOffsets[0]),
                         moduleConstants[1].withEncoderOffset(moduleOffsets[1]),
                         moduleConstants[2].withEncoderOffset(moduleOffsets[2]),
@@ -167,6 +198,18 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public void disableSafeDrive()
     {
         safeDriveSupplier = null;
+    }
+
+    /**
+     * Get a command to drive the robot to a pose on the field using Pathplanner
+     * 
+     * @param pose The pose that the robot should drive to
+     * @return A command that drives the robot to the specified pose
+     */
+    public Command driveToPose(Pose2d pose)
+    {
+        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+        return AutoBuilder.pathfindToPose(pose, constraints, 0.0);
     }
 
     /**

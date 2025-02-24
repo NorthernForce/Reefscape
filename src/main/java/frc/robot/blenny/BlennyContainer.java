@@ -73,6 +73,8 @@ public class BlennyContainer implements NFRRobotContainer
     {
         drive = new PhoenixCommandDrive(BlennyTunerConstants.DrivetrainConstants,
                 BlennyConstants.DrivetrainConstants.MAX_SPEED, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                BlennyConstants.PathplannerConstants.linearPIDConstants,
+                BlennyConstants.PathplannerConstants.angularPIDConstants,
                 BlennyConstants.DrivetrainConstants.SAFE_DISTANCE, BlennyConstants.AutoConstants.xPID,
                 BlennyConstants.AutoConstants.yPID, BlennyConstants.AutoConstants.rPID,
                 BlennyConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, BlennyTunerConstants.FrontLeft,
