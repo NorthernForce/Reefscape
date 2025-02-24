@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -159,5 +160,28 @@ public class FieldConstants
     public static Alliance getAlliance()
     {
         return DriverStation.getAlliance().orElse(Alliance.Blue);
+    }
+
+    public static class CoralRotations
+    {
+        public static final Rotation2d BLUE_LEFT = Rotation2d.fromDegrees(120);
+        public static final Rotation2d BLUE_RIGHT = Rotation2d.fromDegrees(240);
+        public static final Rotation2d RED_LEFT = Rotation2d.fromDegrees(60);
+        public static final Rotation2d RED_RIGHT = Rotation2d.fromDegrees(300);
+    }
+
+    public static boolean isAtCoralRotation(Rotation2d rotation)
+    {
+        double degrees = rotation.getDegrees();
+        degrees = MathUtil.inputModulus(degrees, 0, 360);
+        if (getAlliance() == Alliance.Red)
+        {
+            return Math.abs(degrees - CoralRotations.RED_LEFT.getDegrees()) <= 10
+                    || Math.abs(degrees - CoralRotations.RED_RIGHT.getDegrees()) <= 10;
+        } else
+        {
+            return Math.abs(degrees - CoralRotations.BLUE_LEFT.getDegrees()) <= 10
+                    || Math.abs(degrees - CoralRotations.BLUE_RIGHT.getDegrees()) <= 10;
+        }
     }
 }

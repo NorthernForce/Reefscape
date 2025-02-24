@@ -29,9 +29,6 @@ import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOSwing;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
-import frc.robot.subsystems.rollers.Rollers;
-import frc.robot.subsystems.rollers.RollersIOTalonFXS;
-import frc.robot.subsystems.rollers.sensor.RollersSensorIOAnalog;
 import frc.robot.subsystems.photonvision.PhotonVision;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
@@ -40,6 +37,11 @@ import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.superstructure.elevator.brake.BrakeIO;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIO;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIOLimitSwitch;
+import frc.robot.subsystems.rollers.Rollers;
+import frc.robot.subsystems.rollers.RollersIO;
+import frc.robot.subsystems.rollers.RollersIOTalonFXS;
+import frc.robot.subsystems.rollers.sensor.RollersSensorIO;
+import frc.robot.subsystems.rollers.sensor.RollersSensorIOAnalog;
 import frc.robot.subsystems.superstructure.wrist.Wrist;
 import frc.robot.subsystems.superstructure.wrist.WristIO;
 import frc.robot.subsystems.superstructure.wrist.WristIOTalonFX;
@@ -80,15 +82,6 @@ public class BlennyContainer implements NFRRobotContainer
                 BlennyConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, BlennyTunerConstants.FrontLeft,
                 BlennyTunerConstants.FrontRight, BlennyTunerConstants.BackLeft, BlennyTunerConstants.BackRight);
 
-        rollers = new Rollers(
-                new RollersIOTalonFXS(BlennyConstants.RollersConstants.ROLLER_MOTOR_LEFT_ID,
-                        BlennyConstants.RollersConstants.ROLLER_MOTOR_RIGHT_ID,
-                        BlennyConstants.RollersConstants.ROLLER_MOTORS_INVERTED),
-                new RollersSensorIOAnalog(BlennyConstants.RollersConstants.SensorConstants.ANALOG_ALGAE,
-                        BlennyConstants.RollersConstants.SensorConstants.ALGAE_MAX_DISTANCE),
-                new RollersSensorIOAnalog(BlennyConstants.RollersConstants.SensorConstants.ANALOG_CORAL,
-                        BlennyConstants.RollersConstants.SensorConstants.CORAL_MAX_DISTANCE));
-
         vision = new PhotonVision(BlennyConstants.VisionConstants.cameraNames(),
                 BlennyConstants.VisionConstants.cameraTransforms(), BlennyConstants.VisionConstants.APRILTAG_LAYOUT,
                 BlennyConstants.VisionConstants.MAX_Y_COORDINATE, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
@@ -108,12 +101,23 @@ public class BlennyContainer implements NFRRobotContainer
                             }, new ElevatorSensorIOLimitSwitch(0), 0.2),
                     new Wrist(new WristIOTalonFX(16, 20, BlennyConstants.WristJointConstants.WRIST_CONSTANTS),
                             Degrees.of(2.0)));
-            climber = new Climber(new ClimberIOTalonFX(BlennyConstants.ClimberConstants.ID,
-                    BlennyConstants.ClimberConstants.INVERTED, BlennyConstants.ClimberConstants.ENCODER_ID,
-                    BlennyConstants.ClimberConstants.LOWER_LIMIT, BlennyConstants.ClimberConstants.UPPER_LIMIT));
+            climber = new Climber(
+                    new ClimberIOTalonFX(BlennyConstants.ClimberConstants.ID, BlennyConstants.ClimberConstants.INVERTED,
+                            BlennyConstants.ClimberConstants.ENCODER_ID, BlennyConstants.ClimberConstants.LOWER_LIMIT,
+                            BlennyConstants.ClimberConstants.UPPER_LIMIT),
+                    BlennyConstants.ClimberConstants.SWEET_ANGLE, BlennyConstants.ClimberConstants.LOWER_LIMIT,
+                    BlennyConstants.ClimberConstants.UPPER_LIMIT);
 
             viewer = new Viewer(new ViewerIOXavier());
-
+            rollers = new Rollers(
+                    new RollersIOTalonFXS(BlennyConstants.RollersConstants.ROLLER_MOTOR_LEFT_ID,
+                            BlennyConstants.RollersConstants.ROLLER_MOTOR_RIGHT_ID,
+                            BlennyConstants.RollersConstants.ROLLER_MOTORS_INVERTED),
+                    new RollersSensorIOAnalog(BlennyConstants.RollersConstants.SensorConstants.ANALOG_ALGAE,
+                            BlennyConstants.RollersConstants.SensorConstants.ALGAE_MAX_DISTANCE),
+                    new RollersSensorIOAnalog(BlennyConstants.RollersConstants.SensorConstants.ANALOG_CORAL,
+                            BlennyConstants.RollersConstants.SensorConstants.CORAL_MAX_DISTANCE),
+                        BlennyConstants.RollersConstants.INTAKE_SPEED, BlennyConstants.RollersConstants.OUTTAKE_SPEED);
             break;
         case REPLAY:
         default:
@@ -131,10 +135,18 @@ public class BlennyContainer implements NFRRobotContainer
                     }, Degrees.of(2.0)));
             climber = new Climber(new ClimberIO()
             {
-            });
+            }, BlennyConstants.ClimberConstants.SWEET_ANGLE, BlennyConstants.ClimberConstants.LOWER_LIMIT,
+                    BlennyConstants.ClimberConstants.UPPER_LIMIT);
             viewer = new Viewer(new ViewerIO()
             {
             });
+            rollers = new Rollers(new RollersIO()
+            {
+            }, new RollersSensorIO()
+            {
+            }, new RollersSensorIO()
+            {
+            }, BlennyConstants.RollersConstants.INTAKE_SPEED, BlennyConstants.RollersConstants.OUTTAKE_SPEED);
             break;
         }
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefDisplay"), new DashboardIOFWC());
@@ -153,6 +165,35 @@ public class BlennyContainer implements NFRRobotContainer
                         Commands.parallel(superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
                                 drive.getFollowPathCommand("Center_H4")),
                         drive.getWaypoints("Center_H4"), () -> drive.getInitialPose("Center_H4")));
+    }
+
+    public Command getCoralIntakeCommand()
+    {
+        return superstructure.getGoToGoalCommand(SuperstructureGoal.CORAL_STATION)
+            .andThen(rollers.getCoralIntakeCommand());
+    }
+
+    public Command getCoralOuttakeCommand()
+    {
+        return rollers.getOuttakeCoralCommand()
+            .andThen(drive.getBackupCommand(0.5, 0.3));
+    }
+    
+    public Command getAlgaeHighIntakeCommand()
+    {
+        return superstructure.getGoToGoalCommand(SuperstructureGoal.HIGHER_ALGAE)
+            .andThen(rollers.getAlgaeIntakeCommand());
+    }
+
+    public Command getCenter_H4Command()
+    {
+        return Commands.sequence(
+            Commands.parallel(
+                superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
+                drive.getFollowPathCommand("Center_H4")
+            ),
+            getCoralOuttakeCommand()
+        );
     }
 
     /**
