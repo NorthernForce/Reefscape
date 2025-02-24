@@ -5,7 +5,6 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.blenny.constants.BlennyConstants.ClimberConstants;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -17,6 +16,9 @@ public class Climber extends SubsystemBase
 {
     private ClimberIO io;
     private final ClimberIOInputsAutoLogged m_inputs = new ClimberIOInputsAutoLogged();
+    private final Angle sweetSpot;
+    private final Angle stowPosition;
+    private final Angle extendPosition;
 
     /**
      * Constructor for the Climber class.
@@ -24,9 +26,12 @@ public class Climber extends SubsystemBase
      * @param climberIO IO for the climber
      */
 
-    public Climber(ClimberIO climberIO)
+    public Climber(ClimberIO climberIO, Angle sweetSpot, Angle stowPosition, Angle extendPosition)
     {
         io = climberIO;
+        this.sweetSpot = sweetSpot;
+        this.stowPosition = stowPosition;
+        this.extendPosition = extendPosition;
     }
 
     /**
@@ -75,13 +80,35 @@ public class Climber extends SubsystemBase
         return run(() -> climbDown(climbSpeed));
     }
 
+    public class ClimbToPosition extends Command
+    {
+        private final Angle position;
+
+        public ClimbToPosition(Angle position)
+        {
+            this.position = position;
+        }
+
+        @Override
+        public void initialize()
+        {
+            runTo(position);
+        }
+
+        @Override
+        public boolean isFinished()
+        {
+            return isAtAngle(position);
+        }
+    }
+
     /**
      * climb to perfect position
      */
 
     public Command climbToPosition(Angle position)
     {
-        return run(() -> runTo(position));
+        return new ClimbToPosition(position);
     }
 
     /**
@@ -90,16 +117,21 @@ public class Climber extends SubsystemBase
 
     public Command getRunToSweetSpotCommand()
     {
-        return run(() -> runTo(Degrees.of(0))).andThen(run(() -> runTo(ClimberConstants.SWEET_ANGLE)));
+        return climbToPosition(sweetSpot);
     }
 
     /**
      * returns a command that runs the climber to the top
      */
 
-    public Command getClimbDown()
+    public Command getClimbExtend()
     {
-        return run(() -> runTo(Degrees.of(0)));
+        return climbToPosition(extendPosition);
+    }
+
+    public Command getStowCommand()
+    {
+        return climbToPosition(stowPosition);
     }
 
     /**
@@ -131,6 +163,11 @@ public class Climber extends SubsystemBase
     public Command getStopCommand()
     {
         return run(this::stop);
+    }
+
+    public boolean isAtAngle(Angle angle)
+    {
+        return m_inputs.position.isNear(angle, Degrees.of(5));
     }
 
     /**

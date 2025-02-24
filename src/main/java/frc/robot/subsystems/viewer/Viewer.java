@@ -42,4 +42,9 @@ public class Viewer extends SubsystemBase
     {
         return inputs.postOffset;
     }
+
+    public boolean isPresent()
+    {
+        return inputs.connected;
+    }
 }

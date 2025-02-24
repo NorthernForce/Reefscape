@@ -16,7 +16,7 @@ public interface RollersSensorIO
     @AutoLog
     public static class RollersSensorIOInputs
     {
-        public boolean hasPiece;
+        public boolean hasPiece = false;
     }
 
     /**
@@ -25,5 +25,7 @@ public interface RollersSensorIO
      * @param inputs The inputs to update.
      */
 
-    public void updateInputs(RollersSensorIOInputs inputs);
+    public default void updateInputs(RollersSensorIOInputs inputs)
+    {
+    }
 }

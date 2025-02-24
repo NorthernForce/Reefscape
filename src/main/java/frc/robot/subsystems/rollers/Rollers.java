@@ -25,6 +25,8 @@ public class Rollers extends SubsystemBase
     private final RollersSensorIOInputsAutoLogged m_sensorIOCoralInputs = new RollersSensorIOInputsAutoLogged();
     private final Alert m_intakeLeftMotorMissing = new Alert("Intake left motor is missing", AlertType.kError);
     private final Alert m_intakeRightMotorMissing = new Alert("Intake right motor is missing", AlertType.kError);
+    private final double intakeSpeed;
+    private final double outtakeSpeed;
 
     /**
      * Constructs a new Rollers subsystem.
@@ -34,20 +36,23 @@ public class Rollers extends SubsystemBase
      * @param sensorIOCoral The IO for the coral sensor.
      */
 
-    public Rollers(RollersIO intakeIO, RollersSensorIO sensorIOAlgae, RollersSensorIO sensorIOCoral)
+    public Rollers(RollersIO intakeIO, RollersSensorIO sensorIOAlgae, RollersSensorIO sensorIOCoral,
+        double intakeSpeed, double outtakeSpeed)
     {
         m_intakeIO = intakeIO;
         m_sensorIOAlgae = sensorIOAlgae;
         m_sensorIOCoral = sensorIOCoral;
+        this.intakeSpeed = intakeSpeed;
+        this.outtakeSpeed = outtakeSpeed;
     }
 
     /**
      * Runs motors to intake piece.
      */
 
-    public void intake(double speed)
+    public void intake()
     {
-        m_intakeIO.set(-Math.abs(speed));
+        m_intakeIO.set(intakeSpeed);
     }
 
     /**
@@ -56,9 +61,9 @@ public class Rollers extends SubsystemBase
      * @param speed The speed to outtake at.
      */
 
-    public void outtake(double speed)
+    public void outtake()
     {
-        m_intakeIO.set(Math.abs(speed));
+        m_intakeIO.set(-outtakeSpeed);
     }
 
     /**
@@ -89,9 +94,9 @@ public class Rollers extends SubsystemBase
      * @return The command.
      */
 
-    public Command getCoralIntakeCommand(double speed)
+    public Command getCoralIntakeCommand()
     {
-        return run(() -> intake(speed));// .until(() -> hasCoral());
+        return run(() -> intake()).until(() -> hasCoral());
     }
 
     /**
@@ -101,21 +106,36 @@ public class Rollers extends SubsystemBase
      * @return The command.
      */
 
-    public Command getAlgaeIntakeCommand(double speed)
+    public Command getAlgaeIntakeCommand()
     {
-        return run(() -> intake(speed)).until(() -> hasAlgae());
+        return run(() -> intake()).until(() -> hasAlgae());
     }
 
     /**
-     * Returns a command that outtakes a piece.
+     * Returns a command that outtakes a piece. Does not stop
      * 
      * @param speed The speed to outtake at.
      * @return The command.
      */
 
-    public Command getOuttakeCommand(double speed)
+    public Command getOuttakeCommand()
     {
-        return run(() -> outtake(speed)).until(() -> !hasAlgae() && !hasCoral());
+        return run(() -> outtake());
+    }
+
+    public Command getOuttakeUntilEmptyCommand()
+    {
+        return run(() -> outtake()).until(() -> !hasAlgae() && !hasCoral());
+    }
+
+    public Command getOuttakeCoralCommand()
+    {
+        return run(() -> outtake()).until(() -> !hasCoral());
+    }
+
+    public Command getOuttakeAlgaeCommand()
+    {
+        return run(() -> outtake()).until(() -> !hasAlgae());
     }
 
     /**

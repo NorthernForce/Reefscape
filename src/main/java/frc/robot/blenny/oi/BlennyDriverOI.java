@@ -4,6 +4,8 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -33,7 +35,7 @@ public class BlennyDriverOI implements BlennyOI
         };
     }
 
-    private void bindDrive(CommandXboxController driverController, BlennyContainer container)
+    static void bindDrive(CommandXboxController driverController, BlennyContainer container)
     {
         container.getDrive().setDefaultCommand(container.getDrive().getDriveByJoystickCommand(
                 processJoystickInput(driverController::getLeftY), processJoystickInput(driverController::getLeftX),
@@ -45,40 +47,90 @@ public class BlennyDriverOI implements BlennyOI
         driverController.x().whileTrue(container.getDrive().getXLockCommand());
 
         new Trigger(() -> !container.getSuperstructure().isAtGoal()
-                || container.getSuperstructure().getGoal() == SuperstructureGoal.CORAL_STATION).onTrue(Commands.runOnce(
-                        () -> container.getDrive().enableSafeDrive(() -> container.getViewer().getCenterDistance())))
-                        .onFalse(Commands.runOnce(() -> container.getDrive().disableSafeDrive()));
+                && container.getSuperstructure().getGoal() == SuperstructureGoal.CORAL_STATION
+                && container.getViewer().isPresent()
+                && FieldConstants.isAtCoralRotation(container.getDrive().getPose().getRotation()))
+                        .whileTrue(container.getDrive().getDriveByJoystickWithRobotRelativeLimits(
+                                processJoystickInput(driverController::getLeftY),
+                                processJoystickInput(driverController::getLeftX),
+                                processJoystickInput(driverController::getRightX), () ->
+                                {
+                                    if (container.getViewer().getCenterDistance()
+                                            .lte(BlennyConstants.DrivetrainConstants.SAFE_DISTANCE))
+                                    {
+                                        return 0;
+                                    }
+                                    return 1;
+                                }, () -> -1, () -> 1, () -> -1));
+
+        driverController.rightBumper().whileTrue(Commands.defer(
+                () -> container.getDrive()
+                        .driveToPose(FieldConstants.getReefBackupPosition(container.getDashboard().getTargetPose(),
+                                Feet.of(1)))
+                        .alongWith(container.getSuperstructure()
+                                .getGoToGoalCommand(container.getDashboard().getSuperstructureGoal()))
+                        .andThen(() -> container.getDrive().driveToPose(container.getDashboard().getTargetPose())),
+                Set.of(container.getSuperstructure())));
     }
 
-    @Override
-    public void bindOI(BlennyContainer container)
+    static void bindRollers(CommandXboxController driverController, CommandXboxController manipulatorController,
+            BlennyContainer container)
     {
-        CommandXboxController driverController = new CommandXboxController(0);
-        CommandXboxController manipulatorController = new CommandXboxController(1);
-
-        bindDrive(driverController, container);
+        container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
 
         driverController.leftTrigger()
                 .whileTrue(Commands.either(
-                        container.getRollers().getAlgaeIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
-                        container.getRollers().getCoralIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
-                        () -> container.isInAlgaeState()));
+                        container.getRollers().getAlgaeIntakeCommand(),
+                        container.getRollers().getCoralIntakeCommand(),
+                        () -> container.isInAlgaeState()).andThen(rumble(driverController)));
 
         driverController.rightTrigger()
-                .whileTrue(container.getRollers().getOuttakeCommand(BlennyConstants.RollersConstants.OUTTAKE_SPEED));
+                .whileTrue(container.getRollers().getOuttakeCommand());
 
+        manipulatorController.leftTrigger()
+                .whileTrue(Commands.either(
+                        container.getRollers().getAlgaeIntakeCommand(),
+                        container.getRollers().getCoralIntakeCommand(),
+                        () -> container.isInAlgaeState()).andThen(rumble(manipulatorController)));
+
+        manipulatorController.rightTrigger()
+                .whileTrue(container.getRollers().getOuttakeCommand());
+    }
+
+    static void bindClimber(CommandXboxController driverController, BlennyContainer container)
+    {
+        container.getClimber().setDefaultCommand(container.getClimber().getStopCommand());
         driverController.a().whileTrue(container.getClimber().getRunToSweetSpotCommand());
-        driverController.b().whileTrue(container.getClimber().getClimbDown());
+        driverController.b().onTrue(container.getClimber().getClimbExtend());
+    }
+
+    static void bindSuperstructure(CommandXboxController driverController, CommandXboxController manipulatorController,
+            BlennyContainer container)
+    {
+        container.getSuperstructure().getWrist()
+                .setDefaultCommand(container.getSuperstructure().getWrist().getStopCommand());
+
+        container.getSuperstructure().getInnerElevator().setDefaultCommand(container.getSuperstructure()
+                .getInnerElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getRightY)));
+
+        container.getSuperstructure().getOuterElevator().setDefaultCommand(container.getSuperstructure()
+                .getOuterElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getLeftY)));
 
         driverController.start()
                 .whileTrue(container.getSuperstructure().getHomingCommand(
                         BlennyConstants.InnerElevatorConstants.HOMING_SPEED,
                         BlennyConstants.OuterElevatorConstants.HOMING_SPEED));
 
-        container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
+        manipulatorController.start()
+                .whileTrue(container.getSuperstructure().getHomingCommand(
+                        BlennyConstants.InnerElevatorConstants.HOMING_SPEED,
+                        BlennyConstants.OuterElevatorConstants.HOMING_SPEED));
 
-        container.getSuperstructure().getWrist()
-                .setDefaultCommand(container.getSuperstructure().getWrist().getStopCommand());
+        manipulatorController.leftBumper().whileTrue(container.getSuperstructure().getWrist()
+                .getSetSpeedCommand(-BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
+
+        manipulatorController.rightBumper().whileTrue(container.getSuperstructure().getWrist()
+                .getSetSpeedCommand(BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
 
         manipulatorController.povLeft()
                 .whileTrue(container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.L1));
@@ -96,40 +148,25 @@ public class BlennyDriverOI implements BlennyOI
                 container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.LOWER_ALGAE));
         manipulatorController.x().whileTrue(
                 container.getSuperstructure().getGoToGoalCommand(BlennyConstants.SuperstructureGoal.HIGHER_ALGAE));
+    }
 
-        manipulatorController.leftBumper().whileTrue(container.getSuperstructure().getWrist()
-                .getSetSpeedCommand(-BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
+    public static Command rumble(CommandXboxController controller)
+    {
+        return Commands.runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 0.5))
+                .andThen(Commands.waitSeconds(0.5))
+                .andThen(Commands.runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 0)));
+    }
 
-        manipulatorController.rightBumper().whileTrue(container.getSuperstructure().getWrist()
-                .getSetSpeedCommand(BlennyConstants.WristJointConstants.MANUAL_MOVE_SPEED));
+    @Override
+    public void bindOI(BlennyContainer container)
+    {
+        CommandXboxController driverController = new CommandXboxController(0);
+        CommandXboxController manipulatorController = new CommandXboxController(1);
 
-        manipulatorController.leftTrigger()
-                .whileTrue(Commands.either(
-                        container.getRollers().getAlgaeIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
-                        container.getRollers().getCoralIntakeCommand(BlennyConstants.RollersConstants.INTAKE_SPEED),
-                        () -> container.isInAlgaeState()));
-
-        manipulatorController.rightTrigger()
-                .whileTrue(container.getRollers().getOuttakeCommand(BlennyConstants.RollersConstants.OUTTAKE_SPEED));
-
-        manipulatorController.start()
-                .whileTrue(container.getSuperstructure().getHomingCommand(
-                        BlennyConstants.InnerElevatorConstants.HOMING_SPEED,
-                        BlennyConstants.OuterElevatorConstants.HOMING_SPEED));
-
-        container.getSuperstructure().getInnerElevator().setDefaultCommand(container.getSuperstructure()
-                .getInnerElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getRightY)));
-
-        container.getSuperstructure().getOuterElevator().setDefaultCommand(container.getSuperstructure()
-                .getOuterElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getLeftY)));
-        // driverController.rightBumper().whileTrue(Commands.defer(
-        //         () -> container.getDrive()
-        //                 .driveToPose(FieldConstants.getReefBackupPosition(container.getDashboard().getTargetPose(),
-        //                         Feet.of(1)))
-        //                 .alongWith(container.getSuperstructure()
-        //                         .getGoToGoalCommand(container.getDashboard().getSuperstructureGoal()))
-        //                 .andThen(() -> container.getDrive().driveToPose(container.getDashboard().getTargetPose())),
-        //         Set.of(container.getSuperstructure())));
+        bindDrive(driverController, container);
+        bindRollers(driverController, manipulatorController, container);
+        bindClimber(driverController, container);
+        bindSuperstructure(driverController, manipulatorController, container);
 
     }
 }
