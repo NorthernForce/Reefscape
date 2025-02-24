@@ -47,7 +47,7 @@ public class Rollers extends SubsystemBase
 
     public void intake(double speed)
     {
-        m_intakeIO.set(Math.abs(speed));
+        m_intakeIO.set(-Math.abs(speed));
     }
 
     /**
@@ -58,7 +58,7 @@ public class Rollers extends SubsystemBase
 
     public void outtake(double speed)
     {
-        m_intakeIO.set(-Math.abs(speed));
+        m_intakeIO.set(Math.abs(speed));
     }
 
     /**

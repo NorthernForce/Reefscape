@@ -100,12 +100,12 @@ public class BlennyContainer implements NFRRobotContainer
             superstructure = new Superstructure(new Elevator("InnerElevator",
                     new ElevatorIOTalonFX(15, BlennyConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
                     {
-                    }, new ElevatorSensorIOLimitSwitch(1), 0.2),
+                    }, new ElevatorSensorIOLimitSwitch(0), 0.2),
                     new Elevator("OuterElevator",
                             new ElevatorIOTalonFX(14, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
                             new BrakeIO()
                             {
-                            }, new ElevatorSensorIOLimitSwitch(0), 0.2),
+                            }, new ElevatorSensorIOLimitSwitch(1), 0.2),
                     new Wrist(new WristIOTalonFX(16, 20, BlennyConstants.WristJointConstants.WRIST_CONSTANTS),
                             Degrees.of(2.0)));
             climber = new Climber(new ClimberIOTalonFX(BlennyConstants.ClimberConstants.ID,
