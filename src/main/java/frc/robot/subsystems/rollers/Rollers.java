@@ -149,6 +149,11 @@ public class Rollers extends SubsystemBase
         return run(this::stop);
     }
 
+    public Command getHoldAlgae()
+    {
+        return run(() -> intake());
+    }
+
     /**
      * Updates inputs.
      */

@@ -4,22 +4,19 @@ import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 
-import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.sebastian.constants.SebastianConstants;
@@ -70,16 +67,13 @@ public class SebastianContainer implements NFRRobotContainer
     private Alliance alliance = allianceSupplier.get();
     private final Climber climber;
     private final Dashboard dashboard;
-    private boolean inAlgaeState = false;
     private final Viewer viewer;
 
     /**
      * Create a new SebastianContainer
      */
-    @SuppressWarnings("resource")
     public SebastianContainer()
     {
-        new PowerDistribution(21, ModuleType.kRev).setSwitchableChannel(true);
 
         drive = new PhoenixCommandDrive(SebastianTunerConstants.DrivetrainConstants,
                 SebastianConstants.DrivetrainConstants.MAX_SPEED,
@@ -197,7 +191,19 @@ public class SebastianContainer implements NFRRobotContainer
     public Command getAlgaeHighIntakeCommand()
     {
         return superstructure.getGoToGoalCommand(SuperstructureGoal.HIGHER_ALGAE)
-                .andThen(rollers.getAlgaeIntakeCommand());
+                .andThen((rollers.getAlgaeIntakeCommand().alongWith(drive.getBackupCommand(0.5, 0.5))));
+    }
+
+    public Command getAlgaeLowIntakeCommand()
+    {
+        return superstructure.getGoToGoalCommand(SuperstructureGoal.LOWER_ALGAE)
+                .andThen(rollers.getAlgaeIntakeCommand().alongWith(drive.getBackupCommand(0.5, 0.5)));
+    }
+
+    public Command getStowCommand()
+    {
+        return (superstructure.getGoToGoalCommand(SuperstructureGoal.STOW_ALGAE)
+            .alongWith(rollers.getHoldAlgae())).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
 
     public Command getCenter_H4Command()
@@ -334,6 +340,30 @@ public class SebastianContainer implements NFRRobotContainer
 
     public boolean isInAlgaeState()
     {
-        return inAlgaeState;
+        return superstructure.getGoal() == SuperstructureGoal.HIGHER_ALGAE
+                || superstructure.getGoal() == SuperstructureGoal.LOWER_ALGAE
+                || superstructure.getGoal() == SuperstructureGoal.PROCESSOR_STATION
+                || superstructure.getGoal() == SuperstructureGoal.STOW_ALGAE;
+    }
+
+    public Command getIntakeCommand()
+    {
+        if (!isInAlgaeState())
+        {
+            return getCoralIntakeCommand();
+        }
+        else if (superstructure.getGoal() == SuperstructureGoal.LOWER_ALGAE)
+        {
+            return getAlgaeLowIntakeCommand();
+        }
+        else
+        {
+            return getAlgaeHighIntakeCommand();
+        }
+    }
+
+    public Command getOuttakeCommand()
+    {
+        return isInAlgaeState() ? rollers.getOuttakeCommand() : getCoralOuttakeCommand();
     }
 }

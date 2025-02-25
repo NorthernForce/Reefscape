@@ -24,7 +24,6 @@ import choreo.auto.AutoFactory;
 import choreo.trajectory.SwerveSample;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyFieldSpeeds;
 
 import edu.wpi.first.math.MathUtil;
@@ -176,9 +175,9 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
                 .withRotationalDeadband(0.1).withDriveRequestType(DriveRequestType.OpenLoopVoltage);
         return applyRequest(() ->
         {
-            var x = xSupplier.getAsDouble();
-            var y = ySupplier.getAsDouble();
-            var omega = omegaSupplier.getAsDouble();
+            var x = xSupplier.getAsDouble() * maxSpeed.in(MetersPerSecond);
+            var y = ySupplier.getAsDouble() * maxSpeed.in(MetersPerSecond);
+            var omega = omegaSupplier.getAsDouble() * maxAngularSpeed.in(RadiansPerSecond);
             return fieldCentric.withVelocityX(x).withVelocityY(y).withRotationalRate(omega);
         });
     }
@@ -201,18 +200,20 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
             DoubleSupplier yLimitPositive, DoubleSupplier yLimitNegative)
     {
         SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric().withDeadband(0.1)
-                .withRotationalDeadband(0.1);
+                .withRotationalDeadband(0.1).withDriveRequestType(DriveRequestType.OpenLoopVoltage);
         return applyRequest(() ->
         {
-            var x = xSupplier.getAsDouble();
-            var y = ySupplier.getAsDouble();
-            var omega = omegaSupplier.getAsDouble();
+            var x = xSupplier.getAsDouble() * maxSpeed.in(MetersPerSecond);
+            var y = ySupplier.getAsDouble() * maxSpeed.in(MetersPerSecond);
+            var omega = omegaSupplier.getAsDouble() * maxAngularSpeed.in(RadiansPerSecond);
             ChassisSpeeds speeds = new ChassisSpeeds(x, y, omega);
             var robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation());
             robotRelativeSpeeds.vxMetersPerSecond = MathUtil.clamp(robotRelativeSpeeds.vxMetersPerSecond,
-                    xLimitBackward.getAsDouble(), xLimitForward.getAsDouble());
+                    xLimitBackward.getAsDouble() * maxSpeed.in(MetersPerSecond),
+                    xLimitForward.getAsDouble() * maxSpeed.in(MetersPerSecond));
             robotRelativeSpeeds.vyMetersPerSecond = MathUtil.clamp(robotRelativeSpeeds.vyMetersPerSecond,
-                    yLimitPositive.getAsDouble(), yLimitPositive.getAsDouble());
+                    yLimitNegative.getAsDouble() * maxSpeed.in(MetersPerSecond),
+                    yLimitPositive.getAsDouble() * maxSpeed.in(MetersPerSecond));
             speeds = ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeSpeeds, getPose().getRotation());
             return fieldCentric.withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond)
                     .withRotationalRate(speeds.omegaRadiansPerSecond);

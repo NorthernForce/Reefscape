@@ -50,6 +50,18 @@ public class Superstructure extends SubsystemBase
         m_goal = SuperstructureGoal.START;
     }
 
+    public void stop()
+    {
+        m_innerElevator.stop();
+        m_outerElevator.stop();
+        m_wrist.stop();
+    }
+
+    public void setGoal(SuperstructureGoal goal)
+    {
+        m_goal = goal;
+    }
+
     /**
      * Gets the command to move the superstructure to a goal
      * 

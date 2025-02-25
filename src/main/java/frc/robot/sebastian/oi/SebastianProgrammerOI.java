@@ -66,7 +66,7 @@ public class SebastianProgrammerOI implements SebastianOI
                         .driveToPose(FieldConstants.getReefBackupPosition(container.getDashboard().getTargetPose(),
                                 Feet.of(1)))
                         .alongWith(container.getSuperstructure()
-                                .getGoToGoalCommand(container.getDashboard().getSuperstructureGoal()))
+                                .getGoToGoalCommand(container.getDashboard().getSuperstructureGoalForReef()))
                         .andThen(() -> container.getDrive().driveToPose(container.getDashboard().getTargetPose())),
                 Set.of(container.getSuperstructure())));
     }

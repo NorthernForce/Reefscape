@@ -63,14 +63,18 @@ public class SebastianDriverOI implements SebastianOI
                                     return 1;
                                 }, () -> -1, () -> 1, () -> -1));
 
-        driverController.rightBumper().whileTrue(Commands.defer(
-                () -> container.getDrive()
+        driverController.rightBumper().whileTrue(Commands.either(
+                Commands.defer(() -> container.getDrive()
                         .driveToPose(FieldConstants.getReefBackupPosition(container.getDashboard().getTargetPose(),
                                 Feet.of(1)))
                         .alongWith(container.getSuperstructure()
-                                .getGoToGoalCommand(container.getDashboard().getSuperstructureGoal()))
-                        .andThen(() -> container.getDrive().driveToPose(container.getDashboard().getTargetPose())),
-                Set.of(container.getSuperstructure())));
+                                .getGoToGoalCommand(container.getDashboard().getSuperstructureGoalForReef()))
+                        .andThen(() -> container.getDrive().driveToPose(container.getDashboard().getTargetPose())), Set.of()),
+                Commands.defer(() -> container.getDrive()
+                        .driveToPose(container.getDashboard().getStationTargetPose())
+                        .alongWith(container.getSuperstructure()
+                                .getGoToGoalCommand(container.getDashboard().getSuperstructureGoalForStation())), Set.of()),
+                () -> !(container.getRollers().hasAlgae() || container.getRollers().hasCoral())));
     }
 
     static void bindRollers(CommandXboxController driverController, CommandXboxController manipulatorController,
@@ -79,20 +83,17 @@ public class SebastianDriverOI implements SebastianOI
         container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
 
         driverController.leftTrigger()
-                .whileTrue(Commands
-                        .either(container.getRollers().getAlgaeIntakeCommand(),
-                                container.getRollers().getCoralIntakeCommand(), () -> container.isInAlgaeState())
-                        .andThen(rumble(driverController)));
+                .whileTrue(container.getIntakeCommand().andThen(rumble(driverController)));
 
-        driverController.rightTrigger().whileTrue(container.getRollers().getOuttakeCommand());
+        driverController.rightTrigger().whileTrue(container.getOuttakeCommand());
 
         manipulatorController.leftTrigger()
-                .whileTrue(Commands
-                        .either(container.getRollers().getAlgaeIntakeCommand(),
-                                container.getRollers().getCoralIntakeCommand(), () -> container.isInAlgaeState())
-                        .andThen(rumble(manipulatorController)));
-
-        manipulatorController.rightTrigger().whileTrue(container.getRollers().getOuttakeCommand());
+                .whileTrue(container.getIntakeCommand().andThen(rumble(manipulatorController)));
+        
+        manipulatorController.rightTrigger().whileTrue(container.getOuttakeCommand());
+        
+        new Trigger(() -> container.getRollers().hasAlgae() && !container.getRollers().hasCoral())
+                .whileTrue(container.getStowCommand());
     }
 
     static void bindClimber(CommandXboxController driverController, SebastianContainer container)

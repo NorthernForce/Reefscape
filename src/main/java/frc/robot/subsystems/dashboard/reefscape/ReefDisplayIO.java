@@ -14,9 +14,11 @@ public interface ReefDisplayIO
     public static class ReefDisplayIOInputs
     {
         public ReefLocations reefLocations = ReefLocations.A;
+        public ReefLocations stationlocations = ReefLocations.LEFT_CORAL_STATION;
         public int level = 0;
         public boolean isConnected = false;
-        public SuperstructureGoal goal = SuperstructureGoal.L1;
+        public SuperstructureGoal reefGoal = SuperstructureGoal.L1;
+        public SuperstructureGoal stationGoal = SuperstructureGoal.CORAL_STATION;
     }
 
     /**

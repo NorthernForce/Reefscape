@@ -27,6 +27,11 @@ public class Wrist extends SubsystemBase
         motorNotFoundAlert = new Alert("Wrist motor not found with name: " + getName(), Alert.AlertType.kError);
     }
 
+    public void stop()
+    {
+        io.set(0);
+    }
+
     /**
      * Gets the command to run the wrist at the desired speed
      * 

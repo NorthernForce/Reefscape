@@ -9,7 +9,6 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Preferences;
 import frc.robot.subsystems.superstructure.Superstructure.GenericSuperstructureGoal;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX.ElevatorConstants;
-import frc.robot.subsystems.superstructure.wrist.Wrist;
 import frc.robot.subsystems.superstructure.wrist.WristIOTalonFX.WristConstants;
 
 import static edu.wpi.first.units.Units.*;
@@ -171,7 +170,8 @@ public class SebastianConstants
         CORAL_STATION(Inches.of(3.64), Inches.of(0), WristJointConstants.UPPER_LIMIT),
         PROCESSOR_STATION(Inches.of(0), Inches.of(0), Degrees.of(0)),
         LOWER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)), HIGHER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)),
-        START(Inches.of(0), Inches.of(0), WristJointConstants.LOWER_LIMIT);
+        START(Inches.of(0), Inches.of(0), WristJointConstants.LOWER_LIMIT),
+        STOW_ALGAE(Inches.of(0), Inches.of(0), WristJointConstants.LOWER_LIMIT);
 
         private final Distance innerHeight;
         private final Distance outerHeight;

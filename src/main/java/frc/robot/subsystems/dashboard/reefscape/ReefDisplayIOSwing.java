@@ -16,7 +16,7 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
 {
     private final String name;
     private final NetworkTable table;
-    private final IntegerSubscriber selectedPoint;
+    private final IntegerSubscriber selectedPoint, stationSelected;
     private final BooleanArrayPublisher grayedOutPublisher;
     private final boolean[] grayedOut = new boolean[48];
 
@@ -29,7 +29,8 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
     {
         this.name = name;
         this.table = NetworkTableInstance.getDefault().getTable(name);
-        this.selectedPoint = table.getIntegerTopic("choice").subscribe(0);
+        this.selectedPoint = table.getIntegerTopic("reefChoice").subscribe(0);
+        stationSelected = table.getIntegerTopic("stationChoice").subscribe(0);
         Arrays.fill(this.grayedOut, false);
         this.grayedOutPublisher = table.getBooleanArrayTopic("grayedOut").publish();
     }
@@ -38,15 +39,12 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
     public void updateInputs(ReefDisplayIOInputs inputs)
     {
         int selected = (int) selectedPoint.get();
-        SuperstructureGoal goal = (selected < 54
-                ? ((selected) % 9 == 0 || (selected) % 9 == 4) ? SuperstructureGoal.L1
+        SuperstructureGoal goal = ((selected) % 9 == 0 || (selected) % 9 == 4) ? SuperstructureGoal.L1
                         : (((selected) % 9 == 1 || (selected) % 9 == 5) ? SuperstructureGoal.L2
                                 : (((selected) % 9 == 2 || (selected) % 9 == 6) ? SuperstructureGoal.L3
-                                        : SuperstructureGoal.L4))
-                : (selected == 54 ? SuperstructureGoal.CORAL_STATION
-                        : (selected == 55 ? SuperstructureGoal.CORAL_STATION : SuperstructureGoal.PROCESSOR_STATION)));
+                                        : SuperstructureGoal.L4));
 
-        inputs.goal = goal;
+        inputs.reefGoal = goal;
         grayedOutPublisher.accept(grayedOut);
         if (selected >= 0 && selected < 4)
         {
@@ -57,6 +55,7 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
         } else if (selected == 8)
         {
             inputs.reefLocations = ReefLocations.EF_ALGAE;
+            inputs.reefGoal = SuperstructureGoal.HIGHER_ALGAE;
         } else if (selected >= 9 && selected < 13)
         {
             inputs.reefLocations = ReefLocations.G;
@@ -66,6 +65,7 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
         } else if (selected == 17)
         {
             inputs.reefLocations = ReefLocations.GH_ALGAE;
+            inputs.reefGoal = SuperstructureGoal.LOWER_ALGAE;
         } else if (selected >= 18 && selected < 22)
         {
             inputs.reefLocations = ReefLocations.I;
@@ -75,6 +75,7 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
         } else if (selected == 26)
         {
             inputs.reefLocations = ReefLocations.IJ_ALGAE;
+            inputs.reefGoal = SuperstructureGoal.HIGHER_ALGAE;
         } else if (selected >= 27 && selected < 31)
         {
             inputs.reefLocations = ReefLocations.K;
@@ -84,6 +85,7 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
         } else if (selected == 35)
         {
             inputs.reefLocations = ReefLocations.KL_ALGAE;
+            inputs.reefGoal = SuperstructureGoal.LOWER_ALGAE;
         } else if (selected >= 36 && selected < 40)
         {
             inputs.reefLocations = ReefLocations.A;
@@ -93,6 +95,7 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
         } else if (selected == 44)
         {
             inputs.reefLocations = ReefLocations.AB_ALGAE;
+            inputs.reefGoal = SuperstructureGoal.HIGHER_ALGAE;
         } else if (selected >= 45 && selected < 49)
         {
             inputs.reefLocations = ReefLocations.C;
@@ -102,15 +105,21 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
         } else if (selected == 53)
         {
             inputs.reefLocations = ReefLocations.CD_ALGAE;
-        } else if (selected == 54)
+            inputs.reefGoal = SuperstructureGoal.LOWER_ALGAE;
+        }
+        int otherSelected = (int) stationSelected.get();
+        if (otherSelected == 0)
         {
-            inputs.reefLocations = ReefLocations.RIGHT_CORAL_STATION;
-        } else if (selected == 55)
+            inputs.stationlocations = ReefLocations.RIGHT_CORAL_STATION;
+            inputs.stationGoal = SuperstructureGoal.CORAL_STATION;
+        } else if (selected == 1)
         {
-            inputs.reefLocations = ReefLocations.LEFT_CORAL_STATION;
+            inputs.stationlocations = ReefLocations.LEFT_CORAL_STATION;
+            inputs.stationGoal = SuperstructureGoal.CORAL_STATION;
         } else
         {
-            inputs.reefLocations = ReefLocations.PROCESSOR_STATION;
+            inputs.stationlocations = ReefLocations.PROCESSOR_STATION;
+            inputs.stationGoal = SuperstructureGoal.PROCESSOR_STATION;
         }
         inputs.isConnected = false;
         for (var connection : NetworkTableInstance.getDefault().getConnections())

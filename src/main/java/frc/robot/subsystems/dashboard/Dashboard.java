@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
+import frc.robot.FieldConstants.ReefLocations;
 import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIO;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOInputsAutoLogged;
@@ -178,9 +179,19 @@ public class Dashboard extends SubsystemBase
         return m_io.getSelectedRoutine();
     }
 
-    public SuperstructureGoal getSuperstructureGoal()
+    public SuperstructureGoal getSuperstructureGoalForReef()
     {
-        return reefDisplayInputs.goal;
+        return reefDisplayInputs.reefGoal;
+    }
+
+    public SuperstructureGoal getSuperstructureGoalForStation()
+    {
+        return reefDisplayInputs.stationGoal;
+    }
+
+    public ReefLocations getStationLocation()
+    {
+        return reefDisplayInputs.stationlocations;
     }
 
     public void setHasCoral(boolean hasCoral)
@@ -191,5 +202,11 @@ public class Dashboard extends SubsystemBase
     public void setHasAlgae(boolean hasVision)
     {
         m_io.setHasAlgae(hasVision);
+    }
+
+    @AutoLogOutput
+    public Pose2d getStationTargetPose()
+    {
+        return FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.stationlocations);
     }
 }
