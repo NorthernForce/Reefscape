@@ -30,7 +30,7 @@ public class Elevator extends SubsystemBase
     private final BrakeIO m_brake;
     private final ElevatorSensorIO m_sensor;
     private final ElevatorSensorIOInputsAutoLogged m_sensorInputs = new ElevatorSensorIOInputsAutoLogged();
-    private final double m_errorTolerance;
+    private final Distance m_errorTolerance;
     private Distance targetState;
     private Alert m_motorNotFoundAlert;
     private final SysIdRoutine m_sysIdRoutine;
@@ -42,7 +42,7 @@ public class Elevator extends SubsystemBase
      * @param brake  the brake for the elevator
      * @param sensor the sensor for the elevator
      */
-    public Elevator(String name, ElevatorIO motor, BrakeIO brake, ElevatorSensorIO sensor, double errorTolerance)
+    public Elevator(String name, ElevatorIO motor, BrakeIO brake, ElevatorSensorIO sensor, Distance errorTolerance)
     {
         super(name);
         m_motor = motor;
@@ -213,7 +213,7 @@ public class Elevator extends SubsystemBase
      */
     public boolean isAtTargetPosition()
     {
-        return Math.abs(m_inputs.position.in(Meters) - targetState.in(Meters)) <= m_errorTolerance;
+        return Math.abs(m_inputs.position.in(Meters) - targetState.in(Meters)) <= m_errorTolerance.in(Meters);
     }
 
     /**
@@ -224,7 +224,7 @@ public class Elevator extends SubsystemBase
      */
     public boolean isAtPosition(Distance position)
     {
-        return Math.abs(m_inputs.position.in(Meters) - position.in(Meters)) <= m_errorTolerance;
+        return Math.abs(m_inputs.position.in(Meters) - position.in(Meters)) <= m_errorTolerance.in(Meters);
     }
 
     private SysIdRoutine getSysIdRoutine()

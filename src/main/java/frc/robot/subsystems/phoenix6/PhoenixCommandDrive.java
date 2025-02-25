@@ -24,6 +24,7 @@ import choreo.auto.AutoFactory;
 import choreo.trajectory.SwerveSample;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyFieldSpeeds;
 
 import edu.wpi.first.math.MathUtil;
@@ -172,7 +173,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
             DoubleSupplier omegaSupplier)
     {
         SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric().withDeadband(0.1)
-                .withRotationalDeadband(0.1);
+                .withRotationalDeadband(0.1).withDriveRequestType(DriveRequestType.OpenLoopVoltage);
         return applyRequest(() ->
         {
             var x = xSupplier.getAsDouble();

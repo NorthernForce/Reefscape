@@ -14,7 +14,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Preferences;
-import frc.robot.blenny.constants.BlennyTunerConstants;
+import frc.robot.sebastian.constants.SebastianTunerConstants;
 
 public class ZippyConstants
 {
@@ -26,13 +26,14 @@ public class ZippyConstants
         public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(3.0);
         public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
         public static final Angle[] SWERVE_MODULE_OFFSETS =
-        { Rotations.of(Preferences.getDouble("kSwerveOffsetFrontLeft", BlennyTunerConstants.FrontLeft.EncoderOffset)),
+        { Rotations
+                .of(Preferences.getDouble("kSwerveOffsetFrontLeft", SebastianTunerConstants.FrontLeft.EncoderOffset)),
                 Rotations.of(Preferences.getDouble("kSwerveOffsetFrontRight",
-                        BlennyTunerConstants.FrontRight.EncoderOffset)),
+                        SebastianTunerConstants.FrontRight.EncoderOffset)),
                 Rotations.of(
-                        Preferences.getDouble("kSwerveOffsetBackLeft", BlennyTunerConstants.BackLeft.EncoderOffset)),
+                        Preferences.getDouble("kSwerveOffsetBackLeft", SebastianTunerConstants.BackLeft.EncoderOffset)),
                 Rotations.of(Preferences.getDouble("kSwerveOffsetBackRight",
-                        BlennyTunerConstants.BackRight.EncoderOffset)) };
+                        SebastianTunerConstants.BackRight.EncoderOffset)) };
     }
 
     public static class VisionConstants

@@ -1,14 +1,19 @@
-package frc.robot.blenny;
+package frc.robot.sebastian;
 
 import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 
+import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
@@ -17,11 +22,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
-import frc.robot.blenny.constants.BlennyConstants;
-import frc.robot.blenny.constants.BlennyTunerConstants;
-import frc.robot.blenny.constants.BlennyConstants.SuperstructureGoal;
-import frc.robot.blenny.oi.BlennyDriverOI;
-import frc.robot.blenny.oi.BlennyProgrammerOI;
+import frc.robot.sebastian.constants.SebastianConstants;
+import frc.robot.sebastian.constants.SebastianTunerConstants;
+import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
+import frc.robot.sebastian.oi.SebastianDriverOI;
+import frc.robot.sebastian.oi.SebastianProgrammerOI;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOTalonFX;
@@ -52,10 +57,10 @@ import frc.robot.util.NFRAutoRoutine;
 
 /**
  * 2025 Competition Robot Container. Name is still a work in progress and will
- * likely change. Blenny is a type of fish. It is also the name of a submarine
- * that was sunk to create an artificial reef.
+ * likely change. Sebastian is a type of fish. It is also the name of a
+ * submarine that was sunk to create an artificial reef.
  */
-public class BlennyContainer implements NFRRobotContainer
+public class SebastianContainer implements NFRRobotContainer
 {
     private final PhoenixCommandDrive drive;
     private final Rollers rollers;
@@ -69,55 +74,63 @@ public class BlennyContainer implements NFRRobotContainer
     private final Viewer viewer;
 
     /**
-     * Create a new BlennyContainer
+     * Create a new SebastianContainer
      */
-    public BlennyContainer()
+    @SuppressWarnings("resource")
+    public SebastianContainer()
     {
-        drive = new PhoenixCommandDrive(BlennyTunerConstants.DrivetrainConstants,
-                BlennyConstants.DrivetrainConstants.MAX_SPEED, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
-                BlennyConstants.PathplannerConstants.linearPIDConstants,
-                BlennyConstants.PathplannerConstants.angularPIDConstants,
-                BlennyConstants.DrivetrainConstants.SAFE_DISTANCE, BlennyConstants.AutoConstants.xPID,
-                BlennyConstants.AutoConstants.yPID, BlennyConstants.AutoConstants.rPID,
-                BlennyConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, BlennyTunerConstants.FrontLeft,
-                BlennyTunerConstants.FrontRight, BlennyTunerConstants.BackLeft, BlennyTunerConstants.BackRight);
+        new PowerDistribution(21, ModuleType.kRev).setSwitchableChannel(true);
 
-        vision = new PhotonVision(BlennyConstants.VisionConstants.cameraNames(),
-                BlennyConstants.VisionConstants.cameraTransforms(), BlennyConstants.VisionConstants.APRILTAG_LAYOUT,
-                BlennyConstants.VisionConstants.MAX_Y_COORDINATE, BlennyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
-                BlennyConstants.DrivetrainConstants.MAX_LINEAR_SPEED, BlennyConstants.VisionConstants.CAMERA_WIDTH);
+        drive = new PhoenixCommandDrive(SebastianTunerConstants.DrivetrainConstants,
+                SebastianConstants.DrivetrainConstants.MAX_SPEED,
+                SebastianConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                SebastianConstants.PathplannerConstants.linearPIDConstants,
+                SebastianConstants.PathplannerConstants.angularPIDConstants,
+                SebastianConstants.DrivetrainConstants.SAFE_DISTANCE, SebastianConstants.AutoConstants.xPID,
+                SebastianConstants.AutoConstants.yPID, SebastianConstants.AutoConstants.rPID,
+                SebastianConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, SebastianTunerConstants.FrontLeft,
+                SebastianTunerConstants.FrontRight, SebastianTunerConstants.BackLeft,
+                SebastianTunerConstants.BackRight);
+
+        vision = new PhotonVision(SebastianConstants.VisionConstants.cameraNames(),
+                SebastianConstants.VisionConstants.cameraTransforms(),
+                SebastianConstants.VisionConstants.APRILTAG_LAYOUT, SebastianConstants.VisionConstants.MAX_Y_COORDINATE,
+                SebastianConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                SebastianConstants.DrivetrainConstants.MAX_LINEAR_SPEED,
+                SebastianConstants.VisionConstants.CAMERA_WIDTH);
         switch (Constants.getMode())
         {
         case SIM:
         case REAL:
             superstructure = new Superstructure(new Elevator("InnerElevator",
-                    new ElevatorIOTalonFX(15, BlennyConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
+                    new ElevatorIOTalonFX(15, SebastianConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS),
+                    new BrakeIO()
                     {
-                    }, new ElevatorSensorIOLimitSwitch(0), 0.2),
+                    }, new ElevatorSensorIOLimitSwitch(0), Inches.of(0.5)),
                     new Elevator("OuterElevator",
-                            new ElevatorIOTalonFX(14, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
+                            new ElevatorIOTalonFX(14, SebastianConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
                             new BrakeIO()
                             {
-                            }, new ElevatorSensorIOLimitSwitch(1), 0.2),
-                    new Wrist(new WristIOTalonFX(16, 20, BlennyConstants.WristJointConstants.WRIST_CONSTANTS),
+                            }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
+                    new Wrist(new WristIOTalonFX(16, 20, SebastianConstants.WristJointConstants.WRIST_CONSTANTS),
                             Degrees.of(2.0)));
-            climber = new Climber(
-                    new ClimberIOTalonFX(BlennyConstants.ClimberConstants.ID, BlennyConstants.ClimberConstants.INVERTED,
-                            BlennyConstants.ClimberConstants.ENCODER_ID, BlennyConstants.ClimberConstants.LOWER_LIMIT,
-                            BlennyConstants.ClimberConstants.UPPER_LIMIT),
-                    BlennyConstants.ClimberConstants.SWEET_ANGLE, BlennyConstants.ClimberConstants.LOWER_LIMIT,
-                    BlennyConstants.ClimberConstants.UPPER_LIMIT);
+            climber = new Climber(new ClimberIOTalonFX(SebastianConstants.ClimberConstants.ID,
+                    SebastianConstants.ClimberConstants.INVERTED, SebastianConstants.ClimberConstants.ENCODER_ID,
+                    SebastianConstants.ClimberConstants.LOWER_LIMIT, SebastianConstants.ClimberConstants.UPPER_LIMIT),
+                    SebastianConstants.ClimberConstants.SWEET_ANGLE, SebastianConstants.ClimberConstants.LOWER_LIMIT,
+                    SebastianConstants.ClimberConstants.UPPER_LIMIT);
 
             viewer = new Viewer(new ViewerIOXavier());
             rollers = new Rollers(
-                    new RollersIOTalonFXS(BlennyConstants.RollersConstants.ROLLER_MOTOR_LEFT_ID,
-                            BlennyConstants.RollersConstants.ROLLER_MOTOR_RIGHT_ID,
-                            BlennyConstants.RollersConstants.ROLLER_MOTORS_INVERTED),
-                    new RollersSensorIOAnalog(BlennyConstants.RollersConstants.SensorConstants.ANALOG_ALGAE,
-                            BlennyConstants.RollersConstants.SensorConstants.ALGAE_MAX_DISTANCE),
-                    new RollersSensorIOAnalog(BlennyConstants.RollersConstants.SensorConstants.ANALOG_CORAL,
-                            BlennyConstants.RollersConstants.SensorConstants.CORAL_MAX_DISTANCE),
-                    BlennyConstants.RollersConstants.INTAKE_SPEED, BlennyConstants.RollersConstants.OUTTAKE_SPEED);
+                    new RollersIOTalonFXS(SebastianConstants.RollersConstants.ROLLER_MOTOR_LEFT_ID,
+                            SebastianConstants.RollersConstants.ROLLER_MOTOR_RIGHT_ID,
+                            SebastianConstants.RollersConstants.ROLLER_MOTORS_INVERTED),
+                    new RollersSensorIOAnalog(SebastianConstants.RollersConstants.SensorConstants.ANALOG_ALGAE,
+                            SebastianConstants.RollersConstants.SensorConstants.ALGAE_MAX_DISTANCE),
+                    new RollersSensorIOAnalog(SebastianConstants.RollersConstants.SensorConstants.ANALOG_CORAL,
+                            SebastianConstants.RollersConstants.SensorConstants.CORAL_MAX_DISTANCE),
+                    SebastianConstants.RollersConstants.INTAKE_SPEED,
+                    SebastianConstants.RollersConstants.OUTTAKE_SPEED);
             break;
         case REPLAY:
         default:
@@ -127,16 +140,19 @@ public class BlennyContainer implements NFRRobotContainer
             {
             }, new ElevatorSensorIO()
             {
-            }, 0.2), new Elevator("OuterElevator",
-                    new ElevatorIOTalonFX(15, BlennyConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
-                    {
-                    }, new ElevatorSensorIOLimitSwitch(1), 0.2), new Wrist(new WristIO()
+            }, Inches.of(0.5)),
+                    new Elevator("OuterElevator",
+                            new ElevatorIOTalonFX(15, SebastianConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
+                            new BrakeIO()
+                            {
+                            }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
+                    new Wrist(new WristIO()
                     {
                     }, Degrees.of(2.0)));
             climber = new Climber(new ClimberIO()
             {
-            }, BlennyConstants.ClimberConstants.SWEET_ANGLE, BlennyConstants.ClimberConstants.LOWER_LIMIT,
-                    BlennyConstants.ClimberConstants.UPPER_LIMIT);
+            }, SebastianConstants.ClimberConstants.SWEET_ANGLE, SebastianConstants.ClimberConstants.LOWER_LIMIT,
+                    SebastianConstants.ClimberConstants.UPPER_LIMIT);
             viewer = new Viewer(new ViewerIO()
             {
             });
@@ -146,7 +162,7 @@ public class BlennyContainer implements NFRRobotContainer
             {
             }, new RollersSensorIO()
             {
-            }, BlennyConstants.RollersConstants.INTAKE_SPEED, BlennyConstants.RollersConstants.OUTTAKE_SPEED);
+            }, SebastianConstants.RollersConstants.INTAKE_SPEED, SebastianConstants.RollersConstants.OUTTAKE_SPEED);
             break;
         }
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefDisplay"), new DashboardIOFWC());
@@ -249,13 +265,13 @@ public class BlennyContainer implements NFRRobotContainer
     @Override
     public void bindDriverOI()
     {
-        new BlennyDriverOI().bindOI(this);
+        new SebastianDriverOI().bindOI(this);
     }
 
     @Override
     public void bindProgrammerOI()
     {
-        new BlennyProgrammerOI().bindOI(this);
+        new SebastianProgrammerOI().bindOI(this);
     }
 
     @Override

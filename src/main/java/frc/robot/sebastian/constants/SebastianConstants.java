@@ -1,4 +1,4 @@
-package frc.robot.blenny.constants;
+package frc.robot.sebastian.constants;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -9,6 +9,7 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Preferences;
 import frc.robot.subsystems.superstructure.Superstructure.GenericSuperstructureGoal;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX.ElevatorConstants;
+import frc.robot.subsystems.superstructure.wrist.Wrist;
 import frc.robot.subsystems.superstructure.wrist.WristIOTalonFX.WristConstants;
 
 import static edu.wpi.first.units.Units.*;
@@ -20,7 +21,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 
-public class BlennyConstants
+public class SebastianConstants
 {
     public static class DrivetrainConstants
     {
@@ -32,13 +33,14 @@ public class BlennyConstants
         public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
         public static final Distance SAFE_DISTANCE = Inches.of(10);
         public static final Angle[] SWERVE_MODULE_OFFSETS =
-        { Rotations.of(Preferences.getDouble("kSwerveOffsetFrontLeft", BlennyTunerConstants.FrontLeft.EncoderOffset)),
+        { Rotations
+                .of(Preferences.getDouble("kSwerveOffsetFrontLeft", SebastianTunerConstants.FrontLeft.EncoderOffset)),
                 Rotations.of(Preferences.getDouble("kSwerveOffsetFrontRight",
-                        BlennyTunerConstants.FrontRight.EncoderOffset)),
+                        SebastianTunerConstants.FrontRight.EncoderOffset)),
                 Rotations.of(
-                        Preferences.getDouble("kSwerveOffsetBackLeft", BlennyTunerConstants.BackLeft.EncoderOffset)),
+                        Preferences.getDouble("kSwerveOffsetBackLeft", SebastianTunerConstants.BackLeft.EncoderOffset)),
                 Rotations.of(Preferences.getDouble("kSwerveOffsetBackRight",
-                        BlennyTunerConstants.BackRight.EncoderOffset)) };
+                        SebastianTunerConstants.BackRight.EncoderOffset)) };
     }
 
     public static class VisionConstants
@@ -90,23 +92,21 @@ public class BlennyConstants
 
         // talon configs
         public static final double kS = 0.12;
-        public static final double kV = 0.7;
-        public static final double kA = 0.5;
-        public static final double kP = 1.0;
+        public static final double kV = 0.67;
+        public static final double kA = 0.2;
+        public static final double kP = 14.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
-        public static final double CRUISE_VELOCITY = 1;
-        public static final double ACCELERATION = 0.008;
-        public static final double JERK = 0;
-        public static final double EXPO_kV = 0.12;
-        public static final double EXPO_kA = 0.1;
+        public static final double kG = 0.234;
+        public static final double CRUISE_VELOCITY = 160;
+        public static final double ACCELERATION = 80;
+        public static final double JERK = 200;
         public static final Distance UPPER_LIMIT = Inches.of(25.8);
 
-        public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD,
-                CRUISE_VELOCITY, ACCELERATION, JERK, EXPO_kV, EXPO_kA, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, true,
-                UPPER_LIMIT);
+        public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD, kG,
+                CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, true, UPPER_LIMIT);
 
-        public static final double HOMING_SPEED = 0.05;
+        public static final double HOMING_SPEED = 0.25;
     }
 
     public static class OuterElevatorConstants
@@ -119,23 +119,21 @@ public class BlennyConstants
 
         // talon configs
         public static final double kS = 0.12;
-        public static final double kV = 0.7;
-        public static final double kA = 0.5;
-        public static final double kP = 1.0;
+        public static final double kV = 0.67;
+        public static final double kA = 0.2;
+        public static final double kP = 14.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
-        public static final double CRUISE_VELOCITY = 1;
-        public static final double ACCELERATION = 0.008;
-        public static final double JERK = 0;
-        public static final double EXPO_kV = 0.12;
-        public static final double EXPO_kA = 0.1;
+        public static final double kG = 0.234;
+        public static final double CRUISE_VELOCITY = 160;
+        public static final double ACCELERATION = 80;
+        public static final double JERK = 299;
         public static final Distance UPPER_LIMIT = Inches.of(26.7);
 
-        public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD,
-                CRUISE_VELOCITY, ACCELERATION, JERK, EXPO_kV, EXPO_kA, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, false,
-                UPPER_LIMIT);
+        public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD, kG,
+                CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, false, UPPER_LIMIT);
 
-        public static final double HOMING_SPEED = 0.05;
+        public static final double HOMING_SPEED = 0.25;
     }
 
     public static class WristJointConstants
@@ -154,7 +152,7 @@ public class BlennyConstants
         public static final Angle LOWER_LIMIT = Rotations.of(-0.252);
         public static final double SENSOR_TO_MECHANISM_RATIO = 1.0;
         public static final double ROTOR_TO_SENSOR_RATIO = 192.0;
-        public static final double MANUAL_MOVE_SPEED = 0.05;
+        public static final double MANUAL_MOVE_SPEED = 0.25;
 
         public static final WristConstants WRIST_CONSTANTS = new WristConstants(kS, kV, kA, kP, kI, kD, CRUISE_VELOCITY,
                 ACCELERATION, JERK, INVERTED, UPPER_LIMIT, LOWER_LIMIT, SENSOR_TO_MECHANISM_RATIO,
@@ -169,8 +167,8 @@ public class BlennyConstants
     {
         L1(Inches.of(0), Inches.of(0), Degrees.of(0)), L2(Inches.of(4.69), Inches.of(5.55), Rotations.of(-0.095)),
         L3(Inches.of(13.72), Inches.of(12.13), Rotations.of(-0.095)),
-        L4(Inches.of(26.6), Inches.of(25.6), Rotations.of(-0.083)),
-        CORAL_STATION(Inches.of(0), Inches.of(0), Degrees.of(0)),
+        L4(Inches.of(26.6), Inches.of(25.6), Rotations.of(-0.03)),
+        CORAL_STATION(Inches.of(3.64), Inches.of(0), WristJointConstants.UPPER_LIMIT),
         PROCESSOR_STATION(Inches.of(0), Inches.of(0), Degrees.of(0)),
         LOWER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)), HIGHER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)),
         START(Inches.of(0), Inches.of(0), WristJointConstants.LOWER_LIMIT);
@@ -235,7 +233,7 @@ public class BlennyConstants
         public static final double OUTTAKE_SPEED = 0.3;
         public static final int ROLLER_MOTOR_LEFT_ID = 18;
         public static final int ROLLER_MOTOR_RIGHT_ID = 19;
-        public static final boolean ROLLER_MOTORS_INVERTED = true;
+        public static final boolean ROLLER_MOTORS_INVERTED = false;
 
         public static class SensorConstants
         {
