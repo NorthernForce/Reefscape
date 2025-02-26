@@ -67,6 +67,11 @@ public class Rollers extends SubsystemBase
         m_intakeIO.set(-outtakeSpeed);
     }
 
+    public void outtake(double speed)
+    {
+        m_intakeIO.set(-speed);
+    }
+
     /**
      * Stops motors.
      */
@@ -177,6 +182,11 @@ public class Rollers extends SubsystemBase
     public Command getOuttakeCommand()
     {
         return run(() -> outtake());
+    }
+
+    public Command getOuttakeCommand(double speed)
+    {
+        return run(() -> outtake(speed));
     }
 
     public Command getOuttakeUntilEmptyCommand()

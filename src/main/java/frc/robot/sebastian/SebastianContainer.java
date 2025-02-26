@@ -453,4 +453,9 @@ public class SebastianContainer implements NFRRobotContainer
     {
         return isInAlgaeState() ? rollers.getOuttakeCommand() : getCoralOuttakeCommand();
     }
+
+    public Command getOuttakeCommand(double speed)
+    {
+        return isInAlgaeState() ? rollers.getOuttakeCommand(speed) : getCoralOuttakeCommand();
+    }
 }

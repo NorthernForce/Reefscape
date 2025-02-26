@@ -77,6 +77,8 @@ public class SebastianDriverOI implements SebastianOI
 
         manipulatorController.rightTrigger().whileTrue(container.getOuttakeCommand());
 
+        manipulatorController.y().whileTrue(container.getOuttakeCommand(1.0));
+
         new Trigger(() -> container.getRollers().hasAlgae() && !container.getRollers().hasCoral()
                 && (container.getSuperstructure().getGoal() == SuperstructureGoal.HIGHER_ALGAE
                         || container.getSuperstructure().getGoal() == SuperstructureGoal.LOWER_ALGAE))
