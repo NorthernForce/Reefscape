@@ -174,10 +174,14 @@ public class PhotonVision extends SubsystemBase
                 // valid = false;
                 // reason = RejectionReason.ROBOT_ANGLE_TOO_LARGE;
                 // }
-                if (!testRobotDistance(opt.get()) || !testEstimateTime(opt.get()))
+                if (!testRobotDistance(opt.get()))
                 {
                     valid = false;
                     reason = RejectionReason.DISTANCE_TOO_FAR;
+                }
+                if (!testEstimateTime(opt.get()))
+                {
+                    valid = true;
                 }
                 if (!testWithinField(opt.get()))
                 {
