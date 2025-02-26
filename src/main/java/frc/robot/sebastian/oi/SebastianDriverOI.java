@@ -79,11 +79,11 @@ public class SebastianDriverOI implements SebastianOI
 
         manipulatorController.back().whileTrue(container.getOuttakeCommand(1.0));
 
-        new Trigger(() -> container.getRollers().hasAlgae() && !container.getRollers().hasCoral()
-                && (container.getSuperstructure().getGoal() == SuperstructureGoal.HIGHER_ALGAE
-                        || container.getSuperstructure().getGoal() == SuperstructureGoal.LOWER_ALGAE))
-                                .onTrue(container.getStowCommand().until(() -> container.getSuperstructure()
-                                        .getGoal() == SuperstructureGoal.PROCESSOR_STATION));
+        // new Trigger(() -> container.getRollers().hasAlgae() && !container.getRollers().hasCoral()
+        //         && (container.getSuperstructure().getGoal() == SuperstructureGoal.HIGHER_ALGAE
+        //                 || container.getSuperstructure().getGoal() == SuperstructureGoal.LOWER_ALGAE))
+        //                         .onTrue(container.getStowCommand().until(() -> container.getSuperstructure()
+        //                                 .getGoal() == SuperstructureGoal.PROCESSOR_STATION));
     }
 
     static void bindClimber(CommandXboxController driverController, SebastianContainer container)
