@@ -87,6 +87,32 @@ public class Rollers extends SubsystemBase
         return m_sensorIOCoralInputs.hasPiece;
     }
 
+    public class CoralIntakeCommand extends Command
+    {
+        public CoralIntakeCommand()
+        {
+            addRequirements(Rollers.this);
+        }
+
+        @Override
+        public void initialize()
+        {
+            intake();
+        }
+
+        @Override
+        public boolean isFinished()
+        {
+            return hasCoral();
+        }
+
+        @Override
+        public void end(boolean interrupted)
+        {
+            stop();
+        }
+    }
+
     /**
      * Returns a command that intakes a coral.
      * 
@@ -96,7 +122,7 @@ public class Rollers extends SubsystemBase
 
     public Command getCoralIntakeCommand()
     {
-        return run(() -> intake()).until(() -> hasCoral());
+        return new CoralIntakeCommand();
     }
 
     /**

@@ -8,6 +8,8 @@ import static edu.wpi.first.units.Units.Rotations;
 
 import org.northernforce.util.NFRRobotContainer;
 
+import com.ctre.phoenix6.Utils;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -44,6 +46,7 @@ import frc.robot.subsystems.rollers.RollersIO;
 import frc.robot.subsystems.rollers.RollersIOTalonFXS;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIO;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIOAnalog;
+import frc.robot.subsystems.rollers.sensor.RollersSensorIOBeamBreak;
 import frc.robot.subsystems.superstructure.wrist.Wrist;
 import frc.robot.subsystems.superstructure.wrist.WristIO;
 import frc.robot.subsystems.superstructure.wrist.WristIOTalonFX;
@@ -51,6 +54,7 @@ import frc.robot.subsystems.viewer.Viewer;
 import frc.robot.subsystems.viewer.ViewerIO;
 import frc.robot.subsystems.viewer.ViewerIOXavier;
 import frc.robot.util.NFRAutoRoutine;
+import frc.robot.util.PhoenixUtil;
 
 /**
  * 2025 Competition Robot Container. Name is still a work in progress and will
@@ -121,8 +125,7 @@ public class SebastianContainer implements NFRRobotContainer
                             SebastianConstants.RollersConstants.ROLLER_MOTORS_INVERTED),
                     new RollersSensorIOAnalog(SebastianConstants.RollersConstants.SensorConstants.ANALOG_ALGAE,
                             SebastianConstants.RollersConstants.SensorConstants.ALGAE_MAX_DISTANCE),
-                    new RollersSensorIOAnalog(SebastianConstants.RollersConstants.SensorConstants.ANALOG_CORAL,
-                            SebastianConstants.RollersConstants.SensorConstants.CORAL_MAX_DISTANCE),
+                    new RollersSensorIOBeamBreak(SebastianConstants.RollersConstants.SensorConstants.ANALOG_CORAL),
                     SebastianConstants.RollersConstants.INTAKE_SPEED,
                     SebastianConstants.RollersConstants.OUTTAKE_SPEED);
             break;
@@ -179,8 +182,9 @@ public class SebastianContainer implements NFRRobotContainer
 
     public Command getCoralIntakeCommand()
     {
-        return superstructure.getGoToGoalCommand(SuperstructureGoal.CORAL_STATION)
-                .andThen(rollers.getCoralIntakeCommand());
+        return // superstructure.getGoToGoalCommand(SuperstructureGoal.CORAL_STATION)
+               // .andThen(rollers.getCoralIntakeCommand());
+        rollers.getCoralIntakeCommand();
     }
 
     public Command getCoralOuttakeCommand()
@@ -202,8 +206,8 @@ public class SebastianContainer implements NFRRobotContainer
 
     public Command getStowCommand()
     {
-        return (superstructure.getGoToGoalCommand(SuperstructureGoal.STOW_ALGAE)
-            .alongWith(rollers.getHoldAlgae())).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+        return (superstructure.getGoToGoalCommand(SuperstructureGoal.STOW_ALGAE).alongWith(rollers.getHoldAlgae()))
+                .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
 
     public Command getCenter_H4Command()
@@ -302,7 +306,7 @@ public class SebastianContainer implements NFRRobotContainer
         }
         for (var poseEstimate : vision.getPoseEstimates())
         {
-            drive.addVisionMeasurement(poseEstimate.pose(), poseEstimate.timestamp());
+            drive.addVisionMeasurement(poseEstimate.pose(), Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
         }
         dashboard.updatePose(drive.getPose());
         dashboard.setInnerElevatorPosition(superstructure.getInnerElevator().getPosition());
@@ -351,12 +355,10 @@ public class SebastianContainer implements NFRRobotContainer
         if (!isInAlgaeState())
         {
             return getCoralIntakeCommand();
-        }
-        else if (superstructure.getGoal() == SuperstructureGoal.LOWER_ALGAE)
+        } else if (superstructure.getGoal() == SuperstructureGoal.LOWER_ALGAE)
         {
             return getAlgaeLowIntakeCommand();
-        }
-        else
+        } else
         {
             return getAlgaeHighIntakeCommand();
         }

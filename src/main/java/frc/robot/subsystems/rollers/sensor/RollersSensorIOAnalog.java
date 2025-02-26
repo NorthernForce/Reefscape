@@ -1,6 +1,9 @@
 package frc.robot.subsystems.rollers.sensor;
 
 import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Inches;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -40,6 +43,7 @@ public class RollersSensorIOAnalog implements RollersSensorIO
     @Override
     public void updateInputs(RollersSensorIOInputs inputs)
     {
+        Logger.recordOutput("Distance" + m_analogInput.getChannel(), getDistance().in(Inches));
         inputs.hasPiece = getDistance().lte(m_distToObject);
     }
 }

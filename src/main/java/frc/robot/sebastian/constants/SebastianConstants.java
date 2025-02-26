@@ -165,7 +165,7 @@ public class SebastianConstants
     public static enum SuperstructureGoal implements GenericSuperstructureGoal
     {
         L1(Inches.of(0), Inches.of(0), Degrees.of(0)), L2(Inches.of(4.69), Inches.of(5.55), Rotations.of(-0.095)),
-        L3(Inches.of(13.72), Inches.of(12.13), Rotations.of(-0.095)),
+        L3(Inches.of(25.8), Inches.of(2.6), Rotations.of(-0.095)),
         L4(Inches.of(26.6), Inches.of(25.6), Rotations.of(-0.03)),
         CORAL_STATION(Inches.of(3.64), Inches.of(0), WristJointConstants.UPPER_LIMIT),
         PROCESSOR_STATION(Inches.of(0), Inches.of(0), Degrees.of(0)),
@@ -243,7 +243,7 @@ public class SebastianConstants
             public static final int ULTRASONIC_ALGAE_ECHO = 5;
             public static final Distance CORAL_MAX_DISTANCE = Inches.of(2);
             public static final Distance ALGAE_MAX_DISTANCE = Inches.of(2);
-            public static final int ANALOG_CORAL = 0;
+            public static final int ANALOG_CORAL = 2;
             public static final int ANALOG_ALGAE = 1;
         }
     }

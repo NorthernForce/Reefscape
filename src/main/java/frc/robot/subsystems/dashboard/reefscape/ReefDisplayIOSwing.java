@@ -40,9 +40,9 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
     {
         int selected = (int) selectedPoint.get();
         SuperstructureGoal goal = ((selected) % 9 == 0 || (selected) % 9 == 4) ? SuperstructureGoal.L1
-                        : (((selected) % 9 == 1 || (selected) % 9 == 5) ? SuperstructureGoal.L2
-                                : (((selected) % 9 == 2 || (selected) % 9 == 6) ? SuperstructureGoal.L3
-                                        : SuperstructureGoal.L4));
+                : (((selected) % 9 == 1 || (selected) % 9 == 5) ? SuperstructureGoal.L2
+                        : (((selected) % 9 == 2 || (selected) % 9 == 6) ? SuperstructureGoal.L3
+                                : SuperstructureGoal.L4));
 
         inputs.reefGoal = goal;
         grayedOutPublisher.accept(grayedOut);

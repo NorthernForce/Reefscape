@@ -157,21 +157,21 @@ public class PhotonVision extends SubsystemBase
                 }
                 boolean valid = true;
                 RejectionReason reason = null;
-                if (!testYCoordinate(result))
-                {
-                    valid = false;
-                    reason = RejectionReason.TARGET_OUTSIDE_USABLE_AREA;
-                }
+                // if (!testYCoordinate(result))
+                // {
+                // valid = false;
+                // reason = RejectionReason.TARGET_OUTSIDE_USABLE_AREA;
+                // }
                 // if (!testRobotRotation(opt.get()))
                 // {
                 // valid = false;
                 // reason = RejectionReason.ROBOT_ANGLE_TOO_LARGE;
                 // }
-                if (!testRobotDistance(opt.get()))
-                {
-                    valid = false;
-                    reason = RejectionReason.DISTANCE_TOO_FAR;
-                }
+                // if (!testRobotDistance(opt.get()))
+                // {
+                // valid = false;
+                // reason = RejectionReason.DISTANCE_TOO_FAR;
+                // }
                 if (!testWithinField(opt.get()))
                 {
                     valid = false;

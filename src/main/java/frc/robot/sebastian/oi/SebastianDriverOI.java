@@ -64,16 +64,21 @@ public class SebastianDriverOI implements SebastianOI
                                 }, () -> -1, () -> 1, () -> -1));
 
         driverController.rightBumper().whileTrue(Commands.either(
-                Commands.defer(() -> container.getDrive()
-                        .driveToPose(FieldConstants.getReefBackupPosition(container.getDashboard().getTargetPose(),
-                                Feet.of(1)))
+                Commands.defer(
+                        () -> container.getDrive()
+                                .driveToPose(FieldConstants
+                                        .getReefBackupPosition(container.getDashboard().getTargetPose(), Feet.of(1)))
+                                .alongWith(container
+                                        .getSuperstructure()
+                                        .getGoToGoalCommand(container.getDashboard().getSuperstructureGoalForReef()))
+                                .andThen(
+                                        () -> container.getDrive()
+                                                .driveToPose(container.getDashboard().getTargetPose())),
+                        Set.of()),
+                Commands.defer(() -> container.getDrive().driveToPose(container.getDashboard().getStationTargetPose())
                         .alongWith(container.getSuperstructure()
-                                .getGoToGoalCommand(container.getDashboard().getSuperstructureGoalForReef()))
-                        .andThen(() -> container.getDrive().driveToPose(container.getDashboard().getTargetPose())), Set.of()),
-                Commands.defer(() -> container.getDrive()
-                        .driveToPose(container.getDashboard().getStationTargetPose())
-                        .alongWith(container.getSuperstructure()
-                                .getGoToGoalCommand(container.getDashboard().getSuperstructureGoalForStation())), Set.of()),
+                                .getGoToGoalCommand(container.getDashboard().getSuperstructureGoalForStation())),
+                        Set.of()),
                 () -> !(container.getRollers().hasAlgae() || container.getRollers().hasCoral())));
     }
 
@@ -82,18 +87,23 @@ public class SebastianDriverOI implements SebastianOI
     {
         container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
 
-        driverController.leftTrigger()
-                .whileTrue(container.getIntakeCommand().andThen(rumble(driverController)));
+        driverController.leftTrigger().whileTrue(container.getIntakeCommand().andThen(rumble(driverController)));
 
         driverController.rightTrigger().whileTrue(container.getOuttakeCommand());
 
         manipulatorController.leftTrigger()
                 .whileTrue(container.getIntakeCommand().andThen(rumble(manipulatorController)));
-        
+
         manipulatorController.rightTrigger().whileTrue(container.getOuttakeCommand());
-        
-        new Trigger(() -> container.getRollers().hasAlgae() && !container.getRollers().hasCoral())
-                .whileTrue(container.getStowCommand());
+
+        // new Trigger(() -> container.getRollers().hasAlgae() &&
+        // !container.getRollers().hasCoral()
+        // && (container.getSuperstructure().getGoal() ==
+        // SuperstructureGoal.HIGHER_ALGAE
+        // || container.getSuperstructure().getGoal() ==
+        // SuperstructureGoal.LOWER_ALGAE))
+        // .onTrue(container.getStowCommand().until(() -> container.getSuperstructure()
+        // .getGoal() == SuperstructureGoal.PROCESSOR_STATION));
     }
 
     static void bindClimber(CommandXboxController driverController, SebastianContainer container)
