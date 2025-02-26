@@ -229,9 +229,10 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      * @return A command that drives the robot to the specified pose
      */
     public Command driveToPose(Pose2d pose, LinearVelocity maxVelocity, LinearAcceleration maxAcceleration,
-        AngularVelocity maxAngularVelocity, AngularAcceleration maxAngularAcceleration)
+            AngularVelocity maxAngularVelocity, AngularAcceleration maxAngularAcceleration)
     {
-        PathConstraints constraints = new PathConstraints(maxVelocity, maxAcceleration, maxAngularVelocity, maxAngularAcceleration);
+        PathConstraints constraints = new PathConstraints(maxVelocity, maxAcceleration, maxAngularVelocity,
+                maxAngularAcceleration);
         return AutoBuilder.pathfindToPose(pose, constraints, 0.0);
     }
 

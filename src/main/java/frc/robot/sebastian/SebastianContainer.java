@@ -175,21 +175,31 @@ public class SebastianContainer implements NFRRobotContainer
 
     public Command getGoToReefPoseCommand()
     {
-        return Commands.defer(() -> getDrive().driveToPose(FieldConstants.getReefBackupPosition(getDashboard().getTargetPose(), Feet.of(1)),
-                SebastianConstants.PathplannerConstants.MAX_VELOCITY, SebastianConstants.PathplannerConstants.MAX_ACCELERATION,
-                SebastianConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY, SebastianConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
+        return Commands.defer(() -> getDrive()
+                .driveToPose(FieldConstants.getReefBackupPosition(getDashboard().getTargetPose(), Feet.of(1)),
+                        SebastianConstants.PathplannerConstants.MAX_VELOCITY,
+                        SebastianConstants.PathplannerConstants.MAX_ACCELERATION,
+                        SebastianConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                        SebastianConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
                 .alongWith(getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForReef()))
-                .andThen(() -> getDrive().driveToPose(getDashboard().getTargetPose(), SebastianConstants.PathplannerConstants.MAX_VELOCITY,
-                SebastianConstants.PathplannerConstants.MAX_ACCELERATION, SebastianConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                SebastianConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)), Set.of());
+                .andThen(() -> getDrive().driveToPose(getDashboard().getTargetPose(),
+                        SebastianConstants.PathplannerConstants.MAX_VELOCITY,
+                        SebastianConstants.PathplannerConstants.MAX_ACCELERATION,
+                        SebastianConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                        SebastianConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)),
+                Set.of());
     }
 
     public Command getGoToStationCommand()
     {
-        return Commands.defer(() -> getDrive().driveToPose(getDashboard().getStationTargetPose(),
-                SebastianConstants.PathplannerConstants.MAX_VELOCITY, SebastianConstants.PathplannerConstants.MAX_ACCELERATION,
-                SebastianConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY, SebastianConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                .alongWith(getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForStation())),
+        return Commands.defer(
+                () -> getDrive().driveToPose(
+                        getDashboard().getStationTargetPose(), SebastianConstants.PathplannerConstants.MAX_VELOCITY,
+                        SebastianConstants.PathplannerConstants.MAX_ACCELERATION,
+                        SebastianConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                        SebastianConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
+                        .alongWith(getSuperstructure()
+                                .getGoToGoalCommand(getDashboard().getSuperstructureGoalForStation())),
                 Set.of());
     }
 

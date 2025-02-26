@@ -55,8 +55,9 @@ public class ZippyProgrammerOI implements ZippyOI
                 container.getDrive()));
 
         driverJoystick.rightBumper()
-                .whileTrue(container.getDrive().driveToPose(container.getDashboard().getTargetPose(), MetersPerSecond.of(1),
-                        MetersPerSecondPerSecond.of(1), RotationsPerSecond.of(1), RotationsPerSecondPerSecond.of(1)));
+                .whileTrue(container.getDrive().driveToPose(container.getDashboard().getTargetPose(),
+                        MetersPerSecond.of(1), MetersPerSecondPerSecond.of(1), RotationsPerSecond.of(1),
+                        RotationsPerSecondPerSecond.of(1)));
         driverJoystick.b()
                 .whileTrue(Commands.sequence(Commands.runOnce(() -> SignalLogger.start()),
                         container.getDrive().getSysIdTranslationQuasistatic(SysIdRoutine.Direction.kForward),
