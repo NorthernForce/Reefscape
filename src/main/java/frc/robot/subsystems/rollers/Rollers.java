@@ -117,7 +117,7 @@ public class Rollers extends SubsystemBase
     /**
      * Command to reverse the intake until a coral is no longer detected
      */
-    public class ShiftCoralCommand extends Command 
+    public class ShiftCoralCommand extends Command
     {
         public void ShiftCoralComand()
         {
@@ -178,7 +178,6 @@ public class Rollers extends SubsystemBase
     {
         return run(() -> outtake());
     }
-
 
     public Command getOuttakeUntilEmptyCommand()
     {
