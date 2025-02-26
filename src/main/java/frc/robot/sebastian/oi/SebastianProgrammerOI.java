@@ -1,6 +1,5 @@
 package frc.robot.sebastian.oi;
 
-import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -16,8 +15,6 @@ import frc.robot.sebastian.SebastianContainer;
 import frc.robot.sebastian.constants.SebastianConstants;
 import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
-import static edu.wpi.first.units.Units.*;
 
 /**
  * Sebastian OI for the programmers
@@ -61,14 +58,8 @@ public class SebastianProgrammerOI implements SebastianOI
                                     return 1;
                                 }, () -> -1, () -> 1, () -> -1));
 
-        driverController.rightBumper().whileTrue(Commands.defer(
-                () -> container.getDrive()
-                        .driveToPose(FieldConstants.getReefBackupPosition(container.getDashboard().getTargetPose(),
-                                Feet.of(1)))
-                        .alongWith(container.getSuperstructure()
-                                .getGoToGoalCommand(container.getDashboard().getSuperstructureGoalForReef()))
-                        .andThen(() -> container.getDrive().driveToPose(container.getDashboard().getTargetPose())),
-                Set.of(container.getSuperstructure())));
+        driverController.rightBumper().whileTrue(container.getGoToReefPoseCommand());
+        driverController.leftBumper().whileTrue(container.getGoToStationCommand());
     }
 
     private void bindRollers(CommandXboxController driverController, CommandXboxController manipulatorController,

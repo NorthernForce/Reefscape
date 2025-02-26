@@ -92,6 +92,7 @@ public class PhotonVision extends SubsystemBase
         lastKnownRobotPose = pose;
     }
 
+    @SuppressWarnings("unused")
     private boolean testYCoordinate(PhotonPipelineResult result)
     {
         for (var target : result.getTargets())
@@ -117,6 +118,7 @@ public class PhotonVision extends SubsystemBase
         return Math.abs(difference) < maxDegreesDifference;
     }
 
+    @SuppressWarnings("unused")
     private boolean testRobotDistance(EstimatedRobotPose pose)
     {
         if (lastKnownRobotPose == null)

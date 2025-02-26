@@ -44,7 +44,8 @@ public class Dashboard extends SubsystemBase
     @AutoLogOutput
     public Pose2d getTargetPose()
     {
-        return FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.reefLocations);
+        return FieldConstants.convertPoseByAlliance(FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.reefLocations),
+                FieldConstants.getAlliance());
     }
 
     /**
@@ -207,6 +208,7 @@ public class Dashboard extends SubsystemBase
     @AutoLogOutput
     public Pose2d getStationTargetPose()
     {
-        return FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.stationlocations);
+        return FieldConstants.convertPoseByAlliance(
+                FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.stationlocations), FieldConstants.getAlliance());
     }
 }

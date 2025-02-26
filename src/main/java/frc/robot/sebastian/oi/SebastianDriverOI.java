@@ -1,6 +1,5 @@
 package frc.robot.sebastian.oi;
 
-import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
@@ -13,7 +12,6 @@ import frc.robot.FieldConstants;
 import frc.robot.sebastian.SebastianContainer;
 import frc.robot.sebastian.constants.SebastianConstants;
 import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
-import static edu.wpi.first.units.Units.*;
 
 /**
  * Sebastian OI for the driver and operator
@@ -63,23 +61,8 @@ public class SebastianDriverOI implements SebastianOI
                                     return 1;
                                 }, () -> -1, () -> 1, () -> -1));
 
-        driverController.rightBumper().whileTrue(Commands.either(
-                Commands.defer(
-                        () -> container.getDrive()
-                                .driveToPose(FieldConstants
-                                        .getReefBackupPosition(container.getDashboard().getTargetPose(), Feet.of(1)))
-                                .alongWith(container
-                                        .getSuperstructure()
-                                        .getGoToGoalCommand(container.getDashboard().getSuperstructureGoalForReef()))
-                                .andThen(
-                                        () -> container.getDrive()
-                                                .driveToPose(container.getDashboard().getTargetPose())),
-                        Set.of()),
-                Commands.defer(() -> container.getDrive().driveToPose(container.getDashboard().getStationTargetPose())
-                        .alongWith(container.getSuperstructure()
-                                .getGoToGoalCommand(container.getDashboard().getSuperstructureGoalForStation())),
-                        Set.of()),
-                () -> !(container.getRollers().hasAlgae() || container.getRollers().hasCoral())));
+        driverController.rightBumper().whileTrue(container.getGoToReefPoseCommand());
+        driverController.leftBumper().whileTrue(container.getGoToStationCommand());
     }
 
     static void bindRollers(CommandXboxController driverController, CommandXboxController manipulatorController,

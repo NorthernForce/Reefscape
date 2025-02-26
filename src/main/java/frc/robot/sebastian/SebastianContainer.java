@@ -1,8 +1,10 @@
 package frc.robot.sebastian;
 
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Rotations;
 
@@ -12,6 +14,7 @@ import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
@@ -54,7 +57,6 @@ import frc.robot.subsystems.viewer.Viewer;
 import frc.robot.subsystems.viewer.ViewerIO;
 import frc.robot.subsystems.viewer.ViewerIOXavier;
 import frc.robot.util.NFRAutoRoutine;
-import frc.robot.util.PhoenixUtil;
 
 /**
  * 2025 Competition Robot Container. Name is still a work in progress and will
@@ -89,6 +91,7 @@ public class SebastianContainer implements NFRRobotContainer
                 SebastianConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, SebastianTunerConstants.FrontLeft,
                 SebastianTunerConstants.FrontRight, SebastianTunerConstants.BackLeft,
                 SebastianTunerConstants.BackRight);
+        drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
 
         vision = new PhotonVision(SebastianConstants.VisionConstants.cameraNames(),
                 SebastianConstants.VisionConstants.cameraTransforms(),
@@ -162,11 +165,32 @@ public class SebastianContainer implements NFRRobotContainer
             }, SebastianConstants.RollersConstants.INTAKE_SPEED, SebastianConstants.RollersConstants.OUTTAKE_SPEED);
             break;
         }
-        dashboard = new Dashboard(new ReefDisplayIOSwing("ReefDisplay"), new DashboardIOFWC());
+        dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
         addAutonomousRoutines();
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
         dashboard.setResetWristEncoderCommand(superstructure.getWrist()
                 .runOnce(() -> superstructure.getWrist().resetEncoderAngle(Degrees.of(0))).ignoringDisable(true));
+        SmartDashboard.putData("Go do thing", getGoToReefPoseCommand());
+    }
+
+    public Command getGoToReefPoseCommand()
+    {
+        return Commands.defer(() -> getDrive().driveToPose(FieldConstants.getReefBackupPosition(getDashboard().getTargetPose(), Feet.of(1)),
+                SebastianConstants.PathplannerConstants.MAX_VELOCITY, SebastianConstants.PathplannerConstants.MAX_ACCELERATION,
+                SebastianConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY, SebastianConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
+                .alongWith(getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForReef()))
+                .andThen(() -> getDrive().driveToPose(getDashboard().getTargetPose(), SebastianConstants.PathplannerConstants.MAX_VELOCITY,
+                SebastianConstants.PathplannerConstants.MAX_ACCELERATION, SebastianConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                SebastianConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)), Set.of());
+    }
+
+    public Command getGoToStationCommand()
+    {
+        return Commands.defer(() -> getDrive().driveToPose(getDashboard().getStationTargetPose(),
+                SebastianConstants.PathplannerConstants.MAX_VELOCITY, SebastianConstants.PathplannerConstants.MAX_ACCELERATION,
+                SebastianConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY, SebastianConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
+                .alongWith(getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForStation())),
+                Set.of());
     }
 
     private void addAutonomousRoutines()

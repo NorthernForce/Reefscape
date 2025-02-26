@@ -34,8 +34,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -226,9 +228,10 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      * @param pose The pose that the robot should drive to
      * @return A command that drives the robot to the specified pose
      */
-    public Command driveToPose(Pose2d pose)
+    public Command driveToPose(Pose2d pose, LinearVelocity maxVelocity, LinearAcceleration maxAcceleration,
+        AngularVelocity maxAngularVelocity, AngularAcceleration maxAngularAcceleration)
     {
-        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+        PathConstraints constraints = new PathConstraints(maxVelocity, maxAcceleration, maxAngularVelocity, maxAngularAcceleration);
         return AutoBuilder.pathfindToPose(pose, constraints, 0.0);
     }
 
