@@ -6,6 +6,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIO;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIOInputsAutoLogged;
@@ -114,6 +115,35 @@ public class Rollers extends SubsystemBase
     }
 
     /**
+     * Command to reverse the intake until a coral is no longer detected
+     */
+    public class ShiftCoralCommand extends Command 
+    {
+        public void ShiftCoralComand()
+        {
+            addRequirements(Rollers.this);
+        }
+
+        @Override
+        public void initialize()
+        {
+            outtake();
+        }
+
+        @Override
+        public boolean isFinished()
+        {
+            return !hasCoral();
+        }
+
+        @Override
+        public void end(boolean interrupted)
+        {
+            stop();
+        }
+    }
+
+    /**
      * Returns a command that intakes a coral.
      * 
      * @param speed The speed to intake at.
@@ -122,7 +152,7 @@ public class Rollers extends SubsystemBase
 
     public Command getCoralIntakeCommand()
     {
-        return new CoralIntakeCommand();
+        return new SequentialCommandGroup(new CoralIntakeCommand(), new ShiftCoralCommand(), new CoralIntakeCommand());
     }
 
     /**
@@ -148,6 +178,7 @@ public class Rollers extends SubsystemBase
     {
         return run(() -> outtake());
     }
+
 
     public Command getOuttakeUntilEmptyCommand()
     {
