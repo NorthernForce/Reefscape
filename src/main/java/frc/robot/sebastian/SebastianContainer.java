@@ -388,6 +388,7 @@ public class SebastianContainer implements NFRRobotContainer
             alliance = allianceSupplier.get();
             drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
         }
+        vision.setLastKnownRobotPose(drive.getPose());
         for (var poseEstimate : vision.getPoseEstimates())
         {
             drive.addVisionMeasurement(poseEstimate.pose(), Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
