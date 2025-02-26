@@ -43,6 +43,7 @@ public class PhotonVision extends SubsystemBase
     private final ArrayList<RejectedPoseEstimate> rejectedEstimates;
     private final double maxYCoordinate;
     private Pose2d lastKnownRobotPose;
+    private double lastKnownVisionPoseTimestamp;
     private final AngularVelocity maxAngularVelocity;
     private final LinearVelocity maxLinearVelocity;
     private final AprilTagFieldLayout layout;
@@ -118,7 +119,6 @@ public class PhotonVision extends SubsystemBase
         return Math.abs(difference) < maxDegreesDifference;
     }
 
-    @SuppressWarnings("unused")
     private boolean testRobotDistance(EstimatedRobotPose pose)
     {
         if (lastKnownRobotPose == null)
@@ -129,6 +129,11 @@ public class PhotonVision extends SubsystemBase
         double difference = pose.estimatedPose.toPose2d().getTranslation()
                 .getDistance(lastKnownRobotPose.getTranslation());
         return Math.abs(difference) < maxDistanceDifference;
+    }
+
+    private boolean testEstimateTime(EstimatedRobotPose pose)
+    {
+        return Math.abs(pose.timestampSeconds - lastKnownVisionPoseTimestamp) < 1;
     }
 
     private boolean testWithinField(EstimatedRobotPose pose)
@@ -169,11 +174,11 @@ public class PhotonVision extends SubsystemBase
                 // valid = false;
                 // reason = RejectionReason.ROBOT_ANGLE_TOO_LARGE;
                 // }
-                // if (!testRobotDistance(opt.get()))
-                // {
-                // valid = false;
-                // reason = RejectionReason.DISTANCE_TOO_FAR;
-                // }
+                if (!testRobotDistance(opt.get()) || !testEstimateTime(opt.get()))
+                {
+                    valid = false;
+                    reason = RejectionReason.DISTANCE_TOO_FAR;
+                }
                 if (!testWithinField(opt.get()))
                 {
                     valid = false;
@@ -182,6 +187,7 @@ public class PhotonVision extends SubsystemBase
                 if (valid)
                 {
                     poseEstimates.add(new PoseEstimate(opt.get().estimatedPose.toPose2d(), opt.get().timestampSeconds));
+                    lastKnownVisionPoseTimestamp = Math.max(opt.get().timestampSeconds, lastKnownVisionPoseTimestamp);
                 } else
                 {
                     rejectedEstimates.add(new RejectedPoseEstimate(reason,
