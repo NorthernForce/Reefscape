@@ -40,6 +40,12 @@ public class SebastianConstants
                         Preferences.getDouble("kSwerveOffsetBackLeft", SebastianTunerConstants.BackLeft.EncoderOffset)),
                 Rotations.of(Preferences.getDouble("kSwerveOffsetBackRight",
                         SebastianTunerConstants.BackRight.EncoderOffset)) };
+        /**
+         * The maximum acceleration of the robot in duty cycles per second squared. Only
+         * when the robot's outer elevator is above 4 inches or the inner elevator is
+         * above 10 inches.
+         */
+        public static final double SLOW_RATE = 0.5;
     }
 
     public static class VisionConstants
@@ -96,7 +102,7 @@ public class SebastianConstants
         public static final double kP = 14.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
-        public static final double kG = 0.234;
+        public static final double kG = 0;
         public static final double CRUISE_VELOCITY = 160;
         public static final double ACCELERATION = 80;
         public static final double JERK = 200;
@@ -106,6 +112,10 @@ public class SebastianConstants
                 CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, true, UPPER_LIMIT);
 
         public static final double HOMING_SPEED = 0.25;
+
+        public static final Distance HIGH_POSITION = Inches.of(10);
+
+        public static final Distance TOLERANCE = Inches.of(0.5);
     }
 
     public static class OuterElevatorConstants
@@ -133,6 +143,10 @@ public class SebastianConstants
                 CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, false, UPPER_LIMIT);
 
         public static final double HOMING_SPEED = 0.25;
+
+        public static final Distance HIGH_POSITION = Inches.of(4);
+
+        public static final Distance TOLERANCE = Inches.of(0.5);
     }
 
     public static class WristJointConstants
@@ -156,6 +170,8 @@ public class SebastianConstants
         public static final WristConstants WRIST_CONSTANTS = new WristConstants(kS, kV, kA, kP, kI, kD, CRUISE_VELOCITY,
                 ACCELERATION, JERK, INVERTED, UPPER_LIMIT, LOWER_LIMIT, SENSOR_TO_MECHANISM_RATIO,
                 ROTOR_TO_SENSOR_RATIO);
+
+        public static final Angle WRIST_TOLERANCE = Degrees.of(2);
     }
 
     /**
@@ -229,6 +245,7 @@ public class SebastianConstants
         public static final Angle LOWER_LIMIT = Rotations.of(-0.03);
         public static final Angle UPPER_LIMIT = Rotations.of(0.22);
         public static final Angle SWEET_ANGLE = Degrees.of(70.0);
+        public static final double CLIMB_SPEED = 1;
     }
 
     public static class RollersConstants

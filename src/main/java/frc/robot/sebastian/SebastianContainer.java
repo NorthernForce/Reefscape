@@ -1,6 +1,7 @@
 package frc.robot.sebastian;
 
 import java.util.Set;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Degrees;
@@ -15,6 +16,7 @@ import com.ctre.phoenix6.Utils;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
@@ -114,12 +116,14 @@ public class SebastianContainer implements NFRRobotContainer
                             {
                             }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
                     new Wrist(new WristIOTalonFX(16, 20, SebastianConstants.WristJointConstants.WRIST_CONSTANTS),
-                            Degrees.of(2.0)));
+                            SebastianConstants.WristJointConstants.WRIST_TOLERANCE),
+                    SebastianConstants.InnerElevatorConstants.HIGH_POSITION,
+                    SebastianConstants.OuterElevatorConstants.HIGH_POSITION);
             climber = new Climber(new ClimberIOTalonFX(SebastianConstants.ClimberConstants.ID,
                     SebastianConstants.ClimberConstants.INVERTED, SebastianConstants.ClimberConstants.ENCODER_ID,
                     SebastianConstants.ClimberConstants.LOWER_LIMIT, SebastianConstants.ClimberConstants.UPPER_LIMIT),
                     SebastianConstants.ClimberConstants.SWEET_ANGLE, SebastianConstants.ClimberConstants.LOWER_LIMIT,
-                    SebastianConstants.ClimberConstants.UPPER_LIMIT);
+                    SebastianConstants.ClimberConstants.UPPER_LIMIT, SebastianConstants.ClimberConstants.CLIMB_SPEED);
 
             viewer = new Viewer(new ViewerIOXavier());
             rollers = new Rollers(
@@ -148,11 +152,13 @@ public class SebastianContainer implements NFRRobotContainer
                             }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
                     new Wrist(new WristIO()
                     {
-                    }, Degrees.of(2.0)));
+                    }, SebastianConstants.WristJointConstants.WRIST_TOLERANCE),
+                    SebastianConstants.InnerElevatorConstants.HIGH_POSITION,
+                    SebastianConstants.OuterElevatorConstants.HIGH_POSITION);
             climber = new Climber(new ClimberIO()
             {
             }, SebastianConstants.ClimberConstants.SWEET_ANGLE, SebastianConstants.ClimberConstants.LOWER_LIMIT,
-                    SebastianConstants.ClimberConstants.UPPER_LIMIT);
+                    SebastianConstants.ClimberConstants.UPPER_LIMIT, SebastianConstants.ClimberConstants.CLIMB_SPEED);
             viewer = new Viewer(new ViewerIO()
             {
             });
@@ -269,6 +275,29 @@ public class SebastianContainer implements NFRRobotContainer
     {
         return Commands.sequence(Commands.parallel(superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
                 drive.getFollowPathCommand("RedMid_E4")), getCoralOuttakeCommand());
+    }
+
+    public Command getDriveByJoystickWithSlewCommand(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
+            DoubleSupplier rSupplier)
+    {
+        SlewRateLimiter xSlew = new SlewRateLimiter(SebastianConstants.DrivetrainConstants.SLOW_RATE);
+        SlewRateLimiter ySlew = new SlewRateLimiter(SebastianConstants.DrivetrainConstants.SLOW_RATE);
+        return drive.getDriveByJoystickCommand(() -> xSlew.calculate(xSupplier.getAsDouble()),
+                () -> ySlew.calculate(ySupplier.getAsDouble()), rSupplier);
+    }
+
+    public Command getDriveByJoystickCommand(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
+            DoubleSupplier rSupplier)
+    {
+        return drive.getDriveByJoystickCommand(xSupplier, ySupplier, rSupplier);
+    }
+
+    public Command getDriveByJoystickWithLimitsCommand(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
+            DoubleSupplier rSupplier)
+    {
+        return drive.getDriveByJoystickWithRobotRelativeLimits(xSupplier, ySupplier, rSupplier,
+                () -> viewer.getCenterDistance().lte(SebastianConstants.DrivetrainConstants.SAFE_DISTANCE) ? 0 : 1,
+                () -> -1, () -> 1, () -> -1);
     }
 
     /**

@@ -19,6 +19,7 @@ public class Climber extends SubsystemBase
     private final Angle sweetSpot;
     private final Angle stowPosition;
     private final Angle extendPosition;
+    private final double climbSpeed;
 
     /**
      * Constructor for the Climber class.
@@ -26,12 +27,13 @@ public class Climber extends SubsystemBase
      * @param climberIO IO for the climber
      */
 
-    public Climber(ClimberIO climberIO, Angle sweetSpot, Angle stowPosition, Angle extendPosition)
+    public Climber(ClimberIO climberIO, Angle sweetSpot, Angle stowPosition, Angle extendPosition, double climbSpeed)
     {
         io = climberIO;
         this.sweetSpot = sweetSpot;
         this.stowPosition = stowPosition;
         this.extendPosition = extendPosition;
+        this.climbSpeed = climbSpeed;
     }
 
     /**
@@ -40,7 +42,7 @@ public class Climber extends SubsystemBase
      * @param climbSpeed speed to climb up
      */
 
-    public void climbUp(double climbSpeed)
+    public void climbExtend()
     {
         io.run(-climbSpeed);
     }
@@ -51,7 +53,7 @@ public class Climber extends SubsystemBase
      * @param climbSpeed speed to climb down
      */
 
-    public void climbDown(double climbSpeed)
+    public void climbRetract()
     {
         io.run(climbSpeed);
     }
@@ -63,9 +65,9 @@ public class Climber extends SubsystemBase
      * @return command to climb up
      */
 
-    public Command getClimbUpCommand(double climbSpeed)
+    public Command getClimbExtendCommand()
     {
-        return run(() -> climbUp(climbSpeed));
+        return run(() -> climbExtend());
     }
 
     /**
@@ -75,9 +77,9 @@ public class Climber extends SubsystemBase
      * @return command to climb down
      */
 
-    public Command getClimbDownCommand(double climbSpeed)
+    public Command getClimbRetractCommand()
     {
-        return run(() -> climbDown(climbSpeed));
+        return run(() -> climbRetract());
     }
 
     public class ClimbToPosition extends Command
@@ -124,7 +126,7 @@ public class Climber extends SubsystemBase
      * returns a command that runs the climber to the top
      */
 
-    public Command getClimbExtend()
+    public Command getClimbExtendFully()
     {
         return climbToPosition(extendPosition);
     }

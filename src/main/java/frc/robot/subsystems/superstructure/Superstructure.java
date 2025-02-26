@@ -35,6 +35,8 @@ public class Superstructure extends SubsystemBase
     private final Elevator m_outerElevator;
     private final Wrist m_wrist;
     private SuperstructureGoal m_goal;
+    private final Distance innerElevatorHighPosition;
+    private final Distance outerElevatorHighPosition;
 
     /**
      * Creates a new Superstructure
@@ -42,11 +44,14 @@ public class Superstructure extends SubsystemBase
      * @param innerElevator the inner elevator
      * @param outerElevator the outer elevator
      */
-    public Superstructure(Elevator innerElevator, Elevator outerElevator, Wrist wrist)
+    public Superstructure(Elevator innerElevator, Elevator outerElevator, Wrist wrist,
+            Distance innerElevatorHighPosition, Distance outerElevatorHighPosition)
     {
         m_innerElevator = innerElevator;
         m_outerElevator = outerElevator;
         m_wrist = wrist;
+        this.innerElevatorHighPosition = innerElevatorHighPosition;
+        this.outerElevatorHighPosition = outerElevatorHighPosition;
         m_goal = SuperstructureGoal.START;
     }
 
@@ -116,6 +121,12 @@ public class Superstructure extends SubsystemBase
         return m_innerElevator.isAtPosition(goal.getInnerElevatorGoal())
                 && m_outerElevator.isAtPosition(goal.getOuterElevatorGoal())
                 && m_wrist.isAtPosition(goal.getWristGoal());
+    }
+
+    public boolean isTooHigh()
+    {
+        return m_innerElevator.getPosition().gte(innerElevatorHighPosition)
+                || m_outerElevator.getPosition().gte(outerElevatorHighPosition);
     }
 
     public Wrist getWrist()

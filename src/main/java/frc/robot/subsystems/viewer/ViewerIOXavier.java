@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.FloatSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -13,18 +14,18 @@ public class ViewerIOXavier implements ViewerIO
     private final BooleanSubscriber hasPostInImageSubscriber;
     private final DoubleSubscriber postOffsetSubscriber;
     private final DoubleSubscriber postDistanceSubscriber;
-    private final DoubleSubscriber centerDistanceSubscriber;
+    private final FloatSubscriber centerDistanceSubscriber;
 
     /**
      * Constructs a new ViewerIOXavier.
      */
     public ViewerIOXavier()
     {
-        table = NetworkTableInstance.getDefault().getTable("Xavier");
+        table = NetworkTableInstance.getDefault().getTable("Viewer");
         hasPostInImageSubscriber = table.getBooleanTopic("HasPost").subscribe(false);
         postOffsetSubscriber = table.getDoubleTopic("PostOffset").subscribe(0.0);
         postDistanceSubscriber = table.getDoubleTopic("PostDistance").subscribe(0.0);
-        centerDistanceSubscriber = table.getDoubleTopic("CenterDistance").subscribe(0.0);
+        centerDistanceSubscriber = table.getFloatTopic("CenterDist").subscribe(0.0f);
     }
 
     /**
@@ -36,7 +37,7 @@ public class ViewerIOXavier implements ViewerIO
         inputs.connected = false;
         for (var connection : NetworkTableInstance.getDefault().getConnections())
         {
-            if (connection.remote_id.startsWith("Xavier"))
+            if (connection.remote_id.startsWith("skynet"))
             {
                 inputs.connected = true;
                 break;

@@ -173,8 +173,8 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command getDriveByJoystickCommand(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
             DoubleSupplier omegaSupplier)
     {
-        SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric().withDeadband(0.1)
-                .withRotationalDeadband(0.1).withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
         return applyRequest(() ->
         {
             var x = xSupplier.getAsDouble() * maxSpeed.in(MetersPerSecond);
@@ -201,8 +201,8 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
             DoubleSupplier omegaSupplier, DoubleSupplier xLimitForward, DoubleSupplier xLimitBackward,
             DoubleSupplier yLimitPositive, DoubleSupplier yLimitNegative)
     {
-        SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric().withDeadband(0.1)
-                .withRotationalDeadband(0.1).withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
         return applyRequest(() ->
         {
             var x = xSupplier.getAsDouble() * maxSpeed.in(MetersPerSecond);

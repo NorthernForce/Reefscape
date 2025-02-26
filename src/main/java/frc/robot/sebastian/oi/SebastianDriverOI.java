@@ -35,9 +35,15 @@ public class SebastianDriverOI implements SebastianOI
 
     static void bindDrive(CommandXboxController driverController, SebastianContainer container)
     {
-        container.getDrive().setDefaultCommand(container.getDrive().getDriveByJoystickCommand(
-                processJoystickInput(driverController::getLeftY), processJoystickInput(driverController::getLeftX),
-                processJoystickInput(driverController::getRightX)));
+        container.getDrive()
+                .setDefaultCommand(container.getDriveByJoystickCommand(processJoystickInput(driverController::getLeftY),
+                        processJoystickInput(driverController::getLeftX),
+                        processJoystickInput(driverController::getRightX)));
+
+        new Trigger(() -> container.getSuperstructure().isTooHigh())
+                .whileTrue(container.getDriveByJoystickWithSlewCommand(processJoystickInput(driverController::getLeftY),
+                        processJoystickInput(driverController::getLeftX),
+                        processJoystickInput(driverController::getRightX)));
 
         driverController.back().onTrue(container.getDrive()
                 .getResetOrientationCommand(FieldConstants.getFieldRotation(FieldConstants.getAlliance())));
@@ -47,19 +53,11 @@ public class SebastianDriverOI implements SebastianOI
         new Trigger(() -> !container.getSuperstructure().isAtGoal()
                 && container.getSuperstructure().getGoal() == SuperstructureGoal.CORAL_STATION
                 && container.getViewer().isPresent()
-                && FieldConstants.isAtCoralRotation(container.getDrive().getPose().getRotation()))
-                        .whileTrue(container.getDrive().getDriveByJoystickWithRobotRelativeLimits(
-                                processJoystickInput(driverController::getLeftY),
+                && FieldConstants.isAtCoralRotation(container.getDrive().getPose().getRotation())
+                && !driverController.getHID().getLeftBumperButton()).whileTrue(
+                        container.getDriveByJoystickWithLimitsCommand(processJoystickInput(driverController::getLeftY),
                                 processJoystickInput(driverController::getLeftX),
-                                processJoystickInput(driverController::getRightX), () ->
-                                {
-                                    if (container.getViewer().getCenterDistance()
-                                            .lte(SebastianConstants.DrivetrainConstants.SAFE_DISTANCE))
-                                    {
-                                        return 0;
-                                    }
-                                    return 1;
-                                }, () -> -1, () -> 1, () -> -1));
+                                processJoystickInput(driverController::getRightX)));
 
         driverController.rightBumper().whileTrue(container.getGoToReefPoseCommand());
         driverController.leftBumper().whileTrue(container.getGoToStationCommand());
@@ -79,21 +77,19 @@ public class SebastianDriverOI implements SebastianOI
 
         manipulatorController.rightTrigger().whileTrue(container.getOuttakeCommand());
 
-        // new Trigger(() -> container.getRollers().hasAlgae() &&
-        // !container.getRollers().hasCoral()
-        // && (container.getSuperstructure().getGoal() ==
-        // SuperstructureGoal.HIGHER_ALGAE
-        // || container.getSuperstructure().getGoal() ==
-        // SuperstructureGoal.LOWER_ALGAE))
-        // .onTrue(container.getStowCommand().until(() -> container.getSuperstructure()
-        // .getGoal() == SuperstructureGoal.PROCESSOR_STATION));
+        new Trigger(() -> container.getRollers().hasAlgae() && !container.getRollers().hasCoral()
+                && (container.getSuperstructure().getGoal() == SuperstructureGoal.HIGHER_ALGAE
+                        || container.getSuperstructure().getGoal() == SuperstructureGoal.LOWER_ALGAE))
+                                .onTrue(container.getStowCommand().until(() -> container.getSuperstructure()
+                                        .getGoal() == SuperstructureGoal.PROCESSOR_STATION));
     }
 
     static void bindClimber(CommandXboxController driverController, SebastianContainer container)
     {
         container.getClimber().setDefaultCommand(container.getClimber().getStopCommand());
         driverController.a().whileTrue(container.getClimber().getRunToSweetSpotCommand());
-        driverController.b().onTrue(container.getClimber().getClimbExtend());
+        driverController.b().onTrue(container.getClimber().getClimbExtendFully());
+        driverController.y().whileTrue(container.getClimber().getStowCommand());
     }
 
     static void bindSuperstructure(CommandXboxController driverController, CommandXboxController manipulatorController,
