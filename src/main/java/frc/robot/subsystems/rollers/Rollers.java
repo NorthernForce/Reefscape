@@ -163,7 +163,7 @@ public class Rollers extends SubsystemBase
                     new CoralIntakeCommand());
         } else
         {
-            return runOnce(() -> intake());
+            return run(() -> intake());
         }
     }
 

@@ -68,12 +68,12 @@ public class SebastianDriverOI implements SebastianOI
     {
         container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
 
-        driverController.leftTrigger().whileTrue(container.getIntakeCommand()/*.andThen(rumble(driverController))*/);
+        driverController.leftTrigger().whileTrue(container.getIntakeCommand()/* .andThen(rumble(driverController)) */);
 
         driverController.rightTrigger().whileTrue(container.getOuttakeCommand());
 
         manipulatorController.leftTrigger()
-                .whileTrue(container.getIntakeCommand()/*.andThen(rumble(manipulatorController))*/);
+                .whileTrue(container.getIntakeCommand()/* .andThen(rumble(manipulatorController)) */);
 
         manipulatorController.rightTrigger().whileTrue(container.getOuttakeCommand());
 
