@@ -233,7 +233,7 @@ public class SebastianContainer implements NFRRobotContainer
     {
         return // superstructure.getGoToGoalCommand(SuperstructureGoal.CORAL_STATION)
                // .andThen(rollers.getCoralIntakeCommand());
-        rollers.getCoralIntakeCommand();
+        rollers.getCoralIntakeCommand(false);
     }
 
     public Command getCoralOuttakeCommand()
