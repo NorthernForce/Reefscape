@@ -88,6 +88,7 @@ public class Climber extends SubsystemBase
 
         public ClimbToPosition(Angle position)
         {
+            addRequirements(Climber.this);
             this.position = position;
         }
 

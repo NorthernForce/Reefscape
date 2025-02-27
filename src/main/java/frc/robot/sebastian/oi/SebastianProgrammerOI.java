@@ -28,7 +28,7 @@ public class SebastianProgrammerOI implements SebastianOI
     {
         return () ->
         {
-            double x = MathUtil.applyDeadband(input.getAsDouble(), 0.0, 1);
+            double x = MathUtil.applyDeadband(input.getAsDouble(), 0.1, 1);
             return -x * Math.abs(x);
         };
     }
