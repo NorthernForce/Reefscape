@@ -87,8 +87,8 @@ public class SebastianDriverOI implements SebastianOI
     static void bindClimber(CommandXboxController driverController, SebastianContainer container)
     {
         container.getClimber().setDefaultCommand(container.getClimber().getStopCommand());
-        driverController.a().whileTrue(container.getClimber().getRunToSweetSpotCommand());
-        driverController.b().onTrue(container.getClimber().getClimbExtendFully());
+        driverController.b().whileTrue(container.getClimber().getRunToSweetSpotCommand());
+        driverController.a().whileTrue(container.getClimber().getClimbExtendFully());
         driverController.y().whileTrue(container.getClimber().getStowCommand());
     }
 

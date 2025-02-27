@@ -88,7 +88,7 @@ public class SebastianProgrammerOI implements SebastianOI
     {
         container.getClimber().setDefaultCommand(container.getClimber().getStopCommand());
         driverController.a().whileTrue(container.getClimber().getClimbExtendCommand());
-        driverController.b().onTrue(container.getClimber().getClimbRetractCommand());
+        driverController.b().whileTrue(container.getClimber().getClimbRetractCommand());
     }
 
     static void bindSuperstructure(CommandXboxController driverController, CommandXboxController manipulatorController,
