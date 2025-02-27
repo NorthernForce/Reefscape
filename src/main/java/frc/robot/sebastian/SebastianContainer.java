@@ -229,7 +229,8 @@ public class SebastianContainer implements NFRRobotContainer
         { new Translation2d(7.5, 1.93), new Translation2d(7, 4.06) }, () -> drive.getInitialPose("RedMid_E4")));
     }
 
-    public Command getCoralIntakeCommand()
+    public Command 
+    getCoralIntakeCommand()
     {
         return // superstructure.getGoToGoalCommand(SuperstructureGoal.CORAL_STATION)
                // .andThen(rollers.getCoralIntakeCommand());

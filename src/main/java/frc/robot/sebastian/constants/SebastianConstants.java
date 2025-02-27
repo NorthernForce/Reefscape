@@ -250,7 +250,7 @@ public class SebastianConstants
 
     public static class RollersConstants
     {
-        public static final double INTAKE_SPEED = 0.3;
+        public static final double INTAKE_SPEED = 0.5;
         public static final double OUTTAKE_SPEED = 0.3;
         public static final int ROLLER_MOTOR_LEFT_ID = 18;
         public static final int ROLLER_MOTOR_RIGHT_ID = 19;
