@@ -180,10 +180,10 @@ public class SebastianConstants
 
     public static enum SuperstructureGoal implements GenericSuperstructureGoal
     {
-        L1(Inches.of(0), Inches.of(0), Degrees.of(0)), L2(Inches.of(4.69), Inches.of(5.55), Rotations.of(-0.095)),
-        L3(Inches.of(25.8), Inches.of(2.6), Rotations.of(-0.095)),
-        L4(Inches.of(26.6), Inches.of(25.6), Rotations.of(-0.03)),
-        CORAL_STATION(Inches.of(3.64), Inches.of(0), WristJointConstants.UPPER_LIMIT),
+        L1(Inches.of(0), Inches.of(0), Degrees.of(0)), L2(Inches.of(12.1), Inches.of(0), Rotations.of(-0.095)),
+        L3(Inches.of(25.8), Inches.of(4.61), Rotations.of(-0.095)),
+        L4(Inches.of(26.6), Inches.of(25.6), Rotations.of(-0.069)),
+        CORAL_STATION(Inches.of(5.11), Inches.of(0), WristJointConstants.UPPER_LIMIT),
         PROCESSOR_STATION(Inches.of(0), Inches.of(0), Degrees.of(0)),
         LOWER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)), HIGHER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)),
         START(Inches.of(0), Inches.of(0), WristJointConstants.LOWER_LIMIT),
