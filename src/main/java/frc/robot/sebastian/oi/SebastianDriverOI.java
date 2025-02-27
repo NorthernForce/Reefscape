@@ -140,8 +140,8 @@ public class SebastianDriverOI implements SebastianOI
 
     public static Command rumble(CommandXboxController controller)
     {
-        return Commands.runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 0.0))
-                .andThen(Commands.waitSeconds(0.5))
+        return Commands.runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 0.5))
+                .andThen(Commands.waitSeconds(0.25))
                 .andThen(Commands.runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 0)));
     }
 
