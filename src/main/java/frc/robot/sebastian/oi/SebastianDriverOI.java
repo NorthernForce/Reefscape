@@ -92,8 +92,8 @@ public class SebastianDriverOI implements SebastianOI
     static void bindClimber(CommandXboxController driverController, SebastianContainer container)
     {
         container.getClimber().setDefaultCommand(container.getClimber().getStopCommand());
-        driverController.a().whileTrue(container.getClimber().getRunToSweetSpotCommand());
-        driverController.b().onTrue(container.getClimber().getClimbExtendFully());
+        driverController.b().whileTrue(container.getClimber().getRunToSweetSpotCommand());
+        driverController.a().whileTrue(container.getClimber().getClimbExtendFully());
         driverController.y().whileTrue(container.getClimber().getStowCommand());
     }
 
@@ -145,8 +145,8 @@ public class SebastianDriverOI implements SebastianOI
 
     public static Command rumble(CommandXboxController controller)
     {
-        return Commands.runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 0.0))
-                .andThen(Commands.waitSeconds(0.5))
+        return Commands.runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 0.5))
+                .andThen(Commands.waitSeconds(0.25))
                 .andThen(Commands.runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 0)));
     }
 

@@ -88,7 +88,7 @@ public class SebastianProgrammerOI implements SebastianOI
     {
         container.getClimber().setDefaultCommand(container.getClimber().getStopCommand());
         driverController.a().whileTrue(container.getClimber().getClimbExtendCommand());
-        driverController.b().onTrue(container.getClimber().getClimbRetractCommand());
+        driverController.b().whileTrue(container.getClimber().getClimbRetractCommand());
     }
 
     static void bindSuperstructure(CommandXboxController driverController, CommandXboxController manipulatorController,
@@ -139,8 +139,8 @@ public class SebastianProgrammerOI implements SebastianOI
 
     public static Command rumble(CommandXboxController controller)
     {
-        return Commands.runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 0.0))
-                .andThen(Commands.waitSeconds(0.5))
+        return Commands.runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 0.5))
+                .andThen(Commands.waitSeconds(0.25))
                 .andThen(Commands.runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 0)));
     }
 
