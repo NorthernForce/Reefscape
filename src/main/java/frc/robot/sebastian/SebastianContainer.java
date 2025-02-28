@@ -221,13 +221,13 @@ public class SebastianContainer implements NFRRobotContainer
                 drive.getWaypoints("BlueMid_J4"), () -> drive.getInitialPose("BlueMid_J4")));
         dashboard.addAutoRoutine("RedMid_E4", new NFRAutoRoutine(getRedMid_E4Command(), drive.getWaypoints("RedMid_E4"),
                 () -> drive.getInitialPose("RedMid_E4")));
-        dashboard.addAutoRoutine("Center_LEAVE", new NFRAutoRoutine(drive.getBackupCommand(1, -0.5), new Translation2d[]
+        dashboard.addAutoRoutine("Center_LEAVE", new NFRAutoRoutine(drive.getBackupCommand(1, -0.5).andThen(drive.getXLockCommand()), new Translation2d[]
         { new Translation2d(7.5, 4.06), new Translation2d(7, 4.06) }, () -> drive.getInitialPose("Center_H4")));
         dashboard.addAutoRoutine("BlueMid_LEAVE",
-                new NFRAutoRoutine(drive.getBackupCommand(1, -0.5), new Translation2d[]
+                new NFRAutoRoutine(drive.getBackupCommand(1, -0.5).andThen(drive.getXLockCommand()), new Translation2d[]
                 { new Translation2d(7.5, 6.14), new Translation2d(7, 4.06) },
                         () -> drive.getInitialPose("BlueMid_J4")));
-        dashboard.addAutoRoutine("RedMid_LEAVE", new NFRAutoRoutine(drive.getBackupCommand(1, -0.5), new Translation2d[]
+        dashboard.addAutoRoutine("RedMid_LEAVE", new NFRAutoRoutine(drive.getBackupCommand(1, -0.5).andThen(drive.getXLockCommand()), new Translation2d[]
         { new Translation2d(7.5, 1.93), new Translation2d(7, 4.06) }, () -> drive.getInitialPose("RedMid_E4")));
     }
 
