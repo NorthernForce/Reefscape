@@ -19,6 +19,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.RobotController;
 
 /**
  * ElevatorIOTalon is a class that implements ElevatorIO using a TalonFX.
@@ -34,6 +35,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
     private final MotionMagicVoltage m_motionMagicVoltage;
     private final DutyCycleOut m_duty = new DutyCycleOut(0);
     private final VoltageOut m_voltage = new VoltageOut(0);
+    private final double kG;
 
     /**
      * Constants for the elevator
@@ -103,6 +105,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
         slot0Configs.kI = kI;
         slot0Configs.kD = kD;
         slot0Configs.kG = kG;
+        this.kG = kG;
 
         var motionMagicConfigs = talonFXConfigs.MotionMagic;
         motionMagicConfigs.MotionMagicCruiseVelocity = motionMagicConfigs.MotionMagicAcceleration = 160;
@@ -155,7 +158,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
     @Override
     public void setSpeed(double speed, boolean overrideLowerLimit)
     {
-        m_motor.setControl(m_duty.withOutput(speed));
+        m_motor.setControl(m_duty.withOutput(speed + kG / RobotController.getInputVoltage()));
     }
 
     /**
