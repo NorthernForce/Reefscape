@@ -4,6 +4,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -66,14 +67,18 @@ public class SebastianDriverOI implements SebastianOI
     static void bindRollers(CommandXboxController driverController, CommandXboxController manipulatorController,
             SebastianContainer container)
     {
+        manipulatorController.back().onTrue(Commands.runOnce(() -> container.getDashboard().toggleBeamBreak()));
+
         container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
 
-        driverController.leftTrigger().whileTrue(container.getIntakeCommand()/* .andThen(rumble(driverController)) */);
+        driverController.leftTrigger().whileTrue(container.getIntakeCommand().andThen(rumble(driverController))
+                .onlyIf(() -> SmartDashboard.getBoolean("Use Beam Break", true)));
 
         driverController.rightTrigger().whileTrue(container.getOuttakeCommand());
 
         manipulatorController.leftTrigger()
-                .whileTrue(container.getIntakeCommand()/* .andThen(rumble(manipulatorController)) */);
+                .whileTrue((container.getIntakeCommand()).andThen(rumble(manipulatorController))
+                        .onlyIf(() -> SmartDashboard.getBoolean("Use Beam Break", true)));
 
         manipulatorController.rightTrigger().whileTrue(container.getOuttakeCommand());
 

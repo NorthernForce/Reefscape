@@ -77,6 +77,8 @@ public class SebastianContainer implements NFRRobotContainer
     private final Dashboard dashboard;
     private final Viewer viewer;
 
+    private final Supplier<Boolean> useBeamBreak = () -> SmartDashboard.getBoolean("Use Beam Break", true);
+
     /**
      * Create a new SebastianContainer
      */
@@ -233,7 +235,7 @@ public class SebastianContainer implements NFRRobotContainer
     {
         return // superstructure.getGoToGoalCommand(SuperstructureGoal.CORAL_STATION)
                // .andThen(rollers.getCoralIntakeCommand());
-        rollers.getCoralIntakeCommand(false);
+        rollers.getCoralIntakeCommand(useBeamBreak.get());
     }
 
     public Command getCoralOuttakeCommand()

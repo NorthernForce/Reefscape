@@ -86,6 +86,7 @@ public class Dashboard extends SubsystemBase
 
     /**
      * gets the beam break sensor to be used or not
+     * 
      * @return
      */
 
