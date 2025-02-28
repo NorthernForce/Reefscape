@@ -66,6 +66,8 @@ public class SebastianProgrammerOI implements SebastianOI
     static void bindRollers(CommandXboxController driverController, CommandXboxController manipulatorController,
             SebastianContainer container)
     {
+        manipulatorController.back().onTrue(Commands.runOnce(() -> container.getDashboard().toggleBeamBreak()));
+
         container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
 
         driverController.leftTrigger().whileTrue(container.getIntakeCommand().andThen(rumble(driverController)));
