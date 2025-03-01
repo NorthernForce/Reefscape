@@ -122,6 +122,8 @@ public class ElevatorIOTalonFX implements ElevatorIO
         talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = upperLimit.in(Inches);
         talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+        talonFXConfigs.CurrentLimits.StatorCurrentLimit = 40;
+        talonFXConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
 
         m_motor.getConfigurator().apply(talonFXConfigs);
 

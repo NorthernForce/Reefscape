@@ -222,14 +222,14 @@ public class SebastianContainer implements NFRRobotContainer
         dashboard.addAutoRoutine("RedMid_E4", new NFRAutoRoutine(getRedMid_E4Command(), drive.getWaypoints("RedMid_E4"),
                 () -> drive.getInitialPose("RedMid_E4")));
         dashboard.addAutoRoutine("Center_LEAVE",
-                new NFRAutoRoutine(drive.getBackupCommand(1, -0.5).andThen(drive.getXLockCommand()), new Translation2d[]
+                new NFRAutoRoutine(drive.getBackupCommand(4, -0.5).andThen(drive.getXLockCommand()), new Translation2d[]
                 { new Translation2d(7.5, 4.06), new Translation2d(7, 4.06) }, () -> drive.getInitialPose("Center_H4")));
         dashboard.addAutoRoutine("BlueMid_LEAVE",
-                new NFRAutoRoutine(drive.getBackupCommand(1, -0.5).andThen(drive.getXLockCommand()), new Translation2d[]
+                new NFRAutoRoutine(drive.getBackupCommand(4, -0.5).andThen(drive.getXLockCommand()), new Translation2d[]
                 { new Translation2d(7.5, 6.14), new Translation2d(7, 4.06) },
                         () -> drive.getInitialPose("BlueMid_J4")));
         dashboard.addAutoRoutine("RedMid_LEAVE",
-                new NFRAutoRoutine(drive.getBackupCommand(1, -0.5).andThen(drive.getXLockCommand()), new Translation2d[]
+                new NFRAutoRoutine(drive.getBackupCommand(4, -0.5).andThen(drive.getXLockCommand()), new Translation2d[]
                 { new Translation2d(7.5, 1.93), new Translation2d(7, 4.06) }, () -> drive.getInitialPose("RedMid_E4")));
     }
 
@@ -265,8 +265,9 @@ public class SebastianContainer implements NFRRobotContainer
 
     public Command getCenter_H4Command()
     {
-        return Commands.sequence(Commands.parallel(superstructure.getGoToGoalCommand(SuperstructureGoal.L4)
-        /* drive.getFollowPathCommand("Center_H4") */), getCoralOuttakeCommand());
+        return Commands.sequence(superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
+                superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
+                drive.getFollowPathCommand("Center_H4"), getCoralOuttakeCommand());
     }
 
     public Command getBlueMid_J4Command()
