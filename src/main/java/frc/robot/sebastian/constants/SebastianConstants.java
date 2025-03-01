@@ -106,7 +106,7 @@ public class SebastianConstants
         public static final double CRUISE_VELOCITY = 160;
         public static final double ACCELERATION = 60;
         public static final double JERK = 200;
-        public static final Distance UPPER_LIMIT = Inches.of(25.8);
+        public static final Distance UPPER_LIMIT = Inches.of(25.8 - 2.75);
 
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD, kG,
                 CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, true, UPPER_LIMIT);
@@ -180,10 +180,10 @@ public class SebastianConstants
 
     public static enum SuperstructureGoal implements GenericSuperstructureGoal
     {
-        L1(Inches.of(0), Inches.of(0), Degrees.of(0)), L2(Inches.of(12.1), Inches.of(0), Rotations.of(-0.095)),
-        L3(Inches.of(25.8), Inches.of(4.61), Rotations.of(-0.095)),
-        L4(Inches.of(27.3), Inches.of(25.6), Rotations.of(-0.059)),
-        CORAL_STATION(Inches.of(5.11), Inches.of(0), WristJointConstants.UPPER_LIMIT),
+        L1(Inches.of(0), Inches.of(0), Degrees.of(0)), L2(Inches.of(12.1 - 2.75), Inches.of(0), Rotations.of(-0.095)),
+        L3(Inches.of(25.8 - 2.75), Inches.of(4.61), Rotations.of(-0.095)),
+        L4(Inches.of(27.3 - 2.75), Inches.of(26.6), Rotations.of(-0.059)),
+        CORAL_STATION(Inches.of(5.11 - 2.75), Inches.of(0), WristJointConstants.UPPER_LIMIT),
         PROCESSOR_STATION(Inches.of(0), Inches.of(0), Degrees.of(0)),
         LOWER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)), HIGHER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)),
         START(Inches.of(0), Inches.of(0), WristJointConstants.LOWER_LIMIT),
