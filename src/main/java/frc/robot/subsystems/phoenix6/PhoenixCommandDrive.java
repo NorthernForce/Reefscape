@@ -183,11 +183,13 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
             return fieldCentric.withVelocityX(x).withVelocityY(y).withRotationalRate(omega);
         });
     }
+
     public Command getGoLeft(double speed)
     {
         SwerveRequest.ApplyRobotSpeeds robotSpeeds = new SwerveRequest.ApplyRobotSpeeds()
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-        return applyRequest(() -> {
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        return applyRequest(() ->
+        {
             return robotSpeeds.withSpeeds(new ChassisSpeeds(0, speed, 0));
         });
     }

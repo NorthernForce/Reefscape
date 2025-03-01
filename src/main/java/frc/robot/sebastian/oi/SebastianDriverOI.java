@@ -60,8 +60,8 @@ public class SebastianDriverOI implements SebastianOI
                                 processJoystickInput(driverController::getLeftX),
                                 processJoystickInput(driverController::getRightX)));
 
-        driverController.rightBumper().whileTrue(container.getDrive().getGoLeft(-0.5));
-        driverController.leftBumper().whileTrue(container.getDrive().getGoLeft(0.5));
+        driverController.rightBumper().whileTrue(container.getDrive().getGoLeft(-0.325));
+        driverController.leftBumper().whileTrue(container.getDrive().getGoLeft(0.325));
     }
 
     static void bindRollers(CommandXboxController driverController, CommandXboxController manipulatorController,
