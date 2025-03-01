@@ -165,7 +165,7 @@ public class SebastianConstants
         public static final Angle LOWER_LIMIT = Rotations.of(-0.252);
         public static final double SENSOR_TO_MECHANISM_RATIO = 1.0;
         public static final double ROTOR_TO_SENSOR_RATIO = 192.0;
-        public static final double MANUAL_MOVE_SPEED = 0.5;
+        public static final double MANUAL_MOVE_SPEED = 0.2;
 
         public static final WristConstants WRIST_CONSTANTS = new WristConstants(kS, kV, kA, kP, kI, kD, CRUISE_VELOCITY,
                 ACCELERATION, JERK, INVERTED, UPPER_LIMIT, LOWER_LIMIT, SENSOR_TO_MECHANISM_RATIO,
