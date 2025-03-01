@@ -60,8 +60,8 @@ public class SebastianDriverOI implements SebastianOI
                                 processJoystickInput(driverController::getLeftX),
                                 processJoystickInput(driverController::getRightX)));
 
-        driverController.rightBumper().whileTrue(container.getGoToReefPoseCommand());
-        driverController.leftBumper().whileTrue(container.getGoToStationCommand());
+        driverController.rightBumper().whileTrue(container.getDrive().getGoLeft(-0.5));
+        driverController.leftBumper().whileTrue(container.getDrive().getGoLeft(0.5));
     }
 
     static void bindRollers(CommandXboxController driverController, CommandXboxController manipulatorController,
@@ -138,7 +138,9 @@ public class SebastianDriverOI implements SebastianOI
         manipulatorController.povDown()
                 .whileTrue(container.getSuperstructure().getGoToGoalCommand(SebastianConstants.SuperstructureGoal.L4));
         manipulatorController.a().onTrue(container.getSuperstructure()
-                .getGoToGoalCommand(SebastianConstants.SuperstructureGoal.CORAL_STATION_PRE).andThen(container.getSuperstructure().getHomingCommand(0.5, 0.5)).andThen(container.getSuperstructure().getGoToGoalCommand(SebastianConstants.SuperstructureGoal.CORAL_STATION)));
+                .getGoToGoalCommand(SebastianConstants.SuperstructureGoal.CORAL_STATION_PRE)
+                .andThen(container.getSuperstructure().getHomingCommand(0.5, 0.5)).andThen(container.getSuperstructure()
+                        .getGoToGoalCommand(SebastianConstants.SuperstructureGoal.CORAL_STATION)));
         manipulatorController.b().whileTrue(container.getSuperstructure()
                 .getGoToGoalCommand(SebastianConstants.SuperstructureGoal.PROCESSOR_STATION));
         manipulatorController.y().whileTrue(
