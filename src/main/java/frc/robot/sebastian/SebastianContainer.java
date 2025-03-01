@@ -266,8 +266,8 @@ public class SebastianContainer implements NFRRobotContainer
     public Command getCenter_H4Command()
     {
         return Commands.sequence(superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
-                superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
-                drive.getFollowPathCommand("Center_H4"), getCoralOuttakeCommand());
+                superstructure.getGoToGoalCommand(SuperstructureGoal.L4), drive.getFollowPathCommand("Center_H4"),
+                getCoralOuttakeCommand());
     }
 
     public Command getBlueMid_J4Command()
