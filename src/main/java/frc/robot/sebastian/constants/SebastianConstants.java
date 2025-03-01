@@ -171,7 +171,7 @@ public class SebastianConstants
                 ACCELERATION, JERK, INVERTED, UPPER_LIMIT, LOWER_LIMIT, SENSOR_TO_MECHANISM_RATIO,
                 ROTOR_TO_SENSOR_RATIO);
 
-        public static final Angle WRIST_TOLERANCE = Degrees.of(2);
+        public static final Angle WRIST_TOLERANCE = Degrees.of(5);
     }
 
     /**
