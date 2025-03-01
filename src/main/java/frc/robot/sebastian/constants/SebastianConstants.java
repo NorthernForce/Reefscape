@@ -99,7 +99,7 @@ public class SebastianConstants
         public static final double kS = 0.12;
         public static final double kV = 0.67;
         public static final double kA = 0.2;
-        public static final double kP = 12.0;
+        public static final double kP = 18.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
         public static final double kG = 0;
@@ -130,7 +130,7 @@ public class SebastianConstants
         public static final double kS = 0.12;
         public static final double kV = 0.67;
         public static final double kA = 0.2;
-        public static final double kP = 12.0;
+        public static final double kP = 18.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
         public static final double kG = 0.234;
