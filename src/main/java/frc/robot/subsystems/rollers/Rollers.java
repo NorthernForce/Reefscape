@@ -159,8 +159,7 @@ public class Rollers extends SubsystemBase
     {
         if (beamBreak)
         {
-            return new SequentialCommandGroup(new CoralIntakeCommand(), new ShiftCoralCommand(),
-                    new CoralIntakeCommand());
+            return new SequentialCommandGroup(new CoralIntakeCommand());
         } else
         {
             return run(() -> intake());
