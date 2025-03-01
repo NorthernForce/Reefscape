@@ -115,7 +115,7 @@ public class SebastianConstants
 
         public static final Distance HIGH_POSITION = Inches.of(10);
 
-        public static final Distance TOLERANCE = Inches.of(0.5);
+        public static final Distance TOLERANCE = Inches.of(0.25);
     }
 
     public static class OuterElevatorConstants
@@ -146,7 +146,7 @@ public class SebastianConstants
 
         public static final Distance HIGH_POSITION = Inches.of(4);
 
-        public static final Distance TOLERANCE = Inches.of(0.5);
+        public static final Distance TOLERANCE = Inches.of(0.25);
     }
 
     public static class WristJointConstants
@@ -171,7 +171,7 @@ public class SebastianConstants
                 ACCELERATION, JERK, INVERTED, UPPER_LIMIT, LOWER_LIMIT, SENSOR_TO_MECHANISM_RATIO,
                 ROTOR_TO_SENSOR_RATIO);
 
-        public static final Angle WRIST_TOLERANCE = Degrees.of(5);
+        public static final Angle WRIST_TOLERANCE = Degrees.of(2);
     }
 
     /**
