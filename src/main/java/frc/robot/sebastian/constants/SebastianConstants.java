@@ -184,7 +184,7 @@ public class SebastianConstants
         L2(Inches.of(13.1 - 2.75), Inches.of(0), Rotations.of(-0.095)),
         L3(Inches.of(25.8 - 2.75), Inches.of(4.61), Rotations.of(-0.095)),
         L4(Inches.of(27.3 - 2.75), Inches.of(26.6), Rotations.of(-0.059)),
-        CORAL_STATION(Inches.of(4.42), Inches.of(0), WristJointConstants.UPPER_LIMIT),
+        CORAL_STATION(Inches.of(4.82), Inches.of(0), WristJointConstants.UPPER_LIMIT),
         CORAL_STATION_PRE(Inches.of(0), Inches.of(0), Rotations.of(-0.059)),
         PROCESSOR_STATION(Inches.of(0), Inches.of(0), Degrees.of(0)),
         LOWER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)), HIGHER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)),
