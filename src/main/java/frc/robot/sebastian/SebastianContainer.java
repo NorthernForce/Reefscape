@@ -23,6 +23,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
@@ -265,13 +266,10 @@ public class SebastianContainer implements NFRRobotContainer
 
     public Command getCenter_H4Command()
     {
-        return Commands.sequence(Commands.parallel(
-                Commands.sequence(superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
-                        superstructure.getGoToGoalCommand(SuperstructureGoal.L4)),
-                drive.getFollowPathCommand("Center_H4")),Commands.parallel(
-                    Commands.sequence(superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
-                            superstructure.getGoToGoalCommand(SuperstructureGoal.L4)),
-                    drive.getFollowPathCommand("Center_H4")), getCoralOuttakeCommand());
+        return new SequentialCommandGroup(drive.getBackupCommand(0.5, -0.5),
+            superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
+            drive.getFollowPathCommand("Center_H4"),
+            rollers.getOuttakeCoralCommand());
     }
 
     public Command getBlueMid_J4Command()
