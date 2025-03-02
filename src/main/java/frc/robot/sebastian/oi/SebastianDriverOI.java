@@ -144,7 +144,7 @@ public class SebastianDriverOI implements SebastianOI
                         .andThen(container.getSuperstructure()
                                 .getGoToGoalCommand(SebastianConstants.SuperstructureGoal.CORAL_STATION)),
                         Commands.none(),
-                        () -> container.getSuperstructure().getGoal() != SuperstructureGoal.CORAL_STATION)
+                        () -> container.getSuperstructure().isAtGoal(SebastianConstants.SuperstructureGoal.CORAL_STATION))
                 .withTimeout(1.5));
         manipulatorController.b().whileTrue(container.getSuperstructure()
                 .getGoToGoalCommand(SebastianConstants.SuperstructureGoal.PROCESSOR_STATION));
