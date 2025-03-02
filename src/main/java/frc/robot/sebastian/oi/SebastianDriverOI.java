@@ -137,14 +137,15 @@ public class SebastianDriverOI implements SebastianOI
                 .whileTrue(container.getSuperstructure().getGoToGoalCommand(SebastianConstants.SuperstructureGoal.L3));
         manipulatorController.povDown()
                 .whileTrue(container.getSuperstructure().getGoToGoalCommand(SebastianConstants.SuperstructureGoal.L4));
-        manipulatorController.a().onTrue(Commands.either(
-                container.getSuperstructure()
+        manipulatorController.a().onTrue(Commands
+                .either(container.getSuperstructure()
                         .getGoToGoalCommand(SebastianConstants.SuperstructureGoal.CORAL_STATION_PRE)
                         .andThen(container.getSuperstructure().getHomingCommand(0.5, 0.5))
                         .andThen(container.getSuperstructure()
                                 .getGoToGoalCommand(SebastianConstants.SuperstructureGoal.CORAL_STATION)),
-                Commands.none(), () -> container.getSuperstructure().getGoal() != SuperstructureGoal.CORAL_STATION)
-                    .withTimeout(1.5));
+                        Commands.none(),
+                        () -> container.getSuperstructure().getGoal() != SuperstructureGoal.CORAL_STATION)
+                .withTimeout(1.5));
         manipulatorController.b().whileTrue(container.getSuperstructure()
                 .getGoToGoalCommand(SebastianConstants.SuperstructureGoal.PROCESSOR_STATION));
         manipulatorController.y().whileTrue(
