@@ -141,10 +141,11 @@ public class SebastianDriverOI implements SebastianOI
                 .either(container.getSuperstructure()
                         .getGoToGoalCommand(SebastianConstants.SuperstructureGoal.CORAL_STATION_PRE)
                         .andThen(container.getSuperstructure().getHomingCommand(0.5, 0.5))
-                        .andThen(container.getSuperstructure()
-                                .getGoToGoalCommand(SebastianConstants.SuperstructureGoal.CORAL_STATION)),
-                        Commands.none(),
-                        () -> container.getSuperstructure().isAtGoal(SebastianConstants.SuperstructureGoal.CORAL_STATION))
+                        .andThen(
+                                container.getSuperstructure()
+                                        .getGoToGoalCommand(SebastianConstants.SuperstructureGoal.CORAL_STATION)),
+                        Commands.none(), () -> !container.getSuperstructure()
+                                .isAtGoal(SebastianConstants.SuperstructureGoal.CORAL_STATION))
                 .withTimeout(1.5));
         manipulatorController.b().whileTrue(container.getSuperstructure()
                 .getGoToGoalCommand(SebastianConstants.SuperstructureGoal.PROCESSOR_STATION));
