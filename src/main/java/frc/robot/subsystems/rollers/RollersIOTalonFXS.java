@@ -58,10 +58,12 @@ public class RollersIOTalonFXS implements RollersIO
         intakeMotorRight.getConfigurator().apply(configMotorRight);
 
         motorLeftTemperature = intakeMotorLeft.getDeviceTemp();
-        motorLeftPresent = () -> intakeMotorLeft.isConnected();
+        motorLeftPresent = () -> intakeMotorLeft.isConnected()
+                && !intakeMotorLeft.getFault_HallSensorMissing().getValue();
         motorLeftCurrent = intakeMotorLeft.getTorqueCurrent();
         motorRightTemperature = intakeMotorRight.getDeviceTemp();
-        motorRightPresent = () -> intakeMotorRight.isConnected();
+        motorRightPresent = () -> intakeMotorRight.isConnected()
+                && !intakeMotorRight.getFault_HallSensorMissing().getValue();
         motorRightCurrent = intakeMotorRight.getTorqueCurrent();
     }
 

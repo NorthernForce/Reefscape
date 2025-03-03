@@ -185,3 +185,5 @@ npm-dash/build
 npm-dash/node_modules
 npm-dash/package-lock.json
 npm-dash/dist
+
+src/main/deploy/npm-dash

@@ -8,6 +8,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -104,6 +105,12 @@ public class ClimberIOTalonFX implements ClimberIO
         inputs.current = m_current.getValue();
         inputs.present = m_present.get();
         inputs.temperature = m_temperature.getValue();
+    }
+
+    @Override
+    public void runTo(Angle position)
+    {
+        m_motor.setControl(new MotionMagicExpoVoltage(position));
     }
 
 }

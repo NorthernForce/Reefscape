@@ -33,7 +33,8 @@ import edu.wpi.first.util.WPIUtilJNI;
 public class ReefscapeFrame extends JFrame
 {
     private final NetworkTable table;
-    private final IntegerPublisher choicePublisher;
+    private final IntegerPublisher reefChoicePublisher;
+    private final IntegerPublisher stationChoicePublisher;
     private final BooleanArraySubscriber stateSubscriber;
     private final HexagonSelector hexagonSelector;
     private final LevelSelector levelSelector;
@@ -48,7 +49,8 @@ public class ReefscapeFrame extends JFrame
         super("Reef Display");
 
         table = NetworkTableInstance.getDefault().getTable("ReefscapeDisplay");
-        choicePublisher = table.getIntegerTopic("choice").publish();
+        reefChoicePublisher = table.getIntegerTopic("reefChoice").publish();
+        stationChoicePublisher = table.getIntegerTopic("stationChoice").publish();
         boolean state[] = new boolean[48];
         Arrays.fill(state, false);
         stateSubscriber = table.getBooleanArrayTopic("state").subscribe(state);
@@ -78,7 +80,7 @@ public class ReefscapeFrame extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                choicePublisher.set(54);
+                stationChoicePublisher.set(0);
                 if (rightCoral.isSelected())
                 {
                     rightCoral.deselect();
@@ -86,10 +88,6 @@ public class ReefscapeFrame extends JFrame
                 if (processor.isSelected())
                 {
                     processor.deselect();
-                }
-                if (levelSelector.getSelectedLevel().isPresent())
-                {
-                    levelSelector.deselectLevel();
                 }
             }
         });
@@ -98,7 +96,7 @@ public class ReefscapeFrame extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                choicePublisher.set(55);
+                stationChoicePublisher.set(1);
                 if (leftCoral.isSelected())
                 {
                     leftCoral.deselect();
@@ -107,10 +105,6 @@ public class ReefscapeFrame extends JFrame
                 {
                     processor.deselect();
                 }
-                if (levelSelector.getSelectedLevel().isPresent())
-                {
-                    levelSelector.deselectLevel();
-                }
             }
         });
         processor.setAction(new AbstractAction()
@@ -118,7 +112,7 @@ public class ReefscapeFrame extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                choicePublisher.set(56);
+                stationChoicePublisher.set(2);
                 if (leftCoral.isSelected())
                 {
                     leftCoral.deselect();
@@ -126,10 +120,6 @@ public class ReefscapeFrame extends JFrame
                 if (rightCoral.isSelected())
                 {
                     rightCoral.deselect();
-                }
-                if (levelSelector.getSelectedLevel().isPresent())
-                {
-                    levelSelector.deselectLevel();
                 }
             }
         });
@@ -141,7 +131,7 @@ public class ReefscapeFrame extends JFrame
             {
                 if (hexagonSelector.getSelectedTrapezoid().isPresent() && levelSelector.getSelectedLevel().isPresent())
                 {
-                    choicePublisher.set(hexagonSelector.getSelectedTrapezoid().get() * 9
+                    reefChoicePublisher.set(hexagonSelector.getSelectedTrapezoid().get() * 9
                             + levelSelector.getSelectedLevel().get().ordinal());
                 }
                 if (hexagonSelector.getSelectedTrapezoid().isPresent())
@@ -166,20 +156,8 @@ public class ReefscapeFrame extends JFrame
             {
                 if (hexagonSelector.getSelectedTrapezoid().isPresent() && levelSelector.getSelectedLevel().isPresent())
                 {
-                    choicePublisher.set(hexagonSelector.getSelectedTrapezoid().get() * 9
+                    reefChoicePublisher.set(hexagonSelector.getSelectedTrapezoid().get() * 9
                             + levelSelector.getSelectedLevel().get().ordinal());
-                }
-                if (leftCoral.isSelected())
-                {
-                    leftCoral.deselect();
-                }
-                if (rightCoral.isSelected())
-                {
-                    rightCoral.deselect();
-                }
-                if (processor.isSelected())
-                {
-                    processor.deselect();
                 }
             }
         });

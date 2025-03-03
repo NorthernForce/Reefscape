@@ -1,8 +1,10 @@
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -34,11 +36,23 @@ public class FieldConstants
         public static final Rotation2d KL_ROTATION = Rotation2d.fromDegrees(300);
     }
 
+    public static Pose2d getReefBackupPosition(Pose2d original, Distance metersBackup)
+    {
+        double originalX = original.getX();
+        double originalY = original.getY();
+        Angle parallelAngle = Degrees.of(original.getRotation().getDegrees());
+        double[] result = new double[2];
+        result[0] = originalX + (-metersBackup.in(Meters)) * Math.cos((parallelAngle).in(Radians));
+        result[1] = originalY + (-metersBackup.in(Meters)) * Math.sin((parallelAngle).in(Radians));
+        return new Pose2d(result[0], result[1], original.getRotation());
+    }
+
     /**
      * All poses are BLUE relative
      */
     public static class ReefPositions
     {
+
         public static final Pose2d A = new Pose2d(3.15, 4.18, ReefRotations.AB_ROTATION);
         public static final Pose2d AB_ALGAE = new Pose2d(3.15, 4.02, ReefRotations.AB_ROTATION);
         public static final Pose2d B = new Pose2d(3.15, 3.85, ReefRotations.AB_ROTATION);
@@ -146,5 +160,28 @@ public class FieldConstants
     public static Alliance getAlliance()
     {
         return DriverStation.getAlliance().orElse(Alliance.Blue);
+    }
+
+    public static class CoralRotations
+    {
+        public static final Rotation2d BLUE_LEFT = Rotation2d.fromDegrees(120);
+        public static final Rotation2d BLUE_RIGHT = Rotation2d.fromDegrees(240);
+        public static final Rotation2d RED_LEFT = Rotation2d.fromDegrees(60);
+        public static final Rotation2d RED_RIGHT = Rotation2d.fromDegrees(300);
+    }
+
+    public static boolean isAtCoralRotation(Rotation2d rotation)
+    {
+        double degrees = rotation.getDegrees();
+        degrees = MathUtil.inputModulus(degrees, 0, 360);
+        if (getAlliance() == Alliance.Red)
+        {
+            return Math.abs(degrees - CoralRotations.RED_LEFT.getDegrees()) <= 10
+                    || Math.abs(degrees - CoralRotations.RED_RIGHT.getDegrees()) <= 10;
+        } else
+        {
+            return Math.abs(degrees - CoralRotations.BLUE_LEFT.getDegrees()) <= 10
+                    || Math.abs(degrees - CoralRotations.BLUE_RIGHT.getDegrees()) <= 10;
+        }
     }
 }

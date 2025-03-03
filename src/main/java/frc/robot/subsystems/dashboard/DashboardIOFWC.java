@@ -8,6 +8,7 @@ import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.WebServer;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
@@ -17,7 +18,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.FieldConstants;
-import frc.robot.util.AutoRoutine;
+import frc.robot.util.NFRAutoRoutine;
 
 /**
  * Dashboard IO for the FWC dashboard.
@@ -25,7 +26,7 @@ import frc.robot.util.AutoRoutine;
 public class DashboardIOFWC implements DashboardIO
 {
     private final NetworkTable table;
-    private final LoggedDashboardChooser<AutoRoutine> autoChooser;
+    private final LoggedDashboardChooser<NFRAutoRoutine> autoChooser;
     private final DoublePublisher stagePublisher;
     private final DoubleArrayPublisher autoPosePublisher;
     private final DoubleArrayPublisher autoPathPublisher;
@@ -35,6 +36,8 @@ public class DashboardIOFWC implements DashboardIO
     private final DoubleSubscriber outerElevatorTargetPosition;
     private final DoublePublisher innerElevatorPosition;
     private final DoublePublisher outerElevatorPosition;
+    private final BooleanPublisher hasCoralPublisher;
+    private final BooleanPublisher hasAlgaePublisher;
 
     /**
      * Creates a new DashboardIOFWC. This connects to the FWC dashboard using "FWC"
@@ -45,8 +48,8 @@ public class DashboardIOFWC implements DashboardIO
      */
     public DashboardIOFWC()
     {
-        WebServer.start(5800, Utils.isSimulation() ? "./npm-dash/dist" : "/home/lvuser/npm-dash");
-        autoChooser = new LoggedDashboardChooser<AutoRoutine>("AutoChooser");
+        WebServer.start(5800, Utils.isSimulation() ? "./npm-dash/dist" : "/home/lvuser/deploy/npm-dash");
+        autoChooser = new LoggedDashboardChooser<NFRAutoRoutine>("AutoChooser");
         table = NetworkTableInstance.getDefault().getTable("/FWC");
         stagePublisher = table.getDoubleTopic("selectedTab").publish();
         table.getBooleanTopic("connected").publish().set(true);
@@ -58,10 +61,12 @@ public class DashboardIOFWC implements DashboardIO
         outerElevatorTargetPosition = table.getDoubleTopic("OuterElevator/TargetPosition").subscribe(0);
         innerElevatorPosition = table.getDoubleTopic("InnerElevator/Position").publish();
         outerElevatorPosition = table.getDoubleTopic("OuterElevator/Position").publish();
+        hasCoralPublisher = table.getBooleanTopic("HasCoral").publish();
+        hasAlgaePublisher = table.getBooleanTopic("HasAlgae").publish();
     }
 
     @Override
-    public void addRoutine(String name, AutoRoutine command, boolean defaultOption)
+    public void addRoutine(String name, NFRAutoRoutine command, boolean defaultOption)
     {
         if (defaultOption)
         {
@@ -88,8 +93,7 @@ public class DashboardIOFWC implements DashboardIO
     @Override
     public void updateInputs(DashboardIOInputs inputs)
     {
-        var pose = autoChooser.get().startPose();
-        pose = FieldConstants.convertPoseByAlliance(pose, FieldConstants.getAlliance());
+        var pose = autoChooser.get().startPose().get();
         autoPosePublisher.set(new double[]
         { pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getRotation().getRadians() });
         var path = autoChooser.get().waypoints().clone();
@@ -109,7 +113,19 @@ public class DashboardIOFWC implements DashboardIO
     }
 
     @Override
-    public AutoRoutine getSelectedRoutine()
+    public void setHasCoral(boolean hasCoral)
+    {
+        hasCoralPublisher.set(hasCoral);
+    }
+
+    @Override
+    public void setHasAlgae(boolean hasAlgae)
+    {
+        hasAlgaePublisher.set(hasAlgae);
+    }
+
+    @Override
+    public NFRAutoRoutine getSelectedRoutine()
     {
         return autoChooser.get();
     }

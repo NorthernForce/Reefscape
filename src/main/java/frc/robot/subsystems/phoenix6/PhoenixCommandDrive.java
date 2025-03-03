@@ -20,13 +20,24 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 
+import choreo.auto.AutoFactory;
+import choreo.trajectory.SwerveSample;
+
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest.ApplyFieldSpeeds;
+
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -34,6 +45,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -43,7 +55,9 @@ import com.ctre.phoenix6.SignalLogger;
 
 public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsystem
 {
+    @SuppressWarnings("unused")
     private final LinearVelocity maxSpeed;
+    @SuppressWarnings("unused")
     private final AngularVelocity maxAngularSpeed;
     private final SwerveRequest.ApplyRobotSpeeds applyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
     private final Alert motorDisconnectedAlert;
@@ -58,6 +72,11 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
+    private final PIDController xPid;
+    private final PIDController yPid;
+    private final PIDController rPid;
+    private final AutoFactory factory;
+
     /**
      * Create a new PhoenixCommandDrive
      * 
@@ -68,6 +87,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      */
     public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
             AngularVelocity maxAngularSpeed, PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
+            PIDController xPid, PIDController yPid, PIDController rPid,
             SwerveModuleConstants<?, ?, ?>... moduleConstants)
     {
         super(drivetrainConstants, moduleConstants);
@@ -78,6 +98,20 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         encoderDisconnectedAlert = new Alert("", Alert.AlertType.kWarning);
         disconnectedMotorArray = new ArrayList<>();
         disconnectedEncoderArray = new ArrayList<>();
+        this.xPid = xPid;
+        this.yPid = yPid;
+        this.rPid = rPid;
+        rPid.enableContinuousInput(-Math.PI, Math.PI);
+        ApplyFieldSpeeds pathControl = new ApplyFieldSpeeds().withDriveRequestType(DriveRequestType.Velocity);
+        factory = new AutoFactory(this::getPose, this::resetPose, (SwerveSample sample) ->
+        {
+            var pose = getPose();
+            var speeds = new ChassisSpeeds(sample.vx + xPid.calculate(pose.getX(), sample.x),
+                    sample.vy + yPid.calculate(pose.getY(), sample.y),
+                    sample.omega + rPid.calculate(pose.getRotation().getRadians(), sample.heading));
+            setControl(pathControl.withSpeeds(speeds).withWheelForceFeedforwardsX(sample.moduleForcesX())
+                    .withWheelForceFeedforwardsY(sample.moduleForcesY()));
+        }, true, this);
         // Configure the Pathplanner AutoBuilder for easier pathfinding
         configureAutoBuilder(linearPIDConstants, angularPIDConstants);
     }
@@ -99,6 +133,19 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
             e.printStackTrace();
         }
 
+    }
+
+    public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
+            AngularVelocity maxAngularSpeed, PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
+            Distance safeDriveDistance, PIDController xPid, PIDController yPid, PIDController rPid,
+            Angle[] moduleOffsets, SwerveModuleConstants<?, ?, ?>... moduleConstants)
+    {
+        this(drivetrainConstants, maxSpeed, maxAngularSpeed, linearPIDConstants, angularPIDConstants, xPid, yPid, rPid,
+                new SwerveModuleConstants[]
+                { moduleConstants[0].withEncoderOffset(moduleOffsets[0]),
+                        moduleConstants[1].withEncoderOffset(moduleOffsets[1]),
+                        moduleConstants[2].withEncoderOffset(moduleOffsets[2]),
+                        moduleConstants[3].withEncoderOffset(moduleOffsets[3]) });
     }
 
     /**
@@ -126,13 +173,62 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command getDriveByJoystickCommand(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
             DoubleSupplier omegaSupplier)
     {
-        SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric().withDeadband(maxSpeed.times(0.1))
-                .withRotationalDeadband(maxAngularSpeed.times(0.1));
+        SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
         return applyRequest(() ->
         {
-            return fieldCentric.withVelocityX(maxSpeed.times(xSupplier.getAsDouble()))
-                    .withVelocityY(maxSpeed.times(ySupplier.getAsDouble()))
-                    .withRotationalRate(maxAngularSpeed.times(omegaSupplier.getAsDouble()));
+            var x = xSupplier.getAsDouble() * maxSpeed.in(MetersPerSecond);
+            var y = ySupplier.getAsDouble() * maxSpeed.in(MetersPerSecond);
+            var omega = omegaSupplier.getAsDouble() * maxAngularSpeed.in(RadiansPerSecond);
+            return fieldCentric.withVelocityX(x).withVelocityY(y).withRotationalRate(omega);
+        });
+    }
+
+    public Command getGoLeft(double speed)
+    {
+        SwerveRequest.ApplyRobotSpeeds robotSpeeds = new SwerveRequest.ApplyRobotSpeeds()
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        return applyRequest(() ->
+        {
+            return robotSpeeds.withSpeeds(new ChassisSpeeds(0, speed, 0));
+        });
+    }
+
+    /**
+     * Get a command that drives the robot by joystick input with robot-relative
+     * limits
+     * 
+     * @param xSupplier      x input (relative to the field)
+     * @param ySupplier      y input (relative to the field)
+     * @param omegaSupplier  omega input (rotational rate)
+     * @param xLimitForward  x limit forward (positive, relative to the robot)
+     * @param xLimitBackward x limit backward (negative, relative to the robot)
+     * @param yLimitPositive y limit left (positive, relative to the robot)
+     * @param yLimitNegative y limit right (negative, relative to the robot)
+     * @return
+     */
+    public Command getDriveByJoystickWithRobotRelativeLimits(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
+            DoubleSupplier omegaSupplier, DoubleSupplier xLimitForward, DoubleSupplier xLimitBackward,
+            DoubleSupplier yLimitPositive, DoubleSupplier yLimitNegative)
+    {
+        SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        return applyRequest(() ->
+        {
+            var x = xSupplier.getAsDouble() * maxSpeed.in(MetersPerSecond);
+            var y = ySupplier.getAsDouble() * maxSpeed.in(MetersPerSecond);
+            var omega = omegaSupplier.getAsDouble() * maxAngularSpeed.in(RadiansPerSecond);
+            ChassisSpeeds speeds = new ChassisSpeeds(x, y, omega);
+            var robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation());
+            robotRelativeSpeeds.vxMetersPerSecond = MathUtil.clamp(robotRelativeSpeeds.vxMetersPerSecond,
+                    xLimitBackward.getAsDouble() * maxSpeed.in(MetersPerSecond),
+                    xLimitForward.getAsDouble() * maxSpeed.in(MetersPerSecond));
+            robotRelativeSpeeds.vyMetersPerSecond = MathUtil.clamp(robotRelativeSpeeds.vyMetersPerSecond,
+                    yLimitNegative.getAsDouble() * maxSpeed.in(MetersPerSecond),
+                    yLimitPositive.getAsDouble() * maxSpeed.in(MetersPerSecond));
+            speeds = ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeSpeeds, getPose().getRotation());
+            return fieldCentric.withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond)
+                    .withRotationalRate(speeds.omegaRadiansPerSecond);
         });
     }
 
@@ -142,9 +238,11 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      * @param pose The pose that the robot should drive to
      * @return A command that drives the robot to the specified pose
      */
-    public Command driveToPose(Pose2d pose)
+    public Command driveToPose(Pose2d pose, LinearVelocity maxVelocity, LinearAcceleration maxAcceleration,
+            AngularVelocity maxAngularVelocity, AngularAcceleration maxAngularAcceleration)
     {
-        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+        PathConstraints constraints = new PathConstraints(maxVelocity, maxAcceleration, maxAngularVelocity,
+                maxAngularAcceleration);
         return AutoBuilder.pathfindToPose(pose, constraints, 0.0);
     }
 
@@ -213,6 +311,13 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public ChassisSpeeds getChassisSpeeds()
     {
         return getState().Speeds;
+    }
+
+    public void runVelocity(ChassisSpeeds speeds)
+    {
+        setControl(new SwerveRequest.FieldCentric().withDriveRequestType(DriveRequestType.Velocity)
+                .withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond)
+                .withRotationalRate(speeds.omegaRadiansPerSecond));
     }
 
     public void setBrakeMode()
@@ -382,5 +487,38 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command getSysIdRotationDynamic(SysIdRoutine.Direction direction)
     {
         return m_sysIdRoutineRotation.dynamic(direction);
+    }
+
+    public Command getFollowPathCommand(String pathName)
+    {
+        return Commands.sequence(Commands.runOnce(() ->
+        {
+            xPid.reset();
+            yPid.reset();
+            rPid.reset();
+        }), factory.trajectoryCmd(pathName));
+    }
+
+    public Translation2d[] getWaypoints(String pathName)
+    {
+        var trajectory = factory.newRoutine("routine").trajectory(pathName).getRawTrajectory();
+        Translation2d[] waypoints = new Translation2d[trajectory.getPoses().length];
+        for (int i = 0; i < trajectory.getPoses().length; i++)
+        {
+            waypoints[i] = trajectory.getPoses()[i].getTranslation();
+        }
+        return waypoints;
+    }
+
+    public Pose2d getInitialPose(String pathName)
+    {
+        var trajectory = factory.newRoutine("routine").trajectory(pathName);
+        return trajectory.getInitialPose().orElse(new Pose2d(-1, -1, new Rotation2d()));
+    }
+
+    public Command getBackupCommand(double time, double speed)
+    {
+        SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric();
+        return applyRequest(() -> robotCentric.withVelocityX(-speed)).withTimeout(time);
     }
 }

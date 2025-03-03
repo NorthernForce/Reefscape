@@ -54,4 +54,8 @@ public interface ClimberIO
     public default void updateInputs(ClimberIOInputs inputs)
     {
     }
+
+    public default void runTo(Angle position)
+    {
+    }
 }

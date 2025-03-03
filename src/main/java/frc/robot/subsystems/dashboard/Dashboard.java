@@ -6,13 +6,15 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
-import frc.robot.blenny.constants.BlennyConstants.SuperstructureGoal;
+import frc.robot.FieldConstants.ReefLocations;
+import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIO;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOInputsAutoLogged;
-import frc.robot.util.AutoRoutine;
+import frc.robot.util.NFRAutoRoutine;
 
 /**
  * Subsystem for the dashboard.
@@ -23,6 +25,7 @@ public class Dashboard extends SubsystemBase
     private final DashboardIOInputsAutoLogged m_input;
     private final ReefDisplayIO reefDisplayIO;
     private final ReefDisplayIOInputsAutoLogged reefDisplayInputs;
+    private boolean useBeamBreak = true;
 
     /**
      * Constructs a new Dashboard.
@@ -43,7 +46,8 @@ public class Dashboard extends SubsystemBase
     @AutoLogOutput
     public Pose2d getTargetPose()
     {
-        return FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.reefLocations);
+        return FieldConstants.convertPoseByAlliance(FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.reefLocations),
+                FieldConstants.getAlliance());
     }
 
     /**
@@ -52,7 +56,7 @@ public class Dashboard extends SubsystemBase
      * @param name    Auto routine name (Descriptive for drivers please)
      * @param command Auto routine command
      */
-    public void addAutoRoutine(String name, AutoRoutine command)
+    public void addAutoRoutine(String name, NFRAutoRoutine command)
     {
         m_io.addRoutine(name, command, false);
     }
@@ -63,9 +67,32 @@ public class Dashboard extends SubsystemBase
      * @param name    Auto routine name (Descriptive for drivers please)
      * @param command Auto routine command
      */
-    public void addDefaultAutoRoutine(String name, AutoRoutine command)
+    public void addDefaultAutoRoutine(String name, NFRAutoRoutine command)
     {
         m_io.addRoutine(name, command, true);
+    }
+
+    /**
+     * sets the beam break sensor to be used or not
+     * 
+     * @param useBeamBreak
+     */
+
+    public void toggleBeamBreak()
+    {
+        useBeamBreak = !useBeamBreak;
+        SmartDashboard.putBoolean("Use Beam Break", useBeamBreak);
+    }
+
+    /**
+     * gets the beam break sensor to be used or not
+     * 
+     * @return
+     */
+
+    public boolean getUseBeamBreak()
+    {
+        return useBeamBreak;
     }
 
     /**
@@ -173,13 +200,40 @@ public class Dashboard extends SubsystemBase
      * 
      * @return The selected auto routine.
      */
-    public AutoRoutine getRoutine()
+    public NFRAutoRoutine getRoutine()
     {
         return m_io.getSelectedRoutine();
     }
 
-    public SuperstructureGoal getSuperstructureGoal()
+    public SuperstructureGoal getSuperstructureGoalForReef()
     {
-        return reefDisplayInputs.goal;
+        return reefDisplayInputs.reefGoal;
+    }
+
+    public SuperstructureGoal getSuperstructureGoalForStation()
+    {
+        return reefDisplayInputs.stationGoal;
+    }
+
+    public ReefLocations getStationLocation()
+    {
+        return reefDisplayInputs.stationlocations;
+    }
+
+    public void setHasCoral(boolean hasCoral)
+    {
+        m_io.setHasCoral(hasCoral);
+    }
+
+    public void setHasAlgae(boolean hasVision)
+    {
+        m_io.setHasAlgae(hasVision);
+    }
+
+    @AutoLogOutput
+    public Pose2d getStationTargetPose()
+    {
+        return FieldConstants.convertPoseByAlliance(
+                FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.stationlocations), FieldConstants.getAlliance());
     }
 }

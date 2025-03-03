@@ -18,7 +18,7 @@ function Teleop() {
 
     return <>
         <div className="teleop-container">
-            <NetworkAlerts source-key="/Alerts" />
+            <NetworkAlerts source-key="/SmartDashboard/Alerts" />
             <div className="time-display">
                 <TimeDisplay time={time} />
             </div>

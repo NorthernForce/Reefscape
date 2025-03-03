@@ -3,7 +3,10 @@ package frc.robot.subsystems.rollers;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIO;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIOInputsAutoLogged;
@@ -21,6 +24,10 @@ public class Rollers extends SubsystemBase
     private final IntakeIOInputsAutoLogged m_inputs = new IntakeIOInputsAutoLogged();
     private final RollersSensorIOInputsAutoLogged m_sensorIOAlgaeInputs = new RollersSensorIOInputsAutoLogged();
     private final RollersSensorIOInputsAutoLogged m_sensorIOCoralInputs = new RollersSensorIOInputsAutoLogged();
+    private final Alert m_intakeLeftMotorMissing = new Alert("Intake left motor is missing", AlertType.kError);
+    private final Alert m_intakeRightMotorMissing = new Alert("Intake right motor is missing", AlertType.kError);
+    private final double intakeSpeed;
+    private final double outtakeSpeed;
 
     /**
      * Constructs a new Rollers subsystem.
@@ -30,20 +37,23 @@ public class Rollers extends SubsystemBase
      * @param sensorIOCoral The IO for the coral sensor.
      */
 
-    public Rollers(RollersIO intakeIO, RollersSensorIO sensorIOAlgae, RollersSensorIO sensorIOCoral)
+    public Rollers(RollersIO intakeIO, RollersSensorIO sensorIOAlgae, RollersSensorIO sensorIOCoral, double intakeSpeed,
+            double outtakeSpeed)
     {
         m_intakeIO = intakeIO;
         m_sensorIOAlgae = sensorIOAlgae;
         m_sensorIOCoral = sensorIOCoral;
+        this.intakeSpeed = intakeSpeed;
+        this.outtakeSpeed = outtakeSpeed;
     }
 
     /**
      * Runs motors to intake piece.
      */
 
-    public void intake(double speed)
+    public void intake()
     {
-        m_intakeIO.set(Math.abs(speed));
+        m_intakeIO.set(intakeSpeed);
     }
 
     /**
@@ -52,9 +62,14 @@ public class Rollers extends SubsystemBase
      * @param speed The speed to outtake at.
      */
 
+    public void outtake()
+    {
+        m_intakeIO.set(-outtakeSpeed);
+    }
+
     public void outtake(double speed)
     {
-        m_intakeIO.set(-Math.abs(speed));
+        m_intakeIO.set(-speed);
     }
 
     /**
@@ -78,6 +93,61 @@ public class Rollers extends SubsystemBase
         return m_sensorIOCoralInputs.hasPiece;
     }
 
+    public class CoralIntakeCommand extends Command
+    {
+        public CoralIntakeCommand()
+        {
+            addRequirements(Rollers.this);
+        }
+
+        @Override
+        public void initialize()
+        {
+            intake();
+        }
+
+        @Override
+        public boolean isFinished()
+        {
+            return hasCoral();
+        }
+
+        @Override
+        public void end(boolean interrupted)
+        {
+            stop();
+        }
+    }
+
+    /**
+     * Command to reverse the intake until a coral is no longer detected
+     */
+    public class ShiftCoralCommand extends Command
+    {
+        public void ShiftCoralComand()
+        {
+            addRequirements(Rollers.this);
+        }
+
+        @Override
+        public void initialize()
+        {
+            outtake();
+        }
+
+        @Override
+        public boolean isFinished()
+        {
+            return !hasCoral();
+        }
+
+        @Override
+        public void end(boolean interrupted)
+        {
+            stop();
+        }
+    }
+
     /**
      * Returns a command that intakes a coral.
      * 
@@ -85,9 +155,15 @@ public class Rollers extends SubsystemBase
      * @return The command.
      */
 
-    public Command getCoralIntakeCommand(double speed)
+    public Command getCoralIntakeCommand(boolean beamBreak)
     {
-        return run(() -> intake(speed));// .until(() -> hasCoral());
+        if (beamBreak)
+        {
+            return new CoralIntakeCommand().andThen(new ShiftCoralCommand()).andThen(new CoralIntakeCommand());
+        } else
+        {
+            return run(() -> intake());
+        }
     }
 
     /**
@@ -97,21 +173,41 @@ public class Rollers extends SubsystemBase
      * @return The command.
      */
 
-    public Command getAlgaeIntakeCommand(double speed)
+    public Command getAlgaeIntakeCommand()
     {
-        return run(() -> intake(speed)).until(() -> hasAlgae());
+        return run(() -> intake()).until(() -> hasAlgae());
     }
 
     /**
-     * Returns a command that outtakes a piece.
+     * Returns a command that outtakes a piece. Does not stop
      * 
      * @param speed The speed to outtake at.
      * @return The command.
      */
 
+    public Command getOuttakeCommand()
+    {
+        return run(() -> outtake());
+    }
+
     public Command getOuttakeCommand(double speed)
     {
-        return run(() -> outtake(speed)).until(() -> !hasAlgae() && !hasCoral());
+        return run(() -> outtake(speed));
+    }
+
+    public Command getOuttakeUntilEmptyCommand()
+    {
+        return run(() -> outtake()).until(() -> !hasAlgae() && !hasCoral());
+    }
+
+    public Command getOuttakeCoralCommand()
+    {
+        return run(() -> outtake()).until(() -> !hasCoral());
+    }
+
+    public Command getOuttakeAlgaeCommand()
+    {
+        return run(() -> outtake()).until(() -> !hasAlgae());
     }
 
     /**
@@ -123,6 +219,11 @@ public class Rollers extends SubsystemBase
     public Command getStopCommand()
     {
         return run(this::stop);
+    }
+
+    public Command getHoldAlgae()
+    {
+        return run(() -> intake());
     }
 
     /**
@@ -138,5 +239,7 @@ public class Rollers extends SubsystemBase
         Logger.processInputs(getName() + "/Motor", m_inputs);
         Logger.processInputs(getName() + "/AlgaeSensor", m_sensorIOAlgaeInputs);
         Logger.processInputs(getName() + "/CoralSensor", m_sensorIOCoralInputs);
+        m_intakeLeftMotorMissing.set(!m_inputs.motorLeftPresent);
+        m_intakeRightMotorMissing.set(!m_inputs.motorRightPresent);
     }
 }
