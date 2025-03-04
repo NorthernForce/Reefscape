@@ -1,4 +1,4 @@
-package frc.robot.sebastian;
+package frc.robot.ralph;
 
 import java.util.Set;
 import java.util.function.DoubleSupplier;
@@ -23,11 +23,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
-import frc.robot.sebastian.constants.SebastianConstants;
-import frc.robot.sebastian.constants.SebastianTunerConstants;
-import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
-import frc.robot.sebastian.oi.SebastianDriverOI;
-import frc.robot.sebastian.oi.SebastianProgrammerOI;
+import frc.robot.ralph.constants.RalphConstants;
+import frc.robot.ralph.constants.RalphTunerConstants;
+import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
+import frc.robot.ralph.oi.RalphDriverOI;
+import frc.robot.ralph.oi.RalphProgrammerOI;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOTalonFX;
@@ -58,10 +58,10 @@ import frc.robot.subsystems.viewer.ViewerIOXavier;
 
 /**
  * 2025 Competition Robot Container. Name is still a work in progress and will
- * likely change. Sebastian is a type of fish. It is also the name of a
+ * likely change. Ralph is a type of fish. It is also the name of a
  * submarine that was sunk to create an artificial reef.
  */
-public class SebastianContainer implements NFRRobotContainer
+public class RalphContainer implements NFRRobotContainer
 {
     private final PhoenixCommandDrive drive;
     private final Rollers rollers;
@@ -76,63 +76,63 @@ public class SebastianContainer implements NFRRobotContainer
     private final Supplier<Boolean> useBeamBreak = () -> SmartDashboard.getBoolean("Use Beam Break", true);
 
     /**
-     * Create a new SebastianContainer
+     * Create a new RalphContainer
      */
-    public SebastianContainer()
+    public RalphContainer()
     {
 
-        drive = new PhoenixCommandDrive(SebastianTunerConstants.DrivetrainConstants,
-                SebastianConstants.DrivetrainConstants.MAX_SPEED,
-                SebastianConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
-                SebastianConstants.PathplannerConstants.linearPIDConstants,
-                SebastianConstants.PathplannerConstants.angularPIDConstants,
-                SebastianConstants.DrivetrainConstants.SAFE_DISTANCE, SebastianConstants.AutoConstants.xPID,
-                SebastianConstants.AutoConstants.yPID, SebastianConstants.AutoConstants.rPID,
-                SebastianConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, SebastianTunerConstants.FrontLeft,
-                SebastianTunerConstants.FrontRight, SebastianTunerConstants.BackLeft,
-                SebastianTunerConstants.BackRight);
+        drive = new PhoenixCommandDrive(RalphTunerConstants.DrivetrainConstants,
+                RalphConstants.DrivetrainConstants.MAX_SPEED,
+                RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                RalphConstants.PathplannerConstants.linearPIDConstants,
+                RalphConstants.PathplannerConstants.angularPIDConstants,
+                RalphConstants.DrivetrainConstants.SAFE_DISTANCE, RalphConstants.AutoConstants.xPID,
+                RalphConstants.AutoConstants.yPID, RalphConstants.AutoConstants.rPID,
+                RalphConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, RalphTunerConstants.FrontLeft,
+                RalphTunerConstants.FrontRight, RalphTunerConstants.BackLeft,
+                RalphTunerConstants.BackRight);
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
 
-        vision = new PhotonVision(SebastianConstants.VisionConstants.cameraNames(),
-                SebastianConstants.VisionConstants.cameraTransforms(),
-                SebastianConstants.VisionConstants.APRILTAG_LAYOUT, SebastianConstants.VisionConstants.MAX_Y_COORDINATE,
-                SebastianConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
-                SebastianConstants.DrivetrainConstants.MAX_LINEAR_SPEED,
-                SebastianConstants.VisionConstants.CAMERA_WIDTH);
+        vision = new PhotonVision(RalphConstants.VisionConstants.cameraNames(),
+                RalphConstants.VisionConstants.cameraTransforms(),
+                RalphConstants.VisionConstants.APRILTAG_LAYOUT, RalphConstants.VisionConstants.MAX_Y_COORDINATE,
+                RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                RalphConstants.DrivetrainConstants.MAX_LINEAR_SPEED,
+                RalphConstants.VisionConstants.CAMERA_WIDTH);
         switch (Constants.getMode())
         {
         case SIM:
         case REAL:
             superstructure = new Superstructure(new Elevator("InnerElevator",
-                    new ElevatorIOTalonFX(15, SebastianConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS),
+                    new ElevatorIOTalonFX(15, RalphConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS),
                     new BrakeIO()
                     {
                     }, new ElevatorSensorIOLimitSwitch(0), Inches.of(0.5)),
                     new Elevator("OuterElevator",
-                            new ElevatorIOTalonFX(14, SebastianConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
+                            new ElevatorIOTalonFX(14, RalphConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
                             new BrakeIO()
                             {
                             }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
-                    new Wrist(new WristIOTalonFX(16, 20, SebastianConstants.WristJointConstants.WRIST_CONSTANTS),
-                            SebastianConstants.WristJointConstants.WRIST_TOLERANCE),
-                    SebastianConstants.InnerElevatorConstants.HIGH_POSITION,
-                    SebastianConstants.OuterElevatorConstants.HIGH_POSITION);
-            climber = new Climber(new ClimberIOTalonFX(SebastianConstants.ClimberConstants.ID,
-                    SebastianConstants.ClimberConstants.INVERTED, SebastianConstants.ClimberConstants.ENCODER_ID,
-                    SebastianConstants.ClimberConstants.LOWER_LIMIT, SebastianConstants.ClimberConstants.UPPER_LIMIT),
-                    SebastianConstants.ClimberConstants.SWEET_ANGLE, SebastianConstants.ClimberConstants.LOWER_LIMIT,
-                    SebastianConstants.ClimberConstants.UPPER_LIMIT, SebastianConstants.ClimberConstants.CLIMB_SPEED);
+                    new Wrist(new WristIOTalonFX(16, 20, RalphConstants.WristJointConstants.WRIST_CONSTANTS),
+                            RalphConstants.WristJointConstants.WRIST_TOLERANCE),
+                    RalphConstants.InnerElevatorConstants.HIGH_POSITION,
+                    RalphConstants.OuterElevatorConstants.HIGH_POSITION);
+            climber = new Climber(new ClimberIOTalonFX(RalphConstants.ClimberConstants.ID,
+                    RalphConstants.ClimberConstants.INVERTED, RalphConstants.ClimberConstants.ENCODER_ID,
+                    RalphConstants.ClimberConstants.LOWER_LIMIT, RalphConstants.ClimberConstants.UPPER_LIMIT),
+                    RalphConstants.ClimberConstants.SWEET_ANGLE, RalphConstants.ClimberConstants.LOWER_LIMIT,
+                    RalphConstants.ClimberConstants.UPPER_LIMIT, RalphConstants.ClimberConstants.CLIMB_SPEED);
 
             viewer = new Viewer(new ViewerIOXavier());
             rollers = new Rollers(
-                    new RollersIOTalonFXS(SebastianConstants.RollersConstants.ROLLER_MOTOR_LEFT_ID,
-                            SebastianConstants.RollersConstants.ROLLER_MOTOR_RIGHT_ID,
-                            SebastianConstants.RollersConstants.ROLLER_MOTORS_INVERTED),
-                    new RollersSensorIOAnalog(SebastianConstants.RollersConstants.SensorConstants.ANALOG_ALGAE,
-                            SebastianConstants.RollersConstants.SensorConstants.ALGAE_MAX_DISTANCE),
-                    new RollersSensorIOBeamBreak(SebastianConstants.RollersConstants.SensorConstants.ANALOG_CORAL),
-                    SebastianConstants.RollersConstants.INTAKE_SPEED,
-                    SebastianConstants.RollersConstants.OUTTAKE_SPEED);
+                    new RollersIOTalonFXS(RalphConstants.RollersConstants.ROLLER_MOTOR_LEFT_ID,
+                            RalphConstants.RollersConstants.ROLLER_MOTOR_RIGHT_ID,
+                            RalphConstants.RollersConstants.ROLLER_MOTORS_INVERTED),
+                    new RollersSensorIOAnalog(RalphConstants.RollersConstants.SensorConstants.ANALOG_ALGAE,
+                            RalphConstants.RollersConstants.SensorConstants.ALGAE_MAX_DISTANCE),
+                    new RollersSensorIOBeamBreak(RalphConstants.RollersConstants.SensorConstants.ANALOG_CORAL),
+                    RalphConstants.RollersConstants.INTAKE_SPEED,
+                    RalphConstants.RollersConstants.OUTTAKE_SPEED);
             break;
         case REPLAY:
         default:
@@ -144,19 +144,19 @@ public class SebastianContainer implements NFRRobotContainer
             {
             }, Inches.of(0.5)),
                     new Elevator("OuterElevator",
-                            new ElevatorIOTalonFX(15, SebastianConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
+                            new ElevatorIOTalonFX(15, RalphConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
                             new BrakeIO()
                             {
                             }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
                     new Wrist(new WristIO()
                     {
-                    }, SebastianConstants.WristJointConstants.WRIST_TOLERANCE),
-                    SebastianConstants.InnerElevatorConstants.HIGH_POSITION,
-                    SebastianConstants.OuterElevatorConstants.HIGH_POSITION);
+                    }, RalphConstants.WristJointConstants.WRIST_TOLERANCE),
+                    RalphConstants.InnerElevatorConstants.HIGH_POSITION,
+                    RalphConstants.OuterElevatorConstants.HIGH_POSITION);
             climber = new Climber(new ClimberIO()
             {
-            }, SebastianConstants.ClimberConstants.SWEET_ANGLE, SebastianConstants.ClimberConstants.LOWER_LIMIT,
-                    SebastianConstants.ClimberConstants.UPPER_LIMIT, SebastianConstants.ClimberConstants.CLIMB_SPEED);
+            }, RalphConstants.ClimberConstants.SWEET_ANGLE, RalphConstants.ClimberConstants.LOWER_LIMIT,
+                    RalphConstants.ClimberConstants.UPPER_LIMIT, RalphConstants.ClimberConstants.CLIMB_SPEED);
             viewer = new Viewer(new ViewerIO()
             {
             });
@@ -166,11 +166,11 @@ public class SebastianContainer implements NFRRobotContainer
             {
             }, new RollersSensorIO()
             {
-            }, SebastianConstants.RollersConstants.INTAKE_SPEED, SebastianConstants.RollersConstants.OUTTAKE_SPEED);
+            }, RalphConstants.RollersConstants.INTAKE_SPEED, RalphConstants.RollersConstants.OUTTAKE_SPEED);
             break;
         }
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
-        SebastianAutos.addAutoRoutines(this);
+        RalphAutos.addAutoRoutines(this);
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
         dashboard.setResetWristEncoderCommand(superstructure.getWrist()
                 .runOnce(() -> superstructure.getWrist().resetEncoderAngle(Degrees.of(0))).ignoringDisable(true));
@@ -181,16 +181,16 @@ public class SebastianContainer implements NFRRobotContainer
     {
         return Commands.defer(() -> getDrive()
                 .driveToPose(FieldConstants.getReefBackupPosition(getDashboard().getTargetPose(), Feet.of(1)),
-                        SebastianConstants.PathplannerConstants.MAX_VELOCITY,
-                        SebastianConstants.PathplannerConstants.MAX_ACCELERATION,
-                        SebastianConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        SebastianConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
+                        RalphConstants.PathplannerConstants.MAX_VELOCITY,
+                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
+                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
                 .alongWith(getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForReef()))
                 .andThen(() -> getDrive().driveToPose(getDashboard().getTargetPose(),
-                        SebastianConstants.PathplannerConstants.MAX_VELOCITY,
-                        SebastianConstants.PathplannerConstants.MAX_ACCELERATION,
-                        SebastianConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        SebastianConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)),
+                        RalphConstants.PathplannerConstants.MAX_VELOCITY,
+                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
+                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)),
                 Set.of());
     }
 
@@ -198,10 +198,10 @@ public class SebastianContainer implements NFRRobotContainer
     {
         return Commands.defer(
                 () -> getDrive().driveToPose(
-                        getDashboard().getStationTargetPose(), SebastianConstants.PathplannerConstants.MAX_VELOCITY,
-                        SebastianConstants.PathplannerConstants.MAX_ACCELERATION,
-                        SebastianConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        SebastianConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
+                        getDashboard().getStationTargetPose(), RalphConstants.PathplannerConstants.MAX_VELOCITY,
+                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
+                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
                         .alongWith(getSuperstructure()
                                 .getGoToGoalCommand(getDashboard().getSuperstructureGoalForStation())),
                 Set.of());
@@ -283,13 +283,13 @@ public class SebastianContainer implements NFRRobotContainer
     @Override
     public void bindDriverOI()
     {
-        new SebastianDriverOI().bindOI(this);
+        new RalphDriverOI().bindOI(this);
     }
 
     @Override
     public void bindProgrammerOI()
     {
-        new SebastianProgrammerOI().bindOI(this);
+        new RalphProgrammerOI().bindOI(this);
     }
 
     @Override

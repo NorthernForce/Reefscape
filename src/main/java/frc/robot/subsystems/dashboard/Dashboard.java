@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.ReefLocations;
-import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
+import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIO;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOInputsAutoLogged;
 import frc.robot.util.NFRAutoRoutine;

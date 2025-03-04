@@ -3,7 +3,7 @@ package frc.robot.subsystems.dashboard.reefscape;
 import org.littletonrobotics.junction.AutoLog;
 
 import frc.robot.FieldConstants.ReefLocations;
-import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
+import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 
 /**
  * Reef display IO for the robot.

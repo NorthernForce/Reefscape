@@ -14,7 +14,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Preferences;
-import frc.robot.sebastian.constants.SebastianTunerConstants;
+import frc.robot.ralph.constants.RalphTunerConstants;
 
 public class ZippyConstants
 {
@@ -27,13 +27,13 @@ public class ZippyConstants
         public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
         public static final Angle[] SWERVE_MODULE_OFFSETS =
         { Rotations
-                .of(Preferences.getDouble("kSwerveOffsetFrontLeft", SebastianTunerConstants.FrontLeft.EncoderOffset)),
+                .of(Preferences.getDouble("kSwerveOffsetFrontLeft", RalphTunerConstants.FrontLeft.EncoderOffset)),
                 Rotations.of(Preferences.getDouble("kSwerveOffsetFrontRight",
-                        SebastianTunerConstants.FrontRight.EncoderOffset)),
+                        RalphTunerConstants.FrontRight.EncoderOffset)),
                 Rotations.of(
-                        Preferences.getDouble("kSwerveOffsetBackLeft", SebastianTunerConstants.BackLeft.EncoderOffset)),
+                        Preferences.getDouble("kSwerveOffsetBackLeft", RalphTunerConstants.BackLeft.EncoderOffset)),
                 Rotations.of(Preferences.getDouble("kSwerveOffsetBackRight",
-                        SebastianTunerConstants.BackRight.EncoderOffset)) };
+                        RalphTunerConstants.BackRight.EncoderOffset)) };
     }
 
     public static class VisionConstants
