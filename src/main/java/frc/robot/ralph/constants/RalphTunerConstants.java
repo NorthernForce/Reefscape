@@ -23,8 +23,8 @@ public class RalphTunerConstants
             .withKV(2.66).withKA(0).withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
-    private static final Slot0Configs driveGains = new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKS(0)
-            .withKV(0.124);
+    private static final Slot0Configs driveGains = new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKS(0.02328)
+            .withKV(0.12045);
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
@@ -73,8 +73,8 @@ public class RalphTunerConstants
     // This may need to be tuned to your individual robot
     private static final double kCoupleRatio = 3.5714285714285716;
 
-    private static final double kDriveGearRatio = 6.746031746031747;
-    private static final double kSteerGearRatio = 21.428571428571427;
+    private static final double kDriveGearRatio = 6.12;
+    private static final double kSteerGearRatio = 150. / 7;
     private static final Distance kWheelRadius = Inches.of(2);
 
     private static final boolean kInvertLeftSide = false;
