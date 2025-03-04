@@ -5,7 +5,6 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Seconds;
@@ -167,8 +166,7 @@ public class RalphContainer implements NFRRobotContainer
                                 RalphConstants.PathplannerConstants.MAX_ACCELERATION,
                                 RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
                                 RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                        .alongWith(
-                                getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForReef())),
+                        ,
                 Set.of());
     }
 
@@ -181,8 +179,7 @@ public class RalphContainer implements NFRRobotContainer
                                 RalphConstants.PathplannerConstants.MAX_ACCELERATION,
                                 RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
                                 RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                        .alongWith(
-                                getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForReef())),
+                        ,
                 Set.of());
     }
 

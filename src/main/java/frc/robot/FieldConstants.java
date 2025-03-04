@@ -36,26 +36,25 @@ public class FieldConstants
         public static final Rotation2d KL_ROTATION = Rotation2d.fromDegrees(300);
     }
 
-    public static Pose2d getReefBackupPosition(Pose2d original, Distance metersBackup)
-    {
-        double originalX = original.getX();
-        double originalY = original.getY();
-        Angle parallelAngle = Degrees.of(original.getRotation().getDegrees());
-        double[] result = new double[2];
-        result[0] = originalX + (-metersBackup.in(Meters)) * Math.cos((parallelAngle).in(Radians));
-        result[1] = originalY + (-metersBackup.in(Meters)) * Math.sin((parallelAngle).in(Radians));
-        return new Pose2d(result[0], result[1], original.getRotation());
-    }
-
     /**
      * All poses are BLUE relative
      */
     public static class ReefPositions
     {
         public record ReefSide(Pose2d left, Pose2d center, Pose2d right) {
-            public Distance getDistanceFrom(Pose2d pose)
+            public Distance getDistanceFromCenter(Pose2d pose)
             {
                 return Meters.of(center.getTranslation().getDistance(pose.getTranslation()));
+            }
+
+            public Distance getDistanceFromLeft(Pose2d pose)
+            {
+                return Meters.of(left.getTranslation().getDistance(pose.getTranslation()));
+            }
+
+            public Distance getDistanceFromRight(Pose2d pose)
+            {
+                return Meters.of(right.getTranslation().getDistance(pose.getTranslation()));
             }
         }
 
