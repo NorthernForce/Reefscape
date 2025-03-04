@@ -32,14 +32,13 @@ public class RalphConstants
         public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
         public static final Distance SAFE_DISTANCE = Inches.of(10);
         public static final Angle[] SWERVE_MODULE_OFFSETS =
-        { Rotations
-                .of(Preferences.getDouble("kSwerveOffsetFrontLeft", RalphTunerConstants.FrontLeft.EncoderOffset)),
-                Rotations.of(Preferences.getDouble("kSwerveOffsetFrontRight",
-                        RalphTunerConstants.FrontRight.EncoderOffset)),
+        { Rotations.of(Preferences.getDouble("kSwerveOffsetFrontLeft", RalphTunerConstants.FrontLeft.EncoderOffset)),
                 Rotations.of(
-                        Preferences.getDouble("kSwerveOffsetBackLeft", RalphTunerConstants.BackLeft.EncoderOffset)),
-                Rotations.of(Preferences.getDouble("kSwerveOffsetBackRight",
-                        RalphTunerConstants.BackRight.EncoderOffset)) };
+                        Preferences.getDouble("kSwerveOffsetFrontRight", RalphTunerConstants.FrontRight.EncoderOffset)),
+                Rotations
+                        .of(Preferences.getDouble("kSwerveOffsetBackLeft", RalphTunerConstants.BackLeft.EncoderOffset)),
+                Rotations.of(
+                        Preferences.getDouble("kSwerveOffsetBackRight", RalphTunerConstants.BackRight.EncoderOffset)) };
         /**
          * The maximum acceleration of the robot in duty cycles per second squared. Only
          * when the robot's outer elevator is above 4 inches or the inner elevator is
