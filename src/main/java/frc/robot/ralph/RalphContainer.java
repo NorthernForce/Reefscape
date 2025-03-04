@@ -49,9 +49,6 @@ import frc.robot.subsystems.rollers.RollersIOTalonFXS;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIO;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIOAnalog;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIOBeamBreak;
-import frc.robot.subsystems.superstructure.wrist.Wrist;
-import frc.robot.subsystems.superstructure.wrist.WristIO;
-import frc.robot.subsystems.superstructure.wrist.WristIOTalonFX;
 import frc.robot.subsystems.viewer.Viewer;
 import frc.robot.subsystems.viewer.ViewerIO;
 import frc.robot.subsystems.viewer.ViewerIOXavier;
@@ -106,8 +103,6 @@ public class RalphContainer implements NFRRobotContainer
                             new BrakeIO()
                             {
                             }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
-                    new Wrist(new WristIOTalonFX(16, 20, RalphConstants.WristJointConstants.WRIST_CONSTANTS),
-                            RalphConstants.WristJointConstants.WRIST_TOLERANCE),
                     RalphConstants.InnerElevatorConstants.HIGH_POSITION,
                     RalphConstants.OuterElevatorConstants.HIGH_POSITION);
             climber = new Climber(
@@ -138,9 +133,7 @@ public class RalphContainer implements NFRRobotContainer
             }, Inches.of(0.5)), new Elevator("OuterElevator",
                     new ElevatorIOTalonFX(15, RalphConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
                     {
-                    }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)), new Wrist(new WristIO()
-                    {
-                    }, RalphConstants.WristJointConstants.WRIST_TOLERANCE),
+                    }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
                     RalphConstants.InnerElevatorConstants.HIGH_POSITION,
                     RalphConstants.OuterElevatorConstants.HIGH_POSITION);
             climber = new Climber(new ClimberIO()
@@ -162,8 +155,6 @@ public class RalphContainer implements NFRRobotContainer
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
         RalphAutos.addAutoRoutines(this);
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
-        dashboard.setResetWristEncoderCommand(superstructure.getWrist()
-                .runOnce(() -> superstructure.getWrist().resetEncoderAngle(Degrees.of(0))).ignoringDisable(true));
         SmartDashboard.putData("Go do thing", getGoToReefPoseCommand());
     }
 

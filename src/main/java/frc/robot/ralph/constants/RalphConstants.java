@@ -9,7 +9,6 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Preferences;
 import frc.robot.subsystems.superstructure.Superstructure.GenericSuperstructureGoal;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX.ElevatorConstants;
-import frc.robot.subsystems.superstructure.wrist.WristIOTalonFX.WristConstants;
 
 import static edu.wpi.first.units.Units.*;
 import com.pathplanner.lib.config.PIDConstants;
@@ -148,65 +147,33 @@ public class RalphConstants
         public static final Distance TOLERANCE = Inches.of(0.9);
     }
 
-    public static class WristJointConstants
-    {
-        public static final double kS = 0.2;
-        public static final double kV = 20;
-        public static final double kA = 30;
-        public static final double kP = 15;
-        public static final double kI = 0.0;
-        public static final double kD = 0.0;
-        public static final double CRUISE_VELOCITY = 700;
-        public static final double ACCELERATION = 300;
-        public static final double JERK = 600;
-        public static final boolean INVERTED = false;
-        public static final Angle UPPER_LIMIT = Rotations.of(0.098);
-        public static final Angle LOWER_LIMIT = Rotations.of(-0.252);
-        public static final double SENSOR_TO_MECHANISM_RATIO = 1.0;
-        public static final double ROTOR_TO_SENSOR_RATIO = 192.0;
-        public static final double MANUAL_MOVE_SPEED = 0.2;
-
-        public static final WristConstants WRIST_CONSTANTS = new WristConstants(kS, kV, kA, kP, kI, kD, CRUISE_VELOCITY,
-                ACCELERATION, JERK, INVERTED, UPPER_LIMIT, LOWER_LIMIT, SENSOR_TO_MECHANISM_RATIO,
-                ROTOR_TO_SENSOR_RATIO);
-
-        public static final Angle WRIST_TOLERANCE = Degrees.of(4);
-    }
-
     /**
      * Superstructure states for the coral and algae
      */
 
     public static enum SuperstructureGoal implements GenericSuperstructureGoal
     {
-        L1(Inches.of(0), Inches.of(0), Degrees.of(-0.03)),
-        L2(Inches.of(13.1 - 2.75), Inches.of(0), Rotations.of(-0.095)),
-        L3(Inches.of(25.8 - 2.75), Inches.of(4.61), Rotations.of(-0.095)),
-        L4(Inches.of(27.3 - 2.75), Inches.of(26.6), Rotations.of(-0.059)),
-        CORAL_STATION(Inches.of(4.82), Inches.of(0), WristJointConstants.UPPER_LIMIT.minus(Degrees.of(5))),
-        CORAL_STATION_PRE(Inches.of(0), Inches.of(0), Rotations.of(-0.059)),
-        PROCESSOR_STATION(Inches.of(0), Inches.of(0), Degrees.of(0)),
-        LOWER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)), HIGHER_ALGAE(Inches.of(0), Inches.of(0), Degrees.of(0)),
-        START(Inches.of(0), Inches.of(0), WristJointConstants.LOWER_LIMIT),
-        STOW_ALGAE(Inches.of(0), Inches.of(0), WristJointConstants.LOWER_LIMIT);
+        L1(Inches.of(0), Inches.of(0)), L2(Inches.of(13.1 - 2.75), Inches.of(0)),
+        L3(Inches.of(25.8 - 2.75), Inches.of(4.61)), L4(Inches.of(27.3 - 2.75), Inches.of(26.6)),
+        CORAL_STATION(Inches.of(4.82), Inches.of(0)), CORAL_STATION_PRE(Inches.of(0), Inches.of(0)),
+        PROCESSOR_STATION(Inches.of(0), Inches.of(0)), LOWER_ALGAE(Inches.of(0), Inches.of(0)),
+        HIGHER_ALGAE(Inches.of(0), Inches.of(0)), START(Inches.of(0), Inches.of(0)),
+        STOW_ALGAE(Inches.of(0), Inches.of(0));
 
         private final Distance innerHeight;
         private final Distance outerHeight;
-        private final Angle wristAngle;
 
         /**
          * Superstructure state constructor
          * 
          * @param innerHeight height of the inner elevator to go to
          * @param outerHeight height of the outer elevator to go to
-         * @param wristAngle  angle of the wrist to go to
          */
 
-        private SuperstructureGoal(Distance innerHeight, Distance outerHeight, Angle wristAngle)
+        private SuperstructureGoal(Distance innerHeight, Distance outerHeight)
         {
             this.innerHeight = innerHeight;
             this.outerHeight = outerHeight;
-            this.wristAngle = wristAngle;
         }
 
         @Override
@@ -219,12 +186,6 @@ public class RalphConstants
         public Distance getOuterElevatorGoal()
         {
             return outerHeight;
-        }
-
-        @Override
-        public Angle getWristGoal()
-        {
-            return wristAngle;
         }
     }
 
