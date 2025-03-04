@@ -57,9 +57,7 @@ import frc.robot.subsystems.viewer.ViewerIO;
 import frc.robot.subsystems.viewer.ViewerIOXavier;
 
 /**
- * 2025 Competition Robot Container. Name is still a work in progress and will
- * likely change. Ralph is a type of fish. It is also the name of a submarine
- * that was sunk to create an artificial reef.
+ * 2025 Competition Robot Container.
  */
 public class RalphContainer implements NFRRobotContainer
 {
@@ -82,25 +80,30 @@ public class RalphContainer implements NFRRobotContainer
     {
 
         drive = new PhoenixCommandDrive(RalphTunerConstants.DrivetrainConstants,
-                RalphConstants.DrivetrainConstants.MAX_SPEED, RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                RalphConstants.DrivetrainConstants.MAX_SPEED,
+                RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 RalphConstants.PathplannerConstants.linearPIDConstants,
                 RalphConstants.PathplannerConstants.angularPIDConstants,
                 RalphConstants.DrivetrainConstants.SAFE_DISTANCE, RalphConstants.AutoConstants.xPID,
                 RalphConstants.AutoConstants.yPID, RalphConstants.AutoConstants.rPID,
                 RalphConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, RalphTunerConstants.FrontLeft,
-                RalphTunerConstants.FrontRight, RalphTunerConstants.BackLeft, RalphTunerConstants.BackRight);
+                RalphTunerConstants.FrontRight, RalphTunerConstants.BackLeft,
+                RalphTunerConstants.BackRight);
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
 
         vision = new PhotonVision(RalphConstants.VisionConstants.cameraNames(),
-                RalphConstants.VisionConstants.cameraTransforms(), RalphConstants.VisionConstants.APRILTAG_LAYOUT,
-                RalphConstants.VisionConstants.MAX_Y_COORDINATE, RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
-                RalphConstants.DrivetrainConstants.MAX_LINEAR_SPEED, RalphConstants.VisionConstants.CAMERA_WIDTH);
+                RalphConstants.VisionConstants.cameraTransforms(),
+                RalphConstants.VisionConstants.APRILTAG_LAYOUT, RalphConstants.VisionConstants.MAX_Y_COORDINATE,
+                RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                RalphConstants.DrivetrainConstants.MAX_LINEAR_SPEED,
+                RalphConstants.VisionConstants.CAMERA_WIDTH);
         switch (Constants.getMode())
         {
         case SIM:
         case REAL:
             superstructure = new Superstructure(new Elevator("InnerElevator",
-                    new ElevatorIOTalonFX(15, RalphConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
+                    new ElevatorIOTalonFX(15, RalphConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS),
+                    new BrakeIO()
                     {
                     }, new ElevatorSensorIOLimitSwitch(0), Inches.of(0.5)),
                     new Elevator("OuterElevator",
@@ -112,10 +115,9 @@ public class RalphContainer implements NFRRobotContainer
                             RalphConstants.WristJointConstants.WRIST_TOLERANCE),
                     RalphConstants.InnerElevatorConstants.HIGH_POSITION,
                     RalphConstants.OuterElevatorConstants.HIGH_POSITION);
-            climber = new Climber(
-                    new ClimberIOTalonFX(RalphConstants.ClimberConstants.ID, RalphConstants.ClimberConstants.INVERTED,
-                            RalphConstants.ClimberConstants.ENCODER_ID, RalphConstants.ClimberConstants.LOWER_LIMIT,
-                            RalphConstants.ClimberConstants.UPPER_LIMIT),
+            climber = new Climber(new ClimberIOTalonFX(RalphConstants.ClimberConstants.ID,
+                    RalphConstants.ClimberConstants.INVERTED, RalphConstants.ClimberConstants.ENCODER_ID,
+                    RalphConstants.ClimberConstants.LOWER_LIMIT, RalphConstants.ClimberConstants.UPPER_LIMIT),
                     RalphConstants.ClimberConstants.SWEET_ANGLE, RalphConstants.ClimberConstants.LOWER_LIMIT,
                     RalphConstants.ClimberConstants.UPPER_LIMIT, RalphConstants.ClimberConstants.CLIMB_SPEED);
 
@@ -127,7 +129,8 @@ public class RalphContainer implements NFRRobotContainer
                     new RollersSensorIOAnalog(RalphConstants.RollersConstants.SensorConstants.ANALOG_ALGAE,
                             RalphConstants.RollersConstants.SensorConstants.ALGAE_MAX_DISTANCE),
                     new RollersSensorIOBeamBreak(RalphConstants.RollersConstants.SensorConstants.ANALOG_CORAL),
-                    RalphConstants.RollersConstants.INTAKE_SPEED, RalphConstants.RollersConstants.OUTTAKE_SPEED);
+                    RalphConstants.RollersConstants.INTAKE_SPEED,
+                    RalphConstants.RollersConstants.OUTTAKE_SPEED);
             break;
         case REPLAY:
         default:
@@ -137,10 +140,13 @@ public class RalphContainer implements NFRRobotContainer
             {
             }, new ElevatorSensorIO()
             {
-            }, Inches.of(0.5)), new Elevator("OuterElevator",
-                    new ElevatorIOTalonFX(15, RalphConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
-                    {
-                    }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)), new Wrist(new WristIO()
+            }, Inches.of(0.5)),
+                    new Elevator("OuterElevator",
+                            new ElevatorIOTalonFX(15, RalphConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
+                            new BrakeIO()
+                            {
+                            }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
+                    new Wrist(new WristIO()
                     {
                     }, RalphConstants.WristJointConstants.WRIST_TOLERANCE),
                     RalphConstants.InnerElevatorConstants.HIGH_POSITION,
@@ -188,12 +194,14 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command getGoToStationCommand()
     {
-        return Commands.defer(() -> getDrive()
-                .driveToPose(getDashboard().getStationTargetPose(), RalphConstants.PathplannerConstants.MAX_VELOCITY,
+        return Commands.defer(
+                () -> getDrive().driveToPose(
+                        getDashboard().getStationTargetPose(), RalphConstants.PathplannerConstants.MAX_VELOCITY,
                         RalphConstants.PathplannerConstants.MAX_ACCELERATION,
                         RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
                         RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                .alongWith(getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForStation())),
+                        .alongWith(getSuperstructure()
+                                .getGoToGoalCommand(getDashboard().getSuperstructureGoalForStation())),
                 Set.of());
     }
 

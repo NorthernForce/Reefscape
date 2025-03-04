@@ -26,13 +26,14 @@ public class ZippyConstants
         public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(3.0);
         public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
         public static final Angle[] SWERVE_MODULE_OFFSETS =
-        { Rotations.of(Preferences.getDouble("kSwerveOffsetFrontLeft", RalphTunerConstants.FrontLeft.EncoderOffset)),
+        { Rotations
+                .of(Preferences.getDouble("kSwerveOffsetFrontLeft", RalphTunerConstants.FrontLeft.EncoderOffset)),
+                Rotations.of(Preferences.getDouble("kSwerveOffsetFrontRight",
+                        RalphTunerConstants.FrontRight.EncoderOffset)),
                 Rotations.of(
-                        Preferences.getDouble("kSwerveOffsetFrontRight", RalphTunerConstants.FrontRight.EncoderOffset)),
-                Rotations
-                        .of(Preferences.getDouble("kSwerveOffsetBackLeft", RalphTunerConstants.BackLeft.EncoderOffset)),
-                Rotations.of(
-                        Preferences.getDouble("kSwerveOffsetBackRight", RalphTunerConstants.BackRight.EncoderOffset)) };
+                        Preferences.getDouble("kSwerveOffsetBackLeft", RalphTunerConstants.BackLeft.EncoderOffset)),
+                Rotations.of(Preferences.getDouble("kSwerveOffsetBackRight",
+                        RalphTunerConstants.BackRight.EncoderOffset)) };
     }
 
     public static class VisionConstants
