@@ -53,9 +53,6 @@ import frc.robot.subsystems.rollers.RollersIOTalonFXS;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIO;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIOAnalog;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIOBeamBreak;
-import frc.robot.subsystems.superstructure.wrist.Wrist;
-import frc.robot.subsystems.superstructure.wrist.WristIO;
-import frc.robot.subsystems.superstructure.wrist.WristIOTalonFX;
 import frc.robot.subsystems.viewer.Viewer;
 import frc.robot.subsystems.viewer.ViewerIO;
 import frc.robot.subsystems.viewer.ViewerIOXavier;
@@ -117,9 +114,7 @@ public class SebastianContainer implements NFRRobotContainer
                             new ElevatorIOTalonFX(14, SebastianConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
                             new BrakeIO()
                             {
-                            }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
-                    new Wrist(new WristIOTalonFX(16, 20, SebastianConstants.WristJointConstants.WRIST_CONSTANTS),
-                            SebastianConstants.WristJointConstants.WRIST_TOLERANCE),
+                            }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5))),
                     SebastianConstants.InnerElevatorConstants.HIGH_POSITION,
                     SebastianConstants.OuterElevatorConstants.HIGH_POSITION);
             climber = new Climber(new ClimberIOTalonFX(SebastianConstants.ClimberConstants.ID,
@@ -152,10 +147,7 @@ public class SebastianContainer implements NFRRobotContainer
                             new ElevatorIOTalonFX(15, SebastianConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
                             new BrakeIO()
                             {
-                            }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
-                    new Wrist(new WristIO()
-                    {
-                    }, SebastianConstants.WristJointConstants.WRIST_TOLERANCE),
+                            }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5))),
                     SebastianConstants.InnerElevatorConstants.HIGH_POSITION,
                     SebastianConstants.OuterElevatorConstants.HIGH_POSITION);
             climber = new Climber(new ClimberIO()
@@ -177,8 +169,6 @@ public class SebastianContainer implements NFRRobotContainer
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
         addAutonomousRoutines();
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
-        dashboard.setResetWristEncoderCommand(superstructure.getWrist()
-                .runOnce(() -> superstructure.getWrist().resetEncoderAngle(Degrees.of(0))).ignoringDisable(true));
         SmartDashboard.putData("Go do thing", getGoToReefPoseCommand());
     }
 

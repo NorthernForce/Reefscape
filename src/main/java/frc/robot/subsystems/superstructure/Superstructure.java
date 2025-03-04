@@ -9,12 +9,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
-import frc.robot.subsystems.superstructure.wrist.Wrist;
 
 /**
  * Superstructure is a class that controls the superstructure of the robot. The
  * superstructure consists of two elevators, an inner elevator and an outer
- * elevator, and a wrist.
+ * elevator.
  */
 public class Superstructure extends SubsystemBase
 {
@@ -23,17 +22,13 @@ public class Superstructure extends SubsystemBase
         public Distance getInnerElevatorGoal();
 
         public Distance getOuterElevatorGoal();
-
-        public Angle getWristGoal();
     }
 
-    public static record SuperstructureState(Distance innerElevatorPosition, Distance outerElevatorPosition,
-            Angle wristPosition) {
+    public static record SuperstructureState(Distance innerElevatorPosition, Distance outerElevatorPosition) {
     }
 
     private final Elevator m_innerElevator;
     private final Elevator m_outerElevator;
-    private final Wrist m_wrist;
     private SuperstructureGoal m_goal;
     private final Distance innerElevatorHighPosition;
     private final Distance outerElevatorHighPosition;
@@ -44,12 +39,11 @@ public class Superstructure extends SubsystemBase
      * @param innerElevator the inner elevator
      * @param outerElevator the outer elevator
      */
-    public Superstructure(Elevator innerElevator, Elevator outerElevator, Wrist wrist,
-            Distance innerElevatorHighPosition, Distance outerElevatorHighPosition)
+    public Superstructure(Elevator innerElevator, Elevator outerElevator, Distance innerElevatorHighPosition,
+            Distance outerElevatorHighPosition)
     {
         m_innerElevator = innerElevator;
         m_outerElevator = outerElevator;
-        m_wrist = wrist;
         this.innerElevatorHighPosition = innerElevatorHighPosition;
         this.outerElevatorHighPosition = outerElevatorHighPosition;
         m_goal = SuperstructureGoal.START;
@@ -59,7 +53,6 @@ public class Superstructure extends SubsystemBase
     {
         m_innerElevator.stop();
         m_outerElevator.stop();
-        m_wrist.stop();
     }
 
     public void setGoal(SuperstructureGoal goal)
@@ -77,13 +70,12 @@ public class Superstructure extends SubsystemBase
     {
         return Commands.parallel(m_innerElevator.getMoveToPositionCommand(goal.getInnerElevatorGoal()),
                 m_outerElevator.getMoveToPositionCommand(goal.getOuterElevatorGoal()),
-                m_wrist.getMoveToAngleCommand(goal.getWristGoal()), Commands.runOnce(() -> m_goal = goal));
+                Commands.runOnce(() -> m_goal = goal));
     }
 
     public Command getStopCommand()
     {
-        return Commands.parallel(m_innerElevator.getStopCommand(), m_outerElevator.getStopCommand(),
-                m_wrist.getStopCommand());
+        return Commands.parallel(m_innerElevator.getStopCommand(), m_outerElevator.getStopCommand());
     }
 
     /**
@@ -94,8 +86,7 @@ public class Superstructure extends SubsystemBase
     @AutoLogOutput
     public SuperstructureState getState()
     {
-        return new SuperstructureState(m_innerElevator.getPosition(), m_outerElevator.getPosition(),
-                m_wrist.getAngle());
+        return new SuperstructureState(m_innerElevator.getPosition(), m_outerElevator.getPosition());
     }
 
     /**
@@ -106,8 +97,7 @@ public class Superstructure extends SubsystemBase
     @AutoLogOutput
     public boolean isAtGoal()
     {
-        return m_innerElevator.isAtTargetPosition() && m_outerElevator.isAtTargetPosition()
-                && m_wrist.isAtTargetPosition();
+        return m_innerElevator.isAtTargetPosition() && m_outerElevator.isAtTargetPosition();
     }
 
     /**
@@ -119,19 +109,13 @@ public class Superstructure extends SubsystemBase
     public boolean isAtGoal(GenericSuperstructureGoal goal)
     {
         return m_innerElevator.isAtPosition(goal.getInnerElevatorGoal())
-                && m_outerElevator.isAtPosition(goal.getOuterElevatorGoal())
-                && m_wrist.isAtPosition(goal.getWristGoal());
+                && m_outerElevator.isAtPosition(goal.getOuterElevatorGoal());
     }
 
     public boolean isTooHigh()
     {
         return m_innerElevator.getPosition().gte(innerElevatorHighPosition)
                 || m_outerElevator.getPosition().gte(outerElevatorHighPosition);
-    }
-
-    public Wrist getWrist()
-    {
-        return m_wrist;
     }
 
     public Elevator getInnerElevator()

@@ -96,9 +96,6 @@ public class SebastianProgrammerOI implements SebastianOI
     static void bindSuperstructure(CommandXboxController driverController, CommandXboxController manipulatorController,
             SebastianContainer container)
     {
-        container.getSuperstructure().getWrist()
-                .setDefaultCommand(container.getSuperstructure().getWrist().getStopCommand());
-
         container.getSuperstructure().getInnerElevator().setDefaultCommand(container.getSuperstructure()
                 .getInnerElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getRightY)));
 
@@ -114,12 +111,6 @@ public class SebastianProgrammerOI implements SebastianOI
                 .whileTrue(container.getSuperstructure().getHomingCommand(
                         SebastianConstants.InnerElevatorConstants.HOMING_SPEED,
                         SebastianConstants.OuterElevatorConstants.HOMING_SPEED));
-
-        manipulatorController.leftBumper().whileTrue(container.getSuperstructure().getWrist()
-                .getSetSpeedCommand(-SebastianConstants.WristJointConstants.MANUAL_MOVE_SPEED));
-
-        manipulatorController.rightBumper().whileTrue(container.getSuperstructure().getWrist()
-                .getSetSpeedCommand(SebastianConstants.WristJointConstants.MANUAL_MOVE_SPEED));
 
         manipulatorController.povLeft()
                 .whileTrue(container.getSuperstructure().getGoToGoalCommand(SebastianConstants.SuperstructureGoal.L1));

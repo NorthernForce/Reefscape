@@ -3,7 +3,6 @@ import DriveWidget from './DriveWidget';
 import './Settings.css';
 import PoseWidget from './PoseWidget';
 import CameraDetails from './CameraDetails';
-import WristWidget from './WristWidget';
 import ElevatorWidget from './ElevatorWidget';
 function Settings() {
     let ip = new URLSearchParams(window.location.search).get("ip") || "10.1.72.2";
@@ -21,10 +20,6 @@ function Settings() {
             <Accordion>
                 <AccordionSummary>Pose</AccordionSummary>
                 <AccordionDetails><PoseWidget /></AccordionDetails>
-            </Accordion>
-            <Accordion>
-                <AccordionSummary>Wrist</AccordionSummary>
-                <AccordionDetails><WristWidget /></AccordionDetails>
             </Accordion>
             <Accordion>
                 <AccordionSummary>Inner Elevator</AccordionSummary>
