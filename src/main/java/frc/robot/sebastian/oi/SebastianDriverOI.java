@@ -38,8 +38,8 @@ public class SebastianDriverOI implements SebastianOI
                         processJoystickInput(driverController::getLeftX),
                         processJoystickInput(driverController::getRightX)));
 
-        driverController.back().onTrue(container.getDrive()
-                .resetOrientation(FieldConstants.getFieldRotation(FieldConstants.getAlliance())));
+        driverController.back().onTrue(
+                container.getDrive().resetOrientation(FieldConstants.getFieldRotation(FieldConstants.getAlliance())));
 
         driverController.x().whileTrue(container.getDrive().xLock());
     }
@@ -58,7 +58,7 @@ public class SebastianDriverOI implements SebastianOI
         manipulatorController.back().whileTrue(container.getOuttakeCommand(1.0));
 
         container.getRollers().intakeTrigger().onTrue(new RumbleXBoxController(manipulatorController, 0.5, 0.5)
-            .alongWith(new RumbleXBoxController(driverController, 0.5, 0.5)));
+                .alongWith(new RumbleXBoxController(driverController, 0.5, 0.5)));
     }
 
     static void bindClimber(CommandXboxController driverController, SebastianContainer container)

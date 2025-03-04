@@ -192,8 +192,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         return applyRequest(() ->
         {
             var speeds = speedsSupplier.get();
-            return robotCentric
-                    .withVelocityX(speeds.vxMetersPerSecond * maxSpeed.in(MetersPerSecond))
+            return robotCentric.withVelocityX(speeds.vxMetersPerSecond * maxSpeed.in(MetersPerSecond))
                     .withVelocityY(speeds.vyMetersPerSecond * maxSpeed.in(MetersPerSecond))
                     .withRotationalRate(speeds.omegaRadiansPerSecond * maxAngularSpeed.in(RadiansPerSecond));
         });
@@ -206,8 +205,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         return applyRequest(() ->
         {
             var speeds = speedsSupplier.get();
-            return fieldCentric
-                    .withVelocityX(speeds.vxMetersPerSecond * maxSpeed.in(MetersPerSecond))
+            return fieldCentric.withVelocityX(speeds.vxMetersPerSecond * maxSpeed.in(MetersPerSecond))
                     .withVelocityY(speeds.vyMetersPerSecond * maxSpeed.in(MetersPerSecond))
                     .withRotationalRate(speeds.omegaRadiansPerSecond * maxAngularSpeed.in(RadiansPerSecond));
         });
@@ -221,11 +219,11 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      * @param omegaSupplier omega input (rotational rate)
      * @return a command that drives the robot by joystick input
      */
-    public Command driveByJoystick(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
-            DoubleSupplier omegaSupplier)
+    public Command driveByJoystick(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier omegaSupplier)
     {
         ChassisSpeeds speeds = new ChassisSpeeds();
-        return driveWithFieldRelativeDutyCycle(() -> {
+        return driveWithFieldRelativeDutyCycle(() ->
+        {
             speeds.vxMetersPerSecond = xSupplier.getAsDouble();
             speeds.vyMetersPerSecond = ySupplier.getAsDouble();
             speeds.omegaRadiansPerSecond = omegaSupplier.getAsDouble();
@@ -235,6 +233,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * Get a command that drives the robot to the left relative to the robot
+     * 
      * @param speed the speed to drive at (duty cycle)
      * @return a command that drives the robot to the left
      */
@@ -247,6 +246,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * Get a command that drives the robot to the right relative to the robot
+     * 
      * @param speed the speed to drive at (duty cycle)
      * @return a command that drives the robot to the right
      */
@@ -259,6 +259,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * Get a command that drives the robot forward relative to the robot
+     * 
      * @param speed the speed to drive at (duty cycle)
      * @return a command that drives the robot forward
      */
@@ -271,6 +272,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * Get a command that drives the robot backward relative to the robot
+     * 
      * @param speed the speed to drive at (duty cycle)
      * @return a command that drives the robot backward
      */
@@ -283,10 +285,11 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * Get a command that moves the robot to a specific position
-     * @param pose the pose to move to
-     * @param maxVelocity the maximum velocity
-     * @param maxAcceleration the maximum acceleration
-     * @param maxAngularVelocity the maximum angular velocity
+     * 
+     * @param pose                   the pose to move to
+     * @param maxVelocity            the maximum velocity
+     * @param maxAcceleration        the maximum acceleration
+     * @param maxAngularVelocity     the maximum angular velocity
      * @param maxAngularAcceleration the maximum angular acceleration
      * @return a command that moves the robot to a specific position
      */
@@ -343,6 +346,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * Get the current pose of the robot
+     * 
      * @return the current pose of the robot
      */
     @AutoLogOutput
@@ -353,6 +357,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * Gets the states of the modules
+     * 
      * @return the states of the modules
      */
     @AutoLogOutput
@@ -363,6 +368,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * Get the target states of the modules
+     * 
      * @return the target states of the modules
      */
     @AutoLogOutput
@@ -373,6 +379,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * Get the speeds of the robot
+     * 
      * @return the speeds of the robot
      */
     @AutoLogOutput
@@ -390,8 +397,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     }
 
     /**
-     * Sets the drive motors to coast mode
-     * Why would you ever want to do this?
+     * Sets the drive motors to coast mode Why would you ever want to do this?
      */
     public void setCoastMode()
     {
@@ -494,9 +500,10 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
             state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
             new SysIdRoutine.Mechanism(output -> setControl(m_translationCharacterization.withVolts(output)), null,
                     this));
-    
+
     /**
      * SysId routine for characterizing translation. This is used to find PID gains
+     * 
      * @param direction the direction to characterize
      * @return a command that characterizes translation
      */
@@ -507,6 +514,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * SysId routine for characterizing translation. This is used to find PID gains
+     * 
      * @param direction the direction to characterize
      * @return a command that characterizes translation
      */
@@ -529,6 +537,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * SysId routine for characterizing steer. This is used to find PID gains
+     * 
      * @param direction the direction to characterize
      * @return a command that characterizes steer
      */
@@ -539,6 +548,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * SysId routine for characterizing steer. This is used to find PID gains
+     * 
      * @param direction the direction to characterize
      * @return a command that characterizes steer
      */
@@ -569,6 +579,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * SysId routine for characterizing rotation. This is used to find PID gains
+     * 
      * @param direction the direction to characterize
      * @return a command that characterizes rotation
      */
@@ -579,6 +590,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * SysId routine for characterizing rotation. This is used to find PID gains
+     * 
      * @param direction the direction to characterize
      * @return
      */
@@ -589,6 +601,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * Follow a choreo path
+     * 
      * @param pathName the name of the path
      * @return a command that follows the path
      */
@@ -604,6 +617,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * Get the waypoints of a choreo path
+     * 
      * @param pathName the name of the path
      * @return the waypoints of the path
      */
@@ -620,6 +634,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * Get the initial pose of a choreo path
+     * 
      * @param pathName the name of the path
      * @return the initial pose of the path
      */
@@ -631,7 +646,8 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     /**
      * Backs up the robot
-     * @param time the time to back up
+     * 
+     * @param time  the time to back up
      * @param speed the speed to back up at
      * @return a command that backs up the robot
      */

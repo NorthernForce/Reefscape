@@ -23,25 +23,19 @@ public class SebastianProgrammerOI implements SebastianOI
         SebastianDriverOI.bindClimber(driverController, container);
         SebastianDriverOI.bindSuperstructure(driverController, manipulatorController, container);
 
-        manipulatorController.leftStick()
-            .whileTrue(Commands.sequence(
-                container.getSuperstructure().getOuterElevator().getSysIdQuasistaicForward(),
-                container.getSuperstructure().getOuterElevator().getSysIdQuasistaicReverse(),
-                container.getSuperstructure().getOuterElevator().getSysIdDynamicForward(),
-                container.getSuperstructure().getOuterElevator().getSysIdDynamicReverse()
-            ));
-        
-        manipulatorController.rightStick()
-            .whileTrue(Commands.sequence(
-                container.getSuperstructure().getInnerElevator().getSysIdQuasistaicForward(),
-                container.getSuperstructure().getInnerElevator().getSysIdQuasistaicReverse(),
-                container.getSuperstructure().getInnerElevator().getSysIdDynamicForward(),
-                container.getSuperstructure().getInnerElevator().getSysIdDynamicReverse()
-            ));
-        
-        driverController.leftStick()
-            .whileTrue(Commands.sequence(
-                Commands.runOnce(SignalLogger::start),
+        manipulatorController.leftStick().whileTrue(
+                Commands.sequence(container.getSuperstructure().getOuterElevator().getSysIdQuasistaicForward(),
+                        container.getSuperstructure().getOuterElevator().getSysIdQuasistaicReverse(),
+                        container.getSuperstructure().getOuterElevator().getSysIdDynamicForward(),
+                        container.getSuperstructure().getOuterElevator().getSysIdDynamicReverse()));
+
+        manipulatorController.rightStick().whileTrue(
+                Commands.sequence(container.getSuperstructure().getInnerElevator().getSysIdQuasistaicForward(),
+                        container.getSuperstructure().getInnerElevator().getSysIdQuasistaicReverse(),
+                        container.getSuperstructure().getInnerElevator().getSysIdDynamicForward(),
+                        container.getSuperstructure().getInnerElevator().getSysIdDynamicReverse()));
+
+        driverController.leftStick().whileTrue(Commands.sequence(Commands.runOnce(SignalLogger::start),
                 container.getDrive().sysIdTranslationQuasistatic(Direction.kForward),
                 container.getDrive().sysIdTranslationQuasistatic(Direction.kReverse),
                 container.getDrive().sysIdTranslationDynamic(Direction.kForward),
@@ -53,8 +47,6 @@ public class SebastianProgrammerOI implements SebastianOI
                 container.getDrive().sysIdSteerQuasistatic(Direction.kForward),
                 container.getDrive().sysIdSteerQuasistatic(Direction.kReverse),
                 container.getDrive().sysIdSteerDynamic(Direction.kForward),
-                container.getDrive().sysIdSteerDynamic(Direction.kReverse),
-                Commands.runOnce(SignalLogger::stop)
-            ));
+                container.getDrive().sysIdSteerDynamic(Direction.kReverse), Commands.runOnce(SignalLogger::stop)));
     }
 }

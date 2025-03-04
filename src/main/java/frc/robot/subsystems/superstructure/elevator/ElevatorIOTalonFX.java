@@ -197,8 +197,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
     @Override
     public void updateInputs(ElevatorIO.ElevatorIOInputs inputs)
     {
-        BaseStatusSignal.refreshAll(m_temperature, m_position, m_current,
-                m_velocity, m_rotorVelocity, m_voltage);
+        BaseStatusSignal.refreshAll(m_temperature, m_position, m_current, m_velocity, m_rotorVelocity, m_voltage);
         inputs.temperature = m_temperature.getValue();
         inputs.position = Inches.of(m_position.getValue().in(Rotations));
         inputs.current = m_current.getValue();

@@ -219,8 +219,7 @@ public class SebastianContainer implements NFRRobotContainer
         return rollers.getOuttakeCoralCommand().andThen(drive.backup(Seconds.of(3), 0.3));
     }
 
-    public Command driveByJoystick(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
-            DoubleSupplier rSupplier)
+    public Command driveByJoystick(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier)
     {
         return drive.driveByJoystick(xSupplier, ySupplier, rSupplier);
     }

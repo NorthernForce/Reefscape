@@ -13,42 +13,55 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 /**
  * Rumbles the Xbox controller for a specified amount of time.
  */
-public class RumbleXBoxController extends Command {
+public class RumbleXBoxController extends Command
+{
     private final XboxController controller;
     private final Timer timer = new Timer();
     private final double rumble;
     private final Time time;
+
     /**
      * Rumbles the Xbox controller for a specified amount of time.
+     * 
      * @param controller the Xbox controller to rumble
-     * @param rumble the rumble value (between 0 and 1)
-     * @param time the time to rumble for
+     * @param rumble     the rumble value (between 0 and 1)
+     * @param time       the time to rumble for
      */
-    public RumbleXBoxController(CommandXboxController controller, double rumble, Time time) {
+    public RumbleXBoxController(CommandXboxController controller, double rumble, Time time)
+    {
         this.controller = controller.getHID();
         this.rumble = rumble;
         this.time = time;
     }
+
     /**
      * Rumbles the Xbox controller for a specified amount of time.
+     * 
      * @param controller the Xbox controller to rumble
-     * @param rumble the rumble value (between 0 and 1)
-     * @param time the time to rumble for (in seconds)
+     * @param rumble     the rumble value (between 0 and 1)
+     * @param time       the time to rumble for (in seconds)
      */
-    public RumbleXBoxController(CommandXboxController controller, double rumble, double time) {
+    public RumbleXBoxController(CommandXboxController controller, double rumble, double time)
+    {
         this(controller, rumble, Seconds.of(time));
     }
+
     @Override
-    public void initialize() {
+    public void initialize()
+    {
         timer.restart();
         controller.setRumble(RumbleType.kBothRumble, rumble);
     }
+
     @Override
-    public boolean isFinished() {
+    public boolean isFinished()
+    {
         return timer.hasElapsed(time.in(Seconds));
     }
+
     @Override
-    public void end(boolean interrupted) {
+    public void end(boolean interrupted)
+    {
         controller.setRumble(RumbleType.kBothRumble, 0);
     }
 }
