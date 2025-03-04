@@ -1,33 +1,16 @@
 package frc.robot.sebastian;
 
-import static edu.wpi.first.units.Units.Seconds;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.FieldConstants;
-import frc.robot.util.NFRAutoRoutine;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 public class SebastianAutos
 {
     public static void addAutoRoutines(SebastianContainer container)
     {
-        container.getDashboard().addAutoRoutine("Do Nothing", doNothing(container));
-        container.getDashboard().addDefaultAutoRoutine("Simple Backup", simpleBackup(container));
-    }
-
-    public static NFRAutoRoutine doNothing(SebastianContainer container)
-    {
-        return new NFRAutoRoutine(Commands.none(), new Translation2d[]
-        { Translation2d.kZero, Translation2d.kZero }, () -> Pose2d.kZero);
-    }
-
-    public static NFRAutoRoutine simpleBackup(SebastianContainer container)
-    {
-        Pose2d startingPose = new Pose2d(7.5, 4.06, Rotation2d.kZero);
-        return new NFRAutoRoutine(container.getDrive().backup(Seconds.of(4), -0.3), new Translation2d[]
-        { new Translation2d(7.5, 4.06), new Translation2d(7.5, 4.06) },
-                () -> FieldConstants.convertPoseByAlliance(startingPose));
+        container.getDashboard().addAutoRoutine("S1.LEAVE", new PathPlannerAuto("S1.LEAVE"));
+        container.getDashboard().addAutoRoutine("S1.PLACE", new PathPlannerAuto("S1.PLACE"));
+        container.getDashboard().addAutoRoutine("S2.LEAVE", new PathPlannerAuto("S2.LEAVE"));
+        container.getDashboard().addAutoRoutine("S2.PLACE", new PathPlannerAuto("S2.PLACE"));
+        container.getDashboard().addAutoRoutine("S3.LEAVE", new PathPlannerAuto("S3.LEAVE"));
+        container.getDashboard().addAutoRoutine("S3.PLACE", new PathPlannerAuto("S3.PLACE"));
     }
 }

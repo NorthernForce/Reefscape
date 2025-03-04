@@ -305,13 +305,13 @@ public class SebastianContainer implements NFRRobotContainer
     @Override
     public Command getAutonomousCommand()
     {
-        return dashboard.getRoutine().command();
+        return dashboard.getRoutine();
     }
 
     @Override
     public void autonomousInit()
     {
-        drive.resetPose(dashboard.getRoutine().startPose().get());
+        drive.resetPose(dashboard.getRoutine().getStartingPose());
     }
 
     @Override
