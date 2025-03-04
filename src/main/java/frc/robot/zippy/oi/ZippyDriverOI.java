@@ -39,11 +39,11 @@ public class ZippyDriverOI implements ZippyOI
         CommandXboxController driverJoystick = new CommandXboxController(0);
 
         container.getDrive()
-                .setDefaultCommand(container.getDrive().getDriveByJoystickCommand(
+                .setDefaultCommand(container.getDrive().driveByJoystick(
                         processJoystickInput(driverJoystick::getLeftY), processJoystickInput(driverJoystick::getLeftX),
                         processJoystickInput(driverJoystick::getRightX)));
 
-        driverJoystick.x().whileTrue(container.getDrive().getXLockCommand());
+        driverJoystick.x().whileTrue(container.getDrive().xLock());
 
         driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
                 .resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
