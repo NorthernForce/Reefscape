@@ -230,8 +230,8 @@ public class Elevator extends SubsystemBase
     private SysIdRoutine getSysIdRoutine()
     {
         return new SysIdRoutine(
-                new SysIdRoutine.Config(null, Volts.of(4), null,
-                        state -> Logger.recordOutput(getName() + "/SysIdState", state)),
+                new SysIdRoutine.Config(null, Volts.of(4), Seconds.of(4),
+                        state -> Logger.recordOutput(getName() + "/SysIdState", state.toString())),
                 new SysIdRoutine.Mechanism(volts -> m_motor.setVoltage(volts), null, this));
     }
 

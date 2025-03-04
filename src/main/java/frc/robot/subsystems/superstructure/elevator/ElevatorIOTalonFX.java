@@ -8,7 +8,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -36,7 +36,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
     private final StatusSignal<AngularVelocity> m_velocity;
     private final StatusSignal<AngularVelocity> m_rotorVelocity;
     private final Supplier<Boolean> m_isPresent;
-    private final MotionMagicVoltage m_motionMagicVoltage;
+    private final MotionMagicExpoVoltage m_motionMagicVoltage;
     private final DutyCycleOut m_duty = new DutyCycleOut(0);
     private final VoltageOut m_voltageOut = new VoltageOut(0);
     private final double kG;
@@ -125,7 +125,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
         talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = upperLimit.in(Inches);
         talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+        talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.125;
         talonFXConfigs.CurrentLimits.StatorCurrentLimit = 40;
         talonFXConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
 
@@ -139,7 +139,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
         m_voltage = m_motor.getMotorVoltage();
         m_isPresent = () -> m_motor.isConnected();
 
-        m_motionMagicVoltage = new MotionMagicVoltage(0);
+        m_motionMagicVoltage = new MotionMagicExpoVoltage(0);
     }
 
     /**
