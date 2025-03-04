@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
 
 import org.northernforce.util.NFRRobotContainer;
 
@@ -16,15 +17,10 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.sebastian.constants.SebastianConstants;
@@ -59,7 +55,6 @@ import frc.robot.subsystems.superstructure.wrist.WristIOTalonFX;
 import frc.robot.subsystems.viewer.Viewer;
 import frc.robot.subsystems.viewer.ViewerIO;
 import frc.robot.subsystems.viewer.ViewerIOXavier;
-import frc.robot.util.NFRAutoRoutine;
 
 /**
  * 2025 Competition Robot Container. Name is still a work in progress and will
@@ -175,7 +170,7 @@ public class SebastianContainer implements NFRRobotContainer
             break;
         }
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
-        addAutonomousRoutines();
+        SebastianAutos.addAutoRoutines(this);
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
         dashboard.setResetWristEncoderCommand(superstructure.getWrist()
                 .runOnce(() -> superstructure.getWrist().resetEncoderAngle(Degrees.of(0))).ignoringDisable(true));
@@ -185,10 +180,10 @@ public class SebastianContainer implements NFRRobotContainer
         NamedCommands.registerCommand("GoToL3Goal", superstructure.getGoToGoalCommand(SuperstructureGoal.L3));
         NamedCommands.registerCommand("GoToL2Goal", superstructure.getGoToGoalCommand(SuperstructureGoal.L2));
         NamedCommands.registerCommand("GoToL1Goal", superstructure.getGoToGoalCommand(SuperstructureGoal.L1));
-        NamedCommands.registerCommand("GoToIntakeGoal", superstructure.getGoToGoalCommand(SuperstructureGoal.CORAL_STATION));
+        NamedCommands.registerCommand("GoToIntakeGoal",
+                superstructure.getGoToGoalCommand(SuperstructureGoal.CORAL_STATION));
         NamedCommands.registerCommand("Intake", rollers.getCoralIntakeCommand(true));
         NamedCommands.registerCommand("Outtake", rollers.getOuttakeCommand());
-
 
     }
 
@@ -222,28 +217,6 @@ public class SebastianContainer implements NFRRobotContainer
                 Set.of());
     }
 
-    private void addAutonomousRoutines()
-    {
-        dashboard.addAutoRoutine("Do Nothing", new NFRAutoRoutine(Commands.none(), new Translation2d[]
-        { new Translation2d(), new Translation2d() }, () -> new Pose2d()));
-        dashboard.addAutoRoutine("Center_H4", new NFRAutoRoutine(getCenter_H4Command(), drive.getWaypoints("Center_H4"),
-                () -> drive.getInitialPose("Center_H4")));
-        dashboard.addAutoRoutine("BlueMid_J4", new NFRAutoRoutine(getBlueMid_J4Command(),
-                drive.getWaypoints("BlueMid_J4"), () -> drive.getInitialPose("BlueMid_J4")));
-        dashboard.addAutoRoutine("RedMid_E4", new NFRAutoRoutine(getRedMid_E4Command(), drive.getWaypoints("RedMid_E4"),
-                () -> drive.getInitialPose("RedMid_E4")));
-        dashboard.addDefaultAutoRoutine("Center_LEAVE",
-                new NFRAutoRoutine(drive.getBackupCommand(4, -0.5).andThen(drive.getXLockCommand()), new Translation2d[]
-                { new Translation2d(7.5, 4.06), new Translation2d(7, 4.06) }, () -> drive.getInitialPose("Center_H4")));
-        dashboard.addAutoRoutine("BlueMid_LEAVE",
-                new NFRAutoRoutine(drive.getBackupCommand(4, -0.5).andThen(drive.getXLockCommand()), new Translation2d[]
-                { new Translation2d(7.5, 6.14), new Translation2d(7, 4.06) },
-                        () -> drive.getInitialPose("BlueMid_J4")));
-        dashboard.addAutoRoutine("RedMid_LEAVE",
-                new NFRAutoRoutine(drive.getBackupCommand(4, -0.5).andThen(drive.getXLockCommand()), new Translation2d[]
-                { new Translation2d(7.5, 1.93), new Translation2d(7, 4.06) }, () -> drive.getInitialPose("RedMid_E4")));
-    }
-
     public Command getCoralIntakeCommand()
     {
         return // superstructure.getGoToGoalCommand(SuperstructureGoal.CORAL_STATION)
@@ -253,67 +226,12 @@ public class SebastianContainer implements NFRRobotContainer
 
     public Command getCoralOuttakeCommand()
     {
-        return rollers.getOuttakeCoralCommand().andThen(drive.getBackupCommand(0.5, 0.3));
+        return rollers.getOuttakeCoralCommand().andThen(drive.backup(Seconds.of(3), 0.3));
     }
 
-    public Command getAlgaeHighIntakeCommand()
+    public Command driveByJoystick(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier)
     {
-        return superstructure.getGoToGoalCommand(SuperstructureGoal.HIGHER_ALGAE)
-                .andThen((rollers.getAlgaeIntakeCommand().alongWith(drive.getBackupCommand(0.5, 0.5))));
-    }
-
-    public Command getAlgaeLowIntakeCommand()
-    {
-        return superstructure.getGoToGoalCommand(SuperstructureGoal.LOWER_ALGAE)
-                .andThen(rollers.getAlgaeIntakeCommand().alongWith(drive.getBackupCommand(0.5, 0.5)));
-    }
-
-    public Command getStowCommand()
-    {
-        return (superstructure.getGoToGoalCommand(SuperstructureGoal.STOW_ALGAE).alongWith(rollers.getHoldAlgae()))
-                .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
-    }
-
-    public Command getCenter_H4Command()
-    {
-        return new SequentialCommandGroup(drive.getBackupCommand(1.0, -0.5),
-                superstructure.getGoToGoalCommand(SuperstructureGoal.L3), drive.getBackupCommand(4.0, -0.3),
-                rollers.getOuttakeCoralCommand(), rollers.getOuttakeCommand().withTimeout(1.0));
-    }
-
-    public Command getBlueMid_J4Command()
-    {
-        return Commands.sequence(Commands.parallel(superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
-                drive.getFollowPathCommand("BlueMid_J4")), getCoralOuttakeCommand());
-    }
-
-    public Command getRedMid_E4Command()
-    {
-        return Commands.sequence(Commands.parallel(superstructure.getGoToGoalCommand(SuperstructureGoal.L4),
-                drive.getFollowPathCommand("RedMid_E4")), getCoralOuttakeCommand());
-    }
-
-    public Command getDriveByJoystickWithSlewCommand(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
-            DoubleSupplier rSupplier)
-    {
-        SlewRateLimiter xSlew = new SlewRateLimiter(SebastianConstants.DrivetrainConstants.SLOW_RATE);
-        SlewRateLimiter ySlew = new SlewRateLimiter(SebastianConstants.DrivetrainConstants.SLOW_RATE);
-        return drive.getDriveByJoystickCommand(() -> xSlew.calculate(xSupplier.getAsDouble()),
-                () -> ySlew.calculate(ySupplier.getAsDouble()), rSupplier);
-    }
-
-    public Command getDriveByJoystickCommand(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
-            DoubleSupplier rSupplier)
-    {
-        return drive.getDriveByJoystickCommand(xSupplier, ySupplier, rSupplier);
-    }
-
-    public Command getDriveByJoystickWithLimitsCommand(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
-            DoubleSupplier rSupplier)
-    {
-        return drive.getDriveByJoystickWithRobotRelativeLimits(xSupplier, ySupplier, rSupplier,
-                () -> viewer.getCenterDistance().lte(SebastianConstants.DrivetrainConstants.SAFE_DISTANCE) ? 0 : 1,
-                () -> -1, () -> 1, () -> -1);
+        return drive.driveByJoystick(xSupplier, ySupplier, rSupplier);
     }
 
     /**
@@ -449,20 +367,6 @@ public class SebastianContainer implements NFRRobotContainer
                 || superstructure.getGoal() == SuperstructureGoal.LOWER_ALGAE
                 || superstructure.getGoal() == SuperstructureGoal.PROCESSOR_STATION
                 || superstructure.getGoal() == SuperstructureGoal.STOW_ALGAE;
-    }
-
-    public Command getIntakeCommand()
-    {
-        if (!isInAlgaeState())
-        {
-            return getCoralIntakeCommand();
-        } else if (superstructure.getGoal() == SuperstructureGoal.LOWER_ALGAE)
-        {
-            return getAlgaeLowIntakeCommand();
-        } else
-        {
-            return getAlgaeHighIntakeCommand();
-        }
     }
 
     public Command getOuttakeCommand()

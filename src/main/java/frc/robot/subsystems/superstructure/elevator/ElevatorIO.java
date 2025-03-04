@@ -2,12 +2,17 @@ package frc.robot.subsystems.superstructure.elevator;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Fahrenheit;
+import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
@@ -28,6 +33,9 @@ public interface ElevatorIO
     {
         public Temperature temperature = Fahrenheit.of(0);
         public Distance position = Meters.of(0);
+        public Voltage voltage = Volts.of(0);
+        public LinearVelocity velocity = InchesPerSecond.of(0);
+        public AngularVelocity rotorVelocity = RotationsPerSecond.of(0);
         public boolean present = false;
         public Current current = Amps.of(0);
     }
