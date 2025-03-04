@@ -10,6 +10,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPoint;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
@@ -18,8 +19,10 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.FieldConstants;
 
 /**
  * Dashboard IO for the FWC dashboard.
@@ -40,6 +43,7 @@ public class DashboardIOFWC implements DashboardIO
     private final BooleanPublisher hasCoralPublisher;
     private final BooleanPublisher hasAlgaePublisher;
     private PathPlannerAuto previousAuto;
+    private Alliance previousAlliance;
 
     /**
      * Creates a new DashboardIOFWC. This connects to the FWC dashboard using "FWC"
@@ -95,27 +99,27 @@ public class DashboardIOFWC implements DashboardIO
     @Override
     public void updateInputs(DashboardIOInputs inputs)
     {
-        var pose = autoChooser.get().getStartingPose();
+        var pose = FieldConstants.flipPoseByAlliance(autoChooser.get().getStartingPose());
         autoPosePublisher.set(new double[]
         { pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getRotation().getRadians() });
-        if (previousAuto != autoChooser.get())
+        if (previousAuto != autoChooser.get() || previousAlliance != FieldConstants.getAlliance())
         {
             try
             {
                 var paths = PathPlannerAuto.getPathGroupFromAutoFile(autoChooser.get().getName());
-                ArrayList<PathPoint> pathPoints = new ArrayList<>();
+                ArrayList<Translation2d> pathPoints = new ArrayList<>();
                 for (PathPlannerPath path : paths)
                 {
                     for (PathPoint pathPoint : path.getAllPathPoints())
                     {
-                        pathPoints.add(pathPoint);
+                        pathPoints.add(FieldConstants.flipTranslationByAlliance(pathPoint.position));
                     }
                 }
                 double[] points = new double[pathPoints.size() * 2];
                 for (int i = 0; i < pathPoints.size(); i++)
                 {
-                    points[i * 2] = pathPoints.get(i).position.getX();
-                    points[i * 2 + 1] = pathPoints.get(i).position.getY();
+                    points[i * 2] = pathPoints.get(i).getX();
+                    points[i * 2 + 1] = pathPoints.get(i).getY();
                 }
                 autoPathPublisher.set(points);
             } catch (Exception e)
