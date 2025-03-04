@@ -52,7 +52,7 @@ public class Dashboard extends SubsystemBase
         Pose2d closestTranslation = FieldConstants.ReefPositions.SIDES[0].left();
         for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
         {
-            if (pose.getDistanceFromLeft(currentPose).in(Meters) < pose.getDistanceFromLeft(closestTranslation)
+            if (pose.getDistanceFrom(currentPose).in(Meters) < pose.getDistanceFrom(closestTranslation)
                     .in(Meters))
             {
                 closestTranslation = pose.left();
@@ -66,7 +66,7 @@ public class Dashboard extends SubsystemBase
         Pose2d closestTranslation = FieldConstants.ReefPositions.SIDES[0].center();
         for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
         {
-            if (pose.getDistanceFromCenter(currentPose).in(Meters) < pose.getDistanceFromCenter(closestTranslation)
+            if (pose.getDistanceFrom(currentPose).in(Meters) < pose.getDistanceFrom(closestTranslation)
                     .in(Meters))
             {
                 closestTranslation = pose.center();
@@ -80,7 +80,7 @@ public class Dashboard extends SubsystemBase
         Pose2d closestTranslation = FieldConstants.ReefPositions.SIDES[0].right();
         for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
         {
-            if (pose.getDistanceFromRight(currentPose).in(Meters) < pose.getDistanceFromRight(closestTranslation)
+            if (pose.getDistanceFrom(currentPose).in(Meters) < pose.getDistanceFrom(closestTranslation)
                     .in(Meters) || closestTranslation == null)
             {
                 closestTranslation = pose.right();
