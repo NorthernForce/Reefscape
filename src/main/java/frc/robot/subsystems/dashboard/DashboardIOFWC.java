@@ -2,10 +2,13 @@ package frc.robot.subsystems.dashboard;
 
 import static edu.wpi.first.units.Units.Inches;
 
+import java.util.ArrayList;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.ctre.phoenix6.Utils;
-
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.networktables.BooleanPublisher;
@@ -17,8 +20,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.FieldConstants;
-import frc.robot.util.NFRAutoRoutine;
 
 /**
  * Dashboard IO for the FWC dashboard.
@@ -26,7 +27,7 @@ import frc.robot.util.NFRAutoRoutine;
 public class DashboardIOFWC implements DashboardIO
 {
     private final NetworkTable table;
-    private final LoggedDashboardChooser<NFRAutoRoutine> autoChooser;
+    private final LoggedDashboardChooser<PathPlannerAuto> autoChooser;
     private final DoublePublisher stagePublisher;
     private final DoubleArrayPublisher autoPosePublisher;
     private final DoubleArrayPublisher autoPathPublisher;
@@ -49,7 +50,7 @@ public class DashboardIOFWC implements DashboardIO
     public DashboardIOFWC()
     {
         WebServer.start(5800, Utils.isSimulation() ? "./npm-dash/dist" : "/home/lvuser/deploy/npm-dash");
-        autoChooser = new LoggedDashboardChooser<NFRAutoRoutine>("AutoChooser");
+        autoChooser = new LoggedDashboardChooser<PathPlannerAuto>("AutoChooser");
         table = NetworkTableInstance.getDefault().getTable("/FWC");
         stagePublisher = table.getDoubleTopic("selectedTab").publish();
         table.getBooleanTopic("connected").publish().set(true);
@@ -66,7 +67,7 @@ public class DashboardIOFWC implements DashboardIO
     }
 
     @Override
-    public void addRoutine(String name, NFRAutoRoutine command, boolean defaultOption)
+    public void addRoutine(String name, PathPlannerAuto command, boolean defaultOption)
     {
         if (defaultOption)
         {
@@ -93,21 +94,29 @@ public class DashboardIOFWC implements DashboardIO
     @Override
     public void updateInputs(DashboardIOInputs inputs)
     {
-        var pose = autoChooser.get().startPose().get();
+        var pose = autoChooser.get().getStartingPose();
         autoPosePublisher.set(new double[]
         { pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getRotation().getRadians() });
-        var path = autoChooser.get().waypoints().clone();
-        for (int i = 0; i < path.length; i++)
-        {
-            path[i] = FieldConstants.convertTranslationByAlliance(path[i], FieldConstants.getAlliance());
+        try {
+            var paths = PathPlannerAuto.getPathGroupFromAutoFile(autoChooser.get().getName());
+            ArrayList<PathPoint> pathPoints = new ArrayList<>();
+            for (PathPlannerPath path : paths)
+            {
+                for (PathPoint pathPoint : path.getAllPathPoints())
+                {
+                    pathPoints.add(pathPoint);
+                }
+            }
+            double[] points = new double[pathPoints.size() * 2];
+            for (int i = 0; i < pathPoints.size(); i++)
+            {
+                points[i * 2] = pathPoints.get(i).position.getX();
+                points[i * 2 + 1] = pathPoints.get(i).position.getY();
+            }
+            autoPathPublisher.set(points);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        var pathArray = new double[path.length * 2];
-        for (int i = 0; i < path.length; i++)
-        {
-            pathArray[i * 2] = path[i].getX();
-            pathArray[i * 2 + 1] = path[i].getY();
-        }
-        autoPathPublisher.set(pathArray);
         inputs.innerElevatorTargetPosition = Inches.of(innerElevatorTargetPosition.get());
         inputs.outerElevatorTargetPosition = Inches.of(outerElevatorTargetPosition.get());
     }
@@ -125,7 +134,7 @@ public class DashboardIOFWC implements DashboardIO
     }
 
     @Override
-    public NFRAutoRoutine getSelectedRoutine()
+    public PathPlannerAuto getSelectedRoutine()
     {
         return autoChooser.get();
     }

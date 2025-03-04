@@ -2,10 +2,11 @@ package frc.robot.subsystems.dashboard;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.util.NFRAutoRoutine;
 
 /**
  * Dashboard IO for the robot.
@@ -34,7 +35,7 @@ public interface DashboardIO
      * @param command       the command to run
      * @param defaultOption whether or not this is the default option
      */
-    public default void addRoutine(String name, NFRAutoRoutine command, boolean defaultOption)
+    public default void addRoutine(String name, PathPlannerAuto command, boolean defaultOption)
     {
     }
 
@@ -65,7 +66,7 @@ public interface DashboardIO
      * 
      * @return the selected routine
      */
-    public default NFRAutoRoutine getSelectedRoutine()
+    public default PathPlannerAuto getSelectedRoutine()
     {
         return null;
     }
