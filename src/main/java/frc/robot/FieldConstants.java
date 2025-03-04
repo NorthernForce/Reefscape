@@ -47,6 +47,12 @@ public class FieldConstants
         return new Pose2d(result[0], result[1], original.getRotation());
     }
 
+    public static Pose2d getPostBackupPosition(Pose2d pose, Distance distance)
+    {
+        Translation2d translation = pose.getTranslation().plus(new Translation2d(distance.in(Meters), 0));
+        return new Pose2d(translation, pose.getRotation());
+    }
+
     /**
      * All poses are BLUE relative
      */

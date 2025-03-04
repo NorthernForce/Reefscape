@@ -4,11 +4,6 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Feet;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Rotations;
-
 import org.northernforce.util.NFRRobotContainer;
 
 import com.ctre.phoenix6.Utils;
@@ -19,7 +14,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.DistanceUnit;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -60,6 +57,7 @@ import frc.robot.subsystems.viewer.Viewer;
 import frc.robot.subsystems.viewer.ViewerIO;
 import frc.robot.subsystems.viewer.ViewerIOXavier;
 import frc.robot.util.NFRAutoRoutine;
+import static edu.wpi.first.units.Units.*;
 
 /**
  * 2025 Competition Robot Container. Name is still a work in progress and will
@@ -197,6 +195,47 @@ public class SebastianContainer implements NFRRobotContainer
                         SebastianConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
                         SebastianConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)),
                 Set.of());
+    }
+
+    public Command alignWithPost()
+    {
+        return Commands.defer(() ->
+        {
+            Viewer viewer = getViewer();
+            Distance postOffset = viewer.getPostOffset();
+
+            boolean isRight = postOffset.in(Meters) > 0.0;
+            boolean isLeft = postOffset.in(Meters) < 0.0;
+
+            Pose2d currentPose = getDashboard().getTargetPose();
+            Pose2d newPose;
+
+            if (isRight)
+            {
+                newPose = new Pose2d(currentPose.getTranslation().plus(new Translation2d(postOffset.in(Meters), 0)),
+                        currentPose.getRotation());
+            } else if (isLeft)
+            {
+                newPose = new Pose2d(currentPose.getTranslation().plus(new Translation2d(-postOffset.abs(Meters), 0)),
+                        currentPose.getRotation());
+            } else
+            {
+                newPose = currentPose;
+            }
+
+            Pose2d backupPose = FieldConstants.getPostBackupPosition(newPose, Feet.of(1));
+
+            return getDrive()
+                    .driveToPose(backupPose, SebastianConstants.PathplannerConstants.MAX_VELOCITY,
+                            SebastianConstants.PathplannerConstants.MAX_ACCELERATION,
+                            SebastianConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                            SebastianConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
+                    .alongWith(getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForReef()))
+                    .andThen(() -> getDrive().driveToPose(newPose, SebastianConstants.PathplannerConstants.MAX_VELOCITY,
+                            SebastianConstants.PathplannerConstants.MAX_ACCELERATION,
+                            SebastianConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                            SebastianConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION));
+        }, Set.of());
     }
 
     public Command getGoToStationCommand()
