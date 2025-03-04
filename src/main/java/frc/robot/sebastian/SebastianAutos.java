@@ -1,6 +1,9 @@
 package frc.robot.sebastian;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+
+import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
 
 public class SebastianAutos
 {
@@ -12,5 +15,17 @@ public class SebastianAutos
         container.getDashboard().addAutoRoutine("S2.PLACE", new PathPlannerAuto("S2.PLACE"));
         container.getDashboard().addAutoRoutine("S3.LEAVE", new PathPlannerAuto("S3.LEAVE"));
         container.getDashboard().addAutoRoutine("S3.PLACE", new PathPlannerAuto("S3.PLACE"));
+    }
+    
+    public static void addNamedCommands(SebastianContainer container)
+    {
+        NamedCommands.registerCommand("GoToL4Goal", container.getSuperstructure().getGoToGoalCommand(SuperstructureGoal.L4));
+        NamedCommands.registerCommand("GoToL3Goal", container.getSuperstructure().getGoToGoalCommand(SuperstructureGoal.L3));
+        NamedCommands.registerCommand("GoToL2Goal", container.getSuperstructure().getGoToGoalCommand(SuperstructureGoal.L2));
+        NamedCommands.registerCommand("GoToL1Goal", container.getSuperstructure().getGoToGoalCommand(SuperstructureGoal.L1));
+        NamedCommands.registerCommand("GoToIntakeGoal",
+        container.getSuperstructure().getGoToGoalCommand(SuperstructureGoal.CORAL_STATION));
+        NamedCommands.registerCommand("Intake", container.getRollers().getCoralIntakeCommand(true));
+        NamedCommands.registerCommand("Outtake", container.getRollers().getOuttakeCommand());
     }
 }

@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S3.PLACE.1"
+                  "pathName": "CENTER.PLACE.G.1"
                 }
               },
               {
@@ -33,6 +33,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "S3",
+  "folder": "CENTER",
   "choreoAuto": false
 }

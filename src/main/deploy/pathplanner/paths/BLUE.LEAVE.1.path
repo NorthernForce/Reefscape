@@ -45,7 +45,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "S1.LEAVE",
+  "folder": "BLUE.LEAVE",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

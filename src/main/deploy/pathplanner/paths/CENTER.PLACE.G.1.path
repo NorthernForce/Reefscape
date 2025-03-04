@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 6.0,
-        "y": 4.0
+        "x": 5.85,
+        "y": 4.1
       },
       "prevControl": {
-        "x": 7.0,
-        "y": 4.0
+        "x": 6.85,
+        "y": 4.1
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "S2.LEAVE",
+  "folder": "CENTER.PLACE.G",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

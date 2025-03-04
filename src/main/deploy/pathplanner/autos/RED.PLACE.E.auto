@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S2.PLACE.1"
+                  "pathName": "RED.PLACE.E.1"
                 }
               },
               {
@@ -33,6 +33,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "S2",
+  "folder": "RED",
   "choreoAuto": false
 }

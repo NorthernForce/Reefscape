@@ -39,6 +39,7 @@ public class DashboardIOFWC implements DashboardIO
     private final DoublePublisher outerElevatorPosition;
     private final BooleanPublisher hasCoralPublisher;
     private final BooleanPublisher hasAlgaePublisher;
+    private PathPlannerAuto previousAuto;
 
     /**
      * Creates a new DashboardIOFWC. This connects to the FWC dashboard using "FWC"
@@ -97,28 +98,32 @@ public class DashboardIOFWC implements DashboardIO
         var pose = autoChooser.get().getStartingPose();
         autoPosePublisher.set(new double[]
         { pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getRotation().getRadians() });
-        try
+        if (previousAuto != autoChooser.get())
         {
-            var paths = PathPlannerAuto.getPathGroupFromAutoFile(autoChooser.get().getName());
-            ArrayList<PathPoint> pathPoints = new ArrayList<>();
-            for (PathPlannerPath path : paths)
+            try
             {
-                for (PathPoint pathPoint : path.getAllPathPoints())
+                var paths = PathPlannerAuto.getPathGroupFromAutoFile(autoChooser.get().getName());
+                ArrayList<PathPoint> pathPoints = new ArrayList<>();
+                for (PathPlannerPath path : paths)
                 {
-                    pathPoints.add(pathPoint);
+                    for (PathPoint pathPoint : path.getAllPathPoints())
+                    {
+                        pathPoints.add(pathPoint);
+                    }
                 }
-            }
-            double[] points = new double[pathPoints.size() * 2];
-            for (int i = 0; i < pathPoints.size(); i++)
+                double[] points = new double[pathPoints.size() * 2];
+                for (int i = 0; i < pathPoints.size(); i++)
+                {
+                    points[i * 2] = pathPoints.get(i).position.getX();
+                    points[i * 2 + 1] = pathPoints.get(i).position.getY();
+                }
+                autoPathPublisher.set(points);
+            } catch (Exception e)
             {
-                points[i * 2] = pathPoints.get(i).position.getX();
-                points[i * 2 + 1] = pathPoints.get(i).position.getY();
+                e.printStackTrace();
             }
-            autoPathPublisher.set(points);
-        } catch (Exception e)
-        {
-            e.printStackTrace();
         }
+        previousAuto = autoChooser.get();
         inputs.innerElevatorTargetPosition = Inches.of(innerElevatorTargetPosition.get());
         inputs.outerElevatorTargetPosition = Inches.of(outerElevatorTargetPosition.get());
     }

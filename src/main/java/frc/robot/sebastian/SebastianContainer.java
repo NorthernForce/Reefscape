@@ -13,7 +13,6 @@ import static edu.wpi.first.units.Units.Seconds;
 import org.northernforce.util.NFRRobotContainer;
 
 import com.ctre.phoenix6.Utils;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -175,16 +174,6 @@ public class SebastianContainer implements NFRRobotContainer
         dashboard.setResetWristEncoderCommand(superstructure.getWrist()
                 .runOnce(() -> superstructure.getWrist().resetEncoderAngle(Degrees.of(0))).ignoringDisable(true));
         SmartDashboard.putData("Go do thing", getGoToReefPoseCommand());
-
-        NamedCommands.registerCommand("GoToL4Goal", superstructure.getGoToGoalCommand(SuperstructureGoal.L4));
-        NamedCommands.registerCommand("GoToL3Goal", superstructure.getGoToGoalCommand(SuperstructureGoal.L3));
-        NamedCommands.registerCommand("GoToL2Goal", superstructure.getGoToGoalCommand(SuperstructureGoal.L2));
-        NamedCommands.registerCommand("GoToL1Goal", superstructure.getGoToGoalCommand(SuperstructureGoal.L1));
-        NamedCommands.registerCommand("GoToIntakeGoal",
-                superstructure.getGoToGoalCommand(SuperstructureGoal.CORAL_STATION));
-        NamedCommands.registerCommand("Intake", rollers.getCoralIntakeCommand(true));
-        NamedCommands.registerCommand("Outtake", rollers.getOuttakeCommand());
-
     }
 
     public Command getGoToReefPoseCommand()

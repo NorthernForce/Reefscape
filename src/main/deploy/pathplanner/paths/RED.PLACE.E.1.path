@@ -8,7 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.200000000000001,
+        "x": 6.2,
         "y": 2.0
       },
       "isLocked": false,
@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 6.0,
-        "y": 2.0
+        "x": 5.25,
+        "y": 2.9
       },
       "prevControl": {
-        "x": 7.0,
-        "y": 2.0
+        "x": 5.75,
+        "y": 2.033974596215561
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": "S3.LEAVE",
+  "folder": "RED.PLACE.E",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

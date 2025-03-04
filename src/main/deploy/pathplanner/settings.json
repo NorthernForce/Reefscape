@@ -3,17 +3,17 @@
   "robotLength": 0.965,
   "holonomicMode": true,
   "pathFolders": [
-    "S1.LEAVE",
-    "S1.PLACE",
-    "S2.LEAVE",
-    "S2.PLACE",
-    "S3.LEAVE",
-    "S3.PLACE"
+    "BLUE.LEAVE",
+    "BLUE.PLACE.I",
+    "CENTER.LEAVE",
+    "CENTER.PLACE.G",
+    "RED.LEAVE",
+    "RED.PLACE.E"
   ],
   "autoFolders": [
-    "S1",
-    "S2",
-    "S3"
+    "BLUE",
+    "CENTER",
+    "RED"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
