@@ -114,7 +114,7 @@ public class SebastianContainer implements NFRRobotContainer
                             new ElevatorIOTalonFX(14, SebastianConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
                             new BrakeIO()
                             {
-                            }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5))),
+                            }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
                     SebastianConstants.InnerElevatorConstants.HIGH_POSITION,
                     SebastianConstants.OuterElevatorConstants.HIGH_POSITION);
             climber = new Climber(new ClimberIOTalonFX(SebastianConstants.ClimberConstants.ID,
@@ -147,7 +147,7 @@ public class SebastianContainer implements NFRRobotContainer
                             new ElevatorIOTalonFX(15, SebastianConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
                             new BrakeIO()
                             {
-                            }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5))),
+                            }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
                     SebastianConstants.InnerElevatorConstants.HIGH_POSITION,
                     SebastianConstants.OuterElevatorConstants.HIGH_POSITION);
             climber = new Climber(new ClimberIO()

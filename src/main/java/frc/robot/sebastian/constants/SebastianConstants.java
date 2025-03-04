@@ -148,22 +148,17 @@ public class SebastianConstants
         public static final Distance TOLERANCE = Inches.of(0.9);
     }
 
-
     /**
      * Superstructure states for the coral and algae
      */
 
     public static enum SuperstructureGoal implements GenericSuperstructureGoal
     {
-        L1(Inches.of(0), Inches.of(0), Degrees.of(-0.03)),
-        L2(Inches.of(13.1 - 2.75), Inches.of(0)),
-        L3(Inches.of(25.8 - 2.75), Inches.of(4.61)),
-        L4(Inches.of(27.3 - 2.75), Inches.of(26.6)),
-        CORAL_STATION(Inches.of(4.82), Inches.of(0)),
-        CORAL_STATION_PRE(Inches.of(0), Inches.of(0)),
-        PROCESSOR_STATION(Inches.of(0), Inches.of(0)),
-        LOWER_ALGAE(Inches.of(0), Inches.of(0)), HIGHER_ALGAE(Inches.of(0), Inches.of(0)),
-        START(Inches.of(0), Inches.of(0)),
+        L1(Inches.of(0), Inches.of(0)), L2(Inches.of(13.1 - 2.75), Inches.of(0)),
+        L3(Inches.of(25.8 - 2.75), Inches.of(4.61)), L4(Inches.of(27.3 - 2.75), Inches.of(26.6)),
+        CORAL_STATION(Inches.of(4.82), Inches.of(0)), CORAL_STATION_PRE(Inches.of(0), Inches.of(0)),
+        PROCESSOR_STATION(Inches.of(0), Inches.of(0)), LOWER_ALGAE(Inches.of(0), Inches.of(0)),
+        HIGHER_ALGAE(Inches.of(0), Inches.of(0)), START(Inches.of(0), Inches.of(0)),
         STOW_ALGAE(Inches.of(0), Inches.of(0));
 
         private final Distance innerHeight;
