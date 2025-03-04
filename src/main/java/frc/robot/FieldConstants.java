@@ -52,6 +52,12 @@ public class FieldConstants
      */
     public static class ReefPositions
     {
+        public record ReefSide(Pose2d left, Pose2d center, Pose2d right) {
+            public Distance getDistanceFrom(Pose2d pose)
+            {
+                return Meters.of(center.getTranslation().getDistance(pose.getTranslation()));
+            }
+        }
 
         public static final Pose2d A = new Pose2d(3.15, 4.18, ReefRotations.AB_ROTATION);
         public static final Pose2d AB_ALGAE = new Pose2d(3.15, 4.02, ReefRotations.AB_ROTATION);
@@ -71,6 +77,9 @@ public class FieldConstants
         public static final Pose2d K = new Pose2d(3.95, 5.29, ReefRotations.KL_ROTATION);
         public static final Pose2d KL_ALGAE = new Pose2d(3.82, 5.19, ReefRotations.KL_ROTATION);
         public static final Pose2d L = new Pose2d(3.65, 5.12, ReefRotations.KL_ROTATION);
+        public static final ReefSide[] SIDES = new ReefSide[]
+        { new ReefSide(A, AB_ALGAE, B), new ReefSide(C, CD_ALGAE, D), new ReefSide(E, EF_ALGAE, F),
+                new ReefSide(G, GH_ALGAE, H), new ReefSide(I, IJ_ALGAE, J), new ReefSide(K, KL_ALGAE, L) };
     }
 
     public static final HashMap<ReefLocations, Pose2d> REEF_POSITIONS = new HashMap<>();

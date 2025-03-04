@@ -50,10 +50,12 @@ public class ZippyProgrammerOI implements ZippyOI
                         DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
                 container.getDrive()));
 
-        driverJoystick.rightBumper()
-                .whileTrue(container.getDrive().driveToPose(container.getDashboard().getTargetPose(),
-                        MetersPerSecond.of(1), MetersPerSecondPerSecond.of(1), RotationsPerSecond.of(1),
-                        RotationsPerSecondPerSecond.of(1)));
+        driverJoystick.rightBumper().whileTrue(container.getDrive().driveToPose(
+                container.getDashboard().getTargetPoseRight(container.getDrive().getPose()), MetersPerSecond.of(1),
+                MetersPerSecondPerSecond.of(1), RotationsPerSecond.of(1), RotationsPerSecondPerSecond.of(1)));
+        driverJoystick.leftBumper().whileTrue(container.getDrive().driveToPose(
+                container.getDashboard().getTargetPoseLeft(container.getDrive().getPose()), MetersPerSecond.of(1),
+                MetersPerSecondPerSecond.of(1), RotationsPerSecond.of(1), RotationsPerSecondPerSecond.of(1)));
         driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
                 .resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
                         DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
