@@ -14,11 +14,9 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
-import choreo.trajectory.SwerveSample;
 import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -118,14 +116,6 @@ public class ZippyContainer implements NFRRobotContainer
     {
         drive.resetPose(FieldConstants.convertPoseByAlliance(dashboard.getRoutine().startPose().get(),
                 FieldConstants.getAlliance()));
-        ZippyConstants.AutoConstants.xPID.reset();
-        ZippyConstants.AutoConstants.yPID.reset();
-        ZippyConstants.AutoConstants.rPID.reset();
-        factory = new AutoFactory(drive::getPose, drive::resetPose, (SwerveSample sample) ->
-        {
-            var speeds = new ChassisSpeeds(sample.vx, sample.vy, sample.omega);
-            drive.runVelocity(speeds);
-        }, true, drive);
 
         NamedCommands.registerCommand("test", Commands.runOnce(() -> System.out.println("it works!")));
         var routine = factory.newRoutine("test1");
