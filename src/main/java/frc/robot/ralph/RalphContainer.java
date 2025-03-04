@@ -103,8 +103,6 @@ public class RalphContainer implements NFRRobotContainer
                             new BrakeIO()
                             {
                             }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
-                    new Wrist(new WristIOTalonFX(16, 20, RalphConstants.WristJointConstants.WRIST_CONSTANTS),
-                            RalphConstants.WristJointConstants.WRIST_TOLERANCE),
                     RalphConstants.InnerElevatorConstants.HIGH_POSITION,
                     RalphConstants.OuterElevatorConstants.HIGH_POSITION);
             climber = new Climber(
@@ -135,9 +133,7 @@ public class RalphContainer implements NFRRobotContainer
             }, Inches.of(0.5)), new Elevator("OuterElevator",
                     new ElevatorIOTalonFX(15, RalphConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
                     {
-                    }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)), new Wrist(new WristIO()
-                    {
-                    }, RalphConstants.WristJointConstants.WRIST_TOLERANCE),
+                    }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
                     RalphConstants.InnerElevatorConstants.HIGH_POSITION,
                     RalphConstants.OuterElevatorConstants.HIGH_POSITION);
             climber = new Climber(new ClimberIO()
