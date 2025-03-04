@@ -3,13 +3,10 @@ package frc.robot.sebastian.oi;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.FieldConstants;
+import frc.robot.commands.RumbleXBoxController;
 import frc.robot.sebastian.SebastianContainer;
 import frc.robot.sebastian.constants.SebastianConstants;
 import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
@@ -37,31 +34,14 @@ public class SebastianDriverOI implements SebastianOI
     static void bindDrive(CommandXboxController driverController, SebastianContainer container)
     {
         container.getDrive()
-                .setDefaultCommand(container.getDriveByJoystickCommand(processJoystickInput(driverController::getLeftY),
+                .setDefaultCommand(container.driveByJoystick(processJoystickInput(driverController::getLeftY),
                         processJoystickInput(driverController::getLeftX),
                         processJoystickInput(driverController::getRightX)));
 
-        new Trigger(() -> container.getSuperstructure().isTooHigh())
-                .whileTrue(container.getDriveByJoystickWithSlewCommand(processJoystickInput(driverController::getLeftY),
-                        processJoystickInput(driverController::getLeftX),
-                        processJoystickInput(driverController::getRightX)));
+        driverController.back().onTrue(
+                container.getDrive().resetOrientation(FieldConstants.getFieldRotation(FieldConstants.getAlliance())));
 
-        driverController.back().onTrue(container.getDrive()
-                .getResetOrientationCommand(FieldConstants.getFieldRotation(FieldConstants.getAlliance())));
-
-        driverController.x().whileTrue(container.getDrive().getXLockCommand());
-
-        new Trigger(() -> !container.getSuperstructure().isAtGoal()
-                && container.getSuperstructure().getGoal() == SuperstructureGoal.CORAL_STATION
-                && container.getViewer().isPresent()
-                && FieldConstants.isAtCoralRotation(container.getDrive().getPose().getRotation())
-                && !driverController.getHID().getLeftBumperButton()).whileTrue(
-                        container.getDriveByJoystickWithLimitsCommand(processJoystickInput(driverController::getLeftY),
-                                processJoystickInput(driverController::getLeftX),
-                                processJoystickInput(driverController::getRightX)));
-
-        driverController.rightBumper().whileTrue(container.getDrive().getGoLeft(-0.325));
-        driverController.leftBumper().whileTrue(container.getDrive().getGoLeft(0.325));
+        driverController.x().whileTrue(container.getDrive().xLock());
     }
 
     static void bindRollers(CommandXboxController driverController, CommandXboxController manipulatorController,
@@ -71,27 +51,14 @@ public class SebastianDriverOI implements SebastianOI
 
         container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
 
-        driverController.leftTrigger().whileTrue(container.getIntakeCommand().andThen(rumble(driverController))
-                .onlyIf(() -> SmartDashboard.getBoolean("Use Beam Break", true)));
-
         driverController.rightTrigger().whileTrue(container.getOuttakeCommand());
-
-        manipulatorController.leftTrigger()
-                .whileTrue((container.getIntakeCommand()).andThen(rumble(manipulatorController))
-                        .onlyIf(() -> SmartDashboard.getBoolean("Use Beam Break", true)));
 
         manipulatorController.rightTrigger().whileTrue(container.getOuttakeCommand());
 
         manipulatorController.back().whileTrue(container.getOuttakeCommand(1.0));
 
-        // new Trigger(() -> container.getRollers().hasAlgae() &&
-        // !container.getRollers().hasCoral()
-        // && (container.getSuperstructure().getGoal() ==
-        // SuperstructureGoal.HIGHER_ALGAE
-        // || container.getSuperstructure().getGoal() ==
-        // SuperstructureGoal.LOWER_ALGAE))
-        // .onTrue(container.getStowCommand().until(() -> container.getSuperstructure()
-        // .getGoal() == SuperstructureGoal.PROCESSOR_STATION));
+        container.getRollers().intakeTrigger().onTrue(new RumbleXBoxController(manipulatorController, 0.5, 0.5)
+                .alongWith(new RumbleXBoxController(driverController, 0.5, 0.5)));
     }
 
     static void bindClimber(CommandXboxController driverController, SebastianContainer container)
@@ -143,13 +110,6 @@ public class SebastianDriverOI implements SebastianOI
                 container.getSuperstructure().getGoToGoalCommand(SebastianConstants.SuperstructureGoal.LOWER_ALGAE));
         manipulatorController.x().whileTrue(
                 container.getSuperstructure().getGoToGoalCommand(SebastianConstants.SuperstructureGoal.HIGHER_ALGAE));
-    }
-
-    public static Command rumble(CommandXboxController controller)
-    {
-        return Commands.runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 0.5))
-                .andThen(Commands.waitSeconds(0.25))
-                .andThen(Commands.runOnce(() -> controller.setRumble(RumbleType.kBothRumble, 0)));
     }
 
     @Override

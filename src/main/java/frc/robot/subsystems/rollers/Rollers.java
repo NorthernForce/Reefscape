@@ -6,8 +6,8 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIO;
 import frc.robot.subsystems.rollers.sensor.RollersSensorIOInputsAutoLogged;
 
@@ -45,6 +45,11 @@ public class Rollers extends SubsystemBase
         m_sensorIOCoral = sensorIOCoral;
         this.intakeSpeed = intakeSpeed;
         this.outtakeSpeed = outtakeSpeed;
+    }
+
+    public Trigger intakeTrigger()
+    {
+        return new Trigger(this::hasCoral);
     }
 
     /**

@@ -146,6 +146,11 @@ public class FieldConstants
         }
     }
 
+    public static Pose2d convertPoseByAlliance(Pose2d pose)
+    {
+        return convertPoseByAlliance(pose, getAlliance());
+    }
+
     public static Translation2d convertTranslationByAlliance(Translation2d pose, Alliance alliance)
     {
         if (alliance == Alliance.Blue)

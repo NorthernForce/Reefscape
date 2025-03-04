@@ -39,6 +39,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Alert;
@@ -55,9 +56,7 @@ import com.ctre.phoenix6.SignalLogger;
 
 public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsystem
 {
-    @SuppressWarnings("unused")
     private final LinearVelocity maxSpeed;
-    @SuppressWarnings("unused")
     private final AngularVelocity maxAngularSpeed;
     private final SwerveRequest.ApplyRobotSpeeds applyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
     private final Alert motorDisconnectedAlert;
@@ -162,6 +161,56 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         });
     }
 
+    public Command driveWithRobotRelativeSpeeds(Supplier<ChassisSpeeds> speedsSupplier)
+    {
+        SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
+                .withDriveRequestType(DriveRequestType.Velocity);
+        return applyRequest(() ->
+        {
+            var speeds = speedsSupplier.get();
+            return robotCentric.withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond)
+                    .withRotationalRate(speeds.omegaRadiansPerSecond);
+        });
+    }
+
+    public Command driveWithFieldRelativeSpeeds(Supplier<ChassisSpeeds> speedsSupplier)
+    {
+        SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
+                .withDriveRequestType(DriveRequestType.Velocity);
+        return applyRequest(() ->
+        {
+            var speeds = speedsSupplier.get();
+            return fieldCentric.withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond)
+                    .withRotationalRate(speeds.omegaRadiansPerSecond);
+        });
+    }
+
+    public Command driveWithRobotRelativeDutyCycle(Supplier<ChassisSpeeds> speedsSupplier)
+    {
+        SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        return applyRequest(() ->
+        {
+            var speeds = speedsSupplier.get();
+            return robotCentric.withVelocityX(speeds.vxMetersPerSecond * maxSpeed.in(MetersPerSecond))
+                    .withVelocityY(speeds.vyMetersPerSecond * maxSpeed.in(MetersPerSecond))
+                    .withRotationalRate(speeds.omegaRadiansPerSecond * maxAngularSpeed.in(RadiansPerSecond));
+        });
+    }
+
+    public Command driveWithFieldRelativeDutyCycle(Supplier<ChassisSpeeds> speedsSupplier)
+    {
+        SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        return applyRequest(() ->
+        {
+            var speeds = speedsSupplier.get();
+            return fieldCentric.withVelocityX(speeds.vxMetersPerSecond * maxSpeed.in(MetersPerSecond))
+                    .withVelocityY(speeds.vyMetersPerSecond * maxSpeed.in(MetersPerSecond))
+                    .withRotationalRate(speeds.omegaRadiansPerSecond * maxAngularSpeed.in(RadiansPerSecond));
+        });
+    }
+
     /**
      * Get a command that drives the robot by joystick input
      * 
@@ -170,73 +219,79 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      * @param omegaSupplier omega input (rotational rate)
      * @return a command that drives the robot by joystick input
      */
-    public Command getDriveByJoystickCommand(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
-            DoubleSupplier omegaSupplier)
+    public Command driveByJoystick(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier omegaSupplier)
     {
-        SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
-                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-        return applyRequest(() ->
+        ChassisSpeeds speeds = new ChassisSpeeds();
+        return driveWithFieldRelativeDutyCycle(() ->
         {
-            var x = xSupplier.getAsDouble() * maxSpeed.in(MetersPerSecond);
-            var y = ySupplier.getAsDouble() * maxSpeed.in(MetersPerSecond);
-            var omega = omegaSupplier.getAsDouble() * maxAngularSpeed.in(RadiansPerSecond);
-            return fieldCentric.withVelocityX(x).withVelocityY(y).withRotationalRate(omega);
-        });
-    }
-
-    public Command getGoLeft(double speed)
-    {
-        SwerveRequest.ApplyRobotSpeeds robotSpeeds = new SwerveRequest.ApplyRobotSpeeds()
-                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-        return applyRequest(() ->
-        {
-            return robotSpeeds.withSpeeds(new ChassisSpeeds(0, speed, 0));
+            speeds.vxMetersPerSecond = xSupplier.getAsDouble();
+            speeds.vyMetersPerSecond = ySupplier.getAsDouble();
+            speeds.omegaRadiansPerSecond = omegaSupplier.getAsDouble();
+            return speeds;
         });
     }
 
     /**
-     * Get a command that drives the robot by joystick input with robot-relative
-     * limits
+     * Get a command that drives the robot to the left relative to the robot
      * 
-     * @param xSupplier      x input (relative to the field)
-     * @param ySupplier      y input (relative to the field)
-     * @param omegaSupplier  omega input (rotational rate)
-     * @param xLimitForward  x limit forward (positive, relative to the robot)
-     * @param xLimitBackward x limit backward (negative, relative to the robot)
-     * @param yLimitPositive y limit left (positive, relative to the robot)
-     * @param yLimitNegative y limit right (negative, relative to the robot)
-     * @return
+     * @param speed the speed to drive at (duty cycle)
+     * @return a command that drives the robot to the left
      */
-    public Command getDriveByJoystickWithRobotRelativeLimits(DoubleSupplier xSupplier, DoubleSupplier ySupplier,
-            DoubleSupplier omegaSupplier, DoubleSupplier xLimitForward, DoubleSupplier xLimitBackward,
-            DoubleSupplier yLimitPositive, DoubleSupplier yLimitNegative)
+    public Command goRight(double speed)
     {
-        SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric()
-                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-        return applyRequest(() ->
-        {
-            var x = xSupplier.getAsDouble() * maxSpeed.in(MetersPerSecond);
-            var y = ySupplier.getAsDouble() * maxSpeed.in(MetersPerSecond);
-            var omega = omegaSupplier.getAsDouble() * maxAngularSpeed.in(RadiansPerSecond);
-            ChassisSpeeds speeds = new ChassisSpeeds(x, y, omega);
-            var robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation());
-            robotRelativeSpeeds.vxMetersPerSecond = MathUtil.clamp(robotRelativeSpeeds.vxMetersPerSecond,
-                    xLimitBackward.getAsDouble() * maxSpeed.in(MetersPerSecond),
-                    xLimitForward.getAsDouble() * maxSpeed.in(MetersPerSecond));
-            robotRelativeSpeeds.vyMetersPerSecond = MathUtil.clamp(robotRelativeSpeeds.vyMetersPerSecond,
-                    yLimitNegative.getAsDouble() * maxSpeed.in(MetersPerSecond),
-                    yLimitPositive.getAsDouble() * maxSpeed.in(MetersPerSecond));
-            speeds = ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeSpeeds, getPose().getRotation());
-            return fieldCentric.withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond)
-                    .withRotationalRate(speeds.omegaRadiansPerSecond);
-        });
+        ChassisSpeeds speeds = new ChassisSpeeds();
+        speeds.vxMetersPerSecond = speed;
+        return driveWithRobotRelativeDutyCycle(() -> speeds);
     }
 
     /**
-     * Get a command to drive the robot to a pose on the field using Pathplanner
+     * Get a command that drives the robot to the right relative to the robot
      * 
-     * @param pose The pose that the robot should drive to
-     * @return A command that drives the robot to the specified pose
+     * @param speed the speed to drive at (duty cycle)
+     * @return a command that drives the robot to the right
+     */
+    public Command goLeft(double speed)
+    {
+        ChassisSpeeds speeds = new ChassisSpeeds();
+        speeds.vxMetersPerSecond = -speed;
+        return driveWithRobotRelativeDutyCycle(() -> speeds);
+    }
+
+    /**
+     * Get a command that drives the robot forward relative to the robot
+     * 
+     * @param speed the speed to drive at (duty cycle)
+     * @return a command that drives the robot forward
+     */
+    public Command goForward(double speed)
+    {
+        ChassisSpeeds speeds = new ChassisSpeeds();
+        speeds.vyMetersPerSecond = speed;
+        return driveWithRobotRelativeDutyCycle(() -> speeds);
+    }
+
+    /**
+     * Get a command that drives the robot backward relative to the robot
+     * 
+     * @param speed the speed to drive at (duty cycle)
+     * @return a command that drives the robot backward
+     */
+    public Command goBackward(double speed)
+    {
+        ChassisSpeeds speeds = new ChassisSpeeds();
+        speeds.vyMetersPerSecond = -speed;
+        return driveWithRobotRelativeDutyCycle(() -> speeds);
+    }
+
+    /**
+     * Get a command that moves the robot to a specific position
+     * 
+     * @param pose                   the pose to move to
+     * @param maxVelocity            the maximum velocity
+     * @param maxAcceleration        the maximum acceleration
+     * @param maxAngularVelocity     the maximum angular velocity
+     * @param maxAngularAcceleration the maximum angular acceleration
+     * @return a command that moves the robot to a specific position
      */
     public Command driveToPose(Pose2d pose, LinearVelocity maxVelocity, LinearAcceleration maxAcceleration,
             AngularVelocity maxAngularVelocity, AngularAcceleration maxAngularAcceleration)
@@ -252,7 +307,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      * 
      * @return a command that locks the robot in place
      */
-    public Command getXLockCommand()
+    public Command xLock()
     {
         final var request = new SwerveRequest.SwerveDriveBrake();
         return applyRequest(() -> request);
@@ -263,7 +318,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      * 
      * @return a command that lets the swerve drive idle
      */
-    public Command getIdleCommand()
+    public Command idle()
     {
         final var request = new SwerveRequest.Idle();
         return applyRequest(() -> request);
@@ -275,7 +330,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      * @param orientation the orientation to reset to
      * @return a command that resets the orientation of the robot
      */
-    public Command getResetOrientationCommand(Rotation2d orientation)
+    public Command resetOrientation(Rotation2d orientation)
     {
         return runOnce(() ->
         {
@@ -289,42 +344,61 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         updateSimState(0.02, RobotController.getBatteryVoltage());
     }
 
+    /**
+     * Get the current pose of the robot
+     * 
+     * @return the current pose of the robot
+     */
     @AutoLogOutput
     public Pose2d getPose()
     {
         return getState().Pose;
     }
 
+    /**
+     * Gets the states of the modules
+     * 
+     * @return the states of the modules
+     */
     @AutoLogOutput
     public SwerveModuleState[] getModuleStates()
     {
         return getState().ModuleStates;
     }
 
+    /**
+     * Get the target states of the modules
+     * 
+     * @return the target states of the modules
+     */
     @AutoLogOutput
     public SwerveModuleState[] getTargetModuleStates()
     {
         return getState().ModuleTargets;
     }
 
+    /**
+     * Get the speeds of the robot
+     * 
+     * @return the speeds of the robot
+     */
     @AutoLogOutput
     public ChassisSpeeds getChassisSpeeds()
     {
         return getState().Speeds;
     }
 
-    public void runVelocity(ChassisSpeeds speeds)
-    {
-        setControl(new SwerveRequest.FieldCentric().withDriveRequestType(DriveRequestType.Velocity)
-                .withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond)
-                .withRotationalRate(speeds.omegaRadiansPerSecond));
-    }
-
+    /**
+     * Sets the drive motors to brake mode
+     */
     public void setBrakeMode()
     {
         configNeutralMode(NeutralModeValue.Brake);
     }
 
+    /**
+     * Sets the drive motors to coast mode Why would you ever want to do this?
+     */
     public void setCoastMode()
     {
         configNeutralMode(NeutralModeValue.Coast);
@@ -427,12 +501,24 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
             new SysIdRoutine.Mechanism(output -> setControl(m_translationCharacterization.withVolts(output)), null,
                     this));
 
-    public Command getSysIdTranslationQuasistatic(SysIdRoutine.Direction direction)
+    /**
+     * SysId routine for characterizing translation. This is used to find PID gains
+     * 
+     * @param direction the direction to characterize
+     * @return a command that characterizes translation
+     */
+    public Command sysIdTranslationQuasistatic(SysIdRoutine.Direction direction)
     {
         return m_sysIdRoutineTranslation.quasistatic(direction);
     }
 
-    public Command getSysIdTranslationDynamic(SysIdRoutine.Direction direction)
+    /**
+     * SysId routine for characterizing translation. This is used to find PID gains
+     * 
+     * @param direction the direction to characterize
+     * @return a command that characterizes translation
+     */
+    public Command sysIdTranslationDynamic(SysIdRoutine.Direction direction)
     {
         return m_sysIdRoutineTranslation.dynamic(direction);
     }
@@ -449,12 +535,24 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
             state -> SignalLogger.writeString("SysIdSteer_State", state.toString())),
             new SysIdRoutine.Mechanism(volts -> setControl(m_steerCharacterization.withVolts(volts)), null, this));
 
-    public Command getSysIdSteerQuasistatic(SysIdRoutine.Direction direction)
+    /**
+     * SysId routine for characterizing steer. This is used to find PID gains
+     * 
+     * @param direction the direction to characterize
+     * @return a command that characterizes steer
+     */
+    public Command sysIdSteerQuasistatic(SysIdRoutine.Direction direction)
     {
         return m_sysIdRoutineSteer.quasistatic(direction);
     }
 
-    public Command getSysIdSteerDynamic(SysIdRoutine.Direction direction)
+    /**
+     * SysId routine for characterizing steer. This is used to find PID gains
+     * 
+     * @param direction the direction to characterize
+     * @return a command that characterizes steer
+     */
+    public Command sysIdSteerDynamic(SysIdRoutine.Direction direction)
     {
         return m_sysIdRoutineSteer.dynamic(direction);
     }
@@ -479,17 +577,35 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
                 SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
             }, null, this));
 
-    public Command getSysIdRotationQuasistatic(SysIdRoutine.Direction direction)
+    /**
+     * SysId routine for characterizing rotation. This is used to find PID gains
+     * 
+     * @param direction the direction to characterize
+     * @return a command that characterizes rotation
+     */
+    public Command sysIdRotationQuasistatic(SysIdRoutine.Direction direction)
     {
         return m_sysIdRoutineRotation.quasistatic(direction);
     }
 
-    public Command getSysIdRotationDynamic(SysIdRoutine.Direction direction)
+    /**
+     * SysId routine for characterizing rotation. This is used to find PID gains
+     * 
+     * @param direction the direction to characterize
+     * @return
+     */
+    public Command sysIdRotationDynamic(SysIdRoutine.Direction direction)
     {
         return m_sysIdRoutineRotation.dynamic(direction);
     }
 
-    public Command getFollowPathCommand(String pathName)
+    /**
+     * Follow a choreo path
+     * 
+     * @param pathName the name of the path
+     * @return a command that follows the path
+     */
+    public Command followChoreoPath(String pathName)
     {
         return Commands.sequence(Commands.runOnce(() ->
         {
@@ -499,7 +615,13 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         }), factory.trajectoryCmd(pathName));
     }
 
-    public Translation2d[] getWaypoints(String pathName)
+    /**
+     * Get the waypoints of a choreo path
+     * 
+     * @param pathName the name of the path
+     * @return the waypoints of the path
+     */
+    public Translation2d[] getChoreoWaypoints(String pathName)
     {
         var trajectory = factory.newRoutine("routine").trajectory(pathName).getRawTrajectory();
         Translation2d[] waypoints = new Translation2d[trajectory.getPoses().length];
@@ -510,15 +632,27 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         return waypoints;
     }
 
-    public Pose2d getInitialPose(String pathName)
+    /**
+     * Get the initial pose of a choreo path
+     * 
+     * @param pathName the name of the path
+     * @return the initial pose of the path
+     */
+    public Pose2d getInitialChoreoPose(String pathName)
     {
         var trajectory = factory.newRoutine("routine").trajectory(pathName);
         return trajectory.getInitialPose().orElse(new Pose2d(-1, -1, new Rotation2d()));
     }
 
-    public Command getBackupCommand(double time, double speed)
+    /**
+     * Backs up the robot
+     * 
+     * @param time  the time to back up
+     * @param speed the speed to back up at
+     * @return a command that backs up the robot
+     */
+    public Command backup(Time time, double speed)
     {
-        SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric();
-        return applyRequest(() -> robotCentric.withVelocityX(-speed)).withTimeout(time);
+        return goBackward(speed).withTimeout(time);
     }
 }
