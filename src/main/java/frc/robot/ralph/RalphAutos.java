@@ -1,13 +1,13 @@
-package frc.robot.sebastian;
+package frc.robot.ralph;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
+import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 
-public class SebastianAutos
+public class RalphAutos
 {
-    public static void addAutoRoutines(SebastianContainer container)
+    public static void addAutoRoutines(RalphContainer container)
     {
         container.getDashboard().addAutoRoutine("S1.LEAVE", new PathPlannerAuto("S1.LEAVE"));
         container.getDashboard().addAutoRoutine("S1.PLACE", new PathPlannerAuto("S1.PLACE"));
@@ -17,7 +17,7 @@ public class SebastianAutos
         container.getDashboard().addAutoRoutine("S3.PLACE", new PathPlannerAuto("S3.PLACE"));
     }
     
-    public static void addNamedCommands(SebastianContainer container)
+    public static void addNamedCommands(RalphContainer container)
     {
         NamedCommands.registerCommand("GoToL4Goal", container.getSuperstructure().getGoToGoalCommand(SuperstructureGoal.L4));
         NamedCommands.registerCommand("GoToL3Goal", container.getSuperstructure().getGoToGoalCommand(SuperstructureGoal.L3));

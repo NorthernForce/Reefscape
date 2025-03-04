@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.ReefLocations;
-import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
+import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIO;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOInputsAutoLogged;
 
@@ -126,11 +126,6 @@ public class Dashboard extends SubsystemBase
     public void setResetEncodersCommand(Command command)
     {
         m_io.addCommand("ResetSwerveWheels", command);
-    }
-
-    public void setResetWristEncoderCommand(Command command)
-    {
-        m_io.addCommand("ResetWrist", command);
     }
 
     public void setInnerElevatorGoToPosition(Command command)
