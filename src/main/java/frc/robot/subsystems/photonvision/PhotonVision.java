@@ -231,6 +231,15 @@ public class PhotonVision extends SubsystemBase
         return connected;
     }
 
+    public Pose2d getLatestPoseEstimate()
+    {
+        if (poseEstimates.isEmpty())
+        {
+            return null;
+        }
+        return poseEstimates.get(poseEstimates.size() - 1).pose;
+    }
+
     /**
      * A record that represents a pose estimate from a PhotonVision camera. This
      * record contains the pose estimate and the timestamp of the estimate.

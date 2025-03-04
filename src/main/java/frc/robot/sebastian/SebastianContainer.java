@@ -207,7 +207,7 @@ public class SebastianContainer implements NFRRobotContainer
             boolean isRight = postOffset.in(Meters) > 0.0;
             boolean isLeft = postOffset.in(Meters) < 0.0;
 
-            Pose2d currentPose = getDashboard().getTargetPose();
+            Pose2d currentPose = vision.getLatestPoseEstimate();
             Pose2d newPose;
 
             if (isRight)

@@ -49,7 +49,7 @@ public class Dashboard extends SubsystemBase
         return FieldConstants.convertPoseByAlliance(FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.reefLocations),
                 FieldConstants.getAlliance());
     }
-
+    
     /**
      * Adds an auto routine to the dashboard.
      * 
