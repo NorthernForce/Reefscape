@@ -97,7 +97,8 @@ public class DashboardIOFWC implements DashboardIO
         var pose = autoChooser.get().getStartingPose();
         autoPosePublisher.set(new double[]
         { pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getRotation().getRadians() });
-        try {
+        try
+        {
             var paths = PathPlannerAuto.getPathGroupFromAutoFile(autoChooser.get().getName());
             ArrayList<PathPoint> pathPoints = new ArrayList<>();
             for (PathPlannerPath path : paths)
@@ -114,7 +115,8 @@ public class DashboardIOFWC implements DashboardIO
                 points[i * 2 + 1] = pathPoints.get(i).position.getY();
             }
             autoPathPublisher.set(points);
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             e.printStackTrace();
         }
         inputs.innerElevatorTargetPosition = Inches.of(innerElevatorTargetPosition.get());

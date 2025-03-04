@@ -59,7 +59,8 @@ public class ZippyContainer implements NFRRobotContainer
                 ZippyConstants.VisionConstants.MAX_Y_COORDINATE, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 ZippyConstants.DrivetrainConstants.MAX_LINEAR_SPEED, ZippyConstants.VisionConstants.CAMERA_WIDTH);
         LoggedPowerDistribution.getInstance(40, ModuleType.kRev);
-        // dashboard.addDefaultAutoRoutine("Do Nothing", new NFRAutoRoutine(new InstantCommand(), new Translation2d[]
+        // dashboard.addDefaultAutoRoutine("Do Nothing", new NFRAutoRoutine(new
+        // InstantCommand(), new Translation2d[]
         // { new Translation2d(), new Translation2d() }, () -> new Pose2d()));
 
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
@@ -108,9 +109,10 @@ public class ZippyContainer implements NFRRobotContainer
     public void autonomousInit()
     {
         // drive.resetPose(FieldConstants.convertPoseByAlliance(dashboard.getRoutine().startPose().get(),
-        //         FieldConstants.getAlliance()));
+        // FieldConstants.getAlliance()));
 
-        // NamedCommands.registerCommand("test", Commands.runOnce(() -> System.out.println("it works!")));
+        // NamedCommands.registerCommand("test", Commands.runOnce(() ->
+        // System.out.println("it works!")));
         // var routine = factory.newRoutine("test1");
         // var traj = routine.trajectory("testPath");
         // routine.active().onTrue(Commands.sequence(traj.resetOdometry(), traj.cmd()));
