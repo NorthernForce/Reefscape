@@ -18,6 +18,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 
 public class RalphConstants
 {
@@ -94,16 +95,16 @@ public class RalphConstants
         public static final Distance SPROCKET_CIRCUMFERENCE = SPROCKET_PITCH.times(SPROCKET_TEETH);
 
         // talon configs
-        public static final double kS = 0.12;
-        public static final double kV = 0.67;
-        public static final double kA = 0.2;
-        public static final double kP = 12.0;
+        public static final double kS = 0.017384;
+        public static final double kV = Units.inchesToMeters(28.59);
+        public static final double kA = 0.015;
+        public static final double kP = 10;
         public static final double kI = 0.0;
-        public static final double kD = 0.0;
-        public static final double kG = 0;
-        public static final double CRUISE_VELOCITY = 160;
-        public static final double ACCELERATION = 60;
-        public static final double JERK = 200;
+        public static final double kD = 0;
+        public static final double kG = 0.01869;
+        public static final double CRUISE_VELOCITY = 0;
+        public static final double ACCELERATION = 0;
+        public static final double JERK = 0;
         public static final Distance UPPER_LIMIT = Inches.of(25.8 - 2.75);
 
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD, kG,
@@ -125,17 +126,17 @@ public class RalphConstants
         public static final Distance SPROCKET_CIRCUMFERENCE = SPROCKET_PITCH.times(SPROCKET_TEETH);
 
         // talon configs
-        public static final double kS = 0.12;
-        public static final double kV = 0.67;
-        public static final double kA = 0.2;
-        public static final double kP = 12.0;
-        public static final double kI = 0.0;
-        public static final double kD = 0.0;
-        public static final double kG = 0.234;
-        public static final double CRUISE_VELOCITY = 160;
-        public static final double ACCELERATION = 60;
-        public static final double JERK = 299;
-        public static final Distance UPPER_LIMIT = Inches.of(27.3);
+        public static final double kS = 0.052289;
+        public static final double kV = Units.inchesToMeters(19.868);
+        public static final double kA = 0.015;
+        public static final double kP = 10;
+        public static final double kI = 0;
+        public static final double kD = 0;
+        public static final double kG = 0.085212;
+        public static final double CRUISE_VELOCITY = 0;
+        public static final double ACCELERATION = 0;
+        public static final double JERK = 0;
+        public static final Distance UPPER_LIMIT = Inches.of(26.0);
 
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD, kG,
                 CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, false, UPPER_LIMIT);
