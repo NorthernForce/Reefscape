@@ -112,7 +112,7 @@ public class DashboardIOFWC implements DashboardIO
                 {
                     for (PathPoint pathPoint : path.getAllPathPoints())
                     {
-                        pathPoints.add(FieldConstants.convertTranslationByALliance(pathPoint.position));
+                        pathPoints.add(FieldConstants.convertTranslationByAlliance(pathPoint.position));
                     }
                 }
                 double[] points = new double[pathPoints.size() * 2];

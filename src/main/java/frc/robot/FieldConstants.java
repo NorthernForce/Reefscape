@@ -162,7 +162,7 @@ public class FieldConstants
         }
     }
 
-    public static Translation2d convertTranslationByALliance(Translation2d pose)
+    public static Translation2d convertTranslationByAlliance(Translation2d pose)
     {
         return convertTranslationByAlliance(pose, getAlliance());
     }
