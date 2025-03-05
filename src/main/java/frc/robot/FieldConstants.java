@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -41,9 +42,19 @@ public class FieldConstants
     public static class ReefPositions
     {
         public record ReefSide(Pose2d left, Pose2d center, Pose2d right) {
-            public Distance getDistanceFrom(Pose2d pose)
+            public Distance getDistanceFromCenter(Pose2d pose)
             {
-                return Meters.of(center().getTranslation().getDistance(pose.getTranslation()));
+                return Meters.of(center.getTranslation().getDistance(pose.getTranslation()));
+            }
+
+            public Distance getDistanceFromLeft(Pose2d pose)
+            {
+                return Meters.of(left.getTranslation().getDistance(pose.getTranslation()));
+            }
+
+            public Distance getDistanceFromRight(Pose2d pose)
+            {
+                return Meters.of(right.getTranslation().getDistance(pose.getTranslation()));
             }
         }
 
