@@ -7,7 +7,7 @@ import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.FieldConstants.ReefLocations;
-import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
+import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 
 /**
  * ReefDisplayIO for the Swing dashboard.

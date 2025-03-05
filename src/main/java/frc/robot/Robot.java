@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.sebastian.SebastianContainer;
+import frc.robot.ralph.RalphContainer;
 import frc.robot.zippy.ZippyContainer;
 
 import java.util.Map;
@@ -78,8 +78,8 @@ public class Robot extends LoggedRobot
             break;
         }
 
-        final NFRRobotChooser chooser = new NFRRobotChooser(() -> new SebastianContainer(),
-                Map.of("0316d7d7", () -> new ZippyContainer(), "023C3578", () -> new SebastianContainer()));
+        final NFRRobotChooser chooser = new NFRRobotChooser(() -> new RalphContainer(),
+                Map.of("0316d7d7", () -> new ZippyContainer(), "023C3578", () -> new RalphContainer()));
 
         Logger.recordMetadata("RoboRIO ID", NFRRobotChooser.getRoborioID());
 

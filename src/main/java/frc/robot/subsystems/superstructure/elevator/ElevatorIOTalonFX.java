@@ -8,13 +8,14 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Temperature;
@@ -30,11 +31,14 @@ public class ElevatorIOTalonFX implements ElevatorIO
     private final TalonFX m_motor;
     private final StatusSignal<Angle> m_position;
     private final StatusSignal<Temperature> m_temperature;
+    private final StatusSignal<Voltage> m_voltage;
     private final StatusSignal<Current> m_current;
+    private final StatusSignal<AngularVelocity> m_velocity;
+    private final StatusSignal<AngularVelocity> m_rotorVelocity;
     private final Supplier<Boolean> m_isPresent;
-    private final MotionMagicVoltage m_motionMagicVoltage;
+    private final MotionMagicExpoVoltage m_motionMagicVoltage;
     private final DutyCycleOut m_duty = new DutyCycleOut(0);
-    private final VoltageOut m_voltage = new VoltageOut(0);
+    private final VoltageOut m_voltageOut = new VoltageOut(0);
     private final double kG;
 
     /**
@@ -121,7 +125,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
         talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = upperLimit.in(Inches);
         talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+        talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.125;
         talonFXConfigs.CurrentLimits.StatorCurrentLimit = 40;
         talonFXConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
 
@@ -130,9 +134,12 @@ public class ElevatorIOTalonFX implements ElevatorIO
         m_position = m_motor.getPosition();
         m_temperature = m_motor.getDeviceTemp();
         m_current = m_motor.getTorqueCurrent();
+        m_velocity = m_motor.getVelocity();
+        m_rotorVelocity = m_motor.getRotorVelocity();
+        m_voltage = m_motor.getMotorVoltage();
         m_isPresent = () -> m_motor.isConnected();
 
-        m_motionMagicVoltage = new MotionMagicVoltage(0);
+        m_motionMagicVoltage = new MotionMagicExpoVoltage(0);
     }
 
     /**
@@ -190,17 +197,20 @@ public class ElevatorIOTalonFX implements ElevatorIO
     @Override
     public void updateInputs(ElevatorIO.ElevatorIOInputs inputs)
     {
-        BaseStatusSignal.refreshAll(m_temperature, m_position, m_current);
+        BaseStatusSignal.refreshAll(m_temperature, m_position, m_current, m_velocity, m_rotorVelocity, m_voltage);
         inputs.temperature = m_temperature.getValue();
         inputs.position = Inches.of(m_position.getValue().in(Rotations));
         inputs.current = m_current.getValue();
         inputs.present = m_isPresent.get();
+        inputs.velocity = InchesPerSecond.of(m_velocity.getValue().in(RotationsPerSecond));
+        inputs.rotorVelocity = m_rotorVelocity.getValue();
+        inputs.voltage = m_voltage.getValue();
     }
 
     @Override
     public void setVoltage(Voltage voltage)
     {
-        m_motor.setControl(m_voltage.withOutput(voltage));
+        m_motor.setControl(m_voltageOut.withOutput(voltage));
     }
 
 }
