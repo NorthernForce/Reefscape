@@ -2,12 +2,15 @@ package frc.robot.subsystems.photonvision;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineMetadata;
+import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.TargetCorner;
 
@@ -93,6 +96,34 @@ public class PhotonVision extends SubsystemBase
         lastKnownRobotPose = pose;
     }
 
+    private Optional<EstimatedRobotPose> testPoseFlip(EstimatedRobotPose pose, PhotonPoseEstimator estimator,
+            PhotonPipelineMetadata metadata)
+    {
+        List<PhotonTrackedTarget> targets = pose.targetsUsed;
+        for (int i = 0; i < targets.size(); i++)
+        {
+            PhotonTrackedTarget target = targets.get(i);
+            if (target.getPoseAmbiguity() > 0.2)
+            {
+                targets.remove(i);
+                i--;
+                continue;
+            }
+            if (target.getAlternateCameraToTarget().getTranslation().toTranslation2d()
+                    .getDistance(lastKnownRobotPose.getTranslation()) < target.getBestCameraToTarget().getTranslation()
+                            .toTranslation2d().getDistance(lastKnownRobotPose.getTranslation()))
+            {
+                targets.set(i,
+                        new PhotonTrackedTarget(target.getYaw(), target.getPitch(), target.getArea(), target.getSkew(),
+                                target.getFiducialId(), target.getDetectedObjectClassID(),
+                                target.getDetectedObjectConfidence(), target.getAlternateCameraToTarget(),
+                                target.getBestCameraToTarget(), target.getPoseAmbiguity(),
+                                target.getMinAreaRectCorners(), target.getDetectedCorners()));
+            }
+        }
+        return estimator.update(new PhotonPipelineResult(metadata, targets, null));
+    }
+
     @SuppressWarnings("unused")
     private boolean testYCoordinate(PhotonPipelineResult result)
     {
@@ -158,6 +189,11 @@ public class PhotonVision extends SubsystemBase
             for (var result : cameras[i].getAllUnreadResults())
             {
                 var opt = poseEstimators[i].update(result);
+                if (opt.isEmpty())
+                {
+                    continue;
+                }
+                opt = testPoseFlip(opt.get(), poseEstimators[i], result.metadata);
                 if (opt.isEmpty())
                 {
                     continue;
