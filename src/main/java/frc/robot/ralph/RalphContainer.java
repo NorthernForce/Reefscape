@@ -220,18 +220,30 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command getGoToReefPoseCommandLeft()
     {
-        return Commands.defer(() -> getDrive().driveToPose((getTargetPoseLeft(getDrive().getPose())),
-                RalphConstants.PathplannerConstants.MAX_VELOCITY, RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION), Set.of());
+        return Commands.defer(
+                () -> getDrive()
+                        .driveToPose((getTargetPoseLeft(getDrive().getPose())),
+                                RalphConstants.PathplannerConstants.MAX_VELOCITY,
+                                RalphConstants.PathplannerConstants.MAX_ACCELERATION,
+                                RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                                RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
+                        .alongWith(
+                                getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForReef())),
+                Set.of());
     }
 
     public Command getGoToReefPoseCommandRight()
     {
-        return Commands.defer(() -> getDrive().driveToPose((getTargetPoseRight(getDrive().getPose())),
-                RalphConstants.PathplannerConstants.MAX_VELOCITY, RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION), Set.of());
+        return Commands.defer(
+                () -> getDrive()
+                        .driveToPose((getTargetPoseRight(getDrive().getPose())),
+                                RalphConstants.PathplannerConstants.MAX_VELOCITY,
+                                RalphConstants.PathplannerConstants.MAX_ACCELERATION,
+                                RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                                RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
+                        .alongWith(
+                                getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForReef())),
+                Set.of());
     }
 
     public Command getGoToReefPoseCommandCenter()
