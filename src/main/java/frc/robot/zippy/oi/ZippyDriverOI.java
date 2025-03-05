@@ -1,10 +1,5 @@
 package frc.robot.zippy.oi;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
@@ -52,12 +47,8 @@ public class ZippyDriverOI implements ZippyOI
 
         driverJoystick.start().onTrue(Commands.runOnce(() -> container.getDrive().resetPose(FieldConstants
                 .convertPoseByAlliance(FieldConstants.ReefPositions.AB_ALGAE, FieldConstants.getAlliance()))));
-        driverJoystick.rightBumper().whileTrue(container.getDrive().driveToPose(
-                container.getDashboard().getTargetPoseRight(container.getDrive().getPose()), MetersPerSecond.of(1),
-                MetersPerSecondPerSecond.of(1), RotationsPerSecond.of(1), RotationsPerSecondPerSecond.of(1)));
-        driverJoystick.leftBumper().whileTrue(container.getDrive().driveToPose(
-                container.getDashboard().getTargetPoseLeft(container.getDrive().getPose()), MetersPerSecond.of(1),
-                MetersPerSecondPerSecond.of(1), RotationsPerSecond.of(1), RotationsPerSecondPerSecond.of(1)));
+        driverJoystick.rightBumper().whileTrue(container.getGoToReefPoseCommandRight());
+        driverJoystick.leftBumper().whileTrue(container.getGoToReefPoseCommandLeft());
 
     }
 }

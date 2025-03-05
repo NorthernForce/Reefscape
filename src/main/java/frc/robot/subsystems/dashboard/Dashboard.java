@@ -11,13 +11,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.ReefLocations;
-import frc.robot.FieldConstants.ReefPositions.ReefSide;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIO;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOInputsAutoLogged;
 import frc.robot.util.NFRAutoRoutine;
-
-import static edu.wpi.first.units.Units.Meters;
 
 /**
  * Subsystem for the dashboard.
@@ -39,54 +36,6 @@ public class Dashboard extends SubsystemBase
         this.m_input = new DashboardIOInputsAutoLogged();
         this.reefDisplayIO = displayIO;
         this.reefDisplayInputs = new ReefDisplayIOInputsAutoLogged();
-    }
-
-    /**
-     * Gets the target pose for the reef location.
-     * 
-     * @return The target pose.
-     */
-    @AutoLogOutput
-    public Pose2d getTargetPoseLeft(Pose2d currentPose)
-    {
-        Pose2d closestTranslation = FieldConstants.ReefPositions.SIDES[0].left();
-        for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
-        {
-            if (pose.getDistanceFromLeft(currentPose).in(Meters) < pose.getDistanceFromLeft(closestTranslation)
-                    .in(Meters))
-            {
-                closestTranslation = pose.left();
-            }
-        }
-        return FieldConstants.convertPoseByAlliance(closestTranslation, FieldConstants.getAlliance());
-    }
-
-    public Pose2d getTargetPoseCenter(Pose2d currentPose)
-    {
-        Pose2d closestTranslation = FieldConstants.ReefPositions.SIDES[0].center();
-        for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
-        {
-            if (pose.getDistanceFromCenter(currentPose).in(Meters) < pose.getDistanceFromCenter(closestTranslation)
-                    .in(Meters))
-            {
-                closestTranslation = pose.center();
-            }
-        }
-        return FieldConstants.convertPoseByAlliance(closestTranslation, FieldConstants.getAlliance());
-    }
-
-    public Pose2d getTargetPoseRight(Pose2d currentPose)
-    {
-        Pose2d closestTranslation = FieldConstants.ReefPositions.SIDES[0].right();
-        for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
-        {
-            if (pose.getDistanceFromRight(currentPose).in(Meters) < pose.getDistanceFromRight(closestTranslation)
-                    .in(Meters) || closestTranslation == null)
-            {
-                closestTranslation = pose.right();
-            }
-        }
-        return FieldConstants.convertPoseByAlliance(closestTranslation, FieldConstants.getAlliance());
     }
 
     /**

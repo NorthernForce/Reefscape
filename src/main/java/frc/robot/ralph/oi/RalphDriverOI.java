@@ -43,6 +43,9 @@ public class RalphDriverOI implements RalphOI
 
         driverController.x().whileTrue(container.getDrive().xLock());
 
+        driverController.y().onTrue(Commands.runOnce(() -> container.getDrive()
+                .resetPose(FieldConstants.convertPoseByAlliance(FieldConstants.ReefPositions.AB_ALGAE))));
+
         driverController.rightBumper().whileTrue(container.getGoToReefPoseCommandRight());
         driverController.leftBumper().whileTrue(container.getGoToReefPoseCommandLeft());
     }

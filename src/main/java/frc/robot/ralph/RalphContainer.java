@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Seconds;
 
@@ -16,12 +17,14 @@ import com.ctre.phoenix6.Utils;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
+import frc.robot.FieldConstants.ReefPositions.ReefSide;
 import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.ralph.constants.RalphTunerConstants;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
@@ -157,9 +160,67 @@ public class RalphContainer implements NFRRobotContainer
         SmartDashboard.putData("Go do thing to the left", getGoToReefPoseCommandLeft());
     }
 
+    public Pose2d getTargetPoseLeft(Pose2d currentPose)
+    {
+        ReefSide closestTranslation = FieldConstants.ReefPositions.SIDES[0];
+        for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
+        {
+            if (pose.getDistanceFromLeft(currentPose).in(Meters) < closestTranslation.getDistanceFromCenter(currentPose)
+                    .in(Meters))
+            {
+                closestTranslation = pose;
+            }
+        }
+        double angleRadians = closestTranslation.left().getRotation().getRadians() + 3 * Math.PI / 2;
+        double xOffset = Inches.of(Math.cos(angleRadians) * -10).in(Meters);
+        double yOffset = Inches.of(Math.sin(angleRadians) * -10).in(Meters);
+        Pose2d finalTranslatedPose2d = new Pose2d(closestTranslation.left().getTranslation().getX() + xOffset,
+                closestTranslation.left().getTranslation().getY() + yOffset, closestTranslation.left().getRotation());
+        return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
+    }
+
+    public Pose2d getTargetPoseCenter(Pose2d currentPose)
+    {
+        ReefSide closestTranslation = FieldConstants.ReefPositions.SIDES[0];
+        for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
+        {
+            if (pose.getDistanceFromCenter(currentPose).in(Meters) < closestTranslation
+                    .getDistanceFromCenter(currentPose).in(Meters))
+            {
+                closestTranslation = pose;
+            }
+        }
+        double angleRadians = closestTranslation.center().getRotation().getRadians() + 3 * Math.PI / 2;
+        double xOffset = Inches.of(Math.cos(angleRadians) * -10).in(Meters);
+        double yOffset = Inches.of(Math.sin(angleRadians) * -10).in(Meters);
+        Pose2d finalTranslatedPose2d = new Pose2d(closestTranslation.center().getTranslation().getX() + xOffset,
+                closestTranslation.center().getTranslation().getY() + yOffset,
+                closestTranslation.center().getRotation());
+        return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
+    }
+
+    public Pose2d getTargetPoseRight(Pose2d currentPose)
+    {
+        ReefSide closestTranslation = FieldConstants.ReefPositions.SIDES[0];
+        for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
+        {
+            if (pose.getDistanceFromCenter(currentPose).in(Meters) < closestTranslation
+                    .getDistanceFromCenter(currentPose).in(Meters) || closestTranslation == null)
+            {
+                closestTranslation = pose;
+            }
+        }
+        double angleRadians = closestTranslation.right().getRotation().getRadians() + 3 * Math.PI / 2;
+        double xOffset = Inches.of(Math.cos(angleRadians) * -10).in(Meters);
+        double yOffset = Inches.of(Math.sin(angleRadians) * -10).in(Meters);
+        Pose2d finalTranslatedPose2d = new Pose2d(closestTranslation.right().getTranslation().getX() + xOffset,
+                closestTranslation.right().getTranslation().getY() + yOffset, closestTranslation.right().getRotation());
+        return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
+    }
+
     public Command getGoToReefPoseCommandLeft()
     {
-        return Commands.defer(() -> getDrive().driveToPose((getDashboard().getTargetPoseLeft(getDrive().getPose())),
+        return Commands.defer(() -> getDrive().driveToPose((getTargetPoseLeft(getDrive().getPose())),
                 RalphConstants.PathplannerConstants.MAX_VELOCITY, RalphConstants.PathplannerConstants.MAX_ACCELERATION,
                 RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
                 RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION), Set.of());
@@ -167,7 +228,7 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command getGoToReefPoseCommandRight()
     {
-        return Commands.defer(() -> getDrive().driveToPose((getDashboard().getTargetPoseRight(getDrive().getPose())),
+        return Commands.defer(() -> getDrive().driveToPose((getTargetPoseRight(getDrive().getPose())),
                 RalphConstants.PathplannerConstants.MAX_VELOCITY, RalphConstants.PathplannerConstants.MAX_ACCELERATION,
                 RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
                 RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION), Set.of());
@@ -177,7 +238,7 @@ public class RalphContainer implements NFRRobotContainer
     {
         return Commands.defer(
                 () -> getDrive()
-                        .driveToPose((getDashboard().getTargetPoseCenter(getDrive().getPose())),
+                        .driveToPose((getTargetPoseCenter(getDrive().getPose())),
                                 RalphConstants.PathplannerConstants.MAX_VELOCITY,
                                 RalphConstants.PathplannerConstants.MAX_ACCELERATION,
                                 RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,

@@ -1,6 +1,8 @@
 package frc.robot.zippy;
 
 import java.util.Map;
+import java.util.Set;
+
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
@@ -28,6 +30,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.FieldConstants;
+import frc.robot.FieldConstants.ReefPositions.ReefSide;
+import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOSwing;
@@ -171,6 +175,90 @@ public class ZippyContainer implements NFRRobotContainer
     public void testInit()
     {
         dashboard.setSettingsStage();
+    }
+
+    public Command getGoToReefPoseCommandLeft()
+    {
+        Pose2d currentPose = drive.getPose();
+        ReefSide closestTranslation = FieldConstants.ReefPositions.SIDES[0];
+        for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
+        {
+            if (pose.getDistanceFromCenter(currentPose).in(Meters) < closestTranslation
+                    .getDistanceFromCenter(currentPose).in(Meters) || closestTranslation == null)
+            {
+                closestTranslation = pose;
+            }
+        }
+
+        Pose2d finalClosestTranslation = new Pose2d(closestTranslation.left().getX(), closestTranslation.left().getY(),
+                closestTranslation.left().getRotation());
+        double angle = Math.toRadians(finalClosestTranslation.getRotation().getDegrees());
+        double deltaX = -10 * Math.cos(angle + 3.0 * Math.PI / 2.0) / 39.37; // 10 inches to meters
+        double deltaY = -10 * Math.sin(angle + 3.0 * Math.PI / 2.0) / 39.37; // 10 inches to meters
+        Pose2d adjustePose2d = new Pose2d(finalClosestTranslation.getX() + deltaX,
+                finalClosestTranslation.getY() + deltaY, finalClosestTranslation.getRotation());
+
+        return Commands.defer(() -> getDrive().driveToPose(
+                FieldConstants.convertPoseByAlliance(adjustePose2d, FieldConstants.getAlliance()),
+                RalphConstants.PathplannerConstants.MAX_VELOCITY, RalphConstants.PathplannerConstants.MAX_ACCELERATION,
+                RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION), Set.of());
+    }
+
+    public Command getGoToReefPoseCommandCenter()
+    {
+        Pose2d currentPose = drive.getPose();
+        ReefSide closestTranslation = FieldConstants.ReefPositions.SIDES[0];
+        for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
+        {
+            if (pose.getDistanceFromCenter(currentPose).in(Meters) < closestTranslation
+                    .getDistanceFromCenter(currentPose).in(Meters) || closestTranslation == null)
+            {
+                closestTranslation = pose;
+            }
+        }
+
+        Pose2d finalClosestTranslation = new Pose2d(closestTranslation.center().getX(),
+                closestTranslation.center().getY(), closestTranslation.center().getRotation());
+        double angle = Math.toRadians(finalClosestTranslation.getRotation().getDegrees());
+        double deltaX = -10 * Math.cos(angle + 3.0 * Math.PI / 2.0) / 39.37; // 10 inches to meters
+        double deltaY = -10 * Math.sin(angle + 3.0 * Math.PI / 2.0) / 39.37; // 10 inches to meters
+        Pose2d adjustePose2d = new Pose2d(finalClosestTranslation.getX() + deltaX,
+                finalClosestTranslation.getY() + deltaY, finalClosestTranslation.getRotation());
+
+        return Commands.defer(() -> getDrive().driveToPose(
+                FieldConstants.convertPoseByAlliance(adjustePose2d, FieldConstants.getAlliance()),
+                RalphConstants.PathplannerConstants.MAX_VELOCITY, RalphConstants.PathplannerConstants.MAX_ACCELERATION,
+                RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION), Set.of());
+    }
+
+    public Command getGoToReefPoseCommandRight()
+    {
+        Pose2d currentPose = drive.getPose();
+        ReefSide closestTranslation = FieldConstants.ReefPositions.SIDES[0];
+        for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
+        {
+            if (pose.getDistanceFromCenter(currentPose).in(Meters) < closestTranslation
+                    .getDistanceFromCenter(currentPose).in(Meters) || closestTranslation == null)
+            {
+                closestTranslation = pose;
+            }
+        }
+
+        Pose2d finalClosestTranslation = new Pose2d(closestTranslation.right().getX(),
+                closestTranslation.right().getY(), closestTranslation.right().getRotation());
+        double angle = Math.toRadians(finalClosestTranslation.getRotation().getDegrees());
+        double deltaX = -10 * Math.cos(angle + 3.0 * Math.PI / 2.0) / 39.37; // 10 inches to meters
+        double deltaY = -10 * Math.sin(angle + 3.0 * Math.PI / 2.0) / 39.37; // 10 inches to meters
+        Pose2d adjustePose2d = new Pose2d(finalClosestTranslation.getX() + deltaX,
+                finalClosestTranslation.getY() + deltaY, finalClosestTranslation.getRotation());
+
+        return Commands.defer(() -> getDrive().driveToPose(
+                FieldConstants.convertPoseByAlliance(adjustePose2d, FieldConstants.getAlliance()),
+                RalphConstants.PathplannerConstants.MAX_VELOCITY, RalphConstants.PathplannerConstants.MAX_ACCELERATION,
+                RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION), Set.of());
     }
 
 }
