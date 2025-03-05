@@ -45,7 +45,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "RED.LEAVE",
+  "folder": "RIGHT.LEAVE",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

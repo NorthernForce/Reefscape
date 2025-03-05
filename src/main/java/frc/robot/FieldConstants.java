@@ -151,22 +151,6 @@ public class FieldConstants
         return convertPoseByAlliance(pose, getAlliance());
     }
 
-    public static Pose2d flipPoseByAlliance(Pose2d pose, Alliance alliance)
-    {
-        if (alliance == Alliance.Blue)
-        {
-            return pose;
-        } else
-        {
-            return new Pose2d(FIELD_LENGTH.in(Meters) - pose.getX(), pose.getY(), pose.getRotation().times(-1));
-        }
-    }
-
-    public static Pose2d flipPoseByAlliance(Pose2d pose)
-    {
-        return flipPoseByAlliance(pose, getAlliance());
-    }
-
     public static Translation2d convertTranslationByAlliance(Translation2d pose, Alliance alliance)
     {
         if (alliance == Alliance.Blue)
@@ -181,22 +165,6 @@ public class FieldConstants
     public static Translation2d convertTranslationByALliance(Translation2d pose)
     {
         return convertTranslationByAlliance(pose, getAlliance());
-    }
-
-    public static Translation2d flipTranslationByAlliance(Translation2d pose, Alliance alliance)
-    {
-        if (alliance == Alliance.Blue)
-        {
-            return pose;
-        } else
-        {
-            return new Translation2d(FIELD_LENGTH.in(Meters) - pose.getX(), pose.getY());
-        }
-    }
-
-    public static Translation2d flipTranslationByAlliance(Translation2d pose)
-    {
-        return flipTranslationByAlliance(pose, getAlliance());
     }
 
     public static Alliance getAlliance()

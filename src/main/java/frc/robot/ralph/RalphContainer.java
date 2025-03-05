@@ -152,6 +152,7 @@ public class RalphContainer implements NFRRobotContainer
             break;
         }
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
+        RalphAutos.addNamedCommands(this);
         RalphAutos.addAutoRoutines(this);
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
         SmartDashboard.putData("Go do thing", getGoToReefPoseCommand());

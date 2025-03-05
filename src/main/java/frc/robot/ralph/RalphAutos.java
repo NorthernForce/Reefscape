@@ -9,12 +9,13 @@ public class RalphAutos
 {
     public static void addAutoRoutines(RalphContainer container)
     {
-        container.getDashboard().addAutoRoutine("BLUE.LEAVE", new PathPlannerAuto("BLUE.LEAVE"));
-        container.getDashboard().addAutoRoutine("BLUE.PLACE.I", new PathPlannerAuto("BLUE.PLACE.I"));
+        container.getDashboard().addAutoRoutine("LEFT.LEAVE", new PathPlannerAuto("LEFT.LEAVE"));
+        container.getDashboard().addAutoRoutine("LEFT.PLACE.I", new PathPlannerAuto("LEFT.PLACE.I"));
         container.getDashboard().addDefaultAutoRoutine("CENTER.LEAVE", new PathPlannerAuto("CENTER.LEAVE"));
         container.getDashboard().addAutoRoutine("CENTER.PLACE.G", new PathPlannerAuto("CENTER.PLACE.G"));
-        container.getDashboard().addAutoRoutine("RED.LEAVE", new PathPlannerAuto("RED.LEAVE"));
-        container.getDashboard().addAutoRoutine("RED.PLACE.E", new PathPlannerAuto("RED.PLACE.E"));
+        container.getDashboard().addAutoRoutine("RIGHT.LEAVE", new PathPlannerAuto("RIGHT.LEAVE"));
+        container.getDashboard().addAutoRoutine("RIGHT.PLACE.E", new PathPlannerAuto("RIGHT.PLACE.E"));
+        container.getDashboard().addAutoRoutine("CENTER.H.K.L", new PathPlannerAuto("CENTER.H.K.L"));
     }
 
     public static void addNamedCommands(RalphContainer container)

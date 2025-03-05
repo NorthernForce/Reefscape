@@ -99,7 +99,7 @@ public class DashboardIOFWC implements DashboardIO
     @Override
     public void updateInputs(DashboardIOInputs inputs)
     {
-        var pose = FieldConstants.flipPoseByAlliance(autoChooser.get().getStartingPose());
+        var pose = FieldConstants.convertPoseByAlliance(autoChooser.get().getStartingPose());
         autoPosePublisher.set(new double[]
         { pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getRotation().getRadians() });
         if (previousAuto != autoChooser.get() || previousAlliance != FieldConstants.getAlliance())
@@ -112,7 +112,7 @@ public class DashboardIOFWC implements DashboardIO
                 {
                     for (PathPoint pathPoint : path.getAllPathPoints())
                     {
-                        pathPoints.add(FieldConstants.flipTranslationByAlliance(pathPoint.position));
+                        pathPoints.add(FieldConstants.convertTranslationByALliance(pathPoint.position));
                     }
                 }
                 double[] points = new double[pathPoints.size() * 2];

@@ -13,20 +13,8 @@
                 "data": {
                   "pathName": "CENTER.H.K.L.1"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "GoToL4Goal"
-                }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Outtake"
           }
         },
         {
@@ -38,20 +26,8 @@
                 "data": {
                   "pathName": "CENTER.H.K.L.2"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "GoToIntakeGoal"
-                }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
           }
         },
         {
@@ -63,20 +39,8 @@
                 "data": {
                   "pathName": "CENTER.H.K.L.3"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "GoToL4Goal"
-                }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Outtake"
           }
         },
         {
@@ -88,20 +52,8 @@
                 "data": {
                   "pathName": "CENTER.H.K.L.4"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "GoToIntakeGoal"
-                }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
           }
         },
         {
@@ -113,20 +65,8 @@
                 "data": {
                   "pathName": "CENTER.H.K.L.5"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "GoToL4Goal"
-                }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Outtake"
           }
         }
       ]
