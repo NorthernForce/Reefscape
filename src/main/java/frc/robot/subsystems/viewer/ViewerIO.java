@@ -16,6 +16,7 @@ public interface ViewerIO
         public Distance postOffset = Meters.of(0.0);
         public Distance postDistance = Meters.of(0);
         public Distance centerDistance = Meters.of(0);
+        public boolean postExist = false;
     }
 
     /**
