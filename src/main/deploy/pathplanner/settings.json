@@ -3,7 +3,7 @@
   "robotLength": 0.965,
   "holonomicMode": true,
   "pathFolders": [
-    "CENTER.H.K.L",
+    "LEFT.H.K.L",
     "CENTER.LEAVE",
     "CENTER.PLACE.G",
     "LEFT.LEAVE",
