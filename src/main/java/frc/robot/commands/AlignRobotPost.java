@@ -9,7 +9,8 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Distance;
 
-public class AlignRobotPost extends Command {
+public class AlignRobotPost extends Command
+{
     private Distance PostOffset;
     private Distance PostDistance;
     private boolean PostExist;
@@ -22,27 +23,34 @@ public class AlignRobotPost extends Command {
 
     private final RalphContainer ralphContainer;
 
-    public AlignRobotPost(RalphContainer ralphContainer) {
+    public AlignRobotPost(RalphContainer ralphContainer)
+    {
         this.ralphContainer = ralphContainer;
         xPidController = new PIDController(kp, ki, kd);
     }
 
-    public void XOverideCalc() {
-        PPHolonomicDriveController.overrideXFeedback(() -> {
+    public void XOverideCalc()
+    {
+        PPHolonomicDriveController.overrideXFeedback(() ->
+        {
             double xOffset = PostOffset.in(Meters);
             return xPidController.calculate(xOffset);
         });
     }
 
     @Override
-    public void execute() {
+    public void execute()
+    {
         PostOffset = ralphContainer.getViewer().getPostOffset();
-        if (!ralphContainer.getViewer().getPostExist() && PostExist) {
+        if (!ralphContainer.getViewer().getPostExist() && PostExist)
+        {
             PPHolonomicDriveController.clearXFeedbackOverride();
             xPidController.reset();
             PostExist = false;
-        } else if(ralphContainer.getViewer().getPostExist() && !PostExist) {
-            if (PostOffset.in(Meters) >= 0.1) {
+        } else if (ralphContainer.getViewer().getPostExist() && !PostExist)
+        {
+            if (PostOffset.in(Meters) >= 0.1)
+            {
                 XOverideCalc();
             }
             PostExist = true;
@@ -50,21 +58,26 @@ public class AlignRobotPost extends Command {
     }
 
     @Override
-    public void initialize() {
+    public void initialize()
+    {
         PPHolonomicDriveController.clearXFeedbackOverride();
     }
 
     @Override
-    public boolean isFinished() {
-        if (PostOffset.in(Meters) <= 0.1) {
+    public boolean isFinished()
+    {
+        if (PostOffset.in(Meters) <= 0.1)
+        {
             return true;
-        } else {
+        } else
+        {
             return false;
         }
     }
 
     @Override
-    public void end(boolean interrupted) {
+    public void end(boolean interrupted)
+    {
         PPHolonomicDriveController.clearXFeedbackOverride();
         xPidController.reset();
     }

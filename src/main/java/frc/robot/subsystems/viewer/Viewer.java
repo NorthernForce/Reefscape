@@ -58,7 +58,8 @@ public class Viewer extends SubsystemBase
         return inputs.connected;
     }
 
-    public boolean getPostExist() {
+    public boolean getPostExist()
+    {
         return inputs.postExist;
     }
 }
