@@ -13,6 +13,7 @@ import frc.robot.zippy.ZippyContainer;
 
 public class ZippyDriverOI implements ZippyOI
 {
+
     /**
      * Process joystick input (meant for XBoxController)
      * 
@@ -38,17 +39,37 @@ public class ZippyDriverOI implements ZippyOI
                         processJoystickInput(driverJoystick::getLeftX),
                         processJoystickInput(driverJoystick::getRightX)));
 
-        driverJoystick.x().whileTrue(container.getDrive().xLock());
-
         driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
                 .resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
                         DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
                 container.getDrive()));
 
+        driverJoystick.leftBumper().and(() -> driverJoystick.rightBumper().getAsBoolean())
+                .whileTrue(container.getGoToReefPoseCommandCenter());
+        driverJoystick.rightBumper().and(() -> driverJoystick.leftBumper().getAsBoolean())
+                .whileTrue(container.getGoToReefPoseCommandCenter());
         driverJoystick.start().onTrue(Commands.runOnce(() -> container.getDrive().resetPose(FieldConstants
                 .convertPoseByAlliance(FieldConstants.ReefPositions.AB_ALGAE, FieldConstants.getAlliance()))));
-        driverJoystick.rightBumper().whileTrue(container.getGoToReefPoseCommandRight());
-        driverJoystick.leftBumper().whileTrue(container.getGoToReefPoseCommandLeft());
+        driverJoystick.leftBumper()
+                .onTrue(container.getGoToReefPoseCommandLeft()
+                        .onlyWhile(() -> processJoystickInput(driverJoystick::getLeftY).getAsDouble() == 0
+                                && processJoystickInput(driverJoystick::getLeftX).getAsDouble() == 0
+                                && processJoystickInput(driverJoystick::getRightX).getAsDouble() == 0));
+        driverJoystick.rightBumper()
+                .onTrue(container.getGoToReefPoseCommandRight()
+                        .onlyWhile(() -> processJoystickInput(driverJoystick::getLeftY).getAsDouble() == 0
+                                && processJoystickInput(driverJoystick::getLeftX).getAsDouble() == 0
+                                && processJoystickInput(driverJoystick::getRightX).getAsDouble() == 0));
+        driverJoystick.y()
+                .onTrue(container.driveToCoralStation()
+                        .onlyWhile(() -> processJoystickInput(driverJoystick::getLeftY).getAsDouble() == 0
+                                && processJoystickInput(driverJoystick::getLeftX).getAsDouble() == 0
+                                && processJoystickInput(driverJoystick::getRightX).getAsDouble() == 0));
+        driverJoystick.x()
+                .onTrue(container.getGoToStationCommand()
+                        .onlyWhile(() -> processJoystickInput(driverJoystick::getLeftY).getAsDouble() == 0
+                                && processJoystickInput(driverJoystick::getLeftX).getAsDouble() == 0
+                                && processJoystickInput(driverJoystick::getRightX).getAsDouble() == 0));
 
     }
 }

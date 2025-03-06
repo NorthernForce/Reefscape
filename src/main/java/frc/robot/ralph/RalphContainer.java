@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.ReefPositions.ReefSide;
+import frc.robot.commands.CloseDriveToPose;
 import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.ralph.constants.RalphTunerConstants;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
@@ -160,6 +161,27 @@ public class RalphContainer implements NFRRobotContainer
         SmartDashboard.putData("Go do thing to the left", getGoToReefPoseCommandLeft());
     }
 
+    public Pose2d getClosestCoralStation(Pose2d pose)
+    {
+        if (FieldConstants.CoralStations.LEFT.getTranslation()
+                .getDistance(pose.getTranslation()) < FieldConstants.CoralStations.RIGHT.getTranslation()
+                        .getDistance(pose.getTranslation()))
+        {
+            return FieldConstants.CoralStations.LEFT;
+        } else
+        {
+            return FieldConstants.CoralStations.RIGHT;
+        }
+    }
+
+    public Command driveToCoralStation()
+    {
+        return Commands.defer(() -> getDrive().driveToPose(getClosestCoralStation(getDrive().getPose()),
+                RalphConstants.PathplannerConstants.MAX_VELOCITY, RalphConstants.PathplannerConstants.MAX_ACCELERATION,
+                RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION), Set.of());
+    }
+
     public Pose2d getTargetPoseLeft(Pose2d currentPose)
     {
         ReefSide closestTranslation = FieldConstants.ReefPositions.SIDES[0];
@@ -220,55 +242,25 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command getGoToReefPoseCommandLeft()
     {
-        return Commands.defer(
-                () -> getDrive()
-                        .driveToPose((getTargetPoseLeft(getDrive().getPose())),
-                                RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                                RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                                RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                                RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                        .alongWith(
-                                getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForReef())),
-                Set.of());
+        return Commands.defer(() -> new CloseDriveToPose(drive, getTargetPoseLeft(drive.getPose())), Set.of());
     }
 
     public Command getGoToReefPoseCommandRight()
     {
-        return Commands.defer(
-                () -> getDrive()
-                        .driveToPose((getTargetPoseRight(getDrive().getPose())),
-                                RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                                RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                                RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                                RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                        .alongWith(
-                                getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForReef())),
-                Set.of());
+        return Commands.defer(() -> new CloseDriveToPose(drive, getTargetPoseRight(drive.getPose())), Set.of());
     }
 
     public Command getGoToReefPoseCommandCenter()
     {
-        return Commands.defer(
-                () -> getDrive()
-                        .driveToPose((getTargetPoseCenter(getDrive().getPose())),
-                                RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                                RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                                RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                                RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                        .alongWith(
-                                getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForReef())),
-                Set.of());
+        return Commands.defer(() -> new CloseDriveToPose(drive, getTargetPoseCenter(drive.getPose())), Set.of());
     }
 
     public Command getGoToStationCommand()
     {
-        return Commands.defer(() -> getDrive()
-                .driveToPose(getDashboard().getStationTargetPose(), RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                .alongWith(getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForStation())),
-                Set.of());
+        return Commands.defer(() -> getDrive().driveToPose(FieldConstants.ProcessorStations.PROCESSOR_STATION,
+                RalphConstants.PathplannerConstants.MAX_VELOCITY, RalphConstants.PathplannerConstants.MAX_ACCELERATION,
+                RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
+                RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION), Set.of());
     }
 
     public Command getCoralIntakeCommand()

@@ -24,7 +24,13 @@ public class RalphConstants
 {
     public static class DrivetrainConstants
     {
+        public static final double CLOSE_TRANSLATION_PP_KP = 2.0;
+        public static final double CLOSE_TRANSLATION_PP_KI = 0.0;
+        public static final double CLOSE_TRANSLATION_PP_KD = 0.0;
 
+        public static final double CLOSE_ROTATION_PP_KP = 3.0;
+        public static final double CLOSE_ROTATION_PP_KI = 0.0;
+        public static final double CLOSE_ROTATION_PP_KD = 0.0;
         public static final LinearVelocity MAX_SPEED = MetersPerSecond.of(3.0);
         public static final AngularVelocity MAX_ANGULAR_SPEED = RotationsPerSecond.of(0.7);
         public static final LinearVelocity MAX_LINEAR_SPEED = MetersPerSecond.of(4.0);

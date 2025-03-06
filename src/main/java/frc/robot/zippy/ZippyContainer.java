@@ -26,12 +26,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.ReefPositions.ReefSide;
+import frc.robot.commands.CloseDriveToPose;
 import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
@@ -52,7 +54,7 @@ public class ZippyContainer implements NFRRobotContainer
     private final PhotonVision vision;
     private final Dashboard dashboard;
     private AutoFactory factory = null;
-    private Field2d field = null;
+    // private Field2d field = null;
     private AutoRoutine hi = null;
 
     public ZippyContainer()
@@ -107,13 +109,14 @@ public class ZippyContainer implements NFRRobotContainer
             alliance = allianceSupplier.get();
             drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
         }
-        field.setRobotPose(drive.getPose());
+        // field.setRobotPose(drive.getPose());
         dashboard.updatePose(drive.getPose());
         vision.setLastKnownRobotPose(drive.getPose());
         for (var poseEstimate : vision.getPoseEstimates())
         {
             drive.addVisionMeasurement(poseEstimate.pose(), Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
         }
+        SmartDashboard.updateValues();
     }
 
     @Override
@@ -208,12 +211,9 @@ public class ZippyContainer implements NFRRobotContainer
                 closestTranslation = pose;
             }
         }
-        double angleRadians = closestTranslation.center().getRotation().getRadians() + 3 * Math.PI / 2;
-        double xOffset = Inches.of(Math.cos(angleRadians) * -10).in(Meters);
-        double yOffset = Inches.of(Math.sin(angleRadians) * -10).in(Meters);
-        Pose2d finalTranslatedPose2d = new Pose2d(closestTranslation.center().getTranslation().getX() + xOffset,
-                closestTranslation.center().getTranslation().getY() + yOffset,
-                closestTranslation.center().getRotation());
+
+        Pose2d finalTranslatedPose2d = new Pose2d(closestTranslation.center().getTranslation().getX(),
+                closestTranslation.center().getTranslation().getY(), closestTranslation.center().getRotation());
         return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
     }
 
@@ -238,23 +238,43 @@ public class ZippyContainer implements NFRRobotContainer
 
     public Command getGoToReefPoseCommandLeft()
     {
-        return Commands.defer(() -> getDrive().driveToPose((getTargetPoseLeft(getDrive().getPose())),
-                RalphConstants.PathplannerConstants.MAX_VELOCITY, RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION), Set.of());
+        return Commands.defer(() -> new CloseDriveToPose(drive, getTargetPoseLeft(drive.getPose())), Set.of());
     }
 
     public Command getGoToReefPoseCommandRight()
     {
-        return Commands.defer(() -> getDrive().driveToPose((getTargetPoseRight(getDrive().getPose())),
+        return Commands.defer(() -> new CloseDriveToPose(drive, getTargetPoseRight(drive.getPose())), Set.of());
+    }
+
+    public Command getGoToReefPoseCommandCenter()
+    {
+        return Commands.defer(() -> new CloseDriveToPose(drive, getTargetPoseCenter(drive.getPose())), Set.of());
+    }
+
+    public Pose2d getClosestCoralStation(Pose2d pose)
+    {
+        if (FieldConstants.CoralStations.LEFT.getTranslation()
+                .getDistance(pose.getTranslation()) < FieldConstants.CoralStations.RIGHT.getTranslation()
+                        .getDistance(pose.getTranslation()))
+        {
+            return FieldConstants.CoralStations.LEFT;
+        } else
+        {
+            return FieldConstants.CoralStations.RIGHT;
+        }
+    }
+
+    public Command getGoToStationCommand()
+    {
+        return Commands.defer(() -> getDrive().driveToPose(FieldConstants.ProcessorStations.PROCESSOR_STATION,
                 RalphConstants.PathplannerConstants.MAX_VELOCITY, RalphConstants.PathplannerConstants.MAX_ACCELERATION,
                 RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
                 RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION), Set.of());
     }
 
-    public Command getGoToReefPoseCommandCenter()
+    public Command driveToCoralStation()
     {
-        return Commands.defer(() -> getDrive().driveToPose((getTargetPoseCenter(getDrive().getPose())),
+        return Commands.defer(() -> getDrive().driveToPose(getClosestCoralStation(getDrive().getPose()),
                 RalphConstants.PathplannerConstants.MAX_VELOCITY, RalphConstants.PathplannerConstants.MAX_ACCELERATION,
                 RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
                 RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION), Set.of());
