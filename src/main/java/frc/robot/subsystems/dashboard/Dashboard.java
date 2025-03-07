@@ -39,18 +39,6 @@ public class Dashboard extends SubsystemBase
     }
 
     /**
-     * Gets the target pose for the reef location.
-     * 
-     * @return The target pose.
-     */
-    @AutoLogOutput
-    public Pose2d getTargetPose()
-    {
-        return FieldConstants.convertPoseByAlliance(FieldConstants.REEF_POSITIONS.get(reefDisplayInputs.reefLocations),
-                FieldConstants.getAlliance());
-    }
-
-    /**
      * Adds an auto routine to the dashboard.
      * 
      * @param name    Auto routine name (Descriptive for drivers please)

@@ -5,8 +5,8 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Seconds;
 
@@ -17,16 +17,22 @@ import com.ctre.phoenix6.Utils;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
+import frc.robot.FieldConstants.ReefPositions.ReefSide;
 import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.ralph.constants.RalphTunerConstants;
+import frc.robot.ralph.constants.RalphConstants.DrivetrainConstants;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 import frc.robot.ralph.oi.RalphDriverOI;
+import frc.robot.ralph.oi.RalphOI;
 import frc.robot.ralph.oi.RalphProgrammerOI;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
@@ -67,7 +73,9 @@ public class RalphContainer implements NFRRobotContainer
     private final Climber climber;
     private final Dashboard dashboard;
     private final Viewer viewer;
-
+    private RalphOI oi;
+    private Translation2d drivePose;
+    private Rotation2d driveAngle;
     private final Supplier<Boolean> useBeamBreak = () -> SmartDashboard.getBoolean("Use Beam Break", true);
 
     /**
@@ -155,35 +163,128 @@ public class RalphContainer implements NFRRobotContainer
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
         RalphAutos.addAutoRoutines(this);
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
-        SmartDashboard.putData("Go do thing", getGoToReefPoseCommand());
     }
 
-    public Command getGoToReefPoseCommand()
+    public Pose2d getTargetPoseLeft()
     {
-        return Commands.defer(() -> getDrive()
-                .driveToPose(FieldConstants.getReefBackupPosition(getDashboard().getTargetPose(), Feet.of(1)),
-                        RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                .alongWith(getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForReef()))
-                .andThen(() -> getDrive().driveToPose(getDashboard().getTargetPose(),
-                        RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)),
-                Set.of());
+        ReefSide closestTranslation = FieldConstants.ReefPositions.SIDES[0];
+        for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
+        {
+            if (pose.getDistanceFromLeft(drivePose).in(Meters) < closestTranslation.getDistanceFromCenter(drivePose)
+                    .in(Meters))
+            {
+                closestTranslation = pose;
+            }
+        }
+        double angleRadians = closestTranslation.left().getRotation().getRadians() + 3 * Math.PI / 2;
+        double xOffset = Inches.of(Math.cos(angleRadians) * -10).in(Meters);
+        double yOffset = Inches.of(Math.sin(angleRadians) * -10).in(Meters);
+        Pose2d finalTranslatedPose2d = new Pose2d(closestTranslation.left().getTranslation().getX() + xOffset,
+                closestTranslation.left().getTranslation().getY() + yOffset, closestTranslation.left().getRotation());
+        return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
     }
 
-    public Command getGoToStationCommand()
+    public Pose2d getTargetPoseCenter()
     {
-        return Commands.defer(() -> getDrive()
-                .driveToPose(getDashboard().getStationTargetPose(), RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                .alongWith(getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForStation())),
-                Set.of());
+        Pose2d currentPose = new Pose2d(getDrive().getPose().getTranslation(), getDrive().getPose().getRotation());
+        ReefSide closestTranslation = FieldConstants.ReefPositions.SIDES[0];
+        for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
+        {
+            if (pose.getDistanceFromCenter(currentPose).in(Meters) < closestTranslation
+                    .getDistanceFromCenter(currentPose).in(Meters))
+            {
+                closestTranslation = pose;
+            }
+        }
+
+        Pose2d finalTranslatedPose2d = new Pose2d(closestTranslation.center().getTranslation().getX(),
+                closestTranslation.center().getTranslation().getY(), closestTranslation.center().getRotation());
+        return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
+    }
+
+    public Pose2d getTargetPoseRight()
+    {
+        Pose2d currentPose = new Pose2d(drive.getPose().getTranslation(), drive.getPose().getRotation());
+
+        ReefSide closestTranslation = FieldConstants.ReefPositions.SIDES[0];
+        for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
+        {
+            if (pose.getDistanceFromCenter(currentPose).in(Meters) < closestTranslation
+                    .getDistanceFromCenter(currentPose).in(Meters) || closestTranslation == null)
+            {
+                closestTranslation = pose;
+            }
+        }
+        double angleRadians = closestTranslation.right().getRotation().getRadians() + 3 * Math.PI / 2;
+        double xOffset = Inches.of(Math.cos(angleRadians) * -10).in(Meters);
+        double yOffset = Inches.of(Math.sin(angleRadians) * -10).in(Meters);
+        Pose2d finalTranslatedPose2d = new Pose2d(closestTranslation.right().getTranslation().getX() + xOffset,
+                closestTranslation.right().getTranslation().getY() + yOffset, closestTranslation.right().getRotation());
+        return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
+    }
+
+    public Command getGoToReefPoseCommandLeft()
+    {
+        return Commands.defer(() -> getDrive().driveToAccurate(getTargetPoseLeft(),
+                DrivetrainConstants.MAX_LINEAR_SPEED, DrivetrainConstants.MAX_ACCELERATION,
+                DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KP, DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KD, DrivetrainConstants.CLOSE_ROTATION_PP_KP,
+                DrivetrainConstants.CLOSE_ROTATION_PP_KI, DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
+    }
+
+    public Command getGoToReefPoseCommandRight()
+    {
+        return Commands.defer(() -> getDrive().driveToAccurate(getTargetPoseRight(),
+                DrivetrainConstants.MAX_LINEAR_SPEED, DrivetrainConstants.MAX_ACCELERATION,
+                DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KP, DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KD, DrivetrainConstants.CLOSE_ROTATION_PP_KP,
+                DrivetrainConstants.CLOSE_ROTATION_PP_KI, DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
+    }
+
+    public Command getGoToReefPoseCommandCenter()
+    {
+        return Commands.defer(() -> getDrive().driveToAccurate(getTargetPoseCenter(),
+                DrivetrainConstants.MAX_LINEAR_SPEED, DrivetrainConstants.MAX_ACCELERATION,
+                DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KP, DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KD, DrivetrainConstants.CLOSE_ROTATION_PP_KP,
+                DrivetrainConstants.CLOSE_ROTATION_PP_KI, DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
+    }
+
+    public Pose2d getClosestCoralStation()
+    {
+        Pose2d pose = new Pose2d(getDrive().getPose().getTranslation(), getDrive().getPose().getRotation());
+        if (FieldConstants.CoralStations.LEFT.getTranslation()
+                .getDistance(pose.getTranslation()) < FieldConstants.CoralStations.RIGHT.getTranslation()
+                        .getDistance(pose.getTranslation()))
+        {
+            return FieldConstants.CoralStations.LEFT;
+        } else
+        {
+            return FieldConstants.CoralStations.RIGHT;
+        }
+    }
+
+    public Command getGoToProcessorCommand()
+    {
+        return Commands.defer(() -> getDrive().driveToAccurate(FieldConstants.ProcessorStations.PROCESSOR_STATION,
+                DrivetrainConstants.MAX_LINEAR_SPEED, DrivetrainConstants.MAX_ACCELERATION,
+                DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KP, DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KD, DrivetrainConstants.CLOSE_ROTATION_PP_KP,
+                DrivetrainConstants.CLOSE_ROTATION_PP_KI, DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
+    }
+
+    public Command driveToCoralStation()
+    {
+        return Commands.defer(() -> getDrive().driveToAccurate(getClosestCoralStation(),
+                DrivetrainConstants.MAX_LINEAR_SPEED, DrivetrainConstants.MAX_ACCELERATION,
+                DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KP, DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KD, DrivetrainConstants.CLOSE_ROTATION_PP_KP,
+                DrivetrainConstants.CLOSE_ROTATION_PP_KI, DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
     }
 
     public Command getCoralIntakeCommand()
@@ -262,7 +363,8 @@ public class RalphContainer implements NFRRobotContainer
     @Override
     public void bindDriverOI()
     {
-        new RalphDriverOI().bindOI(this);
+        oi = new RalphDriverOI();
+        oi.bindOI(this);
     }
 
     @Override
@@ -286,21 +388,29 @@ public class RalphContainer implements NFRRobotContainer
     @Override
     public void periodic()
     {
+        drivePose = drive.getPose().getTranslation();
+        driveAngle = drive.getPose().getRotation();
         if (alliance != allianceSupplier.get())
         {
             alliance = allianceSupplier.get();
             drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
         }
-        vision.setLastKnownRobotPose(drive.getPose());
+        vision.setLastKnownRobotPose(new Pose2d(drivePose, driveAngle));
         for (var poseEstimate : vision.getPoseEstimates())
         {
             drive.addVisionMeasurement(poseEstimate.pose(), Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
         }
-        dashboard.updatePose(drive.getPose());
+        dashboard.updatePose(new Pose2d(drivePose, driveAngle));
         dashboard.setInnerElevatorPosition(superstructure.getInnerElevator().getPosition());
         dashboard.setOuterElevatorPosition(superstructure.getOuterElevator().getPosition());
         dashboard.setHasCoral(rollers.hasCoral());
         dashboard.setHasAlgae(rollers.hasAlgae());
+
+    }
+
+    public Pose2d getDrivePose()
+    {
+        return new Pose2d(drivePose, driveAngle);
     }
 
     public void teleopInit()
@@ -346,5 +456,16 @@ public class RalphContainer implements NFRRobotContainer
     public Command getOuttakeCommand(double speed)
     {
         return isInAlgaeState() ? rollers.getOuttakeCommand(speed) : getCoralOuttakeCommand();
+    }
+
+    public Command driveToPose(Pose2d pose)
+    {
+        return Commands.defer(() -> getDrive().driveToAccurate(pose, DrivetrainConstants.MAX_LINEAR_SPEED,
+                DrivetrainConstants.MAX_ACCELERATION, DrivetrainConstants.MAX_ANGULAR_SPEED,
+                DrivetrainConstants.MAX_ANGULAR_ACCELERATION, DrivetrainConstants.CLOSE_TRANSLATION_PP_KP,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KI, DrivetrainConstants.CLOSE_TRANSLATION_PP_KD,
+                DrivetrainConstants.CLOSE_ROTATION_PP_KP, DrivetrainConstants.CLOSE_ROTATION_PP_KI,
+                DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
+
     }
 }

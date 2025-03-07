@@ -50,12 +50,14 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.SignalLogger;
 
 public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsystem
 {
+    private final SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric();
     private final LinearVelocity maxSpeed;
     private final AngularVelocity maxAngularSpeed;
     private final SwerveRequest.ApplyRobotSpeeds applyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
@@ -299,6 +301,82 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         PathConstraints constraints = new PathConstraints(maxVelocity, maxAcceleration, maxAngularVelocity,
                 maxAngularAcceleration);
         return AutoBuilder.pathfindToPose(pose, constraints, 0.0);
+    }
+
+    public Command driveToAccurate(Pose2d pose, LinearVelocity maxVelocity, LinearAcceleration maxAcceleration,
+            AngularVelocity maxAngularVelocity, AngularAcceleration maxAngularAcceleration, double closeTranslationKp,
+            double closeTranslationKi, double closeTranslationKd, double closeRotationKp, double closeRotationKi,
+            double closeRotationKd)
+    {
+        PathConstraints constraints = new PathConstraints(maxVelocity, maxAcceleration, maxAngularVelocity,
+                maxAngularAcceleration);
+        return AutoBuilder.pathfindToPose(pose, constraints, 0.0).andThen(closeDriveToPose(pose, closeTranslationKp,
+                closeTranslationKi, closeTranslationKd, closeRotationKp, closeRotationKi, closeRotationKd));
+    }
+
+    /**
+     * Get a command that moves the robot to a specific position using close PID
+     * control
+     * 
+     * @param pose the pose to move to
+     * @return a command that moves the robot to a specific position
+     */
+
+    public Command closeDriveToPose(Pose2d pose, double closeTranslationKp, double closeTranslationKi,
+            double closeTranslationKd, double closeRotationKp, double closeRotationKi, double closeRotationKd)
+    {
+        return new Command()
+        {
+            private final PIDController xTranslationPID = new PIDController(closeTranslationKp, closeTranslationKi,
+                    closeTranslationKd);
+            private final PIDController yTranslationPID = new PIDController(closeTranslationKp, closeTranslationKi,
+                    closeTranslationKd);
+            private final PIDController rotationPID = new PIDController(closeRotationKp, closeRotationKi,
+                    closeRotationKd);
+            private Pose2d currentPose;
+
+            {
+                rotationPID.enableContinuousInput(-Math.PI, Math.PI);
+                xTranslationPID.setTolerance(0.05);
+                yTranslationPID.setTolerance(0.05);
+                rotationPID.setTolerance(0.01);
+                addRequirements(PhoenixCommandDrive.this);
+            }
+
+            @Override
+            public void initialize()
+            {
+                currentPose = getState().Pose;
+                xTranslationPID.reset();
+                yTranslationPID.reset();
+                rotationPID.reset();
+                xTranslationPID.setSetpoint(pose.getX());
+                yTranslationPID.setSetpoint(pose.getY());
+                rotationPID.setSetpoint(pose.getRotation().getRadians());
+            }
+
+            @Override
+            public void execute()
+            {
+                currentPose = getState().Pose;
+                double xSpeed = xTranslationPID.calculate(currentPose.getX());
+                double ySpeed = yTranslationPID.calculate(currentPose.getY());
+                double thetaSpeed = rotationPID.calculate(currentPose.getRotation().getRadians());
+                setControl(fieldCentric.withVelocityX(xSpeed).withVelocityY(ySpeed).withRotationalRate(thetaSpeed));
+            }
+
+            @Override
+            public boolean isFinished()
+            {
+                return xTranslationPID.atSetpoint() && yTranslationPID.atSetpoint() && rotationPID.atSetpoint();
+            }
+
+            @Override
+            public void end(boolean interrupted)
+            {
+                setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(new ChassisSpeeds(0, 0, 0)));
+            }
+        };
     }
 
     /**

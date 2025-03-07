@@ -1,10 +1,6 @@
 package frc.robot.zippy.oi;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
@@ -18,6 +14,8 @@ import frc.robot.zippy.ZippyContainer;
 
 public class ZippyDriverOI implements ZippyOI
 {
+    private BooleanSupplier isAutoAlignModeCoral;
+
     /**
      * Process joystick input (meant for XBoxController)
      * 
@@ -37,13 +35,13 @@ public class ZippyDriverOI implements ZippyOI
     public void bindOI(ZippyContainer container)
     {
         CommandXboxController driverJoystick = new CommandXboxController(0);
-
+        isAutoAlignModeCoral = () -> processJoystickInput(driverJoystick::getLeftY).getAsDouble() == 0
+                && processJoystickInput(driverJoystick::getLeftX).getAsDouble() == 0
+                && processJoystickInput(driverJoystick::getRightX).getAsDouble() == 0;
         container.getDrive()
                 .setDefaultCommand(container.getDrive().driveByJoystick(processJoystickInput(driverJoystick::getLeftY),
                         processJoystickInput(driverJoystick::getLeftX),
                         processJoystickInput(driverJoystick::getRightX)));
-
-        driverJoystick.x().whileTrue(container.getDrive().xLock());
 
         driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
                 .resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
@@ -52,10 +50,10 @@ public class ZippyDriverOI implements ZippyOI
 
         driverJoystick.start().onTrue(Commands.runOnce(() -> container.getDrive().resetPose(FieldConstants
                 .convertPoseByAlliance(FieldConstants.ReefPositions.AB_ALGAE, FieldConstants.getAlliance()))));
-        driverJoystick.rightBumper()
-                .whileTrue(container.getDrive().driveToPose(container.getDashboard().getTargetPose(),
-                        MetersPerSecond.of(1), MetersPerSecondPerSecond.of(1), RotationsPerSecond.of(1),
-                        RotationsPerSecondPerSecond.of(1)));
+        driverJoystick.leftBumper().onTrue(container.getGoToReefPoseCommandLeft().onlyWhile(isAutoAlignModeCoral));
+        driverJoystick.rightBumper().onTrue(container.getGoToReefPoseCommandRight().onlyWhile(isAutoAlignModeCoral));
+        driverJoystick.y().onTrue(container.driveToCoralStation().onlyWhile(isAutoAlignModeCoral));
+        driverJoystick.x().onTrue(container.getGoToProcessorCommand().onlyWhile(isAutoAlignModeCoral));
 
     }
 }

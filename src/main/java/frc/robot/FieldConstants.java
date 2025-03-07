@@ -4,10 +4,11 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import static edu.wpi.first.units.Units.*;
 
 import java.util.HashMap;
@@ -36,28 +37,42 @@ public class FieldConstants
         public static final Rotation2d KL_ROTATION = Rotation2d.fromDegrees(300);
     }
 
-    public static Pose2d getReefBackupPosition(Pose2d original, Distance metersBackup)
-    {
-        double originalX = original.getX();
-        double originalY = original.getY();
-        Angle parallelAngle = Degrees.of(original.getRotation().getDegrees());
-        double[] result = new double[2];
-        result[0] = originalX + (-metersBackup.in(Meters)) * Math.cos((parallelAngle).in(Radians));
-        result[1] = originalY + (-metersBackup.in(Meters)) * Math.sin((parallelAngle).in(Radians));
-        return new Pose2d(result[0], result[1], original.getRotation());
-    }
-
-    public static Pose2d getPostBackupPosition(Pose2d pose, Distance distance)
-    {
-        Translation2d translation = pose.getTranslation().plus(new Translation2d(distance.in(Meters), 0));
-        return new Pose2d(translation, pose.getRotation());
-    }
-
     /**
      * All poses are BLUE relative
      */
     public static class ReefPositions
     {
+        public record ReefSide(Pose2d left, Pose2d center, Pose2d right) {
+            public Distance getDistanceFromCenter(Pose2d pose)
+            {
+                return Meters.of(center.getTranslation().getDistance(pose.getTranslation()));
+            }
+
+            public Distance getDistanceFromCenter(Translation2d pose)
+            {
+                return Meters.of(center.getTranslation().getDistance(pose));
+            }
+
+            public Distance getDistanceFromLeft(Pose2d pose)
+            {
+                return Meters.of(left.getTranslation().getDistance(pose.getTranslation()));
+            }
+
+            public Distance getDistanceFromLeft(Translation2d pose)
+            {
+                return Meters.of(left.getTranslation().getDistance(pose));
+            }
+
+            public Distance getDistanceFromRight(Pose2d pose)
+            {
+                return Meters.of(right.getTranslation().getDistance(pose.getTranslation()));
+            }
+
+            public Distance getDistanceFromRight(Translation2d pose)
+            {
+                return Meters.of(right.getTranslation().getDistance(pose));
+            }
+        }
 
         public static final Pose2d A = new Pose2d(3.15, 4.18, ReefRotations.AB_ROTATION);
         public static final Pose2d AB_ALGAE = new Pose2d(3.15, 4.02, ReefRotations.AB_ROTATION);
@@ -77,6 +92,50 @@ public class FieldConstants
         public static final Pose2d K = new Pose2d(3.95, 5.29, ReefRotations.KL_ROTATION);
         public static final Pose2d KL_ALGAE = new Pose2d(3.82, 5.19, ReefRotations.KL_ROTATION);
         public static final Pose2d L = new Pose2d(3.65, 5.12, ReefRotations.KL_ROTATION);
+        public static final ReefSide[] SIDES = new ReefSide[]
+        { new ReefSide(A, AB_ALGAE, B), new ReefSide(C, CD_ALGAE, D), new ReefSide(E, EF_ALGAE, F),
+                new ReefSide(G, GH_ALGAE, H), new ReefSide(I, IJ_ALGAE, J), new ReefSide(K, KL_ALGAE, L) };
+
+        public static final Pose2d[] REEF_POSES_CIRCLE = new Pose2d[]
+        { A, B, C, D, E, F, G, H, I, J, K, L };
+
+        public static Pose2d getNextClockwisePose(Pose2d pose)
+        {
+            SmartDashboard.putString("Received Pose", pose.toString());
+            for (int i = 0; i < REEF_POSES_CIRCLE.length; i++)
+            {
+                if ((int) (REEF_POSES_CIRCLE[i].getTranslation().getDistance(pose.getTranslation()) * 1000) == 0
+                        && (double) REEF_POSES_CIRCLE[i].getRotation().getDegrees() == (double) pose.getRotation()
+                                .getDegrees())
+                {
+                    SmartDashboard.putNumber("Current Distance",
+                            REEF_POSES_CIRCLE[i].getTranslation().getDistance(pose.getTranslation()));
+                    SmartDashboard.putNumber("Current Rotation", REEF_POSES_CIRCLE[i].getRotation().getDegrees());
+                    return REEF_POSES_CIRCLE[(i + 1) % REEF_POSES_CIRCLE.length];
+                }
+            }
+            return pose;
+        }
+
+        public static Pose2d getNextCounterClockwisePose(Pose2d pose)
+        {
+            SmartDashboard.putString("Received Other Pose", pose.toString());
+
+            for (int i = 0; i < REEF_POSES_CIRCLE.length; i++)
+            {
+                if ((int) (REEF_POSES_CIRCLE[i].getTranslation().getDistance(pose.getTranslation()) * 1000) == 0
+                        && (double) REEF_POSES_CIRCLE[i].getRotation().getDegrees() == (double) pose.getRotation()
+                                .getDegrees())
+                {
+                    SmartDashboard.putNumber("Current Distance",
+                            REEF_POSES_CIRCLE[i].getTranslation().getDistance(pose.getTranslation()));
+                    SmartDashboard.putNumber("Current Rotation", REEF_POSES_CIRCLE[i].getRotation().getDegrees());
+
+                    return REEF_POSES_CIRCLE[(i - 1 + REEF_POSES_CIRCLE.length) % REEF_POSES_CIRCLE.length];
+                }
+            }
+            return pose;
+        }
     }
 
     public static final HashMap<ReefLocations, Pose2d> REEF_POSITIONS = new HashMap<>();
@@ -120,7 +179,7 @@ public class FieldConstants
      */
     public static class ProcessorStations
     {
-        public static final Pose2d PROCESSOR_STATION = new Pose2d(6.34, 0.44, Rotation2d.fromDegrees(90));
+        public static final Pose2d PROCESSOR_STATION = new Pose2d(6.34, 0.44, Rotation2d.fromDegrees(270));
     }
 
     /**

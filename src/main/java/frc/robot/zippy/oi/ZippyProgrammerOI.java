@@ -1,10 +1,5 @@
 package frc.robot.zippy.oi;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
@@ -50,10 +45,8 @@ public class ZippyProgrammerOI implements ZippyOI
                         DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
                 container.getDrive()));
 
-        driverJoystick.rightBumper()
-                .whileTrue(container.getDrive().driveToPose(container.getDashboard().getTargetPose(),
-                        MetersPerSecond.of(1), MetersPerSecondPerSecond.of(1), RotationsPerSecond.of(1),
-                        RotationsPerSecondPerSecond.of(1)));
+        driverJoystick.rightBumper().whileTrue(container.getGoToReefPoseCommandRight());
+        driverJoystick.leftBumper().whileTrue(container.getGoToReefPoseCommandLeft());
         driverJoystick.back().onTrue(Commands.runOnce(() -> container.getDrive()
                 .resetPose(new Pose2d(container.getDrive().getPose().getTranslation(), FieldConstants.getFieldRotation(
                         DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : Alliance.Blue))),
