@@ -25,7 +25,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,8 +32,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.ReefPositions.ReefSide;
-import frc.robot.commands.CloseDriveToPose;
-import frc.robot.ralph.constants.RalphConstants;
+import frc.robot.ralph.constants.RalphConstants.DrivetrainConstants;
 import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOSwing;
@@ -238,17 +236,32 @@ public class ZippyContainer implements NFRRobotContainer
 
     public Command getGoToReefPoseCommandLeft()
     {
-        return Commands.defer(() -> new CloseDriveToPose(drive, getTargetPoseLeft(drive.getPose())), Set.of());
+        return Commands.defer(() -> getDrive().driveToAccurate(getTargetPoseLeft(getDrive().getPose()),
+                DrivetrainConstants.MAX_LINEAR_SPEED, DrivetrainConstants.MAX_ACCELERATION,
+                DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KP, DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KD, DrivetrainConstants.CLOSE_ROTATION_PP_KP,
+                DrivetrainConstants.CLOSE_ROTATION_PP_KI, DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
     }
 
     public Command getGoToReefPoseCommandRight()
     {
-        return Commands.defer(() -> new CloseDriveToPose(drive, getTargetPoseRight(drive.getPose())), Set.of());
+        return Commands.defer(() -> getDrive().driveToAccurate(getTargetPoseRight(getDrive().getPose()),
+                DrivetrainConstants.MAX_LINEAR_SPEED, DrivetrainConstants.MAX_ACCELERATION,
+                DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KP, DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KD, DrivetrainConstants.CLOSE_ROTATION_PP_KP,
+                DrivetrainConstants.CLOSE_ROTATION_PP_KI, DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
     }
 
     public Command getGoToReefPoseCommandCenter()
     {
-        return Commands.defer(() -> new CloseDriveToPose(drive, getTargetPoseCenter(drive.getPose())), Set.of());
+        return Commands.defer(() -> getDrive().driveToAccurate(getTargetPoseCenter(getDrive().getPose()),
+                DrivetrainConstants.MAX_LINEAR_SPEED, DrivetrainConstants.MAX_ACCELERATION,
+                DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KP, DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KD, DrivetrainConstants.CLOSE_ROTATION_PP_KP,
+                DrivetrainConstants.CLOSE_ROTATION_PP_KI, DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
     }
 
     public Pose2d getClosestCoralStation(Pose2d pose)
@@ -264,19 +277,23 @@ public class ZippyContainer implements NFRRobotContainer
         }
     }
 
-    public Command getGoToStationCommand()
+    public Command getGoToProcessorCommand()
     {
-        return Commands.defer(() -> getDrive().driveToPose(FieldConstants.ProcessorStations.PROCESSOR_STATION,
-                RalphConstants.PathplannerConstants.MAX_VELOCITY, RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION), Set.of());
+        return Commands.defer(() -> getDrive().driveToAccurate(FieldConstants.ProcessorStations.PROCESSOR_STATION,
+                DrivetrainConstants.MAX_LINEAR_SPEED, DrivetrainConstants.MAX_ACCELERATION,
+                DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KP, DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KD, DrivetrainConstants.CLOSE_ROTATION_PP_KP,
+                DrivetrainConstants.CLOSE_ROTATION_PP_KI, DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
     }
 
     public Command driveToCoralStation()
     {
-        return Commands.defer(() -> getDrive().driveToPose(getClosestCoralStation(getDrive().getPose()),
-                RalphConstants.PathplannerConstants.MAX_VELOCITY, RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION), Set.of());
+        return Commands.defer(() -> getDrive().driveToAccurate(getClosestCoralStation(getDrive().getPose()),
+                DrivetrainConstants.MAX_LINEAR_SPEED, DrivetrainConstants.MAX_ACCELERATION,
+                DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KP, DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
+                DrivetrainConstants.CLOSE_TRANSLATION_PP_KD, DrivetrainConstants.CLOSE_ROTATION_PP_KP,
+                DrivetrainConstants.CLOSE_ROTATION_PP_KI, DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
     }
 }

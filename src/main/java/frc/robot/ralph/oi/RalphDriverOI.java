@@ -1,9 +1,9 @@
 package frc.robot.ralph.oi;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.FieldConstants;
@@ -17,9 +17,13 @@ import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
  */
 public class RalphDriverOI implements RalphOI
 {
-    private static boolean rightBumperPressed = false;
-    private static boolean leftBumperPressed = false;
-    private static boolean autoAllignModeCoral = false;
+    private static enum TARGET_MODES
+    {
+        CORAL_STATION, PROCESSOR_STATION, REEF
+    }
+
+    private static TARGET_MODES currentMode;
+    private static BooleanSupplier isAutoAlignMode;
 
     /**
      * Process joystick input (meant for XBoxController)
@@ -29,15 +33,17 @@ public class RalphDriverOI implements RalphOI
      */
     private static DoubleSupplier processJoystickInput(DoubleSupplier input)
     {
-        double x = MathUtil.applyDeadband(input.getAsDouble(), 0.1, 1);
-        if (x > 0)
-        {
-            autoAllignModeCoral = false;
-        }
+
         return () ->
         {
+            double x = MathUtil.applyDeadband(input.getAsDouble(), 0.1, 1);
             return -x * Math.abs(x);
         };
+    }
+
+    private static void setTargetMode(TARGET_MODES mode)
+    {
+        currentMode = mode;
     }
 
     static void bindDrive(CommandXboxController driverController, RalphContainer container)
@@ -50,28 +56,21 @@ public class RalphDriverOI implements RalphOI
         driverController.back().onTrue(
                 container.getDrive().resetOrientation(FieldConstants.getFieldRotation(FieldConstants.getAlliance())));
 
-        driverController.a().whileTrue(container.getClimber().getClimbExtendCommand());
-        driverController.b().whileTrue(container.getClimber().getClimbRetractCommand());
-        driverController.x().whileTrue(container.driveToCoralStation());
-        driverController.y().whileTrue(container.getGoToStationCommand());
+        driverController.x()
+                .onTrue(Commands.runOnce(() -> setTargetMode(TARGET_MODES.CORAL_STATION))
+                        .andThen(container.driveToCoralStation())
+                        .onlyWhile(() -> isAutoAlignMode.getAsBoolean() && currentMode == TARGET_MODES.CORAL_STATION));
+        driverController.y()
+                .onTrue(Commands.runOnce(() -> setTargetMode(TARGET_MODES.PROCESSOR_STATION))
+                        .andThen(container.getGoToProcessorCommand()).onlyWhile(
+                                () -> isAutoAlignMode.getAsBoolean() && currentMode == TARGET_MODES.PROCESSOR_STATION));
 
-        driverController.rightBumper().onFalse(Commands.runOnce(() -> rightBumperPressed = false));
-        driverController.leftBumper().onFalse(Commands.runOnce(() -> leftBumperPressed = false));
-        driverController.rightBumper().onTrue(Commands.runOnce(() ->
-        {
-            rightBumperPressed = true;
-            autoAllignModeCoral = true;
-        }));
-        driverController.leftBumper().onTrue(Commands.runOnce(() ->
-        {
-            leftBumperPressed = true;
-            autoAllignModeCoral = true;
-        }));
-
-        driverController.leftBumper()
-                .onTrue(container.getGoToReefPoseCommandLeft().onlyWhile(() -> autoAllignModeCoral));
-        driverController.rightBumper()
-                .onTrue(container.getGoToReefPoseCommandRight().onlyWhile(() -> autoAllignModeCoral));
+        driverController.leftBumper().onTrue(
+                Commands.runOnce(() -> setTargetMode(TARGET_MODES.REEF)).andThen(container.getGoToReefPoseCommandLeft()
+                        .onlyWhile(() -> isAutoAlignMode.getAsBoolean() && currentMode == TARGET_MODES.REEF)));
+        driverController.rightBumper().onTrue(
+                Commands.runOnce(() -> setTargetMode(TARGET_MODES.REEF)).andThen(container.getGoToReefPoseCommandRight()
+                        .onlyWhile(() -> isAutoAlignMode.getAsBoolean() && currentMode == TARGET_MODES.REEF)));
     }
 
     static void bindRollers(CommandXboxController driverController, CommandXboxController manipulatorController,
@@ -94,8 +93,8 @@ public class RalphDriverOI implements RalphOI
     static void bindClimber(CommandXboxController driverController, RalphContainer container)
     {
         container.getClimber().setDefaultCommand(container.getClimber().getStopCommand());
-        driverController.povUp().whileTrue(container.getClimber().getClimbExtendCommand());
-        driverController.povDown().whileTrue(container.getClimber().getClimbRetractCommand());
+        driverController.a().whileTrue(container.getClimber().getClimbExtendCommand());
+        driverController.b().whileTrue(container.getClimber().getClimbRetractCommand());
     }
 
     static void bindSuperstructure(CommandXboxController driverController, CommandXboxController manipulatorController,
@@ -145,6 +144,13 @@ public class RalphDriverOI implements RalphOI
     {
         CommandXboxController driverController = new CommandXboxController(0);
         CommandXboxController manipulatorController = new CommandXboxController(1);
+        isAutoAlignMode = () ->
+        {
+            return processJoystickInput(driverController::getLeftY).getAsDouble() == 0
+                    && processJoystickInput(driverController::getLeftX).getAsDouble() == 0
+                    && processJoystickInput(driverController::getRightX).getAsDouble() == 0;
+        };
+
         bindDrive(driverController, container);
         bindRollers(driverController, manipulatorController, container);
         bindClimber(driverController, container);
