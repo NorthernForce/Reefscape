@@ -163,13 +163,10 @@ public class RalphContainer implements NFRRobotContainer
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
         RalphAutos.addAutoRoutines(this);
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
-        SmartDashboard.putData("Go do thing to the left", getGoToReefPoseCommandLeft());
     }
 
     public Pose2d getTargetPoseLeft()
     {
-        SmartDashboard.putNumberArray("Bumper Pose", new double[]
-        { drivePose.getX(), drivePose.getY(), driveAngle.getDegrees() });
         ReefSide closestTranslation = FieldConstants.ReefPositions.SIDES[0];
         for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
         {
@@ -393,8 +390,6 @@ public class RalphContainer implements NFRRobotContainer
     {
         drivePose = drive.getPose().getTranslation();
         driveAngle = drive.getPose().getRotation();
-        SmartDashboard.putNumberArray("Current Pose", new double[]
-        { drivePose.getX(), drivePose.getY(), driveAngle.getDegrees() });
         if (alliance != allianceSupplier.get())
         {
             alliance = allianceSupplier.get();
