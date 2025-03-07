@@ -20,9 +20,6 @@ public class Viewer extends SubsystemBase
     private final ViewerIOInputsAutoLogged inputs;
     private final Alert viewerMissingAlert;
 
-    // find out the PID gains
-    private final PIDController xPidController = new PIDController(0.5, 0.5, 0.5);
-
     public Viewer(ViewerIO io)
     {
         this.io = io;

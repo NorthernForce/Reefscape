@@ -49,7 +49,7 @@ public class AlignRobotPost extends Command
             PostExist = false;
         } else if (ralphContainer.getViewer().getPostExist() && !PostExist)
         {
-            if (PostOffset.in(Meters) >= 0.1)
+            if ((PostOffset.in(Meters) <= -0.127) || (PostOffset.in(Meters) >= 0.127))
             {
                 XOverideCalc();
             }
