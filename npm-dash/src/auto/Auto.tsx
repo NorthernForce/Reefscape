@@ -21,14 +21,21 @@ function Auto() {
     const [autoPose] = useEntry('/FWC/AutoPose', [0, 0, 0]);
     const [autoPath] = useEntry('/FWC/AutoPath', [0, 0, 2, 2]);
     const [choreoAlertsWarning] = useEntry('/SmartDashboard/Choreo Alerts/warnings', []);
-    const [choreoAlertsError] = useEntry('/SmartDashboard/Choreo Alerts/errors', []);
+    const [choreoAlertsError] = useEntry('/SmartDashboard/Choreo Alerts/errors', ["ERRORS NOT PUBLISHED"]);
     const [choreoAlertsInfo] = useEntry('/SmartDashboard/Choreo Alerts/infos', []);
     const [alertsWarning] = useEntry('/SmartDashboard/Alerts/warnings', []);
-    const [alertsError] = useEntry('/SmartDashboard/Alerts/errors', []);
+    const [alertsError] = useEntry('/SmartDashboard/Alerts/errors', ["ERRORS NOT PUBLISHED"]);
     const [alertsInfo] = useEntry('/SmartDashboard/Alerts/infos', []);
+    const [IsRedAlliance] = useEntry('/FMSInfo/IsRedAlliance', false);
+    const [matchNumber] = useEntry('/FMSInfo/MatchNumber', 0);
     const combinedInfo = [...choreoAlertsInfo, ...alertsInfo];
     const combinedWarning = [...choreoAlertsWarning, ...alertsWarning];
     const combinedError = [...choreoAlertsError, ...alertsError];
+
+    if (matchNumber == 0) {
+        combinedError.push("Check alliance color; FMS info may be incorrect");
+    }
+
     return (
         <>
             <div className="auto-container">
@@ -37,7 +44,7 @@ function Auto() {
                 </div>
                 <div className="auto-field-container">
                     <Field game="Reefscape" className="auto-field">
-                        <FieldRobot pose={autoPose} />
+                        <FieldRobot pose={autoPose} color={IsRedAlliance ? "red": "blue"} />
                         <FieldPath translations={autoPath} />
                     </Field>
                     <NetworkAlerts className="auto-alerts" infos={combinedInfo} warnings={combinedWarning}
