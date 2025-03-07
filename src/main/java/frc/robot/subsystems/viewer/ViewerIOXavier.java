@@ -15,6 +15,7 @@ public class ViewerIOXavier implements ViewerIO
     private final DoubleSubscriber postOffsetSubscriber;
     private final DoubleSubscriber postDistanceSubscriber;
     private final FloatSubscriber centerDistanceSubscriber;
+    private final BooleanSubscriber postExistSubscriber;
 
     /**
      * Constructs a new ViewerIOXavier.
@@ -26,6 +27,7 @@ public class ViewerIOXavier implements ViewerIO
         postOffsetSubscriber = table.getDoubleTopic("PostOffset").subscribe(0.0);
         postDistanceSubscriber = table.getDoubleTopic("PostDistance").subscribe(0.0);
         centerDistanceSubscriber = table.getFloatTopic("CenterDist").subscribe(0.0f);
+        postExistSubscriber = table.getBooleanTopic("PostExist").subscribe(false);
     }
 
     /**
@@ -47,5 +49,6 @@ public class ViewerIOXavier implements ViewerIO
         inputs.postOffset = Meters.of(postOffsetSubscriber.get());
         inputs.postDistance = Meters.of(postDistanceSubscriber.get());
         inputs.centerDistance = Meters.of(centerDistanceSubscriber.get());
+        inputs.postExist = postExistSubscriber.get();
     }
 }

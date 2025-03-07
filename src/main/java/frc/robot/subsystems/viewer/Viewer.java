@@ -2,10 +2,17 @@ package frc.robot.subsystems.viewer;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Meters;
 
 public class Viewer extends SubsystemBase
 {
@@ -46,5 +53,10 @@ public class Viewer extends SubsystemBase
     public boolean isPresent()
     {
         return inputs.connected;
+    }
+
+    public boolean getPostExist()
+    {
+        return inputs.postExist;
     }
 }
