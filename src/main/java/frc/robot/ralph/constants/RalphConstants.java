@@ -45,6 +45,7 @@ public class RalphConstants
          * above 10 inches.
          */
         public static final double SLOW_RATE = 0.5;
+        public static final LinearVelocity MAX_INTAKE_SPEED = FeetPerSecond.of(3.0);
     }
 
     public static class VisionConstants
@@ -219,8 +220,7 @@ public class RalphConstants
         {
             public static final Distance CORAL_MAX_DISTANCE = Inches.of(2);
             public static final Distance ALGAE_MAX_DISTANCE = Inches.of(2);
-            public static final int FRONT_CORAL_PIN = 2;
-            public static final int BACK_CORAL_PIN = 3;
+            public static final int CORAL_PIN = 2;
         }
     }
 
