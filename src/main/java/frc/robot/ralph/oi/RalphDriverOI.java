@@ -66,7 +66,6 @@ public class RalphDriverOI implements RalphOI
     static void bindSuperstructure(CommandXboxController driverController, CommandXboxController manipulatorController,
             RalphContainer container)
     {
-        
 
         container.getSuperstructure().setDefaultCommand(container.goToIntake());
 
@@ -79,8 +78,10 @@ public class RalphDriverOI implements RalphOI
         manipulatorController.povRight().whileTrue(container.goToL3());
         manipulatorController.povDown().whileTrue(container.goToL4());
 
-        manipulatorController.rightBumper().whileTrue(container.getSuperstructure().getManualControlCommand(
-                processJoystickInput(manipulatorController::getRightY), processJoystickInput(manipulatorController::getLeftY)));
+        manipulatorController.rightBumper()
+                .whileTrue(container.getSuperstructure().getManualControlCommand(
+                        processJoystickInput(manipulatorController::getRightY),
+                        processJoystickInput(manipulatorController::getLeftY)));
     }
 
     @Override

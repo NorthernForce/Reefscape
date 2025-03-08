@@ -62,23 +62,27 @@ public class Superstructure extends SubsystemBase
         m_goal = goal;
     }
 
-
-    public class GoToGoalCommand extends Command {
+    public class GoToGoalCommand extends Command
+    {
         private final SuperstructureGoal goal;
-        public GoToGoalCommand(SuperstructureGoal goal) {
+
+        public GoToGoalCommand(SuperstructureGoal goal)
+        {
             addRequirements(Superstructure.this);
             this.goal = goal;
         }
 
         @Override
-        public void initialize() {
+        public void initialize()
+        {
             Superstructure.this.setGoal(goal);
             m_innerElevator.setTargetPosition(goal.getInnerElevatorGoal());
             m_outerElevator.setTargetPosition(goal.getOuterElevatorGoal());
         }
 
         @Override
-        public boolean isFinished() {
+        public boolean isFinished()
+        {
             return m_innerElevator.isAtTargetPosition() && m_outerElevator.isAtTargetPosition();
         }
     }
@@ -150,7 +154,8 @@ public class Superstructure extends SubsystemBase
         public HomingCommand(double innerElevatorSpeed, double outerElevatorSpeed)
         {
             addRequirements(Superstructure.this);
-            addCommands(m_innerElevator.getHomingCommand(innerElevatorSpeed), m_outerElevator.getHomingCommand(outerElevatorSpeed));
+            addCommands(m_innerElevator.getHomingCommand(innerElevatorSpeed),
+                    m_outerElevator.getHomingCommand(outerElevatorSpeed));
         }
     }
 
