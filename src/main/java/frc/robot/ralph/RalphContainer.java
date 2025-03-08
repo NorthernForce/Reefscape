@@ -19,6 +19,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.ralph.constants.RalphConstants;
@@ -111,8 +112,7 @@ public class RalphContainer implements NFRRobotContainer
             inserter = new Inserter(
                     new InserterIOTalonFXS(RalphConstants.InserterConstants.ROLLER_MOTOR_ID,
                             RalphConstants.InserterConstants.ROLLER_MOTOR_INVERTED),
-                    new InserterSensorIOBeamBreak(RalphConstants.InserterConstants.SensorConstants.FRONT_CORAL_PIN),
-                    new InserterSensorIOBeamBreak(RalphConstants.InserterConstants.SensorConstants.BACK_CORAL_PIN),
+                    new InserterSensorIOBeamBreak(RalphConstants.InserterConstants.SensorConstants.CORAL_PIN),
                     RalphConstants.InserterConstants.INTAKE_SPEED, RalphConstants.InserterConstants.OUTTAKE_SPEED);
             break;
         case REPLAY:
@@ -137,8 +137,6 @@ public class RalphContainer implements NFRRobotContainer
             {
             });
             inserter = new Inserter(new InserterIO()
-            {
-            }, new InserterSensorIO()
             {
             }, new InserterSensorIO()
             {
@@ -348,5 +346,12 @@ public class RalphContainer implements NFRRobotContainer
     public void testInit()
     {
         dashboard.setSettingsStage();
+    }
+
+    public Trigger readyToIntake()
+    {
+        return inserter.readyToIntakeTrigger()
+                .and(() -> drive.getSpeed().lte(RalphConstants.DrivetrainConstants.MAX_INTAKE_SPEED))
+                .and(() -> superstructure.isAtGoal(SuperstructureGoal.CORAL_STATION));
     }
 }

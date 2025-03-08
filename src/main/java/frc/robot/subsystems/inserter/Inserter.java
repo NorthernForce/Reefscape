@@ -18,11 +18,10 @@ import frc.robot.subsystems.inserter.sensor.InserterSensorIOInputsAutoLogged;
 
 public class Inserter extends SubsystemBase
 {
-    public final InserterIO io;
-    public final InserterSensorIO backSensorIO, frontSensorIO;
+    private final InserterIO io;
+    private final InserterSensorIO sensorIO;
     private final InserterIOInputsAutoLogged inputs = new InserterIOInputsAutoLogged();
-    private final InserterSensorIOInputsAutoLogged backSensorInputs = new InserterSensorIOInputsAutoLogged();
-    private final InserterSensorIOInputsAutoLogged frontSensorInputs = new InserterSensorIOInputsAutoLogged();
+    private final InserterSensorIOInputsAutoLogged sensorInputs = new InserterSensorIOInputsAutoLogged();
     private final Alert motorMissingAlert = new Alert("Intake left motor is missing", AlertType.kError);
     private final double intakeSpeed;
     private final double outtakeSpeed;
@@ -35,12 +34,10 @@ public class Inserter extends SubsystemBase
      * @param sensorIOCoral The IO for the coral sensor.
      */
 
-    public Inserter(InserterIO io, InserterSensorIO backSensorIO, InserterSensorIO frontSensorIO, double intakeSpeed,
-            double outtakeSpeed)
+    public Inserter(InserterIO io, InserterSensorIO sensorIO, double intakeSpeed, double outtakeSpeed)
     {
         this.io = io;
-        this.backSensorIO = backSensorIO;
-        this.frontSensorIO = frontSensorIO;
+        this.sensorIO = sensorIO;
         this.intakeSpeed = intakeSpeed;
         this.outtakeSpeed = outtakeSpeed;
     }
@@ -87,13 +84,13 @@ public class Inserter extends SubsystemBase
     @AutoLogOutput
     public boolean hasCoral()
     {
-        return frontSensorInputs.hasPiece;
+        return sensorInputs.hasPiece;
     }
 
     @AutoLogOutput
     public boolean readyToIntake()
     {
-        return backSensorInputs.hasPiece && !frontSensorInputs.hasPiece;
+        return !sensorInputs.hasPiece;
     }
 
     public class CoralIntakeCommand extends Command
@@ -184,11 +181,9 @@ public class Inserter extends SubsystemBase
     public void periodic()
     {
         io.updateInputs(inputs);
-        frontSensorIO.updateInputs(frontSensorInputs);
-        backSensorIO.updateInputs(backSensorInputs);
+        sensorIO.updateInputs(sensorInputs);
         Logger.processInputs(getName() + "/Motor", inputs);
-        Logger.processInputs(getName() + "/ForwardSensor", frontSensorInputs);
-        Logger.processInputs(getName() + "/BackwardSensor", backSensorInputs);
+        Logger.processInputs(getName() + "/Sensor", sensorInputs);
         motorMissingAlert.set(!inputs.motorPresent);
     }
 }
