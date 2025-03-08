@@ -156,10 +156,7 @@ public class RalphConstants
     {
         L1(Inches.of(0), Inches.of(0)), L2(Inches.of(13.1 - 2.75), Inches.of(0)),
         L3(Inches.of(25.8 - 2.75), Inches.of(4.61)), L4(Inches.of(27.3 - 2.75), Inches.of(26.6)),
-        CORAL_STATION(Inches.of(4.82), Inches.of(0)), CORAL_STATION_PRE(Inches.of(0), Inches.of(0)),
-        PROCESSOR_STATION(Inches.of(0), Inches.of(0)), LOWER_ALGAE(Inches.of(0), Inches.of(0)),
-        HIGHER_ALGAE(Inches.of(0), Inches.of(0)), START(Inches.of(0), Inches.of(0)),
-        STOW_ALGAE(Inches.of(0), Inches.of(0));
+        CORAL_STATION(Inches.of(0), Inches.of(0)), START(Inches.of(0), Inches.of(0));
 
         private final Distance innerHeight;
         private final Distance outerHeight;
@@ -215,20 +212,15 @@ public class RalphConstants
     {
         public static final double INTAKE_SPEED = 0.35;
         public static final double OUTTAKE_SPEED = 0.3;
-        public static final int ROLLER_MOTOR_LEFT_ID = 18;
-        public static final int ROLLER_MOTOR_RIGHT_ID = 19;
-        public static final boolean ROLLER_MOTORS_INVERTED = false;
+        public static final int ROLLER_MOTOR_ID = 18;
+        public static final boolean ROLLER_MOTOR_INVERTED = false;
 
         public static class SensorConstants
         {
-            public static final int ULTRASONIC_CORAL_TRIGGER = 2;
-            public static final int ULTRASONIC_CORAL_ECHO = 3;
-            public static final int ULTRASONIC_ALGAE_TRIGGER = 4;
-            public static final int ULTRASONIC_ALGAE_ECHO = 5;
             public static final Distance CORAL_MAX_DISTANCE = Inches.of(2);
             public static final Distance ALGAE_MAX_DISTANCE = Inches.of(2);
-            public static final int ANALOG_CORAL = 2;
-            public static final int ANALOG_ALGAE = 1;
+            public static final int FRONT_CORAL_PIN = 2;
+            public static final int BACK_CORAL_PIN = 3;
         }
     }
 

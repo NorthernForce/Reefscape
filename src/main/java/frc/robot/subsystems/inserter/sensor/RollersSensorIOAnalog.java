@@ -1,4 +1,4 @@
-package frc.robot.subsystems.rollers.sensor;
+package frc.robot.subsystems.inserter.sensor;
 
 import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Inches;
