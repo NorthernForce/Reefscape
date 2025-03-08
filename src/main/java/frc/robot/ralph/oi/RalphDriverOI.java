@@ -1,9 +1,12 @@
 package frc.robot.ralph.oi;
 
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.FieldConstants;
@@ -19,11 +22,16 @@ public class RalphDriverOI implements RalphOI
 {
     private static enum TARGET_MODES
     {
-        CORAL_STATION, PROCESSOR_STATION, REEF
+        CORAL_STATION, PROCESSOR_STATION, RIGHT_REEF, LEFT_REEF
     }
 
     private static TARGET_MODES currentMode;
     private static BooleanSupplier isAutoAlignMode;
+    private static int autoAlignCounter = 0;
+    private static boolean autoCoralMode = false;
+    private static Pose2d autoTargetCoralPose = Pose2d.kZero;
+    private static boolean leftBumper = false;
+    private static boolean rightBumper = false;
 
     /**
      * Process joystick input (meant for XBoxController)
@@ -31,27 +39,99 @@ public class RalphDriverOI implements RalphOI
      * @param input the input to process
      * @return the processed input (squared and deadbanded)
      */
-    private static DoubleSupplier processJoystickInput(DoubleSupplier input)
+    private static DoubleSupplier processJoystickInput(DoubleSupplier input, boolean updateCoralMode)
     {
 
         return () ->
         {
+            if (updateCoralMode)
+            {
+                isAutoAlignMode.getAsBoolean();
+                SmartDashboard.putBoolean("Auto Coral Mode", autoCoralMode);
+            }
             double x = MathUtil.applyDeadband(input.getAsDouble(), 0.1, 1);
             return -x * Math.abs(x);
         };
     }
 
+    private static void setTargetMode(TARGET_MODES mode, Pose2d targetPose)
+    {
+        if (mode != TARGET_MODES.LEFT_REEF && mode != TARGET_MODES.RIGHT_REEF)
+        {
+            autoAlignCounter = 0;
+            autoCoralMode = false;
+        } else
+        {
+            if (autoCoralMode)
+            {
+                if (mode == TARGET_MODES.LEFT_REEF)
+                {
+                    autoAlignCounter++;
+                    leftBumper = true;
+                } else
+                {
+                    rightBumper = true;
+                    autoAlignCounter--;
+                }
+            } else
+            {
+                autoTargetCoralPose = targetPose;
+                SmartDashboard.putNumberArray("Target Pose", new double[]
+                { autoTargetCoralPose.getX(), autoTargetCoralPose.getY(),
+                        autoTargetCoralPose.getRotation().getRadians() });
+                autoCoralMode = true;
+                autoAlignCounter = 0;
+                if (mode == TARGET_MODES.LEFT_REEF)
+                {
+                    leftBumper = true;
+                } else
+                {
+                    rightBumper = true;
+                }
+            }
+
+        }
+        currentMode = mode;
+        SmartDashboard.putNumber("Auto Align Counter", autoAlignCounter);
+        SmartDashboard.putBoolean("Auto Coral Mode", autoCoralMode);
+        SmartDashboard.putString("Current Mode", currentMode.toString());
+    }
+
     private static void setTargetMode(TARGET_MODES mode)
     {
+        if (mode != TARGET_MODES.LEFT_REEF && mode != TARGET_MODES.RIGHT_REEF)
+        {
+            autoAlignCounter = 0;
+            autoCoralMode = false;
+        } else
+        {
+            if (autoCoralMode)
+            {
+                if (mode == TARGET_MODES.LEFT_REEF)
+                {
+                    autoAlignCounter++;
+                } else
+                {
+                    autoAlignCounter--;
+                }
+            } else
+            {
+                autoCoralMode = true;
+                autoAlignCounter = 0;
+            }
+        }
         currentMode = mode;
+        SmartDashboard.putNumber("Auto Align Counter", autoAlignCounter);
+        SmartDashboard.putBoolean("Auto Coral Mode", autoCoralMode);
+        SmartDashboard.putString("Current Mode", currentMode.toString());
     }
 
     static void bindDrive(CommandXboxController driverController, RalphContainer container)
     {
         container.getDrive()
-                .setDefaultCommand(container.driveByJoystick(processJoystickInput(driverController::getLeftY),
-                        processJoystickInput(driverController::getLeftX),
-                        processJoystickInput(driverController::getRightX)));
+                .setDefaultCommand(container.driveByJoystick(processJoystickInput(driverController::getLeftY, true),
+                        processJoystickInput(driverController::getLeftX, true),
+                        processJoystickInput(driverController::getRightX, true)));
 
         driverController.back().onTrue(
                 container.getDrive().resetOrientation(FieldConstants.getFieldRotation(FieldConstants.getAlliance())));
@@ -65,12 +145,33 @@ public class RalphDriverOI implements RalphOI
                         .andThen(container.getGoToProcessorCommand()).onlyWhile(
                                 () -> isAutoAlignMode.getAsBoolean() && currentMode == TARGET_MODES.PROCESSOR_STATION));
 
-        driverController.leftBumper().onTrue(
-                Commands.runOnce(() -> setTargetMode(TARGET_MODES.REEF)).andThen(container.getGoToReefPoseCommandLeft()
-                        .onlyWhile(() -> isAutoAlignMode.getAsBoolean() && currentMode == TARGET_MODES.REEF)));
-        driverController.rightBumper().onTrue(
-                Commands.runOnce(() -> setTargetMode(TARGET_MODES.REEF)).andThen(container.getGoToReefPoseCommandRight()
-                        .onlyWhile(() -> isAutoAlignMode.getAsBoolean() && currentMode == TARGET_MODES.REEF)));
+        driverController.leftBumper().onTrue(Commands.runOnce(() ->
+        {
+            if (!leftBumper)
+            {
+                setTargetMode(TARGET_MODES.LEFT_REEF, container.getTargetPoseLeft());
+            }
+        }).andThen(Commands
+                .defer(() -> container.driveToPose(container.translatePose(FieldConstants.ReefPositions
+                        .getNextRotationalPose(autoTargetCoralPose.getTranslation(), autoAlignCounter))), Set.of())
+                .onlyWhile(() -> isAutoAlignMode.getAsBoolean() && currentMode == TARGET_MODES.LEFT_REEF
+                        && !driverController.rightBumper().getAsBoolean())));
+
+        driverController.rightBumper().onTrue(Commands.runOnce(() ->
+        {
+            if (!rightBumper)
+            {
+                setTargetMode(TARGET_MODES.RIGHT_REEF, container.getTargetPoseRight());
+            }
+        }).andThen(Commands
+                .defer(() -> container.driveToPose(container.translatePose(FieldConstants.ReefPositions
+                        .getNextRotationalPose(autoTargetCoralPose.getTranslation(), autoAlignCounter))), Set.of())
+                .onlyWhile(() -> isAutoAlignMode.getAsBoolean() && currentMode == TARGET_MODES.RIGHT_REEF
+                        && !driverController.leftBumper().getAsBoolean())));
+
+        driverController.leftBumper().whileFalse(Commands.runOnce(() -> leftBumper = false));
+        driverController.rightBumper().whileFalse(Commands.runOnce(() -> rightBumper = false));
+
     }
 
     static void bindRollers(CommandXboxController driverController, CommandXboxController manipulatorController,
@@ -101,10 +202,10 @@ public class RalphDriverOI implements RalphOI
             RalphContainer container)
     {
         container.getSuperstructure().getInnerElevator().setDefaultCommand(container.getSuperstructure()
-                .getInnerElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getRightY)));
+                .getInnerElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getRightY, true)));
 
         container.getSuperstructure().getOuterElevator().setDefaultCommand(container.getSuperstructure()
-                .getOuterElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getLeftY)));
+                .getOuterElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getLeftY, true)));
 
         driverController.start()
                 .whileTrue(container.getSuperstructure().getHomingCommand(
@@ -146,9 +247,19 @@ public class RalphDriverOI implements RalphOI
         CommandXboxController manipulatorController = new CommandXboxController(1);
         isAutoAlignMode = () ->
         {
-            return processJoystickInput(driverController::getLeftY).getAsDouble() == 0
-                    && processJoystickInput(driverController::getLeftX).getAsDouble() == 0
-                    && processJoystickInput(driverController::getRightX).getAsDouble() == 0;
+            boolean joysticks = processJoystickInput(driverController::getLeftY, false).getAsDouble() == 0
+                    && processJoystickInput(driverController::getLeftX, false).getAsDouble() == 0
+                    && processJoystickInput(driverController::getRightX, false).getAsDouble() == 0;
+
+            if (!joysticks)
+            {
+                autoAlignCounter = 0;
+                autoCoralMode = false;
+            }
+            SmartDashboard.putNumber("Auto Align Counter", autoAlignCounter);
+            SmartDashboard.putBoolean("Auto Coral Mode", autoCoralMode);
+
+            return joysticks;
         };
 
         bindDrive(driverController, container);

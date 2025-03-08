@@ -99,42 +99,57 @@ public class FieldConstants
         public static final Pose2d[] REEF_POSES_CIRCLE = new Pose2d[]
         { A, B, C, D, E, F, G, H, I, J, K, L };
 
-        public static Pose2d getNextClockwisePose(Pose2d pose)
+        public static Pose2d getNextRotationalPose(Translation2d pose, int amtMoves)
         {
-            SmartDashboard.putString("Received Pose", pose.toString());
-            for (int i = 0; i < REEF_POSES_CIRCLE.length; i++)
+            if (amtMoves > 0)
             {
-                if ((int) (REEF_POSES_CIRCLE[i].getTranslation().getDistance(pose.getTranslation()) * 1000) == 0
-                        && (double) REEF_POSES_CIRCLE[i].getRotation().getDegrees() == (double) pose.getRotation()
-                                .getDegrees())
-                {
-                    SmartDashboard.putNumber("Current Distance",
-                            REEF_POSES_CIRCLE[i].getTranslation().getDistance(pose.getTranslation()));
-                    SmartDashboard.putNumber("Current Rotation", REEF_POSES_CIRCLE[i].getRotation().getDegrees());
-                    return REEF_POSES_CIRCLE[(i + 1) % REEF_POSES_CIRCLE.length];
-                }
+                return getNextCounterClockwisePose(pose, amtMoves);
+            } else
+            {
+                return getNextClockwisePose(pose, Math.abs(amtMoves));
             }
-            return pose;
         }
 
-        public static Pose2d getNextCounterClockwisePose(Pose2d pose)
+        public static Pose2d getNextClockwisePose(Translation2d pose, int amtMoves)
         {
-            SmartDashboard.putString("Received Other Pose", pose.toString());
+            SmartDashboard.putString("Received Pose", pose.toString());
+            double[] distances = new double[REEF_POSES_CIRCLE.length];
+            for (int i = 0; i < REEF_POSES_CIRCLE.length; i++)
+            {
+                distances[i] = REEF_POSES_CIRCLE[i].getTranslation().getDistance(pose);
+                if ((int) (REEF_POSES_CIRCLE[i].getTranslation().getDistance(pose) * 1000) == 0)
+                {
+                    SmartDashboard.putNumber("Current Distance",
+                            REEF_POSES_CIRCLE[i].getTranslation().getDistance(pose));
+                    SmartDashboard.putNumber("Current Rotation", REEF_POSES_CIRCLE[i].getRotation().getDegrees());
+                    return REEF_POSES_CIRCLE[(i + amtMoves) % REEF_POSES_CIRCLE.length];
+                }
+            }
+            SmartDashboard.putNumberArray("Distances", distances);
+            return Pose2d.kZero;
+        }
+
+        public static Pose2d getNextCounterClockwisePose(Translation2d pose, int amtMoves)
+        {
+            SmartDashboard.putNumberArray("Received Other Pose", new double[]
+            { pose.getX(), pose.getY() });
+            double[] distances = new double[REEF_POSES_CIRCLE.length];
 
             for (int i = 0; i < REEF_POSES_CIRCLE.length; i++)
             {
-                if ((int) (REEF_POSES_CIRCLE[i].getTranslation().getDistance(pose.getTranslation()) * 1000) == 0
-                        && (double) REEF_POSES_CIRCLE[i].getRotation().getDegrees() == (double) pose.getRotation()
-                                .getDegrees())
+                distances[i] = REEF_POSES_CIRCLE[i].getTranslation().getDistance(pose);
+                if ((int) (REEF_POSES_CIRCLE[i].getTranslation().getDistance(pose) * 1000) == 0)
                 {
                     SmartDashboard.putNumber("Current Distance",
-                            REEF_POSES_CIRCLE[i].getTranslation().getDistance(pose.getTranslation()));
+                            REEF_POSES_CIRCLE[i].getTranslation().getDistance(pose));
                     SmartDashboard.putNumber("Current Rotation", REEF_POSES_CIRCLE[i].getRotation().getDegrees());
 
-                    return REEF_POSES_CIRCLE[(i - 1 + REEF_POSES_CIRCLE.length) % REEF_POSES_CIRCLE.length];
+                    return REEF_POSES_CIRCLE[(i + (-1 + REEF_POSES_CIRCLE.length) * amtMoves)
+                            % REEF_POSES_CIRCLE.length];
                 }
             }
-            return pose;
+            SmartDashboard.putNumberArray("Distances", distances);
+            return Pose2d.kZero;
         }
     }
 

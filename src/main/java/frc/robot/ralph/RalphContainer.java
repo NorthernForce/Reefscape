@@ -176,12 +176,8 @@ public class RalphContainer implements NFRRobotContainer
                 closestTranslation = pose;
             }
         }
-        double angleRadians = closestTranslation.left().getRotation().getRadians() + 3 * Math.PI / 2;
-        double xOffset = Inches.of(Math.cos(angleRadians) * -10).in(Meters);
-        double yOffset = Inches.of(Math.sin(angleRadians) * -10).in(Meters);
-        Pose2d finalTranslatedPose2d = new Pose2d(closestTranslation.left().getTranslation().getX() + xOffset,
-                closestTranslation.left().getTranslation().getY() + yOffset, closestTranslation.left().getRotation());
-        return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
+
+        return FieldConstants.convertPoseByAlliance(closestTranslation.left(), FieldConstants.getAlliance());
     }
 
     public Pose2d getTargetPoseCenter()
@@ -202,6 +198,28 @@ public class RalphContainer implements NFRRobotContainer
         return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
     }
 
+    public Pose2d translatePose(Pose2d pose)
+    {
+        double angleRadians = pose.getRotation().getRadians() + 3 * Math.PI / 2;
+        double xOffset = Inches.of(Math.cos(angleRadians) * -10).in(Meters);
+        double yOffset = Inches.of(Math.sin(angleRadians) * -10).in(Meters);
+        Pose2d finalTranslatedPose2d = new Pose2d(pose.getTranslation().getX() + xOffset,
+                pose.getTranslation().getY() + yOffset, pose.getRotation());
+        return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
+
+    }
+
+    public Pose2d translatePoseBack(Pose2d pose)
+    {
+        double angleRadians = pose.getRotation().getRadians() + 3 * Math.PI / 2;
+        double xOffset = Inches.of(Math.cos(angleRadians) * 10).in(Meters);
+        double yOffset = Inches.of(Math.sin(angleRadians) * 10).in(Meters);
+        Pose2d finalTranslatedPose2d = new Pose2d(pose.getTranslation().getX() + xOffset,
+                pose.getTranslation().getY() + yOffset, pose.getRotation());
+        return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
+
+    }
+
     public Pose2d getTargetPoseRight()
     {
         Pose2d currentPose = new Pose2d(drive.getPose().getTranslation(), drive.getPose().getRotation());
@@ -215,12 +233,8 @@ public class RalphContainer implements NFRRobotContainer
                 closestTranslation = pose;
             }
         }
-        double angleRadians = closestTranslation.right().getRotation().getRadians() + 3 * Math.PI / 2;
-        double xOffset = Inches.of(Math.cos(angleRadians) * -10).in(Meters);
-        double yOffset = Inches.of(Math.sin(angleRadians) * -10).in(Meters);
-        Pose2d finalTranslatedPose2d = new Pose2d(closestTranslation.right().getTranslation().getX() + xOffset,
-                closestTranslation.right().getTranslation().getY() + yOffset, closestTranslation.right().getRotation());
-        return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
+
+        return FieldConstants.convertPoseByAlliance(closestTranslation.right(), FieldConstants.getAlliance());
     }
 
     public Command getGoToReefPoseCommandLeft()
