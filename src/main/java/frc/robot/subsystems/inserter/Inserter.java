@@ -8,34 +8,34 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.inserter.sensor.RollersSensorIO;
-import frc.robot.subsystems.inserter.sensor.RollersSensorIOInputsAutoLogged;
+import frc.robot.subsystems.inserter.sensor.InserterSensorIO;
+import frc.robot.subsystems.inserter.sensor.InserterSensorIOInputsAutoLogged;
 
 /**
- * The rollers subsystem is responsible for controlling the rollers on the
- * robot.
+ * The inserter subsystem is responsible for controlling the rollers for
+ * inserting on the robot.
  */
 
 public class Inserter extends SubsystemBase
 {
     public final InserterIO io;
-    public final RollersSensorIO backSensorIO, frontSensorIO;
+    public final InserterSensorIO backSensorIO, frontSensorIO;
     private final InserterIOInputsAutoLogged inputs = new InserterIOInputsAutoLogged();
-    private final RollersSensorIOInputsAutoLogged backSensorInputs = new RollersSensorIOInputsAutoLogged();
-    private final RollersSensorIOInputsAutoLogged frontSensorInputs = new RollersSensorIOInputsAutoLogged();
+    private final InserterSensorIOInputsAutoLogged backSensorInputs = new InserterSensorIOInputsAutoLogged();
+    private final InserterSensorIOInputsAutoLogged frontSensorInputs = new InserterSensorIOInputsAutoLogged();
     private final Alert motorMissingAlert = new Alert("Intake left motor is missing", AlertType.kError);
     private final double intakeSpeed;
     private final double outtakeSpeed;
 
     /**
-     * Constructs a new Rollers subsystem.
+     * Constructs a new Inserter subsystem.
      * 
-     * @param intakeIO      The IO for the rollers.
+     * @param intakeIO      The IO for the inserter.
      * @param sensorIOAlgae The IO for the algae sensor.
      * @param sensorIOCoral The IO for the coral sensor.
      */
 
-    public Inserter(InserterIO io, RollersSensorIO backSensorIO, RollersSensorIO frontSensorIO, double intakeSpeed,
+    public Inserter(InserterIO io, InserterSensorIO backSensorIO, InserterSensorIO frontSensorIO, double intakeSpeed,
             double outtakeSpeed)
     {
         this.io = io;

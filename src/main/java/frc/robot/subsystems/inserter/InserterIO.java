@@ -12,7 +12,7 @@ public interface InserterIO
 {
 
     /**
-     * The inputs for the rollers.
+     * The inputs for the inserter.
      */
 
     @AutoLog
@@ -37,7 +37,7 @@ public interface InserterIO
     }
 
     /**
-     * Updates the inputs for the rollers.
+     * Updates the inputs for the inserter.
      * 
      * @param inputs The inputs to update.
      */

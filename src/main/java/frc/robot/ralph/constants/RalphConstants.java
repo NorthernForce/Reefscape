@@ -208,7 +208,7 @@ public class RalphConstants
         public static final double CLIMB_SPEED = 1;
     }
 
-    public static class RollersConstants
+    public static class InserterConstants
     {
         public static final double INTAKE_SPEED = 0.35;
         public static final double OUTTAKE_SPEED = 0.3;

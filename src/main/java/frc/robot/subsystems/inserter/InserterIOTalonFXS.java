@@ -2,6 +2,7 @@ package frc.robot.subsystems.inserter;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.hardware.TalonFXS;
@@ -16,7 +17,7 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
 /**
- * The Talon IO for the rollers.
+ * The TalonFXS IO for the inserter.
  */
 
 public class InserterIOTalonFXS implements InserterIO
@@ -30,7 +31,7 @@ public class InserterIOTalonFXS implements InserterIO
     private final StatusSignal<Angle> motorPosition;
 
     /**
-     * Constructs a new RollersIOTalonFX.
+     * Constructs a new InserterIOTalonFXS.
      * 
      * @param id1      The ID of the first motor.
      * @param id2      The ID of the second motor.
@@ -59,9 +60,9 @@ public class InserterIOTalonFXS implements InserterIO
     }
 
     /**
-     * Sets the speed of the rollers.
+     * Sets the speed of the inserter.
      * 
-     * @param speed The speed to set the rollers to.
+     * @param speed The speed to set the inserter to.
      */
 
     @Override
@@ -71,7 +72,7 @@ public class InserterIOTalonFXS implements InserterIO
     }
 
     /**
-     * Updates the inputs for the rollers.
+     * Updates the inputs for the inserter.
      * 
      * @param inputs The inputs to update.
      */
@@ -79,6 +80,7 @@ public class InserterIOTalonFXS implements InserterIO
     @Override
     public void updateInputs(InserterIOInputs inputs)
     {
+        BaseStatusSignal.refreshAll(motorTemperature, motorCurrent, motorVoltage, motorVelocity, motorPosition);
         inputs.motorTemperature = motorTemperature.getValue();
         inputs.motorPresent = motorPresent.get();
         inputs.motorCurrent = motorCurrent.getValue();

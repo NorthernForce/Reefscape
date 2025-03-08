@@ -41,19 +41,19 @@ public class RalphDriverOI implements RalphOI
         driverController.x().whileTrue(container.getDrive().xLock());
     }
 
-    static void bindRollers(CommandXboxController driverController, CommandXboxController manipulatorController,
+    static void bindInserter(CommandXboxController driverController, CommandXboxController manipulatorController,
             RalphContainer container)
     {
-        container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
+        container.getInserter().setDefaultCommand(container.getInserter().getStopCommand());
 
         driverController.rightTrigger().whileTrue(container.outtakeCoral());
 
         manipulatorController.rightTrigger().whileTrue(container.outtakeCoral());
 
-        container.getRollers().intakeTrigger().onTrue(new RumbleXBoxController(manipulatorController, 0.5, 0.5)
+        container.getInserter().intakeTrigger().onTrue(new RumbleXBoxController(manipulatorController, 0.5, 0.5)
                 .alongWith(new RumbleXBoxController(driverController, 0.5, 0.5)));
 
-        container.getRollers().readyToIntakeTrigger().whileTrue(container.getRollers().intakeCoral());
+        container.getInserter().readyToIntakeTrigger().whileTrue(container.intakeCoral());
     }
 
     static void bindClimber(CommandXboxController driverController, RalphContainer container)
@@ -89,7 +89,7 @@ public class RalphDriverOI implements RalphOI
         CommandXboxController manipulatorController = new CommandXboxController(1);
 
         bindDrive(driverController, container);
-        bindRollers(driverController, manipulatorController, container);
+        bindInserter(driverController, manipulatorController, container);
         bindClimber(driverController, container);
         bindSuperstructure(driverController, manipulatorController, container);
 

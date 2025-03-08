@@ -6,23 +6,23 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 import static edu.wpi.first.units.Units.Millimeters;
 
 /**
- * The IO for the rollers ultrasonic sensor.
+ * The IO for the inserter ultrasonic sensor.
  */
 
-public class RollersSensorIOUltrasonic implements RollersSensorIO
+public class InserterSensorIOUltrasonic implements InserterSensorIO
 {
     private final Ultrasonic m_sonar;
     private final Distance m_distToObject;
 
     /**
-     * Constructs a new RollersSensorIOUltrasonic.
+     * Constructs a new InserterSensorIOUltrasonic.
      * 
      * @param trigChannel the channel for the trigger pin
      * @param echoChannel the channel for the echo pin (receiving end)
      * @param mmToObject  the distance in mm to the object to mark as having a piece
      */
 
-    public RollersSensorIOUltrasonic(int trigChannel, int echoChannel, Distance distToObject)
+    public InserterSensorIOUltrasonic(int trigChannel, int echoChannel, Distance distToObject)
     {
         m_sonar = new Ultrasonic(trigChannel, echoChannel);
         m_distToObject = distToObject;
@@ -40,13 +40,13 @@ public class RollersSensorIOUltrasonic implements RollersSensorIO
     }
 
     /**
-     * Updates the inputs for the rollers ultrasonic sensor.
+     * Updates the inputs for the inserter ultrasonic sensor.
      * 
      * @param inputs The inputs to update.
      */
 
     @Override
-    public void updateInputs(RollersSensorIOInputs inputs)
+    public void updateInputs(InserterSensorIOInputs inputs)
     {
         inputs.hasPiece = getRange() <= m_distToObject.in(Millimeters);
     }
