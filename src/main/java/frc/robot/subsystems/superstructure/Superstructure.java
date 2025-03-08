@@ -65,7 +65,7 @@ public class Superstructure extends SubsystemBase
      * @param goal the goal to move the superstructure to
      * @return the command to move the superstructure to the goal
      */
-    public Command getGoToGoalCommand(SuperstructureGoal goal)
+    public Command goToGoal(SuperstructureGoal goal)
     {
         return Commands.parallel(m_innerElevator.getMoveToPositionCommand(goal.getInnerElevatorGoal()),
                 m_outerElevator.getMoveToPositionCommand(goal.getOuterElevatorGoal()),
@@ -131,13 +131,6 @@ public class Superstructure extends SubsystemBase
     {
         return Commands.parallel(m_innerElevator.getHomingCommand(innerElevatorSpeed),
                 m_outerElevator.getHomingCommand(outerElevatorSpeed));
-    }
-
-    @AutoLogOutput
-    public boolean isAlgaeGoal()
-    {
-        return m_goal == SuperstructureGoal.LOWER_ALGAE || m_goal == SuperstructureGoal.PROCESSOR_STATION
-                || m_goal == SuperstructureGoal.HIGHER_ALGAE;
     }
 
     public SuperstructureGoal getGoal()

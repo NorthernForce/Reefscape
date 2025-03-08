@@ -6,7 +6,6 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
@@ -25,7 +24,6 @@ public class Dashboard extends SubsystemBase
     private final DashboardIOInputsAutoLogged m_input;
     private final ReefDisplayIO reefDisplayIO;
     private final ReefDisplayIOInputsAutoLogged reefDisplayInputs;
-    private boolean useBeamBreak = true;
 
     /**
      * Constructs a new Dashboard.
@@ -70,29 +68,6 @@ public class Dashboard extends SubsystemBase
     public void addDefaultAutoRoutine(String name, NFRAutoRoutine command)
     {
         m_io.addRoutine(name, command, true);
-    }
-
-    /**
-     * sets the beam break sensor to be used or not
-     * 
-     * @param useBeamBreak
-     */
-
-    public void toggleBeamBreak()
-    {
-        useBeamBreak = !useBeamBreak;
-        SmartDashboard.putBoolean("Use Beam Break", useBeamBreak);
-    }
-
-    /**
-     * gets the beam break sensor to be used or not
-     * 
-     * @return
-     */
-
-    public boolean getUseBeamBreak()
-    {
-        return useBeamBreak;
     }
 
     /**
@@ -218,11 +193,6 @@ public class Dashboard extends SubsystemBase
     public void setHasCoral(boolean hasCoral)
     {
         m_io.setHasCoral(hasCoral);
-    }
-
-    public void setHasAlgae(boolean hasVision)
-    {
-        m_io.setHasAlgae(hasVision);
     }
 
     @AutoLogOutput
