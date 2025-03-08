@@ -1,8 +1,11 @@
 package frc.robot.subsystems.algaeremover;
 
+import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
 
-public interface AlgaeRemoverIO {
+public interface AlgaeRemoverIO
+{
+    @AutoLog
     public static class AlgaeRemoverIOInputs
     {
         public boolean algaeRemoved = false;

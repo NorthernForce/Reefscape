@@ -5,7 +5,8 @@ import com.ctre.phoenix6.hardware.TalonFXS;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class AlgaeRemoverIOTalonFXS implements AlgaeRemoverIO {
+public class AlgaeRemoverIOTalonFXS implements AlgaeRemoverIO
+{
     // find actual angle later
     private boolean algaeRemoved = false;
     private TalonFXS talonFXS;

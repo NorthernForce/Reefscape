@@ -28,6 +28,9 @@ import frc.robot.ralph.constants.RalphTunerConstants;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 import frc.robot.ralph.oi.RalphDriverOI;
 import frc.robot.ralph.oi.RalphProgrammerOI;
+import frc.robot.subsystems.algaeremover.AlgaeRemover;
+import frc.robot.subsystems.algaeremover.AlgaeRemoverIO;
+import frc.robot.subsystems.algaeremover.sensor.AlgaeRemoverSensorIO;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOTalonFX;
@@ -67,6 +70,7 @@ public class RalphContainer implements NFRRobotContainer
     private final Climber climber;
     private final Dashboard dashboard;
     private final Viewer viewer;
+    private final AlgaeRemover algaeremover;
 
     private final Supplier<Boolean> useBeamBreak = () -> SmartDashboard.getBoolean("Use Beam Break", true);
 
@@ -152,10 +156,17 @@ public class RalphContainer implements NFRRobotContainer
             }, RalphConstants.RollersConstants.INTAKE_SPEED, RalphConstants.RollersConstants.OUTTAKE_SPEED);
             break;
         }
+        algaeremover = new AlgaeRemover(new AlgaeRemoverIO()
+        {
+        }, new AlgaeRemoverSensorIO()
+        {
+        }, RalphConstants.AlgaeRemoverConstants.REMOVING_SPEED, RalphConstants.AlgaeRemoverConstants.RETURNING_SPEED);
+
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
         RalphAutos.addAutoRoutines(this);
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
         SmartDashboard.putData("Go do thing", getGoToReefPoseCommand());
+        algaeremover.setDefaultCommand(Commands.run(() -> algaeremover.returnArm()));
     }
 
     public Command getGoToReefPoseCommand()

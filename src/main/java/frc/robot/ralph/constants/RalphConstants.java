@@ -239,4 +239,10 @@ public class RalphConstants
         public static final PIDController yPID = new PIDController(10, 0, 0);
         public static final PIDController rPID = new PIDController(7.5, 0, 0);
     }
+
+    public static class AlgaeRemoverConstants
+    {
+        public static final double REMOVING_SPEED = 0.5;
+        public static final double RETURNING_SPEED = 0.5;
+    }
 }
