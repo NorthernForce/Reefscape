@@ -2,15 +2,11 @@ package frc.robot.subsystems.photonvision;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.targeting.PhotonPipelineMetadata;
-import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.TargetCorner;
 
@@ -73,7 +69,7 @@ public class PhotonVision extends SubsystemBase
             cameras[i] = new PhotonCamera(cameraNames[i]);
             poseEstimators[i] = new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                     cameraPoses[i]);
-            poseEstimators[i].setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+            poseEstimators[i].setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_LAST_POSE);
             alerts[i] = new Alert("PhotonVision Camera " + cameraNames[i] + " disconnected", AlertType.kError);
         }
         poseEstimates = new ArrayList<>();
@@ -95,34 +91,6 @@ public class PhotonVision extends SubsystemBase
     public void setLastKnownRobotPose(Pose2d pose)
     {
         lastKnownRobotPose = pose;
-    }
-
-    private Optional<EstimatedRobotPose> testPoseFlip(EstimatedRobotPose pose, PhotonPoseEstimator estimator,
-            PhotonPipelineMetadata metadata)
-    {
-        List<PhotonTrackedTarget> targets = pose.targetsUsed;
-        for (int i = 0; i < targets.size(); i++)
-        {
-            PhotonTrackedTarget target = targets.get(i);
-            if (target.getPoseAmbiguity() > 0.2)
-            {
-                targets.remove(i);
-                i--;
-                continue;
-            }
-            if (target.getAlternateCameraToTarget().getTranslation().toTranslation2d()
-                    .getDistance(lastKnownRobotPose.getTranslation()) < target.getBestCameraToTarget().getTranslation()
-                            .toTranslation2d().getDistance(lastKnownRobotPose.getTranslation()))
-            {
-                targets.set(i,
-                        new PhotonTrackedTarget(target.getYaw(), target.getPitch(), target.getArea(), target.getSkew(),
-                                target.getFiducialId(), target.getDetectedObjectClassID(),
-                                target.getDetectedObjectConfidence(), target.getAlternateCameraToTarget(),
-                                target.getBestCameraToTarget(), target.getPoseAmbiguity(),
-                                target.getMinAreaRectCorners(), target.getDetectedCorners()));
-            }
-        }
-        return estimator.update(new PhotonPipelineResult(metadata, targets, null));
     }
 
     @SuppressWarnings("unused")
@@ -190,11 +158,6 @@ public class PhotonVision extends SubsystemBase
             for (var result : cameras[i].getAllUnreadResults())
             {
                 var opt = poseEstimators[i].update(result);
-                if (opt.isEmpty())
-                {
-                    continue;
-                }
-                opt = testPoseFlip(opt.get(), poseEstimators[i], result.metadata);
                 if (opt.isEmpty())
                 {
                     continue;
