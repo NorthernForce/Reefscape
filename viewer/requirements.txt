@@ -1,0 +1,8 @@
+# we will only need most up to date (for now)
+numpy
+opencv-python
+pyparsing
+pyrealsense2
+robotpy-cscore
+robotpy-wpinet
+robotpy-wpiutil

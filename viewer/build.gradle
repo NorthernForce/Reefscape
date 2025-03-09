@@ -1,0 +1,21 @@
+plugins {
+    id "org.hidetake.ssh" version "2.11.2"
+}
+
+remotes {
+    orangepi {
+        host = "photonfrontright.lan"
+        user = "pi"
+        password = "raspberry"
+    }
+}
+
+task(viewDeploy) {
+    ssh.run {
+        session(remotes.orangepi) {
+            def dirName = project.projectDir.getName()
+            put from: project.projectDir, into: "/home/pi"
+            println "vision code uploaded to ~/$dirName."
+        }
+    }
+}
