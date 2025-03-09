@@ -71,10 +71,10 @@ public class RalphDriverOI implements RalphOI
 
         manipulatorController.start().whileTrue(container.homeElevator());
 
-        manipulatorController.povLeft().whileTrue(container.goToL1());
-        manipulatorController.povUp().whileTrue(container.goToL2());
-        manipulatorController.povRight().whileTrue(container.goToL3());
-        manipulatorController.povDown().whileTrue(container.goToL4());
+        manipulatorController.povLeft().whileTrue(container.holdAtL1());
+        manipulatorController.povUp().whileTrue(container.holdAtL2());
+        manipulatorController.povRight().whileTrue(container.holdAtL3());
+        manipulatorController.povDown().whileTrue(container.holdAtL4());
 
         manipulatorController.rightBumper()
                 .whileTrue(container.getSuperstructure().getManualControlCommand(

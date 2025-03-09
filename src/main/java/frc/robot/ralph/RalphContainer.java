@@ -205,6 +205,26 @@ public class RalphContainer implements NFRRobotContainer
         return superstructure.goToGoal(SuperstructureGoal.L1);
     }
 
+    public Command holdAtL4()
+    {
+        return superstructure.holdAtGoal(SuperstructureGoal.L4);
+    }
+
+    public Command holdAtL3()
+    {
+        return superstructure.holdAtGoal(SuperstructureGoal.L3);
+    }
+
+    public Command holdAtL2()
+    {
+        return superstructure.holdAtGoal(SuperstructureGoal.L2);
+    }
+
+    public Command holdAtL1()
+    {
+        return superstructure.holdAtGoal(SuperstructureGoal.L1);
+    }
+
     public Command goToIntake()
     {
         return superstructure.goToGoal(SuperstructureGoal.CORAL_STATION);

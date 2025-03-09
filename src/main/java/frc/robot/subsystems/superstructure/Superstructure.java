@@ -82,7 +82,32 @@ public class Superstructure extends SubsystemBase
         @Override
         public boolean isFinished()
         {
-            return false;// m_innerElevator.isAtTargetPosition() && m_outerElevator.isAtTargetPosition();
+            return m_innerElevator.isAtTargetPosition() && m_outerElevator.isAtTargetPosition();
+        }
+    }
+
+    public class HoldAtGoalCommand extends Command
+    {
+        private final SuperstructureGoal goal;
+
+        public HoldAtGoalCommand(SuperstructureGoal goal)
+        {
+            addRequirements(Superstructure.this);
+            this.goal = goal;
+        }
+
+        @Override
+        public void initialize()
+        {
+            Superstructure.this.setGoal(goal);
+            m_innerElevator.setTargetPosition(goal.getInnerElevatorGoal());
+            m_outerElevator.setTargetPosition(goal.getOuterElevatorGoal());
+        }
+
+        @Override
+        public boolean isFinished()
+        {
+            return false;
         }
     }
 
@@ -95,6 +120,11 @@ public class Superstructure extends SubsystemBase
     public Command goToGoal(SuperstructureGoal goal)
     {
         return new GoToGoalCommand(goal);
+    }
+
+    public Command holdAtGoal(SuperstructureGoal goal)
+    {
+        return new HoldAtGoalCommand(goal);
     }
 
     /**
