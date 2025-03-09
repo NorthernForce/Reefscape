@@ -125,14 +125,14 @@ public class PhotonVision extends SubsystemBase
             return true;
         }
         double maxDistanceDifference = maxLinearVelocity.in(MetersPerSecond) * 0.02 * 3;
-        double difference = pose.estimatedPose.toPose2d().getTranslation()
-                .getDistance(referencePose.getTranslation());
+        double difference = pose.estimatedPose.toPose2d().getTranslation().getDistance(referencePose.getTranslation());
         return Math.abs(difference) < maxDistanceDifference;
     }
 
     // private boolean testEstimateTime(EstimatedRobotPose pose)
     // {
-    //     return Math.abs(pose.timestampSeconds - referencePoseEstimate.timestamp()) < 1;
+    // return Math.abs(pose.timestampSeconds - referencePoseEstimate.timestamp()) <
+    // 1;
     // }
 
     private boolean testWithinField(EstimatedRobotPose pose)
