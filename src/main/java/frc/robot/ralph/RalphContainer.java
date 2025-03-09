@@ -361,6 +361,9 @@ public class RalphContainer implements NFRRobotContainer
                     && superstructure.isAtGoal(SuperstructureGoal.CORAL_STATION))
             {
                 inserter.intake();
+            } else
+            {
+                inserter.stop();
             }
         }
     }
