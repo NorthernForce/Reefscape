@@ -44,8 +44,6 @@ public class RalphDriverOI implements RalphOI
     static void bindInserter(CommandXboxController driverController, CommandXboxController manipulatorController,
             RalphContainer container)
     {
-        container.getInserter().setDefaultCommand(container.defaultIntake());
-
         driverController.rightTrigger().whileTrue(container.outtakeCoral());
 
         manipulatorController.rightTrigger().whileTrue(container.outtakeCoral());

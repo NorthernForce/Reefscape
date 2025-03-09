@@ -141,6 +141,7 @@ public class RalphContainer implements NFRRobotContainer
             }, RalphConstants.InserterConstants.INTAKE_SPEED, RalphConstants.InserterConstants.OUTTAKE_SPEED);
             break;
         }
+        inserter.setDefaultCommand(defaultIntake());
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
         RalphAutos.addNamedCommands(this);
         RalphAutos.addAutoRoutines(this);

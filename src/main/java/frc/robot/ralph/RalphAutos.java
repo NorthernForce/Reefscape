@@ -3,7 +3,7 @@ package frc.robot.ralph;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 public class RalphAutos
 {
@@ -20,17 +20,12 @@ public class RalphAutos
 
     public static void addNamedCommands(RalphContainer container)
     {
-        NamedCommands.registerCommand("GoToL4Goal",
-                container.getSuperstructure().getGoToGoalCommand(SuperstructureGoal.L4));
-        NamedCommands.registerCommand("GoToL3Goal",
-                container.getSuperstructure().getGoToGoalCommand(SuperstructureGoal.L3));
-        NamedCommands.registerCommand("GoToL2Goal",
-                container.getSuperstructure().getGoToGoalCommand(SuperstructureGoal.L2));
-        NamedCommands.registerCommand("GoToL1Goal",
-                container.getSuperstructure().getGoToGoalCommand(SuperstructureGoal.L1));
-        NamedCommands.registerCommand("GoToIntakeGoal",
-                container.getSuperstructure().getGoToGoalCommand(SuperstructureGoal.CORAL_STATION));
-        NamedCommands.registerCommand("Intake", container.getRollers().getCoralIntakeCommand(true));
-        NamedCommands.registerCommand("Outtake", container.getRollers().getOuttakeCommand());
+        NamedCommands.registerCommand("GoToL4Goal", container.goToL4());
+        NamedCommands.registerCommand("GoToL3Goal", container.goToL3());
+        NamedCommands.registerCommand("GoToL2Goal", container.goToL2());
+        NamedCommands.registerCommand("GoToL1Goal", container.goToL1());
+        NamedCommands.registerCommand("GoToIntakeGoal", container.goToIntake());
+        NamedCommands.registerCommand("Intake", Commands.waitUntil(container.getInserter()::hasCoral));
+        NamedCommands.registerCommand("Outtake", container.outtakeCoral());
     }
 }

@@ -5,19 +5,45 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "parallel",
                 "data": {
-                  "pathName": "LEFT.PLACE.I.1"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "GoToL4Goal"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "LEFT.PLACE.I.1"
+                      }
+                    }
+                  ]
                 }
               },
               {
-                "type": "named",
+                "type": "deadline",
                 "data": {
-                  "name": "GoToL4Goal"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Outtake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "GoToL4Goal"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -26,7 +52,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Outtake"
+            "name": "GoToIntake"
           }
         }
       ]
