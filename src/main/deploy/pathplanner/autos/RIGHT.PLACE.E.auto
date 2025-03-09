@@ -28,6 +28,12 @@
           "data": {
             "name": "Outtake"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToIntake"
+          }
         }
       ]
     }

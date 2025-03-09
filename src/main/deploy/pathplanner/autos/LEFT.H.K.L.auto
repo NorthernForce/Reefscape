@@ -5,171 +5,38 @@
     "data": {
       "commands": [
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "parallel",
+                "type": "path",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "LEFT.H.K.L.1"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "GoToL4Goal"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "deadline",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Outtake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "GoToL4Goal"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "parallel",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "LEFT.H.K.L.2"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "GoToIntake"
-                      }
-                    }
-                  ]
+                  "pathName": "LEFT.H.K.L.1"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "GoToL4Goal"
                 }
-              },
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Outtake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
               {
-                "type": "parallel",
+                "type": "path",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "LEFT.H.K.L.3"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "GoToL4Goal"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "deadline",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Outtake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "GoToL4Goal"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "parallel",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "LEFT.H.K.L.4"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "GoToIntake"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              },
-              {
-                "type": "parallel",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "LEFT.H.K.L.5"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "GoToL4Goal"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "deadline",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Outtake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "GoToL4Goal"
-                      }
-                    }
-                  ]
+                  "pathName": "LEFT.H.K.L.2"
                 }
               },
               {
@@ -179,6 +46,93 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LEFT.H.K.L.3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToL4Goal"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Outtake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LEFT.H.K.L.4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LEFT.H.K.L.5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToL4Goal"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Outtake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToIntake"
           }
         }
       ]

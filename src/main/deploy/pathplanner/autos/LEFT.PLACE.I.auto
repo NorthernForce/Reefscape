@@ -5,48 +5,28 @@
     "data": {
       "commands": [
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "parallel",
+                "type": "path",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "GoToL4Goal"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "LEFT.PLACE.I.1"
-                      }
-                    }
-                  ]
+                  "pathName": "LEFT.PLACE.I.1"
                 }
               },
               {
-                "type": "deadline",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Outtake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "GoToL4Goal"
-                      }
-                    }
-                  ]
+                  "name": "GoToL4Goal"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Outtake"
           }
         },
         {
