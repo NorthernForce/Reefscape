@@ -377,8 +377,7 @@ public class RalphContainer implements NFRRobotContainer
         @Override
         public void execute()
         {
-            if (!inserter.hasCoral() && drive.getSpeed().lte(RalphConstants.DrivetrainConstants.MAX_INTAKE_SPEED)
-                    && superstructure.isAtGoal(SuperstructureGoal.CORAL_STATION))
+            if (!inserter.hasCoral() && superstructure.isAtGoal(SuperstructureGoal.CORAL_STATION))
             {
                 inserter.intake();
             } else

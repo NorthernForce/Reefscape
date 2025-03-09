@@ -99,14 +99,14 @@ public class RalphConstants
         public static final double kS = 0.017384;
         public static final double kV = Units.inchesToMeters(28.59);
         public static final double kA = 0.015;
-        public static final double kP = 10;
+        public static final double kP = 18;
         public static final double kI = 0.0;
         public static final double kD = 0;
         public static final double kG = 0.01869;
         public static final double CRUISE_VELOCITY = 0;
         public static final double ACCELERATION = 0;
         public static final double JERK = 0;
-        public static final Distance UPPER_LIMIT = Inches.of(23.75);
+        public static final Distance UPPER_LIMIT = Inches.of(24.3);
 
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD, kG,
                 CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, true, UPPER_LIMIT);
@@ -115,7 +115,7 @@ public class RalphConstants
 
         public static final Distance HIGH_POSITION = Inches.of(10);
 
-        public static final Distance TOLERANCE = Inches.of(0.9);
+        public static final Distance TOLERANCE = Inches.of(0.1);
     }
 
     public static class OuterElevatorConstants
@@ -133,7 +133,7 @@ public class RalphConstants
         public static final double kP = 10;
         public static final double kI = 0;
         public static final double kD = 0;
-        public static final double kG = 0.215212;
+        public static final double kG = 0.175212;
         public static final double CRUISE_VELOCITY = 0;
         public static final double ACCELERATION = 0;
         public static final double JERK = 0;
@@ -146,7 +146,7 @@ public class RalphConstants
 
         public static final Distance HIGH_POSITION = Inches.of(4);
 
-        public static final Distance TOLERANCE = Inches.of(0.9);
+        public static final Distance TOLERANCE = Inches.of(0.1);
     }
 
     /**
