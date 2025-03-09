@@ -44,9 +44,13 @@ public class RalphDriverOI implements RalphOI
     static void bindInserter(CommandXboxController driverController, CommandXboxController manipulatorController,
             RalphContainer container)
     {
-        driverController.rightTrigger().whileTrue(container.outtakeCoral());
+        container.getInserter().setDefaultCommand(container.defaultIntake());
 
-        manipulatorController.rightTrigger().whileTrue(container.outtakeCoral());
+        driverController.rightTrigger().and(container.getSuperstructure()::isAtGoal)
+                .whileTrue(container.outtakeCoral());
+
+        manipulatorController.rightTrigger().and(container.getSuperstructure()::isAtGoal)
+                .whileTrue(container.outtakeCoral());
 
         container.getInserter().intakeTrigger().onTrue(new RumbleXBoxController(manipulatorController, 0.5, 0.5)
                 .alongWith(new RumbleXBoxController(driverController, 0.5, 0.5)));
@@ -63,19 +67,19 @@ public class RalphDriverOI implements RalphOI
             RalphContainer container)
     {
 
-        container.getSuperstructure().setDefaultCommand(container.goToIntake());
+        manipulatorController.a().onTrue(container.goToIntake());
 
         driverController.start().whileTrue(container.homeElevator());
 
         manipulatorController.start().whileTrue(container.homeElevator());
 
-        manipulatorController.povLeft().whileTrue(container.goToL1());
-        manipulatorController.povUp().whileTrue(container.goToL2());
-        manipulatorController.povRight().whileTrue(container.goToL3());
-        manipulatorController.povDown().whileTrue(container.goToL4());
+        manipulatorController.povLeft().and(container.getInserter()::hasCoral).onTrue(container.goToL1());
+        manipulatorController.povUp().and(container.getInserter()::hasCoral).onTrue(container.goToL2());
+        manipulatorController.povRight().and(container.getInserter()::hasCoral).onTrue(container.goToL3());
+        manipulatorController.povDown().and(container.getInserter()::hasCoral).onTrue(container.goToL4());
 
-        manipulatorController.rightBumper()
-                .whileTrue(container.getSuperstructure().getManualControlCommand(
+        container.getSuperstructure()
+                .setDefaultCommand(container.getSuperstructure().getManualControlCommand(
                         processJoystickInput(manipulatorController::getRightY),
                         processJoystickInput(manipulatorController::getLeftY)));
     }
