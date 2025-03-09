@@ -106,7 +106,7 @@ public class RalphConstants
         public static final double CRUISE_VELOCITY = 0;
         public static final double ACCELERATION = 0;
         public static final double JERK = 0;
-        public static final Distance UPPER_LIMIT = Inches.of(25.8 - 2.75);
+        public static final Distance UPPER_LIMIT = Inches.of(23.75);
 
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD, kG,
                 CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, true, UPPER_LIMIT);
@@ -137,7 +137,7 @@ public class RalphConstants
         public static final double CRUISE_VELOCITY = 0;
         public static final double ACCELERATION = 0;
         public static final double JERK = 0;
-        public static final Distance UPPER_LIMIT = Inches.of(26.0);
+        public static final Distance UPPER_LIMIT = Inches.of(26.8);
 
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD, kG,
                 CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, false, UPPER_LIMIT);
@@ -212,8 +212,8 @@ public class RalphConstants
     public static class InserterConstants
     {
         public static final double INTAKE_SPEED = 0.35;
-        public static final double OUTTAKE_SPEED = 0.3;
-        public static final int ROLLER_MOTOR_ID = 18;
+        public static final double OUTTAKE_SPEED = 0.89;
+        public static final int ROLLER_MOTOR_ID = 19;
         public static final boolean ROLLER_MOTOR_INVERTED = false;
 
         public static class SensorConstants

@@ -6,7 +6,6 @@ import org.littletonrobotics.junction.AutoLogOutput;
 
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;

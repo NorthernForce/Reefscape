@@ -44,7 +44,7 @@ public class RalphDriverOI implements RalphOI
     static void bindInserter(CommandXboxController driverController, CommandXboxController manipulatorController,
             RalphContainer container)
     {
-        container.getInserter().setDefaultCommand(container.getInserter().getStopCommand());
+        container.getInserter().setDefaultCommand(container.defaultIntake());
 
         driverController.rightTrigger().whileTrue(container.outtakeCoral());
 
@@ -52,8 +52,6 @@ public class RalphDriverOI implements RalphOI
 
         container.getInserter().intakeTrigger().onTrue(new RumbleXBoxController(manipulatorController, 0.5, 0.5)
                 .alongWith(new RumbleXBoxController(driverController, 0.5, 0.5)));
-
-        container.getInserter().readyToIntakeTrigger().whileTrue(container.intakeCoral());
     }
 
     static void bindClimber(CommandXboxController driverController, RalphContainer container)

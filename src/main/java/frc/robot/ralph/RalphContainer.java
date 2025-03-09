@@ -19,7 +19,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.ralph.constants.RalphConstants;
@@ -348,10 +347,26 @@ public class RalphContainer implements NFRRobotContainer
         dashboard.setSettingsStage();
     }
 
-    public Trigger readyToIntake()
+    public class IntakeWhileWaitingCommand extends Command
     {
-        return inserter.readyToIntakeTrigger()
-                .and(() -> drive.getSpeed().lte(RalphConstants.DrivetrainConstants.MAX_INTAKE_SPEED))
-                .and(() -> superstructure.isAtGoal(SuperstructureGoal.CORAL_STATION));
+        public IntakeWhileWaitingCommand()
+        {
+            addRequirements(inserter);
+        }
+
+        @Override
+        public void execute()
+        {
+            if (!inserter.hasCoral() && drive.getSpeed().lte(RalphConstants.DrivetrainConstants.MAX_INTAKE_SPEED)
+                    && superstructure.isAtGoal(SuperstructureGoal.CORAL_STATION))
+            {
+                inserter.intake();
+            }
+        }
+    }
+
+    public Command defaultIntake()
+    {
+        return new IntakeWhileWaitingCommand();
     }
 }
