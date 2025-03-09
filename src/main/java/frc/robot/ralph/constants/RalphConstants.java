@@ -133,11 +133,11 @@ public class RalphConstants
         public static final double kP = 10;
         public static final double kI = 0;
         public static final double kD = 0;
-        public static final double kG = 0.085212;
+        public static final double kG = 0.215212;
         public static final double CRUISE_VELOCITY = 0;
         public static final double ACCELERATION = 0;
         public static final double JERK = 0;
-        public static final Distance UPPER_LIMIT = Inches.of(26.8);
+        public static final Distance UPPER_LIMIT = Inches.of(26.5);
 
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD, kG,
                 CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, false, UPPER_LIMIT);
@@ -155,8 +155,8 @@ public class RalphConstants
 
     public static enum SuperstructureGoal implements GenericSuperstructureGoal
     {
-        L1(Inches.of(0), Inches.of(0)), L2(Inches.of(13.1 - 2.75), Inches.of(0)),
-        L3(Inches.of(25.8 - 2.75), Inches.of(4.61)), L4(Inches.of(27.3 - 2.75), Inches.of(26.6)),
+        L1(Inches.of(0), Inches.of(6)), L2(Inches.of(0), Inches.of(11.38)), L3(Inches.of(0), Inches.of(26.3)),
+        L4(InnerElevatorConstants.UPPER_LIMIT, OuterElevatorConstants.UPPER_LIMIT),
         CORAL_STATION(Inches.of(0), Inches.of(0)), START(Inches.of(0), Inches.of(0));
 
         private final Distance innerHeight;

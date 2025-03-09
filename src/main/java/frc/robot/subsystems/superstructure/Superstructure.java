@@ -82,7 +82,7 @@ public class Superstructure extends SubsystemBase
         @Override
         public boolean isFinished()
         {
-            return m_innerElevator.isAtTargetPosition() && m_outerElevator.isAtTargetPosition();
+            return false;// m_innerElevator.isAtTargetPosition() && m_outerElevator.isAtTargetPosition();
         }
     }
 
