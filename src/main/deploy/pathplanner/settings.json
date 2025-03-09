@@ -2,8 +2,20 @@
   "robotWidth": 0.965,
   "robotLength": 0.965,
   "holonomicMode": true,
-  "pathFolders": [],
-  "autoFolders": [],
+  "pathFolders": [
+    "LEFT.H.K.L",
+    "CENTER.LEAVE",
+    "CENTER.PLACE.G",
+    "LEFT.LEAVE",
+    "LEFT.PLACE.I",
+    "RIGHT.LEAVE",
+    "RIGHT.PLACE.E"
+  ],
+  "autoFolders": [
+    "LEFT",
+    "CENTER",
+    "RIGHT"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
@@ -28,5 +40,7 @@
   "brModuleY": -0.273,
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
-  "robotFeatures": []
+  "robotFeatures": [
+    "{\"name\":\"Circle\",\"type\":\"circle\",\"data\":{\"center\":{\"x\":0.477,\"y\":0.254},\"radius\":0.1,\"strokeWidth\":0.02,\"filled\":false}}"
+  ]
 }

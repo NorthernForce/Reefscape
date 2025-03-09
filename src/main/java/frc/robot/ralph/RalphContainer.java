@@ -11,7 +11,6 @@ import static edu.wpi.first.units.Units.Rotations;
 import org.northernforce.util.NFRRobotContainer;
 
 import com.ctre.phoenix6.Utils;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -143,7 +142,9 @@ public class RalphContainer implements NFRRobotContainer
             }, RalphConstants.InserterConstants.INTAKE_SPEED, RalphConstants.InserterConstants.OUTTAKE_SPEED);
             break;
         }
+        inserter.setDefaultCommand(defaultIntake());
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
+        RalphAutos.addNamedCommands(this);
         RalphAutos.addAutoRoutines(this);
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
         SmartDashboard.putData("Go do thing", getGoToReefPoseCommand());
@@ -323,13 +324,13 @@ public class RalphContainer implements NFRRobotContainer
     @Override
     public Command getAutonomousCommand()
     {
-        return dashboard.getRoutine().command();
+        return dashboard.getRoutine();
     }
 
     @Override
     public void autonomousInit()
     {
-        drive.resetPose(dashboard.getRoutine().startPose().get());
+        drive.resetPose(dashboard.getRoutine().getStartingPose());
     }
 
     @Override
