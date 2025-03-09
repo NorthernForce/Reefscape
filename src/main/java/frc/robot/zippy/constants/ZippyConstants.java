@@ -6,11 +6,14 @@ import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Preferences;
@@ -83,5 +86,16 @@ public class ZippyConstants
         public static final PIDController xPID = new PIDController(10, 0, 0);
         public static final PIDController yPID = new PIDController(10, 0, 0);
         public static final PIDController rPID = new PIDController(7.5, 0, 0);
+        public static double kP;
+        public static double kI;
+        public static double postP;
+        public static double postI;
+        public static Constraints kConstraints;
+        public static double rotationContinuous;
+        public static double postD;
+        public static double kD;
+        public static double kPRotation;
+        public static Rotation2d totalAngle;
+        public static Distance totalDistance;
     }
 }

@@ -16,8 +16,10 @@ import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
 public class RalphConstants
@@ -244,5 +246,16 @@ public class RalphConstants
         public static final PIDController xPID = new PIDController(10, 0, 0);
         public static final PIDController yPID = new PIDController(10, 0, 0);
         public static final PIDController rPID = new PIDController(7.5, 0, 0);
+        public static final double kD = 0;
+        public static double postP;
+        public static double kI;
+        public static double postI;
+        public static double postD;
+        public static Constraints kConstraints;
+        public static double kPRotation;
+        public static Rotation2d totalAngle;
+        public static Distance totalDistance;
+        public static double rotationContinuous;
+        public static double kP;
     }
 }

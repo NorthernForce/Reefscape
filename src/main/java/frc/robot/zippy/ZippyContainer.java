@@ -63,6 +63,11 @@ public class ZippyContainer implements NFRRobotContainer
                 ZippyConstants.PathplannerConstants.linearPIDConstants,
                 ZippyConstants.PathplannerConstants.angularPIDConstants, Meters.of(0),
                 ZippyConstants.AutoConstants.xPID, ZippyConstants.AutoConstants.yPID, ZippyConstants.AutoConstants.rPID,
+                ZippyConstants.AutoConstants.kP, ZippyConstants.AutoConstants.kI, ZippyConstants.AutoConstants.kD,
+                ZippyConstants.AutoConstants.postP, ZippyConstants.AutoConstants.postI,
+                ZippyConstants.AutoConstants.postD, ZippyConstants.AutoConstants.kConstraints,
+                ZippyConstants.AutoConstants.kPRotation, ZippyConstants.AutoConstants.rotationContinuous,
+                ZippyConstants.AutoConstants.totalAngle, ZippyConstants.AutoConstants.totalDistance,
                 ZippyConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, ZippyTunerConstants.FrontLeft,
                 ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft, ZippyTunerConstants.BackRight);
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));

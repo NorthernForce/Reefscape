@@ -33,6 +33,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -50,6 +51,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.DriveToPoseRequest;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -67,6 +69,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     private ArrayList<Integer> disconnectedEncoderArray;
     private String motorAlertString = "";
     private String encoderAlertString = "";
+    private DriveToPoseRequest driveToPoseRequest;
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -88,11 +91,14 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      */
     public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
             AngularVelocity maxAngularSpeed, PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
-            PIDController xPid, PIDController yPid, PIDController rPid,
-            SwerveModuleConstants<?, ?, ?>... moduleConstants)
+            PIDController xPid, PIDController yPid, PIDController rPid, double kP, double kI, double kD, double postP,
+            double postI, double postD, Constraints kConstraints, double kPRotation, double rotationContinuous,
+            Rotation2d totalAngle, Distance totalDistance, SwerveModuleConstants<?, ?, ?>... moduleConstants)
     {
         super(drivetrainConstants, moduleConstants);
         CommandScheduler.getInstance().registerSubsystem(this);
+        this.driveToPoseRequest = new DriveToPoseRequest(kP, kI, kD, postP, postI, postD, kConstraints, kPRotation,
+                rotationContinuous, totalAngle, totalDistance, maxSpeed);
         this.maxSpeed = maxSpeed;
         this.maxAngularSpeed = maxAngularSpeed;
         motorDisconnectedAlert = new Alert("", Alert.AlertType.kWarning);
@@ -138,11 +144,14 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
             AngularVelocity maxAngularSpeed, PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
-            Distance safeDriveDistance, PIDController xPid, PIDController yPid, PIDController rPid,
-            Angle[] moduleOffsets, SwerveModuleConstants<?, ?, ?>... moduleConstants)
+            Distance safeDriveDistance, PIDController xPid, PIDController yPid, PIDController rPid, double kP,
+            double kI, double kD, double postP, double postI, double postD, Constraints kConstraints, double kPRotation,
+            double rotationContinuous, Rotation2d totalAngle, Distance totalDistance, Angle[] moduleOffsets,
+            SwerveModuleConstants<?, ?, ?>... moduleConstants)
     {
         this(drivetrainConstants, maxSpeed, maxAngularSpeed, linearPIDConstants, angularPIDConstants, xPid, yPid, rPid,
-                new SwerveModuleConstants[]
+                kP, kI, kD, postP, postI, postD, kConstraints, kPRotation, rotationContinuous, totalAngle,
+                totalDistance, new SwerveModuleConstants[]
                 { moduleConstants[0].withEncoderOffset(moduleOffsets[0]),
                         moduleConstants[1].withEncoderOffset(moduleOffsets[1]),
                         moduleConstants[2].withEncoderOffset(moduleOffsets[2]),
@@ -377,6 +386,11 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
                 setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(new ChassisSpeeds(0, 0, 0)));
             }
         };
+    }
+
+    public Command closeTranslationPIDCommand(Pose2d pose)
+    {
+        return applyRequest(() -> driveToPoseRequest.withPose(pose));
     }
 
     /**
