@@ -15,6 +15,7 @@ import com.ctre.phoenix6.Utils;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -146,6 +147,16 @@ public class RalphContainer implements NFRRobotContainer
         RalphAutos.addAutoRoutines(this);
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
         SmartDashboard.putData("Go do thing", getGoToReefPoseCommand());
+        PortForwarder.add(5800, "10.1.72.11", 5800);
+        PortForwarder.add(5801, "10.1.72.11", 1181);
+        PortForwarder.add(5802, "10.1.72.12", 5800);
+        PortForwarder.add(5803, "10.1.72.12", 1181);
+        PortForwarder.add(5804, "10.1.72.13", 5800);
+        PortForwarder.add(5805, "10.1.72.13", 1181);
+        PortForwarder.add(5806, "10.1.72.14", 5800);
+        PortForwarder.add(5807, "10.1.72.14", 1181);
+        PortForwarder.add(5808, "10.1.72.14", 1188);
+        PortForwarder.add(5809, "10.1.72.14", 22);
     }
 
     public Command getGoToReefPoseCommand()
@@ -340,6 +351,7 @@ public class RalphContainer implements NFRRobotContainer
         dashboard.setHasCoral(inserter.hasCoral());
     }
 
+    @Override
     public void teleopInit()
     {
         dashboard.setTeleopStage();
