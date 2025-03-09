@@ -8,8 +8,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Seconds;
-
 import org.northernforce.util.NFRRobotContainer;
 
 import com.ctre.phoenix6.Utils;
@@ -33,6 +31,11 @@ import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOSwing;
+import frc.robot.subsystems.inserter.Inserter;
+import frc.robot.subsystems.inserter.InserterIO;
+import frc.robot.subsystems.inserter.InserterIOTalonFXS;
+import frc.robot.subsystems.inserter.sensor.InserterSensorIO;
+import frc.robot.subsystems.inserter.sensor.InserterSensorIOBeamBreak;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 import frc.robot.subsystems.photonvision.PhotonVision;
 import frc.robot.subsystems.superstructure.Superstructure;
@@ -42,12 +45,6 @@ import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.superstructure.elevator.brake.BrakeIO;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIO;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIOLimitSwitch;
-import frc.robot.subsystems.rollers.Rollers;
-import frc.robot.subsystems.rollers.RollersIO;
-import frc.robot.subsystems.rollers.RollersIOTalonFXS;
-import frc.robot.subsystems.rollers.sensor.RollersSensorIO;
-import frc.robot.subsystems.rollers.sensor.RollersSensorIOAnalog;
-import frc.robot.subsystems.rollers.sensor.RollersSensorIOBeamBreak;
 import frc.robot.subsystems.viewer.Viewer;
 import frc.robot.subsystems.viewer.ViewerIO;
 import frc.robot.subsystems.viewer.ViewerIOXavier;
@@ -58,7 +55,7 @@ import frc.robot.subsystems.viewer.ViewerIOXavier;
 public class RalphContainer implements NFRRobotContainer
 {
     private final PhoenixCommandDrive drive;
-    private final Rollers rollers;
+    private final Inserter inserter;
     private final Superstructure superstructure;
     private final PhotonVision vision;
     private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
@@ -66,8 +63,6 @@ public class RalphContainer implements NFRRobotContainer
     private final Climber climber;
     private final Dashboard dashboard;
     private final Viewer viewer;
-
-    private final Supplier<Boolean> useBeamBreak = () -> SmartDashboard.getBoolean("Use Beam Break", true);
 
     /**
      * Create a new RalphContainer
@@ -112,14 +107,11 @@ public class RalphContainer implements NFRRobotContainer
                     RalphConstants.ClimberConstants.UPPER_LIMIT, RalphConstants.ClimberConstants.CLIMB_SPEED);
 
             viewer = new Viewer(new ViewerIOXavier());
-            rollers = new Rollers(
-                    new RollersIOTalonFXS(RalphConstants.RollersConstants.ROLLER_MOTOR_LEFT_ID,
-                            RalphConstants.RollersConstants.ROLLER_MOTOR_RIGHT_ID,
-                            RalphConstants.RollersConstants.ROLLER_MOTORS_INVERTED),
-                    new RollersSensorIOAnalog(RalphConstants.RollersConstants.SensorConstants.ANALOG_ALGAE,
-                            RalphConstants.RollersConstants.SensorConstants.ALGAE_MAX_DISTANCE),
-                    new RollersSensorIOBeamBreak(RalphConstants.RollersConstants.SensorConstants.ANALOG_CORAL),
-                    RalphConstants.RollersConstants.INTAKE_SPEED, RalphConstants.RollersConstants.OUTTAKE_SPEED);
+            inserter = new Inserter(
+                    new InserterIOTalonFXS(RalphConstants.InserterConstants.ROLLER_MOTOR_ID,
+                            RalphConstants.InserterConstants.ROLLER_MOTOR_INVERTED),
+                    new InserterSensorIOBeamBreak(RalphConstants.InserterConstants.SensorConstants.CORAL_PIN),
+                    RalphConstants.InserterConstants.INTAKE_SPEED, RalphConstants.InserterConstants.OUTTAKE_SPEED);
             break;
         case REPLAY:
         default:
@@ -142,13 +134,11 @@ public class RalphContainer implements NFRRobotContainer
             viewer = new Viewer(new ViewerIO()
             {
             });
-            rollers = new Rollers(new RollersIO()
+            inserter = new Inserter(new InserterIO()
             {
-            }, new RollersSensorIO()
+            }, new InserterSensorIO()
             {
-            }, new RollersSensorIO()
-            {
-            }, RalphConstants.RollersConstants.INTAKE_SPEED, RalphConstants.RollersConstants.OUTTAKE_SPEED);
+            }, RalphConstants.InserterConstants.INTAKE_SPEED, RalphConstants.InserterConstants.OUTTAKE_SPEED);
             break;
         }
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
@@ -166,7 +156,7 @@ public class RalphContainer implements NFRRobotContainer
                         RalphConstants.PathplannerConstants.MAX_ACCELERATION,
                         RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
                         RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                .alongWith(getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForReef()))
+                .alongWith(getSuperstructure().goToGoal(getDashboard().getSuperstructureGoalForReef()))
                 .andThen(() -> getDrive().driveToPose(getDashboard().getTargetPose(),
                         RalphConstants.PathplannerConstants.MAX_VELOCITY,
                         RalphConstants.PathplannerConstants.MAX_ACCELERATION,
@@ -182,20 +172,48 @@ public class RalphContainer implements NFRRobotContainer
                         RalphConstants.PathplannerConstants.MAX_ACCELERATION,
                         RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
                         RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                .alongWith(getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForStation())),
-                Set.of());
+                .alongWith(getSuperstructure().goToGoal(getDashboard().getSuperstructureGoalForStation())), Set.of());
     }
 
-    public Command getCoralIntakeCommand()
+    public Command intakeCoral()
     {
-        return // superstructure.getGoToGoalCommand(SuperstructureGoal.CORAL_STATION)
-               // .andThen(rollers.getCoralIntakeCommand());
-        rollers.getCoralIntakeCommand(useBeamBreak.get());
+        return inserter.intakeCoral();
     }
 
-    public Command getCoralOuttakeCommand()
+    public Command outtakeCoral()
     {
-        return rollers.getOuttakeCoralCommand().andThen(drive.backup(Seconds.of(3), 0.3));
+        return inserter.outtakeCoral();
+    }
+
+    public Command goToL4()
+    {
+        return superstructure.goToGoal(SuperstructureGoal.L4);
+    }
+
+    public Command goToL3()
+    {
+        return superstructure.goToGoal(SuperstructureGoal.L3);
+    }
+
+    public Command goToL2()
+    {
+        return superstructure.goToGoal(SuperstructureGoal.L2);
+    }
+
+    public Command goToL1()
+    {
+        return superstructure.goToGoal(SuperstructureGoal.L1);
+    }
+
+    public Command goToIntake()
+    {
+        return superstructure.goToGoal(SuperstructureGoal.CORAL_STATION);
+    }
+
+    public Command homeElevator()
+    {
+        return superstructure.getHomingCommand(RalphConstants.InnerElevatorConstants.HOMING_SPEED,
+                RalphConstants.OuterElevatorConstants.HOMING_SPEED);
     }
 
     public Command driveByJoystick(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier)
@@ -214,14 +232,14 @@ public class RalphContainer implements NFRRobotContainer
     }
 
     /**
-     * Get the rollers subsystem from the container
+     * Get the inserter subsystem from the container
      * 
-     * @return the rollers subsystem
+     * @return the inserter subsystem
      */
 
-    public Rollers getRollers()
+    public Inserter getInserter()
     {
-        return rollers;
+        return inserter;
     }
 
     /**
@@ -299,8 +317,7 @@ public class RalphContainer implements NFRRobotContainer
         dashboard.updatePose(drive.getPose());
         dashboard.setInnerElevatorPosition(superstructure.getInnerElevator().getPosition());
         dashboard.setOuterElevatorPosition(superstructure.getOuterElevator().getPosition());
-        dashboard.setHasCoral(rollers.hasCoral());
-        dashboard.setHasAlgae(rollers.hasAlgae());
+        dashboard.setHasCoral(inserter.hasCoral());
     }
 
     public void teleopInit()
@@ -330,21 +347,29 @@ public class RalphContainer implements NFRRobotContainer
         dashboard.setSettingsStage();
     }
 
-    public boolean isInAlgaeState()
+    public class IntakeWhileWaitingCommand extends Command
     {
-        return superstructure.getGoal() == SuperstructureGoal.HIGHER_ALGAE
-                || superstructure.getGoal() == SuperstructureGoal.LOWER_ALGAE
-                || superstructure.getGoal() == SuperstructureGoal.PROCESSOR_STATION
-                || superstructure.getGoal() == SuperstructureGoal.STOW_ALGAE;
+        public IntakeWhileWaitingCommand()
+        {
+            addRequirements(inserter);
+        }
+
+        @Override
+        public void execute()
+        {
+            if (!inserter.hasCoral() && drive.getSpeed().lte(RalphConstants.DrivetrainConstants.MAX_INTAKE_SPEED)
+                    && superstructure.isAtGoal(SuperstructureGoal.CORAL_STATION))
+            {
+                inserter.intake();
+            } else
+            {
+                inserter.stop();
+            }
+        }
     }
 
-    public Command getOuttakeCommand()
+    public Command defaultIntake()
     {
-        return isInAlgaeState() ? rollers.getOuttakeCommand() : getCoralOuttakeCommand();
-    }
-
-    public Command getOuttakeCommand(double speed)
-    {
-        return isInAlgaeState() ? rollers.getOuttakeCommand(speed) : getCoralOuttakeCommand();
+        return new IntakeWhileWaitingCommand();
     }
 }

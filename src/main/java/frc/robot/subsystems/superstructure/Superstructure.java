@@ -1,10 +1,12 @@
 package frc.robot.subsystems.superstructure;
 
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
@@ -59,22 +61,40 @@ public class Superstructure extends SubsystemBase
         m_goal = goal;
     }
 
+    public class GoToGoalCommand extends Command
+    {
+        private final SuperstructureGoal goal;
+
+        public GoToGoalCommand(SuperstructureGoal goal)
+        {
+            addRequirements(Superstructure.this);
+            this.goal = goal;
+        }
+
+        @Override
+        public void initialize()
+        {
+            Superstructure.this.setGoal(goal);
+            m_innerElevator.setTargetPosition(goal.getInnerElevatorGoal());
+            m_outerElevator.setTargetPosition(goal.getOuterElevatorGoal());
+        }
+
+        @Override
+        public boolean isFinished()
+        {
+            return m_innerElevator.isAtTargetPosition() && m_outerElevator.isAtTargetPosition();
+        }
+    }
+
     /**
      * Gets the command to move the superstructure to a goal
      * 
      * @param goal the goal to move the superstructure to
      * @return the command to move the superstructure to the goal
      */
-    public Command getGoToGoalCommand(SuperstructureGoal goal)
+    public Command goToGoal(SuperstructureGoal goal)
     {
-        return Commands.parallel(m_innerElevator.getMoveToPositionCommand(goal.getInnerElevatorGoal()),
-                m_outerElevator.getMoveToPositionCommand(goal.getOuterElevatorGoal()),
-                Commands.runOnce(() -> m_goal = goal));
-    }
-
-    public Command getStopCommand()
-    {
-        return Commands.parallel(m_innerElevator.getStopCommand(), m_outerElevator.getStopCommand());
+        return new GoToGoalCommand(goal);
     }
 
     /**
@@ -127,17 +147,35 @@ public class Superstructure extends SubsystemBase
         return m_outerElevator;
     }
 
-    public Command getHomingCommand(double innerElevatorSpeed, double outerElevatorSpeed)
+    public class HomingCommand extends ParallelCommandGroup
     {
-        return Commands.parallel(m_innerElevator.getHomingCommand(innerElevatorSpeed),
-                m_outerElevator.getHomingCommand(outerElevatorSpeed));
+
+        public HomingCommand(double innerElevatorSpeed, double outerElevatorSpeed)
+        {
+            addRequirements(Superstructure.this);
+            addCommands(m_innerElevator.getHomingCommand(innerElevatorSpeed),
+                    m_outerElevator.getHomingCommand(outerElevatorSpeed));
+        }
     }
 
-    @AutoLogOutput
-    public boolean isAlgaeGoal()
+    public Command getHomingCommand(double innerElevatorSpeed, double outerElevatorSpeed)
     {
-        return m_goal == SuperstructureGoal.LOWER_ALGAE || m_goal == SuperstructureGoal.PROCESSOR_STATION
-                || m_goal == SuperstructureGoal.HIGHER_ALGAE;
+        return new HomingCommand(innerElevatorSpeed, outerElevatorSpeed);
+    }
+
+    public class ManualControlCommand extends ParallelCommandGroup
+    {
+        public ManualControlCommand(DoubleSupplier innerElevatorSpeed, DoubleSupplier outerElevatorSpeed)
+        {
+            addRequirements(Superstructure.this);
+            addCommands(m_innerElevator.getMoveByJoystick(innerElevatorSpeed),
+                    m_outerElevator.getMoveByJoystick(outerElevatorSpeed));
+        }
+    }
+
+    public Command getManualControlCommand(DoubleSupplier innerElevatorSpeed, DoubleSupplier outerElevatorSpeed)
+    {
+        return new ManualControlCommand(innerElevatorSpeed, outerElevatorSpeed);
     }
 
     public SuperstructureGoal getGoal()
