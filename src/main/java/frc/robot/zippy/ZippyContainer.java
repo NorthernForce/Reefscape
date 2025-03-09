@@ -104,7 +104,7 @@ public class ZippyContainer implements NFRRobotContainer
         }
         field.setRobotPose(drive.getPose());
         dashboard.updatePose(drive.getPose());
-        vision.setLastKnownRobotPose(drive.getPose());
+        vision.setReferencePose(drive.getPose());
         for (var poseEstimate : vision.getPoseEstimates())
         {
             drive.addVisionMeasurement(poseEstimate.pose(), Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
