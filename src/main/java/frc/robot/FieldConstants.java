@@ -227,6 +227,11 @@ public class FieldConstants
         }
     }
 
+    public static Translation2d convertTranslationByAlliance(Translation2d pose)
+    {
+        return convertTranslationByAlliance(pose, getAlliance());
+    }
+
     public static Alliance getAlliance()
     {
         return DriverStation.getAlliance().orElse(Alliance.Blue);

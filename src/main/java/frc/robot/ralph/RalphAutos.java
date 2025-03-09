@@ -1,33 +1,31 @@
 package frc.robot.ralph;
 
-import static edu.wpi.first.units.Units.Seconds;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.FieldConstants;
-import frc.robot.util.NFRAutoRoutine;
 
 public class RalphAutos
 {
     public static void addAutoRoutines(RalphContainer container)
     {
-        container.getDashboard().addAutoRoutine("Do Nothing", doNothing(container));
-        container.getDashboard().addDefaultAutoRoutine("Simple Backup", simpleBackup(container));
+        container.getDashboard().addAutoRoutine("LEFT.LEAVE", new PathPlannerAuto("LEFT.LEAVE"));
+        container.getDashboard().addAutoRoutine("LEFT.PLACE.I", new PathPlannerAuto("LEFT.PLACE.I"));
+        container.getDashboard().addDefaultAutoRoutine("CENTER.LEAVE", new PathPlannerAuto("CENTER.LEAVE"));
+        container.getDashboard().addAutoRoutine("CENTER.PLACE.G", new PathPlannerAuto("CENTER.PLACE.G"));
+        container.getDashboard().addAutoRoutine("RIGHT.LEAVE", new PathPlannerAuto("RIGHT.LEAVE"));
+        container.getDashboard().addAutoRoutine("RIGHT.PLACE.E", new PathPlannerAuto("RIGHT.PLACE.E"));
+        container.getDashboard().addAutoRoutine("CENTER.H.K.L", new PathPlannerAuto("CENTER.H.K.L"));
     }
 
-    public static NFRAutoRoutine doNothing(RalphContainer container)
+    public static void addNamedCommands(RalphContainer container)
     {
-        return new NFRAutoRoutine(Commands.none(), new Translation2d[]
-        { Translation2d.kZero, Translation2d.kZero }, () -> Pose2d.kZero);
-    }
-
-    public static NFRAutoRoutine simpleBackup(RalphContainer container)
-    {
-        Pose2d startingPose = new Pose2d(7.5, 4.06, Rotation2d.kZero);
-        return new NFRAutoRoutine(container.getDrive().backup(Seconds.of(4), -0.3), new Translation2d[]
-        { new Translation2d(7.5, 4.06), new Translation2d(7.5, 4.06) },
-                () -> FieldConstants.convertPoseByAlliance(startingPose));
+        NamedCommands.registerCommand("GoToL4Goal", container.goToL4());
+        NamedCommands.registerCommand("GoToL3Goal", container.goToL3());
+        NamedCommands.registerCommand("GoToL2Goal", container.goToL2());
+        NamedCommands.registerCommand("GoToL1Goal", container.goToL1());
+        NamedCommands.registerCommand("GoToIntakeGoal", container.goToIntake());
+        NamedCommands.registerCommand("Intake", Commands.waitUntil(container.getInserter()::hasCoral));
+        NamedCommands.registerCommand("Outtake", container.outtakeCoral());
     }
 }

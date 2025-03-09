@@ -13,14 +13,10 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.northernforce.util.NFRRobotContainer;
 
-import com.pathplanner.lib.auto.NamedCommands;
-
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import com.ctre.phoenix6.Utils;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
@@ -28,8 +24,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.ReefPositions.ReefSide;
 import frc.robot.ralph.constants.RalphConstants.DrivetrainConstants;
@@ -37,7 +31,6 @@ import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOSwing;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
-import frc.robot.util.NFRAutoRoutine;
 import frc.robot.subsystems.photonvision.PhotonVision;
 import frc.robot.zippy.constants.ZippyConstants;
 import frc.robot.zippy.constants.ZippyTunerConstants;
@@ -76,8 +69,6 @@ public class ZippyContainer implements NFRRobotContainer
                 ZippyConstants.VisionConstants.MAX_Y_COORDINATE, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 ZippyConstants.DrivetrainConstants.MAX_LINEAR_SPEED, ZippyConstants.VisionConstants.CAMERA_WIDTH);
         LoggedPowerDistribution.getInstance(40, ModuleType.kRev);
-        dashboard.addDefaultAutoRoutine("Do Nothing", new NFRAutoRoutine(new InstantCommand(), new Translation2d[]
-        { new Translation2d(), new Translation2d() }, () -> new Pose2d()));
 
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
     }
@@ -125,17 +116,7 @@ public class ZippyContainer implements NFRRobotContainer
     @Override
     public void autonomousInit()
     {
-        drive.resetPose(FieldConstants.convertPoseByAlliance(dashboard.getRoutine().startPose().get(),
-                FieldConstants.getAlliance()));
 
-        NamedCommands.registerCommand("test", Commands.runOnce(() -> System.out.println("it works!")));
-        var routine = factory.newRoutine("test1");
-        var traj = routine.trajectory("testPath");
-        routine.active().onTrue(Commands.sequence(traj.resetOdometry(), traj.cmd()));
-        hi = routine;
-        // hicmd = factory.trajectoryCmd("testPath");
-        // RobotModeTriggers.autonomous().whileTrue(hicmd).whileTrue(Commands.run(() ->
-        // System.out.println("")));
     }
 
     @Override
@@ -165,7 +146,7 @@ public class ZippyContainer implements NFRRobotContainer
     @Override
     public Command getAutonomousCommand()
     {
-        return dashboard.getRoutine().command();
+        return dashboard.getRoutine();
     }
 
     private void resetDriveEncoders()
