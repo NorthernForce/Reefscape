@@ -6,12 +6,11 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.ReefLocations;
-import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
+import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIO;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOInputsAutoLogged;
 import frc.robot.util.NFRAutoRoutine;
@@ -25,7 +24,6 @@ public class Dashboard extends SubsystemBase
     private final DashboardIOInputsAutoLogged m_input;
     private final ReefDisplayIO reefDisplayIO;
     private final ReefDisplayIOInputsAutoLogged reefDisplayInputs;
-    private boolean useBeamBreak = true;
 
     /**
      * Constructs a new Dashboard.
@@ -73,29 +71,6 @@ public class Dashboard extends SubsystemBase
     }
 
     /**
-     * sets the beam break sensor to be used or not
-     * 
-     * @param useBeamBreak
-     */
-
-    public void toggleBeamBreak()
-    {
-        useBeamBreak = !useBeamBreak;
-        SmartDashboard.putBoolean("Use Beam Break", useBeamBreak);
-    }
-
-    /**
-     * gets the beam break sensor to be used or not
-     * 
-     * @return
-     */
-
-    public boolean getUseBeamBreak()
-    {
-        return useBeamBreak;
-    }
-
-    /**
      * Sets the stage of the dashboard to auto. This only changes the display stage
      * when toggle is on.
      */
@@ -125,11 +100,6 @@ public class Dashboard extends SubsystemBase
     public void setResetEncodersCommand(Command command)
     {
         m_io.addCommand("ResetSwerveWheels", command);
-    }
-
-    public void setResetWristEncoderCommand(Command command)
-    {
-        m_io.addCommand("ResetWrist", command);
     }
 
     public void setInnerElevatorGoToPosition(Command command)
@@ -223,11 +193,6 @@ public class Dashboard extends SubsystemBase
     public void setHasCoral(boolean hasCoral)
     {
         m_io.setHasCoral(hasCoral);
-    }
-
-    public void setHasAlgae(boolean hasVision)
-    {
-        m_io.setHasAlgae(hasVision);
     }
 
     @AutoLogOutput

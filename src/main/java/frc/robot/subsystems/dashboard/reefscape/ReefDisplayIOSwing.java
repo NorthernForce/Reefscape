@@ -7,7 +7,7 @@ import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.FieldConstants.ReefLocations;
-import frc.robot.sebastian.constants.SebastianConstants.SuperstructureGoal;
+import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 
 /**
  * ReefDisplayIO for the Swing dashboard.
@@ -55,7 +55,6 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
         } else if (selected == 8)
         {
             inputs.reefLocations = ReefLocations.EF_ALGAE;
-            inputs.reefGoal = SuperstructureGoal.HIGHER_ALGAE;
         } else if (selected >= 9 && selected < 13)
         {
             inputs.reefLocations = ReefLocations.G;
@@ -65,7 +64,6 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
         } else if (selected == 17)
         {
             inputs.reefLocations = ReefLocations.GH_ALGAE;
-            inputs.reefGoal = SuperstructureGoal.LOWER_ALGAE;
         } else if (selected >= 18 && selected < 22)
         {
             inputs.reefLocations = ReefLocations.I;
@@ -75,7 +73,6 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
         } else if (selected == 26)
         {
             inputs.reefLocations = ReefLocations.IJ_ALGAE;
-            inputs.reefGoal = SuperstructureGoal.HIGHER_ALGAE;
         } else if (selected >= 27 && selected < 31)
         {
             inputs.reefLocations = ReefLocations.K;
@@ -85,7 +82,6 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
         } else if (selected == 35)
         {
             inputs.reefLocations = ReefLocations.KL_ALGAE;
-            inputs.reefGoal = SuperstructureGoal.LOWER_ALGAE;
         } else if (selected >= 36 && selected < 40)
         {
             inputs.reefLocations = ReefLocations.A;
@@ -95,7 +91,6 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
         } else if (selected == 44)
         {
             inputs.reefLocations = ReefLocations.AB_ALGAE;
-            inputs.reefGoal = SuperstructureGoal.HIGHER_ALGAE;
         } else if (selected >= 45 && selected < 49)
         {
             inputs.reefLocations = ReefLocations.C;
@@ -105,7 +100,6 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
         } else if (selected == 53)
         {
             inputs.reefLocations = ReefLocations.CD_ALGAE;
-            inputs.reefGoal = SuperstructureGoal.LOWER_ALGAE;
         }
         int otherSelected = (int) stationSelected.get();
         if (otherSelected == 0)
@@ -116,10 +110,6 @@ public class ReefDisplayIOSwing implements ReefDisplayIO
         {
             inputs.stationlocations = ReefLocations.LEFT_CORAL_STATION;
             inputs.stationGoal = SuperstructureGoal.CORAL_STATION;
-        } else
-        {
-            inputs.stationlocations = ReefLocations.PROCESSOR_STATION;
-            inputs.stationGoal = SuperstructureGoal.PROCESSOR_STATION;
         }
         inputs.isConnected = false;
         for (var connection : NetworkTableInstance.getDefault().getConnections())

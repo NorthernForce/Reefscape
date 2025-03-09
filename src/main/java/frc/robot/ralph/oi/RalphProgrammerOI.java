@@ -1,27 +1,27 @@
-package frc.robot.sebastian.oi;
+package frc.robot.ralph.oi;
 
 import com.ctre.phoenix6.SignalLogger;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.sebastian.SebastianContainer;
+import frc.robot.ralph.RalphContainer;
 
 /**
- * Sebastian OI for the driver and operator
+ * Ralph OI for the driver and operator
  */
-public class SebastianProgrammerOI implements SebastianOI
+public class RalphProgrammerOI implements RalphOI
 {
     @Override
-    public void bindOI(SebastianContainer container)
+    public void bindOI(RalphContainer container)
     {
         CommandXboxController driverController = new CommandXboxController(0);
         CommandXboxController manipulatorController = new CommandXboxController(1);
 
-        SebastianDriverOI.bindDrive(driverController, container);
-        SebastianDriverOI.bindRollers(driverController, manipulatorController, container);
-        SebastianDriverOI.bindClimber(driverController, container);
-        SebastianDriverOI.bindSuperstructure(driverController, manipulatorController, container);
+        RalphDriverOI.bindDrive(driverController, container);
+        RalphDriverOI.bindInserter(driverController, manipulatorController, container);
+        RalphDriverOI.bindClimber(driverController, container);
+        RalphDriverOI.bindSuperstructure(driverController, manipulatorController, container);
 
         manipulatorController.leftStick().whileTrue(
                 Commands.sequence(container.getSuperstructure().getOuterElevator().getSysIdQuasistaicForward(),
