@@ -73,13 +73,15 @@ public class RalphConstants
         public static String[] cameraNames()
         {
             return new String[]
-            { FL_CAMERA_NAME, FR_CAMERA_NAME, BL_CAMERA_NAME, BR_CAMERA_NAME };
+            { FR_CAMERA_NAME };
         }
 
         public static Transform3d[] cameraTransforms()
         {
             return new Transform3d[]
-            { FL_ROBOT_TO_CAMERA, FR_ROBOT_TO_CAMERA, BL_ROBOT_TO_CAMERA, BR_ROBOT_TO_CAMERA };
+            { FR_ROBOT_TO_CAMERA };
+            // { FL_ROBOT_TO_CAMERA, FR_ROBOT_TO_CAMERA, BL_ROBOT_TO_CAMERA,
+            // BR_ROBOT_TO_CAMERA };
         }
 
         public static final double MAX_Y_COORDINATE = 350; // TODO: Set this to the actual value
