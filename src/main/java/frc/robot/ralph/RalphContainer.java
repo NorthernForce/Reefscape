@@ -14,7 +14,6 @@ import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -30,7 +29,6 @@ import frc.robot.ralph.constants.RalphTunerConstants;
 import frc.robot.ralph.constants.RalphConstants.DrivetrainConstants;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 import frc.robot.ralph.oi.RalphDriverOI;
-import frc.robot.ralph.oi.RalphOI;
 import frc.robot.ralph.oi.RalphProgrammerOI;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
@@ -172,8 +170,8 @@ public class RalphContainer implements NFRRobotContainer
             }
         }
         double angleRadians = closestTranslation.left().getRotation().getRadians() + 3 * Math.PI / 2;
-        double xOffset = Inches.of(Math.cos(angleRadians) * -10).in(Meters);
-        double yOffset = Inches.of(Math.sin(angleRadians) * -10).in(Meters);
+        double xOffset = Inches.of(Math.cos(angleRadians) * 10).in(Meters);
+        double yOffset = Inches.of(Math.sin(angleRadians) * 10).in(Meters);
         Pose2d finalTranslatedPose2d = new Pose2d(closestTranslation.left().getTranslation().getX() + xOffset,
                 closestTranslation.left().getTranslation().getY() + yOffset, closestTranslation.left().getRotation());
         return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
@@ -211,8 +209,8 @@ public class RalphContainer implements NFRRobotContainer
             }
         }
         double angleRadians = closestTranslation.right().getRotation().getRadians() + 3 * Math.PI / 2;
-        double xOffset = Inches.of(Math.cos(angleRadians) * -10).in(Meters);
-        double yOffset = Inches.of(Math.sin(angleRadians) * -10).in(Meters);
+        double xOffset = Inches.of(Math.cos(angleRadians) * 10).in(Meters);
+        double yOffset = Inches.of(Math.sin(angleRadians) * 10).in(Meters);
         Pose2d finalTranslatedPose2d = new Pose2d(closestTranslation.right().getTranslation().getX() + xOffset,
                 closestTranslation.right().getTranslation().getY() + yOffset, closestTranslation.right().getRotation());
         return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
@@ -220,32 +218,44 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command getGoToReefPoseCommandLeft()
     {
-        return Commands.defer(() -> getDrive().driveToAccurate(getTargetPoseLeft(),
-                DrivetrainConstants.MAX_LINEAR_SPEED, DrivetrainConstants.MAX_ACCELERATION,
-                DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
-                DrivetrainConstants.CLOSE_TRANSLATION_PP_KP, DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
-                DrivetrainConstants.CLOSE_TRANSLATION_PP_KD, DrivetrainConstants.CLOSE_ROTATION_PP_KP,
-                DrivetrainConstants.CLOSE_ROTATION_PP_KI, DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
+        return Commands.defer(() -> drive.driveToAccurate(getTargetPoseLeft(),
+                RalphConstants.DrivetrainConstants.MAX_SPEED, RalphConstants.DrivetrainConstants.MAX_ACCELERATION,
+                RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                RalphConstants.DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                RalphConstants.DrivetrainConstants.CLOSE_TRANSLATION_PP_KP,
+                RalphConstants.DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
+                RalphConstants.DrivetrainConstants.CLOSE_TRANSLATION_PP_KD,
+                RalphConstants.DrivetrainConstants.CLOSE_ROTATION_PP_KP,
+                RalphConstants.DrivetrainConstants.CLOSE_ROTATION_PP_KI,
+                RalphConstants.DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
     }
 
     public Command getGoToReefPoseCommandRight()
     {
-        return Commands.defer(() -> getDrive().driveToAccurate(getTargetPoseRight(),
-                DrivetrainConstants.MAX_LINEAR_SPEED, DrivetrainConstants.MAX_ACCELERATION,
-                DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
-                DrivetrainConstants.CLOSE_TRANSLATION_PP_KP, DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
-                DrivetrainConstants.CLOSE_TRANSLATION_PP_KD, DrivetrainConstants.CLOSE_ROTATION_PP_KP,
-                DrivetrainConstants.CLOSE_ROTATION_PP_KI, DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
+        return Commands.defer(() -> drive.driveToAccurate(getTargetPoseRight(),
+                RalphConstants.DrivetrainConstants.MAX_SPEED, RalphConstants.DrivetrainConstants.MAX_ACCELERATION,
+                RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                RalphConstants.DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                RalphConstants.DrivetrainConstants.CLOSE_TRANSLATION_PP_KP,
+                RalphConstants.DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
+                RalphConstants.DrivetrainConstants.CLOSE_TRANSLATION_PP_KD,
+                RalphConstants.DrivetrainConstants.CLOSE_ROTATION_PP_KP,
+                RalphConstants.DrivetrainConstants.CLOSE_ROTATION_PP_KI,
+                RalphConstants.DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
     }
 
     public Command getGoToReefPoseCommandCenter()
     {
-        return Commands.defer(() -> getDrive().driveToAccurate(getTargetPoseCenter(),
-                DrivetrainConstants.MAX_LINEAR_SPEED, DrivetrainConstants.MAX_ACCELERATION,
-                DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
-                DrivetrainConstants.CLOSE_TRANSLATION_PP_KP, DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
-                DrivetrainConstants.CLOSE_TRANSLATION_PP_KD, DrivetrainConstants.CLOSE_ROTATION_PP_KP,
-                DrivetrainConstants.CLOSE_ROTATION_PP_KI, DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
+        return Commands.defer(() -> drive.driveToAccurate(getTargetPoseCenter(),
+                RalphConstants.DrivetrainConstants.MAX_SPEED, RalphConstants.DrivetrainConstants.MAX_ACCELERATION,
+                RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                RalphConstants.DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                RalphConstants.DrivetrainConstants.CLOSE_TRANSLATION_PP_KP,
+                RalphConstants.DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
+                RalphConstants.DrivetrainConstants.CLOSE_TRANSLATION_PP_KD,
+                RalphConstants.DrivetrainConstants.CLOSE_ROTATION_PP_KP,
+                RalphConstants.DrivetrainConstants.CLOSE_ROTATION_PP_KI,
+                RalphConstants.DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
     }
 
     public Pose2d getClosestCoralStation()
@@ -264,22 +274,30 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command getGoToProcessorCommand()
     {
-        return Commands.defer(() -> getDrive().driveToAccurate(FieldConstants.ProcessorStations.PROCESSOR_STATION,
-                DrivetrainConstants.MAX_LINEAR_SPEED, DrivetrainConstants.MAX_ACCELERATION,
-                DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
-                DrivetrainConstants.CLOSE_TRANSLATION_PP_KP, DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
-                DrivetrainConstants.CLOSE_TRANSLATION_PP_KD, DrivetrainConstants.CLOSE_ROTATION_PP_KP,
-                DrivetrainConstants.CLOSE_ROTATION_PP_KI, DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
+        return Commands.defer(() -> drive.driveToAccurate(FieldConstants.ProcessorStations.PROCESSOR_STATION,
+                RalphConstants.DrivetrainConstants.MAX_SPEED, RalphConstants.DrivetrainConstants.MAX_ACCELERATION,
+                RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                RalphConstants.DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                RalphConstants.DrivetrainConstants.CLOSE_TRANSLATION_PP_KP,
+                RalphConstants.DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
+                RalphConstants.DrivetrainConstants.CLOSE_TRANSLATION_PP_KD,
+                RalphConstants.DrivetrainConstants.CLOSE_ROTATION_PP_KP,
+                RalphConstants.DrivetrainConstants.CLOSE_ROTATION_PP_KI,
+                RalphConstants.DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
     }
 
     public Command driveToCoralStation()
     {
-        return Commands.defer(() -> getDrive().driveToAccurate(getClosestCoralStation(),
-                DrivetrainConstants.MAX_LINEAR_SPEED, DrivetrainConstants.MAX_ACCELERATION,
-                DrivetrainConstants.MAX_ANGULAR_SPEED, DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
-                DrivetrainConstants.CLOSE_TRANSLATION_PP_KP, DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
-                DrivetrainConstants.CLOSE_TRANSLATION_PP_KD, DrivetrainConstants.CLOSE_ROTATION_PP_KP,
-                DrivetrainConstants.CLOSE_ROTATION_PP_KI, DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
+        return Commands.defer(() -> drive.driveToAccurate(getClosestCoralStation(),
+                RalphConstants.DrivetrainConstants.MAX_SPEED, RalphConstants.DrivetrainConstants.MAX_ACCELERATION,
+                RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                RalphConstants.DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                RalphConstants.DrivetrainConstants.CLOSE_TRANSLATION_PP_KP,
+                RalphConstants.DrivetrainConstants.CLOSE_TRANSLATION_PP_KI,
+                RalphConstants.DrivetrainConstants.CLOSE_TRANSLATION_PP_KD,
+                RalphConstants.DrivetrainConstants.CLOSE_ROTATION_PP_KP,
+                RalphConstants.DrivetrainConstants.CLOSE_ROTATION_PP_KI,
+                RalphConstants.DrivetrainConstants.CLOSE_ROTATION_PP_KD), Set.of());
     }
 
     public Command intakeCoral()

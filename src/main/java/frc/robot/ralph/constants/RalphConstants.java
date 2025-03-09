@@ -239,15 +239,15 @@ public class RalphConstants
         public static final PIDController yPID = new PIDController(10, 0, 0);
         public static final PIDController rPID = new PIDController(7.5, 0, 0);
         public static final double kD = 0;
-        public static double postP;
-        public static double kI;
-        public static double postI;
-        public static double postD;
-        public static Constraints kConstraints;
-        public static double kPRotation;
-        public static Rotation2d totalAngle;
-        public static Distance totalDistance;
-        public static double rotationContinuous;
-        public static double kP;
+        public static double postP = 12;
+        public static double kI = 0;
+        public static double postI = 0;
+        public static double postD = 0;
+        public static Constraints kConstraints = new Constraints(6, 2);
+        public static double kPRotation = 2;
+        public static Rotation2d totalAngle = Rotation2d.kZero;
+        public static Distance totalDistance = Meters.of(1);
+        public static double rotationContinuous = 5;
+        public static double kP = 0;
     }
 }
