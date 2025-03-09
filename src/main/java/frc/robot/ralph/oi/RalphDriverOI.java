@@ -3,6 +3,7 @@ package frc.robot.ralph.oi;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.FieldConstants;
 import frc.robot.commands.RumbleXBoxController;
@@ -71,10 +72,14 @@ public class RalphDriverOI implements RalphOI
 
         manipulatorController.start().whileTrue(container.homeElevator());
 
-        manipulatorController.povLeft().whileTrue(container.holdAtL1());
-        manipulatorController.povUp().whileTrue(container.holdAtL2());
-        manipulatorController.povRight().whileTrue(container.holdAtL3());
-        manipulatorController.povDown().whileTrue(container.holdAtL4());
+        manipulatorController.povLeft()
+                .whileTrue(Commands.waitUntil(container.getInserter()::hasCoral).andThen(container.holdAtL1()));
+        manipulatorController.povUp()
+                .whileTrue(Commands.waitUntil(container.getInserter()::hasCoral).andThen(container.holdAtL2()));
+        manipulatorController.povRight()
+                .whileTrue(Commands.waitUntil(container.getInserter()::hasCoral).andThen(container.holdAtL3()));
+        manipulatorController.povDown()
+                .whileTrue(Commands.waitUntil(container.getInserter()::hasCoral).andThen(container.holdAtL4()));
 
         manipulatorController.rightBumper()
                 .whileTrue(container.getSuperstructure().getManualControlCommand(
