@@ -747,4 +747,15 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     {
         return goBackward(speed).withTimeout(time);
     }
+
+    /**
+     * Get the current speed of the robot
+     * 
+     * @return the current speed of the robot (a LinearVelocity)
+     */
+    public LinearVelocity getSpeed()
+    {
+        var speeds = getState().Speeds;
+        return MetersPerSecond.of(Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond));
+    }
 }

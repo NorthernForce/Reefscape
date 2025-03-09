@@ -4,13 +4,10 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.FieldConstants;
 import frc.robot.commands.RumbleXBoxController;
 import frc.robot.ralph.RalphContainer;
-import frc.robot.ralph.constants.RalphConstants;
-import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 
 /**
  * Ralph OI for the driver and operator
@@ -73,20 +70,18 @@ public class RalphDriverOI implements RalphOI
                         .onlyWhile(() -> isAutoAlignMode.getAsBoolean() && currentMode == TARGET_MODES.REEF)));
     }
 
-    static void bindRollers(CommandXboxController driverController, CommandXboxController manipulatorController,
+    static void bindInserter(CommandXboxController driverController, CommandXboxController manipulatorController,
             RalphContainer container)
     {
-        manipulatorController.back().onTrue(Commands.runOnce(() -> container.getDashboard().toggleBeamBreak()));
+        container.getInserter().setDefaultCommand(container.defaultIntake());
 
-        container.getRollers().setDefaultCommand(container.getRollers().getStopCommand());
+        driverController.rightTrigger().and(container.getSuperstructure()::isAtGoal)
+                .whileTrue(container.outtakeCoral());
 
-        driverController.rightTrigger().whileTrue(container.getOuttakeCommand());
+        manipulatorController.rightTrigger().and(container.getSuperstructure()::isAtGoal)
+                .whileTrue(container.outtakeCoral());
 
-        manipulatorController.rightTrigger().whileTrue(container.getOuttakeCommand());
-
-        manipulatorController.back().whileTrue(container.getOuttakeCommand(1.0));
-
-        container.getRollers().intakeTrigger().onTrue(new RumbleXBoxController(manipulatorController, 0.5, 0.5)
+        container.getInserter().intakeTrigger().onTrue(new RumbleXBoxController(manipulatorController, 0.5, 0.5)
                 .alongWith(new RumbleXBoxController(driverController, 0.5, 0.5)));
     }
 
@@ -100,43 +95,22 @@ public class RalphDriverOI implements RalphOI
     static void bindSuperstructure(CommandXboxController driverController, CommandXboxController manipulatorController,
             RalphContainer container)
     {
-        container.getSuperstructure().getInnerElevator().setDefaultCommand(container.getSuperstructure()
-                .getInnerElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getRightY)));
 
-        container.getSuperstructure().getOuterElevator().setDefaultCommand(container.getSuperstructure()
-                .getOuterElevator().getMoveByJoystick(processJoystickInput(manipulatorController::getLeftY)));
+        manipulatorController.a().onTrue(container.goToIntake());
 
-        driverController.start()
-                .whileTrue(container.getSuperstructure().getHomingCommand(
-                        RalphConstants.InnerElevatorConstants.HOMING_SPEED,
-                        RalphConstants.OuterElevatorConstants.HOMING_SPEED));
+        driverController.start().whileTrue(container.homeElevator());
 
-        manipulatorController.start()
-                .whileTrue(container.getSuperstructure().getHomingCommand(
-                        RalphConstants.InnerElevatorConstants.HOMING_SPEED,
-                        RalphConstants.OuterElevatorConstants.HOMING_SPEED));
+        manipulatorController.start().whileTrue(container.homeElevator());
 
-        manipulatorController.povLeft()
-                .whileTrue(container.getSuperstructure().getGoToGoalCommand(RalphConstants.SuperstructureGoal.L1));
-        manipulatorController.povUp()
-                .whileTrue(container.getSuperstructure().getGoToGoalCommand(RalphConstants.SuperstructureGoal.L2));
-        manipulatorController.povRight()
-                .whileTrue(container.getSuperstructure().getGoToGoalCommand(RalphConstants.SuperstructureGoal.L3));
-        manipulatorController.povDown()
-                .whileTrue(container.getSuperstructure().getGoToGoalCommand(RalphConstants.SuperstructureGoal.L4));
-        manipulatorController.a().onTrue(Commands.either(
-                container.getSuperstructure().getGoToGoalCommand(RalphConstants.SuperstructureGoal.CORAL_STATION_PRE)
-                        .andThen(container.getSuperstructure().getHomingCommand(0.5, 0.5))
-                        .andThen(container.getSuperstructure()
-                                .getGoToGoalCommand(RalphConstants.SuperstructureGoal.CORAL_STATION)),
-                Commands.none(), () -> container.getSuperstructure().getGoal() != SuperstructureGoal.CORAL_STATION)
-                .withTimeout(1.5));
-        manipulatorController.b().whileTrue(
-                container.getSuperstructure().getGoToGoalCommand(RalphConstants.SuperstructureGoal.PROCESSOR_STATION));
-        manipulatorController.y().whileTrue(
-                container.getSuperstructure().getGoToGoalCommand(RalphConstants.SuperstructureGoal.LOWER_ALGAE));
-        manipulatorController.x().whileTrue(
-                container.getSuperstructure().getGoToGoalCommand(RalphConstants.SuperstructureGoal.HIGHER_ALGAE));
+        manipulatorController.povLeft().and(container.getInserter()::hasCoral).onTrue(container.goToL1());
+        manipulatorController.povUp().and(container.getInserter()::hasCoral).onTrue(container.goToL2());
+        manipulatorController.povRight().and(container.getInserter()::hasCoral).onTrue(container.goToL3());
+        manipulatorController.povDown().and(container.getInserter()::hasCoral).onTrue(container.goToL4());
+
+        container.getSuperstructure()
+                .setDefaultCommand(container.getSuperstructure().getManualControlCommand(
+                        processJoystickInput(manipulatorController::getRightY),
+                        processJoystickInput(manipulatorController::getLeftY)));
     }
 
     @Override
@@ -152,7 +126,7 @@ public class RalphDriverOI implements RalphOI
         };
 
         bindDrive(driverController, container);
-        bindRollers(driverController, manipulatorController, container);
+        bindInserter(driverController, manipulatorController, container);
         bindClimber(driverController, container);
         bindSuperstructure(driverController, manipulatorController, container);
 
