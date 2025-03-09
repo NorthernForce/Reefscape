@@ -192,8 +192,8 @@ public class RalphConstants
 
     public static class PathplannerConstants
     {
-        public static final PIDConstants linearPIDConstants = new PIDConstants(10.0, 0.0, 0.0);
-        public static final PIDConstants angularPIDConstants = new PIDConstants(5.0, 0.0, 0.0);
+        public static final PIDConstants linearPIDConstants = new PIDConstants(15.0, 0.0, 0.0);
+        public static final PIDConstants angularPIDConstants = new PIDConstants(10.0, 0.0, 0.0);
         public static final LinearVelocity MAX_VELOCITY = FeetPerSecond.of(4);
         public static final LinearAcceleration MAX_ACCELERATION = FeetPerSecondPerSecond.of(3);
         public static final AngularVelocity MAX_ANGULAR_VELOCITY = RotationsPerSecond.of(0.7);
