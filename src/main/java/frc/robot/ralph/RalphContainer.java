@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.units.measure.Angle;
@@ -210,20 +209,15 @@ public class RalphContainer implements NFRRobotContainer
         return closestTranslation;
     }
 
-    private Pose2d calculatePoseWithOffset(Pose2d basePose, double distanceInInches, double angleOffset) {
-        Translation2d offset = new Translation2d(
-            Inches.of(distanceInInches).in(Meters), 
-            0
-        ).rotateBy(basePose.getRotation().plus(new Rotation2d(angleOffset)));
-    
+    private Pose2d calculatePoseWithOffset(Pose2d basePose, double distanceInInches, double angleOffset)
+    {
+        Translation2d offset = new Translation2d(Inches.of(distanceInInches).in(Meters), 0)
+                .rotateBy(basePose.getRotation().plus(new Rotation2d(angleOffset)));
+
         Translation2d newTranslation = basePose.getTranslation().plus(offset);
-    
-        return new Pose2d(
-            newTranslation,
-            basePose.getRotation()
-        );
+
+        return new Pose2d(newTranslation, basePose.getRotation());
     }
-    
 
     public Command getGoToReefPoseCommandLeft()
     {
