@@ -42,6 +42,11 @@ public class FieldConstants
      */
     public static class ReefPositions
     {
+        public enum ReefSideLocations
+        {
+            LEFT, CENTER, RIGHT
+        }
+
         public record ReefSide(Pose2d left, Pose2d center, Pose2d right) {
             public Distance getDistanceFromCenter(Pose2d pose)
             {

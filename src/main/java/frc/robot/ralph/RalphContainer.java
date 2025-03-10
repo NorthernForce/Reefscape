@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.units.measure.Angle;
@@ -24,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.ReefPositions.ReefSide;
+import frc.robot.FieldConstants.ReefPositions.ReefSideLocations;
 import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.ralph.constants.RalphTunerConstants;
 import frc.robot.ralph.constants.RalphConstants.DrivetrainConstants;
@@ -170,28 +172,32 @@ public class RalphContainer implements NFRRobotContainer
         PortForwarder.add(5809, "10.1.72.14", 22);
     }
 
-    public Pose2d getTargetPoseLeft()
+    public Pose2d getTargetPose(FieldConstants.ReefPositions.ReefSideLocations location)
     {
-        ReefSide closestTranslation = FieldConstants.ReefPositions.SIDES[0];
-        for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
+        Pose2d currentPose = new Pose2d(drive.getPose().getTranslation(), drive.getPose().getRotation());
+        ReefSide closestTranslation = getClosestReefSide(currentPose);
+
+        Pose2d targetPose;
+        switch (location)
         {
-            if (pose.getDistanceFromLeft(drivePose).in(Meters) < closestTranslation.getDistanceFromCenter(drivePose)
-                    .in(Meters))
-            {
-                closestTranslation = pose;
-            }
+        case LEFT:
+            targetPose = calculatePoseWithOffset(closestTranslation.left(), 10, 3 * Math.PI / 2);
+            break;
+        case CENTER:
+            targetPose = closestTranslation.center();
+            break;
+        case RIGHT:
+            targetPose = calculatePoseWithOffset(closestTranslation.right(), 10, 3 * Math.PI / 2);
+            break;
+        default:
+            throw new IllegalArgumentException("Invalid side: " + location.toString());
         }
-        double angleRadians = closestTranslation.left().getRotation().getRadians() + 3 * Math.PI / 2;
-        double xOffset = Inches.of(Math.cos(angleRadians) * 10).in(Meters);
-        double yOffset = Inches.of(Math.sin(angleRadians) * 10).in(Meters);
-        Pose2d finalTranslatedPose2d = new Pose2d(closestTranslation.left().getTranslation().getX() + xOffset,
-                closestTranslation.left().getTranslation().getY() + yOffset, closestTranslation.left().getRotation());
-        return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
+
+        return FieldConstants.convertPoseByAlliance(targetPose, FieldConstants.getAlliance());
     }
 
-    public Pose2d getTargetPoseCenter()
+    private ReefSide getClosestReefSide(Pose2d currentPose)
     {
-        Pose2d currentPose = new Pose2d(getDrive().getPose().getTranslation(), getDrive().getPose().getRotation());
         ReefSide closestTranslation = FieldConstants.ReefPositions.SIDES[0];
         for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
         {
@@ -201,36 +207,27 @@ public class RalphContainer implements NFRRobotContainer
                 closestTranslation = pose;
             }
         }
-
-        Pose2d finalTranslatedPose2d = new Pose2d(closestTranslation.center().getTranslation().getX(),
-                closestTranslation.center().getTranslation().getY(), closestTranslation.center().getRotation());
-        return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
+        return closestTranslation;
     }
 
-    public Pose2d getTargetPoseRight()
-    {
-        Pose2d currentPose = new Pose2d(drive.getPose().getTranslation(), drive.getPose().getRotation());
-
-        ReefSide closestTranslation = FieldConstants.ReefPositions.SIDES[0];
-        for (ReefSide pose : FieldConstants.ReefPositions.SIDES)
-        {
-            if (pose.getDistanceFromCenter(currentPose).in(Meters) < closestTranslation
-                    .getDistanceFromCenter(currentPose).in(Meters) || closestTranslation == null)
-            {
-                closestTranslation = pose;
-            }
-        }
-        double angleRadians = closestTranslation.right().getRotation().getRadians() + 3 * Math.PI / 2;
-        double xOffset = Inches.of(Math.cos(angleRadians) * 10).in(Meters);
-        double yOffset = Inches.of(Math.sin(angleRadians) * 10).in(Meters);
-        Pose2d finalTranslatedPose2d = new Pose2d(closestTranslation.right().getTranslation().getX() + xOffset,
-                closestTranslation.right().getTranslation().getY() + yOffset, closestTranslation.right().getRotation());
-        return FieldConstants.convertPoseByAlliance(finalTranslatedPose2d, FieldConstants.getAlliance());
+    private Pose2d calculatePoseWithOffset(Pose2d basePose, double distanceInInches, double angleOffset) {
+        Translation2d offset = new Translation2d(
+            Inches.of(distanceInInches).in(Meters), 
+            0
+        ).rotateBy(basePose.getRotation().plus(new Rotation2d(angleOffset)));
+    
+        Translation2d newTranslation = basePose.getTranslation().plus(offset);
+    
+        return new Pose2d(
+            newTranslation,
+            basePose.getRotation()
+        );
     }
+    
 
     public Command getGoToReefPoseCommandLeft()
     {
-        return Commands.defer(() -> drive.driveToAccurate(getTargetPoseLeft(),
+        return Commands.defer(() -> drive.driveToAccurate(getTargetPose(ReefSideLocations.LEFT),
                 RalphConstants.DrivetrainConstants.MAX_SPEED, RalphConstants.DrivetrainConstants.MAX_ACCELERATION,
                 RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 RalphConstants.DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
@@ -244,7 +241,7 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command getGoToReefPoseCommandRight()
     {
-        return Commands.defer(() -> drive.driveToAccurate(getTargetPoseRight(),
+        return Commands.defer(() -> drive.driveToAccurate(getTargetPose(ReefSideLocations.RIGHT),
                 RalphConstants.DrivetrainConstants.MAX_SPEED, RalphConstants.DrivetrainConstants.MAX_ACCELERATION,
                 RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 RalphConstants.DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
@@ -258,7 +255,7 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command getGoToReefPoseCommandCenter()
     {
-        return Commands.defer(() -> drive.driveToAccurate(getTargetPoseCenter(),
+        return Commands.defer(() -> drive.driveToAccurate(getTargetPose(ReefSideLocations.CENTER),
                 RalphConstants.DrivetrainConstants.MAX_SPEED, RalphConstants.DrivetrainConstants.MAX_ACCELERATION,
                 RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 RalphConstants.DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
