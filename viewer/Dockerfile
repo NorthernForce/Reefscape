@@ -6,7 +6,9 @@ WORKDIR /src
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -y && apt-get upgrade -y
-RUN apt-get install -y git sudo wget curl cmake build-essential \
+RUN apt-get install -y \
+    git sudo wget curl cmake build-essential \
+    libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev \
     libssl-dev libusb-1.0-0-dev libudev-dev udev pkg-config \
     python3 python3-pip python3-venv python3-dev
 # setup repo
@@ -33,12 +35,10 @@ ENV PYTHONPATH="$PYTHONPATH:/usr/local/lib"
 
 WORKDIR /run/viewer
 COPY . .
-
-RUN python3 -m venv .env \
+RUN python3 -m venv .env --system-site-packages \
     && . .env/bin/activate \
     && pip install --upgrade pip setuptools wheel \
     && pip install -r requirements.txt
-
 # color + depth debug
 EXPOSE 1181
 EXPOSE 1182

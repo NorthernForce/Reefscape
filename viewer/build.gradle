@@ -10,12 +10,24 @@ remotes {
     }
 }
 
+// task(viewInit) {
+//     ssh.run {
+//         session(remotes.orangepi) {
+//             execute "sudo nmcli conn down static-end1"
+//             execute "cd ~/viewer && sudo docker build . -t viewer --network=host"
+//             execute "sudo nmcli conn up static-end1"
+//         }
+//     }
+// }
+
 task(viewDeploy) {
     ssh.run {
         session(remotes.orangepi) {
             def dirName = project.projectDir.getName()
             put from: project.projectDir, into: "/home/pi"
             println "vision code uploaded to ~/$dirName."
+            // sudo docker run --device /dev/bus/usb --rm -it viewer
+            // sudo docker run --device /dev/bus/usb -p 1188:1181 -p 1189:1182 --rm -it viewer
         }
     }
 }

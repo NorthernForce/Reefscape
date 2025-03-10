@@ -3,3 +3,4 @@ numpy
 opencv-python
 robotpy-cscore
 pynetworktables
+# pyrealsense2 built manually
