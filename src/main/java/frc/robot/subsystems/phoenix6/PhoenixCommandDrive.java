@@ -28,6 +28,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ApplyFieldSpeeds;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -81,6 +82,8 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     private final PIDController rPid;
     private final AutoFactory factory;
 
+    private SwerveDrivePoseEstimator poseEstimator;
+
     /**
      * Create a new PhoenixCommandDrive
      * 
@@ -110,6 +113,8 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         this.rPid = rPid;
         rPid.enableContinuousInput(-Math.PI, Math.PI);
         ApplyFieldSpeeds pathControl = new ApplyFieldSpeeds().withDriveRequestType(DriveRequestType.Velocity);
+        poseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getState().RawHeading, getState().ModulePositions,
+                getState().Pose);
         factory = new AutoFactory(this::getPose, this::resetPose, (SwerveSample sample) ->
         {
             var pose = getPose();
@@ -444,7 +449,13 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     @AutoLogOutput
     public Pose2d getPose()
     {
-        return getState().Pose;
+        return poseEstimator.getEstimatedPosition();
+    }
+
+    @Override
+    public void resetPose(Pose2d pose)
+    {
+        poseEstimator.resetPose(pose);
     }
 
     /**
@@ -757,5 +768,10 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     {
         var speeds = getState().Speeds;
         return MetersPerSecond.of(Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond));
+    }
+
+    public SwerveDrivePoseEstimator getPoseEstimator()
+    {
+        return poseEstimator;
     }
 }

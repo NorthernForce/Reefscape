@@ -26,17 +26,17 @@ public class RalphConstants
 {
     public static class DrivetrainConstants
     {
-        public static final double CLOSE_TRANSLATION_PP_KP = 2.0;
+        public static final double CLOSE_TRANSLATION_PP_KP = 5.0;
         public static final double CLOSE_TRANSLATION_PP_KI = 0.0;
         public static final double CLOSE_TRANSLATION_PP_KD = 0.0;
 
         public static final double CLOSE_ROTATION_PP_KP = 3.0;
         public static final double CLOSE_ROTATION_PP_KI = 0.0;
         public static final double CLOSE_ROTATION_PP_KD = 0.0;
-        public static final LinearVelocity MAX_SPEED = MetersPerSecond.of(3.0);
+        public static final LinearVelocity MAX_SPEED = FeetPerSecond.of(12.0);
         public static final AngularVelocity MAX_ANGULAR_SPEED = RotationsPerSecond.of(0.7);
-        public static final LinearVelocity MAX_LINEAR_SPEED = MetersPerSecond.of(4.0);
-        public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(3.0);
+        public static final LinearVelocity MAX_LINEAR_SPEED = FeetPerSecond.of(12.0);
+        public static final LinearAcceleration MAX_ACCELERATION = FeetPerSecondPerSecond.of(8.0);
         public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
         public static final Distance SAFE_DISTANCE = Inches.of(10);
         public static final Angle[] SWERVE_MODULE_OFFSETS =
@@ -81,15 +81,13 @@ public class RalphConstants
         public static String[] cameraNames()
         {
             return new String[]
-            { FR_CAMERA_NAME };
+            { FL_CAMERA_NAME, FR_CAMERA_NAME, BL_CAMERA_NAME, BR_CAMERA_NAME };
         }
 
         public static Transform3d[] cameraTransforms()
         {
             return new Transform3d[]
-            { FR_ROBOT_TO_CAMERA };
-            // { FL_ROBOT_TO_CAMERA, FR_ROBOT_TO_CAMERA, BL_ROBOT_TO_CAMERA,
-            // BR_ROBOT_TO_CAMERA };
+            { FL_ROBOT_TO_CAMERA, FR_ROBOT_TO_CAMERA, BL_ROBOT_TO_CAMERA, BR_ROBOT_TO_CAMERA };
         }
 
         public static final double MAX_Y_COORDINATE = 350; // TODO: Set this to the actual value
@@ -201,9 +199,9 @@ public class RalphConstants
     public static class PathplannerConstants
     {
         public static final PIDConstants linearPIDConstants = new PIDConstants(10.0, 0.0, 0.0);
-        public static final PIDConstants angularPIDConstants = new PIDConstants(5.0, 0.0, 0.0);
-        public static final LinearVelocity MAX_VELOCITY = FeetPerSecond.of(4);
-        public static final LinearAcceleration MAX_ACCELERATION = FeetPerSecondPerSecond.of(3);
+        public static final PIDConstants angularPIDConstants = new PIDConstants(10.0, 0.0, 0.0);
+        public static final LinearVelocity MAX_VELOCITY = FeetPerSecond.of(12);
+        public static final LinearAcceleration MAX_ACCELERATION = FeetPerSecondPerSecond.of(8);
         public static final AngularVelocity MAX_ANGULAR_VELOCITY = RotationsPerSecond.of(0.7);
         public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
     }

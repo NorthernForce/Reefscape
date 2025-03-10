@@ -70,6 +70,7 @@ public class PhotonVision extends SubsystemBase
             cameras[i] = new PhotonCamera(cameraNames[i]);
             poseEstimators[i] = new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                     cameraPoses[i]);
+            poseEstimators[i].setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_LAST_POSE);
             alerts[i] = new Alert("PhotonVision Camera " + cameraNames[i] + " disconnected", AlertType.kError);
         }
         poseEstimates = new ArrayList<>();
@@ -91,6 +92,10 @@ public class PhotonVision extends SubsystemBase
     public void setLastKnownRobotPose(Pose2d pose)
     {
         lastKnownRobotPose = pose;
+        for (PhotonPoseEstimator e : poseEstimators)
+        {
+            e.setLastPose(pose);
+        }
     }
 
     @SuppressWarnings("unused")
