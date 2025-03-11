@@ -20,7 +20,7 @@ task viewBuild {
             session(remotes.orangepi) {
                 def dirName = project.projectDir.getName()
                 put from: project.projectDir, into: "/home/pi"
-                println "running docker build (will disconnected from static)"
+                println "running docker build (will disconnect from static)"
                 executeScript """
                     sudo nmcli conn down static-end1 && sleep 5
                     cd ~/viewer
