@@ -5,7 +5,6 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
@@ -13,7 +12,6 @@ import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
@@ -149,7 +147,6 @@ public class RalphContainer implements NFRRobotContainer
         RalphAutos.addNamedCommands(this);
         RalphAutos.addAutoRoutines(this);
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
-        SmartDashboard.putData("Go do thing", getGoToReefPoseCommand());
         PortForwarder.add(5800, "10.1.72.11", 5800);
         PortForwarder.add(5801, "10.1.72.11", 1181);
         PortForwarder.add(5802, "10.1.72.12", 5800);
@@ -160,33 +157,6 @@ public class RalphContainer implements NFRRobotContainer
         PortForwarder.add(5807, "10.1.72.14", 1181);
         PortForwarder.add(5808, "10.1.72.14", 1188);
         PortForwarder.add(5809, "10.1.72.14", 22);
-    }
-
-    public Command getGoToReefPoseCommand()
-    {
-        return Commands.defer(() -> getDrive()
-                .driveToPose(FieldConstants.getReefBackupPosition(getDashboard().getTargetPose(), Feet.of(1)),
-                        RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                .alongWith(getSuperstructure().goToGoal(getDashboard().getSuperstructureGoalForReef()))
-                .andThen(() -> getDrive().driveToPose(getDashboard().getTargetPose(),
-                        RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)),
-                Set.of());
-    }
-
-    public Command getGoToStationCommand()
-    {
-        return Commands.defer(() -> getDrive()
-                .driveToPose(getDashboard().getStationTargetPose(), RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                .alongWith(getSuperstructure().goToGoal(getDashboard().getSuperstructureGoalForStation())), Set.of());
     }
 
     public Command intakeCoral()
@@ -415,12 +385,12 @@ public class RalphContainer implements NFRRobotContainer
 
     public ReefSide getNearestReefSide()
     {
-        ReefSide abSide = FieldConstants.convertReefSideByAlliance(getNearestReefSide(), alliance);
-        ReefSide cdSide = FieldConstants.convertReefSideByAlliance(getNearestReefSide(), alliance);
-        ReefSide efSide = FieldConstants.convertReefSideByAlliance(getNearestReefSide(), alliance);
-        ReefSide ghSide = FieldConstants.convertReefSideByAlliance(getNearestReefSide(), alliance);
-        ReefSide ijSide = FieldConstants.convertReefSideByAlliance(getNearestReefSide(), alliance);
-        ReefSide klSide = FieldConstants.convertReefSideByAlliance(getNearestReefSide(), alliance);
+        ReefSide abSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.AB_SIDE, alliance);
+        ReefSide cdSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.CD_SIDE, alliance);
+        ReefSide efSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.EF_SIDE, alliance);
+        ReefSide ghSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.GH_SIDE, alliance);
+        ReefSide ijSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.IJ_SIDE, alliance);
+        ReefSide klSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.KL_SIDE, alliance);
         ReefSide nearestSide = abSide;
         Distance nearestDistance = getDistanceToPose(abSide.center());
         if (getDistanceToPose(cdSide.center()).lt(nearestDistance))
@@ -459,7 +429,7 @@ public class RalphContainer implements NFRRobotContainer
 
     public Pose2d applyOffset(Pose2d pose)
     {
-        return applyOffset(pose, Inches.of(0), Inches.of(15));
+        return applyOffset(pose, Inches.of(0), Inches.of(-12));
     }
 
     public Command driveToLeftReef()

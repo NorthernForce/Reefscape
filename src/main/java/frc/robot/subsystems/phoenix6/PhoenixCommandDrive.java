@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -210,6 +211,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     {
         CloseDriveToPoseRequest request = new CloseDriveToPoseRequest(pose, 10, 0, 0, 20, 0, 0,
                 () -> poseEstimator.getEstimatedPosition());
+        Logger.recordOutput("TargetPose", pose);
         return applyRequest(() -> request).until(
                 () -> poseEstimator.getEstimatedPosition().getTranslation().getDistance(pose.getTranslation()) < 0.1);
     }
