@@ -3,6 +3,7 @@ package frc.robot.ralph.oi;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.FieldConstants;
 import frc.robot.commands.RumbleXBoxController;
@@ -43,6 +44,8 @@ public class RalphDriverOI implements RalphOI
         driverController.leftBumper().whileTrue(container.driveToLeftReef());
 
         driverController.rightBumper().whileTrue(container.driveToRightReef());
+
+        SmartDashboard.putData("DriveToReef", container.driveToLeftReef());
     }
 
     static void bindInserter(CommandXboxController driverController, CommandXboxController manipulatorController,

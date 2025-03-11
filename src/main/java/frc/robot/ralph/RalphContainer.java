@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
@@ -450,13 +451,24 @@ public class RalphContainer implements NFRRobotContainer
         return nearestSide;
     }
 
+    public Pose2d applyOffset(Pose2d pose, Distance x, Distance y)
+    {
+        Translation2d translation = new Translation2d(x, y).rotateBy(pose.getRotation());
+        return new Pose2d(pose.getTranslation().plus(translation), pose.getRotation());
+    }
+
+    public Pose2d applyOffset(Pose2d pose)
+    {
+        return applyOffset(pose, Inches.of(0), Inches.of(15));
+    }
+
     public Command driveToLeftReef()
     {
-        return Commands.defer(() -> drive.closeDriveToPose(getNearestReefSide().left()), Set.of(drive));
+        return Commands.defer(() -> drive.closeDriveToPose(applyOffset(getNearestReefSide().left())), Set.of(drive));
     }
 
     public Command driveToRightReef()
     {
-        return Commands.defer(() -> drive.closeDriveToPose(getNearestReefSide().right()), Set.of(drive));
+        return Commands.defer(() -> drive.closeDriveToPose(applyOffset(getNearestReefSide().right())), Set.of(drive));
     }
 }
