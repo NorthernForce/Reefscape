@@ -34,13 +34,10 @@ RUN cp /src/librealsense-${RSVER}/config/99-realsense-d4xx-mipi-dfu.rules /etc/u
 ENV PYTHONPATH="$PYTHONPATH:/usr/local/lib"
 
 WORKDIR /run/viewer
-COPY . .
 RUN python3 -m venv .env --system-site-packages \
     && . .env/bin/activate \
     && pip install --upgrade pip setuptools wheel \
-    && pip install -r requirements.txt
-# color + depth debug
-EXPOSE 1181
-EXPOSE 1182
+    && pip install numpy opencv-python robotpy-cscore pynetworktables
 
+# run.py must be mounted to /run/viewer/run.py
 CMD . .env/bin/activate && python3 ./run.py

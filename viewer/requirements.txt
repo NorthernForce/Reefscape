@@ -1,6 +1,0 @@
-# we will only need most up to date (for now at least)
-numpy
-opencv-python
-robotpy-cscore
-pynetworktables
-# pyrealsense2 built manually

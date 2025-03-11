@@ -4,30 +4,51 @@ plugins {
 
 remotes {
     orangepi {
-        host = "photonfrontright.lan"
+        host = findProperty("devAddr") ?: "10.1.72.14"
+        port = (findProperty("devPort") ?: 22) as int
         user = "pi"
         password = "raspberry"
     }
 }
 
-// task(viewInit) {
-//     ssh.run {
-//         session(remotes.orangepi) {
-//             execute "sudo nmcli conn down static-end1"
-//             execute "cd ~/viewer && sudo docker build . -t viewer --network=host"
-//             execute "sudo nmcli conn up static-end1"
-//         }
-//     }
-// }
+task viewBuild {
+    group = "Vision Deployment"
+    description = "builds + starts docker container (requires internet access)"
+    doLast {
+        println "this build requires both your computer and pi to be connected to internet!"
+        ssh.run {
+            session(remotes.orangepi) {
+                def dirName = project.projectDir.getName()
+                put from: project.projectDir, into: "/home/pi"
+                println "running docker build (will disconnected from static)"
+                executeScript """
+                    sudo nmcli conn down static-end1 && sleep 5
+                    cd ~/viewer
+                    sudo docker build . -t viewer --network=host
+                    sudo docker run \
+                        --name=viewer-sys \
+                        --restart=always \
+                        --network=host \
+                        --device /dev/bus/usb \
+                        -v .:/run/viewer/:ro \
+                        viewer
+                    sudo nmcli conn up static-end1""", pty: true
+            }
+        }
+    }
+}
 
-task(viewDeploy) {
-    ssh.run {
-        session(remotes.orangepi) {
-            def dirName = project.projectDir.getName()
-            put from: project.projectDir, into: "/home/pi"
-            println "vision code uploaded to ~/$dirName."
-            // sudo docker run --device /dev/bus/usb --rm -it viewer
-            // sudo docker run --device /dev/bus/usb -p 1188:1181 -p 1189:1182 --rm -it viewer
+task viewDeploy {
+    group = "Vision Deployment"
+    description = "deploy viewer system code (only for non-docker code)"
+    doLast {
+        ssh.run {
+            session(remotes.orangepi) {
+                def dirName = project.projectDir.getName()
+                put from: project.projectDir, into: "/home/pi"
+                println "vision code uploaded to ~/$dirName, reloading docker."
+                executeScript "cd ~/viewer && sudo docker restart viewer-sys"
+            }
         }
     }
 }
