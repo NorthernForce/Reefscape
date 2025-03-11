@@ -10,7 +10,6 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Rotations;
 import org.northernforce.util.NFRRobotContainer;
 
-import com.ctre.phoenix6.Utils;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -343,7 +342,7 @@ public class RalphContainer implements NFRRobotContainer
         vision.setLastKnownRobotPose(drive.getPose());
         for (var poseEstimate : vision.getPoseEstimates())
         {
-            drive.addVisionMeasurement(poseEstimate.pose(), Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
+            drive.addVisionMeasurement(poseEstimate.pose(), poseEstimate.timestamp());
         }
         dashboard.updatePose(drive.getPose());
         dashboard.setInnerElevatorPosition(superstructure.getInnerElevator().getPosition());

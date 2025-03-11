@@ -443,6 +443,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         {
             encoderDisconnectedAlert.set(false);
         }
+        poseEstimator.update(getState().RawHeading, getState().ModulePositions);
     }
 
     /**
