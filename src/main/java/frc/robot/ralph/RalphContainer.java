@@ -7,19 +7,23 @@ import java.util.function.Supplier;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
+import frc.robot.FieldConstants.ReefSide;
 import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.ralph.constants.RalphTunerConstants;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
@@ -401,5 +405,58 @@ public class RalphContainer implements NFRRobotContainer
     public Command defaultIntake()
     {
         return new IntakeWhileWaitingCommand();
+    }
+
+    public Distance getDistanceToPose(Pose2d pose)
+    {
+        return Meters.of(drive.getPose().getTranslation().getDistance(pose.getTranslation()));
+    }
+
+    public ReefSide getNearestReefSide()
+    {
+        ReefSide abSide = FieldConstants.convertReefSideByAlliance(getNearestReefSide(), alliance);
+        ReefSide cdSide = FieldConstants.convertReefSideByAlliance(getNearestReefSide(), alliance);
+        ReefSide efSide = FieldConstants.convertReefSideByAlliance(getNearestReefSide(), alliance);
+        ReefSide ghSide = FieldConstants.convertReefSideByAlliance(getNearestReefSide(), alliance);
+        ReefSide ijSide = FieldConstants.convertReefSideByAlliance(getNearestReefSide(), alliance);
+        ReefSide klSide = FieldConstants.convertReefSideByAlliance(getNearestReefSide(), alliance);
+        ReefSide nearestSide = abSide;
+        Distance nearestDistance = getDistanceToPose(abSide.center());
+        if (getDistanceToPose(cdSide.center()).lt(nearestDistance))
+        {
+            nearestSide = cdSide;
+            nearestDistance = getDistanceToPose(cdSide.center());
+        }
+        if (getDistanceToPose(efSide.center()).lt(nearestDistance))
+        {
+            nearestSide = efSide;
+            nearestDistance = getDistanceToPose(efSide.center());
+        }
+        if (getDistanceToPose(ghSide.center()).lt(nearestDistance))
+        {
+            nearestSide = ghSide;
+            nearestDistance = getDistanceToPose(ghSide.center());
+        }
+        if (getDistanceToPose(ijSide.center()).lt(nearestDistance))
+        {
+            nearestSide = ijSide;
+            nearestDistance = getDistanceToPose(ijSide.center());
+        }
+        if (getDistanceToPose(klSide.center()).lt(nearestDistance))
+        {
+            nearestSide = klSide;
+            nearestDistance = getDistanceToPose(klSide.center());
+        }
+        return nearestSide;
+    }
+
+    public Command driveToLeftReef()
+    {
+        return Commands.defer(() -> drive.closeDriveToPose(getNearestReefSide().left()), Set.of(drive));
+    }
+
+    public Command driveToRightReef()
+    {
+        return Commands.defer(() -> drive.closeDriveToPose(getNearestReefSide().right()), Set.of(drive));
     }
 }

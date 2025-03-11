@@ -43,6 +43,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.subsystems.phoenix6.requests.CloseDriveToPoseRequest;
+
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -202,6 +204,14 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
                     .withVelocityY(speeds.vyMetersPerSecond * maxSpeed.in(MetersPerSecond))
                     .withRotationalRate(speeds.omegaRadiansPerSecond * maxAngularSpeed.in(RadiansPerSecond));
         });
+    }
+
+    public Command closeDriveToPose(Pose2d pose)
+    {
+        CloseDriveToPoseRequest request = new CloseDriveToPoseRequest(pose, 10, 0, 0, 20, 0, 0,
+                () -> poseEstimator.getEstimatedPosition());
+        return applyRequest(() -> request).until(
+                () -> poseEstimator.getEstimatedPosition().getTranslation().getDistance(pose.getTranslation()) < 0.1);
     }
 
     /**

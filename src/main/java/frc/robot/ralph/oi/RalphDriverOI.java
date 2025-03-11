@@ -39,6 +39,10 @@ public class RalphDriverOI implements RalphOI
                 container.getDrive().resetOrientation(FieldConstants.getFieldRotation(FieldConstants.getAlliance())));
 
         driverController.x().whileTrue(container.getDrive().xLock());
+
+        driverController.leftBumper().whileTrue(container.driveToLeftReef());
+
+        driverController.rightBumper().whileTrue(container.driveToRightReef());
     }
 
     static void bindInserter(CommandXboxController driverController, CommandXboxController manipulatorController,
