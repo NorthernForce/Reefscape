@@ -14,10 +14,10 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 public class CloseDriveToPoseRequest implements SwerveRequest
 {
-    private final PIDController xPID;
-    private final PIDController yPID;
     private final FieldCentricFacingAngle facingAngle;
     private final Supplier<Pose2d> poseGetter;
+    private final PIDController xPID;
+    private final PIDController yPID;
 
     public CloseDriveToPoseRequest(Pose2d pose, double tP, double tI, double tD, double rP, double rI, double rD,
             Supplier<Pose2d> poseGetter)
@@ -43,6 +43,11 @@ public class CloseDriveToPoseRequest implements SwerveRequest
         facingAngle.withVelocityY(vy);
         facingAngle.withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
         return facingAngle.apply(parameters, modulesToApply);
+    }
+
+    public boolean isFinished()
+    {
+        return xPID.atSetpoint() && yPID.atSetpoint() && facingAngle.HeadingController.atSetpoint();
     }
 
 }
