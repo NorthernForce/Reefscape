@@ -2,7 +2,6 @@ package frc.robot.zippy;
 
 import java.util.Map;
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 
 import java.util.function.Supplier;
@@ -49,8 +48,7 @@ public class ZippyContainer implements NFRRobotContainer
         drive = new PhoenixCommandDrive(ZippyTunerConstants.DrivetrainConstants,
                 ZippyConstants.DrivetrainConstants.MAX_SPEED, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 ZippyConstants.PathplannerConstants.linearPIDConstants,
-                ZippyConstants.PathplannerConstants.angularPIDConstants, Meters.of(0),
-                ZippyConstants.AutoConstants.xPID, ZippyConstants.AutoConstants.yPID, ZippyConstants.AutoConstants.rPID,
+                ZippyConstants.PathplannerConstants.angularPIDConstants,
                 ZippyConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, ZippyTunerConstants.FrontLeft,
                 ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft, ZippyTunerConstants.BackRight);
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));

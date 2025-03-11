@@ -75,8 +75,6 @@ public class RalphContainer implements NFRRobotContainer
                 RalphConstants.DrivetrainConstants.MAX_SPEED, RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 RalphConstants.PathplannerConstants.linearPIDConstants,
                 RalphConstants.PathplannerConstants.angularPIDConstants,
-                RalphConstants.DrivetrainConstants.SAFE_DISTANCE, RalphConstants.AutoConstants.xPID,
-                RalphConstants.AutoConstants.yPID, RalphConstants.AutoConstants.rPID,
                 RalphConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, RalphTunerConstants.FrontLeft,
                 RalphTunerConstants.FrontRight, RalphTunerConstants.BackLeft, RalphTunerConstants.BackRight);
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
