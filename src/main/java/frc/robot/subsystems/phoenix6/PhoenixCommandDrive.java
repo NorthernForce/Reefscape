@@ -104,6 +104,11 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         poseEstimator.addVisionMeasurement(visionMeasurement, timestamp);
     }
 
+    public Rotation2d getHeading()
+    {
+        return getState().Pose.getRotation();
+    }
+
     private void configureAutoBuilder(PIDConstants linear, PIDConstants angular)
     {
         try

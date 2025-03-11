@@ -53,13 +53,9 @@ public class RalphConstants
         public static final AprilTagFieldLayout APRILTAG_LAYOUT = AprilTagFieldLayout
                 .loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
-        private static final String FL_CAMERA_NAME = "front_left_camera";
         private static final String FR_CAMERA_NAME = "front_right_camera";
         private static final String BL_CAMERA_NAME = "back_left_camera";
         private static final String BR_CAMERA_NAME = "back_right_camera";
-
-        private static final Transform3d FL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(11.5), Inches.of(7),
-                Inches.of(8.5), new Rotation3d(Degrees.of(20.75), Degrees.of(15.0), Degrees.of(45.0)));
 
         private static final Transform3d FR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 3.0),
                 Inches.of(-(15 - 7.75)), Inches.of(8.5), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
@@ -73,13 +69,13 @@ public class RalphConstants
         public static String[] cameraNames()
         {
             return new String[]
-            { FR_CAMERA_NAME };
+            { FR_CAMERA_NAME, BL_CAMERA_NAME, BR_CAMERA_NAME };
         }
 
         public static Transform3d[] cameraTransforms()
         {
             return new Transform3d[]
-            { FR_ROBOT_TO_CAMERA };
+            { FR_ROBOT_TO_CAMERA, BL_ROBOT_TO_CAMERA, BR_ROBOT_TO_CAMERA };
             // { FL_ROBOT_TO_CAMERA, FR_ROBOT_TO_CAMERA, BL_ROBOT_TO_CAMERA,
             // BR_ROBOT_TO_CAMERA };
         }

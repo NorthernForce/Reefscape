@@ -11,8 +11,11 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.TargetCorner;
 
+import com.ctre.phoenix6.Utils;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -70,6 +73,7 @@ public class PhotonVision extends SubsystemBase
             cameras[i] = new PhotonCamera(cameraNames[i]);
             poseEstimators[i] = new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                     cameraPoses[i]);
+            poseEstimators[i].setMultiTagFallbackStrategy(PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
             alerts[i] = new Alert("PhotonVision Camera " + cameraNames[i] + " disconnected", AlertType.kError);
         }
         poseEstimates = new ArrayList<>();
@@ -119,6 +123,7 @@ public class PhotonVision extends SubsystemBase
         return Math.abs(difference) < maxDegreesDifference;
     }
 
+    @SuppressWarnings("unused")
     private boolean testRobotDistance(EstimatedRobotPose pose)
     {
         if (lastKnownRobotPose == null)
@@ -131,6 +136,7 @@ public class PhotonVision extends SubsystemBase
         return Math.abs(difference) < maxDistanceDifference;
     }
 
+    @SuppressWarnings("unused")
     private boolean testEstimateTime(EstimatedRobotPose pose)
     {
         return Math.abs(pose.timestampSeconds - lastKnownVisionPoseTimestamp) < 1;
@@ -174,15 +180,6 @@ public class PhotonVision extends SubsystemBase
                 // valid = false;
                 // reason = RejectionReason.ROBOT_ANGLE_TOO_LARGE;
                 // }
-                if (!testRobotDistance(opt.get()))
-                {
-                    valid = false;
-                    reason = RejectionReason.DISTANCE_TOO_FAR;
-                }
-                if (!testEstimateTime(opt.get()))
-                {
-                    valid = true;
-                }
                 if (!testWithinField(opt.get()))
                 {
                     valid = false;
@@ -198,6 +195,14 @@ public class PhotonVision extends SubsystemBase
                             new PoseEstimate(opt.get().estimatedPose.toPose2d(), opt.get().timestampSeconds)));
                 }
             }
+        }
+    }
+
+    public void updateWithHeading(Rotation2d newHeading)
+    {
+        for (var poseEstimator : poseEstimators)
+        {
+            poseEstimator.addHeadingData(Utils.getCurrentTimeSeconds(), newHeading);
         }
     }
 

@@ -334,6 +334,7 @@ public class RalphContainer implements NFRRobotContainer
     @Override
     public void periodic()
     {
+        vision.updateWithHeading(drive.getHeading());
         if (alliance != allianceSupplier.get())
         {
             alliance = allianceSupplier.get();
