@@ -237,8 +237,8 @@ public class RalphConstants
 
     public static class AlgaeRemoverConstants
     {
-        public static final double REMOVING_SPEED = 0.5;
-        public static final double RETURNING_SPEED = 0.5;
+        public static final double REMOVING_SPEED = 0.3;
+        public static final double RETURNING_SPEED = -0.1;
         public static final double GEAR_RATIO = 50.;
     }
 }
