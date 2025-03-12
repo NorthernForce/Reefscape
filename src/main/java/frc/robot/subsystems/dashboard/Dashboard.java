@@ -3,10 +3,11 @@ package frc.robot.subsystems.dashboard;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.FieldConstants;
@@ -14,7 +15,6 @@ import frc.robot.FieldConstants.ReefLocations;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIO;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOInputsAutoLogged;
-import frc.robot.util.NFRAutoRoutine;
 
 /**
  * Subsystem for the dashboard.
@@ -25,7 +25,6 @@ public class Dashboard extends SubsystemBase
     private final DashboardIOInputsAutoLogged m_input;
     private final ReefDisplayIO reefDisplayIO;
     private final ReefDisplayIOInputsAutoLogged reefDisplayInputs;
-    private boolean useBeamBreak = true;
 
     /**
      * Constructs a new Dashboard.
@@ -56,7 +55,7 @@ public class Dashboard extends SubsystemBase
      * @param name    Auto routine name (Descriptive for drivers please)
      * @param command Auto routine command
      */
-    public void addAutoRoutine(String name, NFRAutoRoutine command)
+    public void addAutoRoutine(String name, PathPlannerAuto command)
     {
         m_io.addRoutine(name, command, false);
     }
@@ -67,32 +66,9 @@ public class Dashboard extends SubsystemBase
      * @param name    Auto routine name (Descriptive for drivers please)
      * @param command Auto routine command
      */
-    public void addDefaultAutoRoutine(String name, NFRAutoRoutine command)
+    public void addDefaultAutoRoutine(String name, PathPlannerAuto command)
     {
         m_io.addRoutine(name, command, true);
-    }
-
-    /**
-     * sets the beam break sensor to be used or not
-     * 
-     * @param useBeamBreak
-     */
-
-    public void toggleBeamBreak()
-    {
-        useBeamBreak = !useBeamBreak;
-        SmartDashboard.putBoolean("Use Beam Break", useBeamBreak);
-    }
-
-    /**
-     * gets the beam break sensor to be used or not
-     * 
-     * @return
-     */
-
-    public boolean getUseBeamBreak()
-    {
-        return useBeamBreak;
     }
 
     /**
@@ -195,7 +171,7 @@ public class Dashboard extends SubsystemBase
      * 
      * @return The selected auto routine.
      */
-    public NFRAutoRoutine getRoutine()
+    public PathPlannerAuto getRoutine()
     {
         return m_io.getSelectedRoutine();
     }
@@ -218,11 +194,6 @@ public class Dashboard extends SubsystemBase
     public void setHasCoral(boolean hasCoral)
     {
         m_io.setHasCoral(hasCoral);
-    }
-
-    public void setHasAlgae(boolean hasVision)
-    {
-        m_io.setHasAlgae(hasVision);
     }
 
     @AutoLogOutput
