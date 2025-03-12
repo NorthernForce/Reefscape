@@ -31,6 +31,8 @@ import frc.robot.ralph.oi.RalphDriverOI;
 import frc.robot.ralph.oi.RalphProgrammerOI;
 import frc.robot.subsystems.algaeremover.AlgaeRemover;
 import frc.robot.subsystems.algaeremover.AlgaeRemoverIO;
+import frc.robot.subsystems.algaeremover.AlgaeRemoverIOTalonFXS;
+import frc.robot.subsystems.algaeremover.sensor.AlgaeLimitSwitchIO;
 import frc.robot.subsystems.algaeremover.sensor.AlgaeRemoverSensorIO;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
@@ -117,6 +119,10 @@ public class RalphContainer implements NFRRobotContainer
                             RalphConstants.InserterConstants.ROLLER_MOTOR_INVERTED),
                     new InserterSensorIOBeamBreak(RalphConstants.InserterConstants.SensorConstants.CORAL_PIN),
                     RalphConstants.InserterConstants.INTAKE_SPEED, RalphConstants.InserterConstants.OUTTAKE_SPEED);
+            algaeremover = new AlgaeRemover(
+                    new AlgaeRemoverIOTalonFXS(18, false, RalphConstants.AlgaeRemoverConstants.GEAR_RATIO),
+                    new AlgaeLimitSwitchIO(3), RalphConstants.AlgaeRemoverConstants.REMOVING_SPEED,
+                    RalphConstants.AlgaeRemoverConstants.RETURNING_SPEED);
             break;
         case REPLAY:
         default:
@@ -144,13 +150,14 @@ public class RalphContainer implements NFRRobotContainer
             }, new InserterSensorIO()
             {
             }, RalphConstants.InserterConstants.INTAKE_SPEED, RalphConstants.InserterConstants.OUTTAKE_SPEED);
+            algaeremover = new AlgaeRemover(new AlgaeRemoverIO()
+            {
+            }, new AlgaeRemoverSensorIO()
+            {
+            }, RalphConstants.AlgaeRemoverConstants.REMOVING_SPEED,
+                    RalphConstants.AlgaeRemoverConstants.RETURNING_SPEED);
             break;
         }
-        algaeremover = new AlgaeRemover(new AlgaeRemoverIO()
-        {
-        }, new AlgaeRemoverSensorIO()
-        {
-        }, RalphConstants.AlgaeRemoverConstants.REMOVING_SPEED, RalphConstants.AlgaeRemoverConstants.RETURNING_SPEED);
 
         inserter.setDefaultCommand(defaultIntake());
         algaeremover.setDefaultCommand(algaeremover.returnArm());

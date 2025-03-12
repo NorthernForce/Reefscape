@@ -29,8 +29,6 @@ public class AlgaeRemoverIOTalonFXS implements AlgaeRemoverIO
         TalonFXSConfiguration config = new TalonFXSConfiguration();
         config.MotorOutput.Inverted = inverted ? InvertedValue.Clockwise_Positive
                 : InvertedValue.CounterClockwise_Positive;
-        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
         config.ExternalFeedback.SensorToMechanismRatio = gearRatio;
         talonFXS.getConfigurator().apply(config);
         motorVoltage = talonFXS.getMotorVoltage();

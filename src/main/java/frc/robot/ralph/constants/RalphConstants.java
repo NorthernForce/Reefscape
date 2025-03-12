@@ -239,5 +239,6 @@ public class RalphConstants
     {
         public static final double REMOVING_SPEED = 0.5;
         public static final double RETURNING_SPEED = 0.5;
+        public static final double GEAR_RATIO = 50.;
     }
 }
