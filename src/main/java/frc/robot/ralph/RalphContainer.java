@@ -5,22 +5,25 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 import org.northernforce.util.NFRRobotContainer;
 
-import com.ctre.phoenix6.Utils;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
+import frc.robot.FieldConstants.ReefSide;
 import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.ralph.constants.RalphTunerConstants;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
@@ -70,13 +73,10 @@ public class RalphContainer implements NFRRobotContainer
      */
     public RalphContainer()
     {
-
         drive = new PhoenixCommandDrive(RalphTunerConstants.DrivetrainConstants,
                 RalphConstants.DrivetrainConstants.MAX_SPEED, RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 RalphConstants.PathplannerConstants.linearPIDConstants,
                 RalphConstants.PathplannerConstants.angularPIDConstants,
-                RalphConstants.DrivetrainConstants.SAFE_DISTANCE, RalphConstants.AutoConstants.xPID,
-                RalphConstants.AutoConstants.yPID, RalphConstants.AutoConstants.rPID,
                 RalphConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, RalphTunerConstants.FrontLeft,
                 RalphTunerConstants.FrontRight, RalphTunerConstants.BackLeft, RalphTunerConstants.BackRight);
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
@@ -147,7 +147,6 @@ public class RalphContainer implements NFRRobotContainer
         RalphAutos.addNamedCommands(this);
         RalphAutos.addAutoRoutines(this);
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
-        SmartDashboard.putData("Go do thing", getGoToReefPoseCommand());
         PortForwarder.add(5800, "10.1.72.11", 5800);
         PortForwarder.add(5801, "10.1.72.11", 1181);
         PortForwarder.add(5802, "10.1.72.12", 5800);
@@ -158,33 +157,7 @@ public class RalphContainer implements NFRRobotContainer
         PortForwarder.add(5807, "10.1.72.14", 1181);
         PortForwarder.add(5808, "10.1.72.14", 1188);
         PortForwarder.add(5809, "10.1.72.14", 22);
-    }
-
-    public Command getGoToReefPoseCommand()
-    {
-        return Commands.defer(() -> getDrive()
-                .driveToPose(FieldConstants.getReefBackupPosition(getDashboard().getTargetPose(), Feet.of(1)),
-                        RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                .alongWith(getSuperstructure().goToGoal(getDashboard().getSuperstructureGoalForReef()))
-                .andThen(() -> getDrive().driveToPose(getDashboard().getTargetPose(),
-                        RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)),
-                Set.of());
-    }
-
-    public Command getGoToStationCommand()
-    {
-        return Commands.defer(() -> getDrive()
-                .driveToPose(getDashboard().getStationTargetPose(), RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                .alongWith(getSuperstructure().goToGoal(getDashboard().getSuperstructureGoalForStation())), Set.of());
+        getInserter().setDefaultCommand(defaultIntake());
     }
 
     public Command intakeCoral()
@@ -336,6 +309,7 @@ public class RalphContainer implements NFRRobotContainer
     @Override
     public void periodic()
     {
+        vision.updateWithHeading(drive.getHeading());
         if (alliance != allianceSupplier.get())
         {
             alliance = allianceSupplier.get();
@@ -344,7 +318,7 @@ public class RalphContainer implements NFRRobotContainer
         vision.setLastKnownRobotPose(drive.getPose());
         for (var poseEstimate : vision.getPoseEstimates())
         {
-            drive.addVisionMeasurement(poseEstimate.pose(), Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
+            drive.addVisionMeasurement(poseEstimate.pose(), poseEstimate.timestamp(), VecBuilder.fill(0.1, 0.1, 0.001));
         }
         dashboard.updatePose(drive.getPose());
         dashboard.setInnerElevatorPosition(superstructure.getInnerElevator().getPosition());
@@ -403,5 +377,87 @@ public class RalphContainer implements NFRRobotContainer
     public Command defaultIntake()
     {
         return new IntakeWhileWaitingCommand();
+    }
+
+    public Distance getDistanceToPose(Pose2d pose)
+    {
+        return Meters.of(drive.getPose().getTranslation().getDistance(pose.getTranslation()));
+    }
+
+    public ReefSide getNearestReefSide()
+    {
+        ReefSide abSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.AB_SIDE, alliance);
+        ReefSide cdSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.CD_SIDE, alliance);
+        ReefSide efSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.EF_SIDE, alliance);
+        ReefSide ghSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.GH_SIDE, alliance);
+        ReefSide ijSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.IJ_SIDE, alliance);
+        ReefSide klSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.KL_SIDE, alliance);
+        ReefSide nearestSide = abSide;
+        Distance nearestDistance = getDistanceToPose(abSide.center());
+        if (getDistanceToPose(cdSide.center()).lt(nearestDistance))
+        {
+            nearestSide = cdSide;
+            nearestDistance = getDistanceToPose(cdSide.center());
+        }
+        if (getDistanceToPose(efSide.center()).lt(nearestDistance))
+        {
+            nearestSide = efSide;
+            nearestDistance = getDistanceToPose(efSide.center());
+        }
+        if (getDistanceToPose(ghSide.center()).lt(nearestDistance))
+        {
+            nearestSide = ghSide;
+            nearestDistance = getDistanceToPose(ghSide.center());
+        }
+        if (getDistanceToPose(ijSide.center()).lt(nearestDistance))
+        {
+            nearestSide = ijSide;
+            nearestDistance = getDistanceToPose(ijSide.center());
+        }
+        if (getDistanceToPose(klSide.center()).lt(nearestDistance))
+        {
+            nearestSide = klSide;
+            nearestDistance = getDistanceToPose(klSide.center());
+        }
+        return nearestSide;
+    }
+
+    public Pose2d applyOffset(Pose2d pose, Distance x, Distance y)
+    {
+        Translation2d translation = new Translation2d(x, y).rotateBy(pose.getRotation());
+        return new Pose2d(pose.getTranslation().plus(translation), pose.getRotation());
+    }
+
+    public Pose2d applyOffset(Pose2d pose)
+    {
+        return applyOffset(pose, Inches.of(2.5), Inches.of(-9.5));
+    }
+
+    public Command driveToLeftReef()
+    {
+        return Commands.defer(() -> drive.closeDriveToPose(applyOffset(getNearestReefSide().left())), Set.of(drive));
+    }
+
+    public Command driveToRightReef()
+    {
+        return Commands.defer(() -> drive.closeDriveToPose(applyOffset(getNearestReefSide().right())), Set.of(drive));
+    }
+
+    public Command goToClosestCoralStation()
+    {
+        if (getDistanceToPose(FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.LEFT)).in(
+                Meters) > getDistanceToPose(FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.RIGHT))
+                        .in(Meters))
+        {
+            return drive.closeDriveToPose(FieldConstants.CoralStations.RIGHT);
+        } else
+        {
+            return drive.closeDriveToPose(FieldConstants.CoralStations.LEFT);
+        }
+    }
+
+    public Command goToProcessor()
+    {
+        return drive.closeDriveToPose(FieldConstants.ProcessorStations.PROCESSOR_STATION);
     }
 }

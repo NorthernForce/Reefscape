@@ -26,6 +26,9 @@ public class FieldConstants
         LEFT_CORAL_STATION, RIGHT_CORAL_STATION, PROCESSOR_STATION
     }
 
+    public static record ReefSide(Pose2d left, Pose2d right, Pose2d center) {
+    }
+
     public static class ReefRotations
     {
         public static final Rotation2d AB_ROTATION = Rotation2d.fromDegrees(0);
@@ -71,6 +74,12 @@ public class FieldConstants
         public static final Pose2d K = new Pose2d(3.95, 5.29, ReefRotations.KL_ROTATION);
         public static final Pose2d KL_ALGAE = new Pose2d(3.82, 5.19, ReefRotations.KL_ROTATION);
         public static final Pose2d L = new Pose2d(3.65, 5.12, ReefRotations.KL_ROTATION);
+        public static final ReefSide AB_SIDE = new ReefSide(A, B, AB_ALGAE);
+        public static final ReefSide CD_SIDE = new ReefSide(C, D, CD_ALGAE);
+        public static final ReefSide EF_SIDE = new ReefSide(E, F, EF_ALGAE);
+        public static final ReefSide GH_SIDE = new ReefSide(G, H, GH_ALGAE);
+        public static final ReefSide IJ_SIDE = new ReefSide(I, J, IJ_ALGAE);
+        public static final ReefSide KL_SIDE = new ReefSide(K, L, KL_ALGAE);
     }
 
     public static final HashMap<ReefLocations, Pose2d> REEF_POSITIONS = new HashMap<>();
@@ -105,8 +114,8 @@ public class FieldConstants
      */
     public static class CoralStations
     {
-        public static final Pose2d LEFT = new Pose2d(1.18, 7.07, Rotation2d.fromDegrees(127.5));
-        public static final Pose2d RIGHT = new Pose2d(1.11, 1.00, Rotation2d.fromDegrees(-127.5));
+        public static final Pose2d LEFT = new Pose2d(1.18, 7.07, Rotation2d.fromDegrees(307.5));
+        public static final Pose2d RIGHT = new Pose2d(1.11, 1.00, Rotation2d.fromDegrees(52.5));
     }
 
     /**
@@ -165,6 +174,18 @@ public class FieldConstants
     public static Translation2d convertTranslationByAlliance(Translation2d pose)
     {
         return convertTranslationByAlliance(pose, getAlliance());
+    }
+
+    public static ReefSide convertReefSideByAlliance(ReefSide side, Alliance alliance)
+    {
+        if (alliance == Alliance.Blue)
+        {
+            return side;
+        } else
+        {
+            return new ReefSide(convertPoseByAlliance(side.left), convertPoseByAlliance(side.right),
+                    convertPoseByAlliance(side.center));
+        }
     }
 
     public static Alliance getAlliance()
