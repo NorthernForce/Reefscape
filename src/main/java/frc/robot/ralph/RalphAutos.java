@@ -15,7 +15,8 @@ public class RalphAutos
         container.getDashboard().addAutoRoutine("CENTER.PLACE.G", new PathPlannerAuto("CENTER.PLACE.G"));
         container.getDashboard().addAutoRoutine("RIGHT.LEAVE", new PathPlannerAuto("RIGHT.LEAVE"));
         container.getDashboard().addAutoRoutine("RIGHT.PLACE.E", new PathPlannerAuto("RIGHT.PLACE.E"));
-        container.getDashboard().addAutoRoutine("CENTER.H.K.L", new PathPlannerAuto("CENTER.H.K.L"));
+        container.getDashboard().addAutoRoutine("LEFT.I.K.L", new PathPlannerAuto("LEFT.I.K.L"));
+        container.getDashboard().addAutoRoutine("RIGHT.E.D.C", new PathPlannerAuto("RIGHT.E.D.C"));
     }
 
     public static void addNamedCommands(RalphContainer container)
@@ -24,8 +25,10 @@ public class RalphAutos
         NamedCommands.registerCommand("GoToL3Goal", container.goToL3());
         NamedCommands.registerCommand("GoToL2Goal", container.goToL2());
         NamedCommands.registerCommand("GoToL1Goal", container.goToL1());
-        NamedCommands.registerCommand("GoToIntakeGoal", container.goToIntake());
-        NamedCommands.registerCommand("Intake", Commands.waitUntil(container.getInserter()::hasCoral));
+        NamedCommands.registerCommand("GoToIntake", container.goToIntake());
+        NamedCommands.registerCommand("Intake", container.intakeCoral());
         NamedCommands.registerCommand("Outtake", container.outtakeCoral());
+        NamedCommands.registerCommand("DriveToCloseLeft", container.driveToLeftReef());
+        NamedCommands.registerCommand("DriveToCloseRight", container.driveToRightReef());
     }
 }

@@ -73,7 +73,7 @@ public class PhotonVision extends SubsystemBase
             cameras[i] = new PhotonCamera(cameraNames[i]);
             poseEstimators[i] = new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                     cameraPoses[i]);
-            poseEstimators[i].setMultiTagFallbackStrategy(PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+            poseEstimators[i].setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_LAST_POSE);
             alerts[i] = new Alert("PhotonVision Camera " + cameraNames[i] + " disconnected", AlertType.kError);
         }
         poseEstimates = new ArrayList<>();
@@ -94,6 +94,10 @@ public class PhotonVision extends SubsystemBase
 
     public void setLastKnownRobotPose(Pose2d pose)
     {
+        for (PhotonPoseEstimator estimator : poseEstimators)
+        {
+            estimator.setLastPose(pose);
+        }
         lastKnownRobotPose = pose;
     }
 
@@ -179,6 +183,11 @@ public class PhotonVision extends SubsystemBase
                 // {
                 // valid = false;
                 // reason = RejectionReason.ROBOT_ANGLE_TOO_LARGE;
+                // }
+                // if (!testRobotDistance(opt.get()))
+                // {
+                // valid = false;
+                // reason = RejectionReason.DISTANCE_TOO_FAR;
                 // }
                 if (!testWithinField(opt.get()))
                 {

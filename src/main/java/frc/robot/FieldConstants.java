@@ -114,8 +114,8 @@ public class FieldConstants
      */
     public static class CoralStations
     {
-        public static final Pose2d LEFT = new Pose2d(1.18, 7.07, Rotation2d.fromDegrees(127.5));
-        public static final Pose2d RIGHT = new Pose2d(1.11, 1.00, Rotation2d.fromDegrees(-127.5));
+        public static final Pose2d LEFT = new Pose2d(1.18, 7.07, Rotation2d.fromDegrees(307.5));
+        public static final Pose2d RIGHT = new Pose2d(1.11, 1.00, Rotation2d.fromDegrees(52.5));
     }
 
     /**

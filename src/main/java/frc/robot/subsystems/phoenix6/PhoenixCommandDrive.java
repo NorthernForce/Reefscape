@@ -24,11 +24,13 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -107,6 +109,11 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         poseEstimator.addVisionMeasurement(visionMeasurement, timestamp);
     }
 
+    public void addVisionMeasurement(Pose2d visionMeasurement, double timestamp, Vector<N3> stdDevs)
+    {
+        poseEstimator.addVisionMeasurement(visionMeasurement, timestamp, stdDevs);
+    }
+
     public Rotation2d getHeading()
     {
         return getState().Pose.getRotation();
@@ -117,7 +124,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         try
         {
             RobotConfig config = RobotConfig.fromGUISettings();
-            AutoBuilder.configure(() -> getState().Pose, this::resetPose, () -> getState().Speeds,
+            AutoBuilder.configure(this::getPose, this::resetPose, () -> getState().Speeds,
                     (speeds, feedforwards) -> setControl(applyRobotSpeeds.withSpeeds(speeds)
                             .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
                             .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
@@ -209,7 +216,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     public Command closeDriveToPose(Pose2d pose)
     {
-        CloseDriveToPoseRequest request = new CloseDriveToPoseRequest(pose, 20, 0, 0, 20, 0, 0,
+        CloseDriveToPoseRequest request = new CloseDriveToPoseRequest(pose, 4, 0, 0, 5, 0, 0,
                 () -> poseEstimator.getEstimatedPosition());
         Logger.recordOutput("TargetPose", pose);
         return applyRequest(() -> request).until(() -> request.isFinished());
@@ -336,6 +343,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      */
     public Command resetOrientation(Rotation2d orientation)
     {
+        poseEstimator.resetRotation(orientation);
         return runOnce(() ->
         {
             resetRotation(orientation);

@@ -11,13 +11,32 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LEFT.H.K.L.1"
+                  "pathName": "RIGHT.E.D.C.1"
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "GoToL4Goal"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DriveToCloseLeft"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.5
                 }
               }
             ]
@@ -36,7 +55,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LEFT.H.K.L.2"
+                  "pathName": "RIGHT.E.D.C.2"
                 }
               },
               {
@@ -61,7 +80,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LEFT.H.K.L.3"
+                  "pathName": "RIGHT.E.D.C.3"
                 }
               },
               {
@@ -86,7 +105,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LEFT.H.K.L.4"
+                  "pathName": "RIGHT.E.D.C.4"
                 }
               },
               {
@@ -111,7 +130,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LEFT.H.K.L.5"
+                  "pathName": "RIGHT.E.D.C.5"
                 }
               },
               {
@@ -124,21 +143,34 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Outtake"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DriveToCloseLeft"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.5
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "GoToIntake"
+            "name": "Outtake"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "LEFT",
+  "folder": "RIGHT",
   "choreoAuto": false
 }

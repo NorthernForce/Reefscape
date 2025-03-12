@@ -12,6 +12,7 @@ import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
@@ -72,7 +73,6 @@ public class RalphContainer implements NFRRobotContainer
      */
     public RalphContainer()
     {
-
         drive = new PhoenixCommandDrive(RalphTunerConstants.DrivetrainConstants,
                 RalphConstants.DrivetrainConstants.MAX_SPEED, RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 RalphConstants.PathplannerConstants.linearPIDConstants,
@@ -157,6 +157,7 @@ public class RalphContainer implements NFRRobotContainer
         PortForwarder.add(5807, "10.1.72.14", 1181);
         PortForwarder.add(5808, "10.1.72.14", 1188);
         PortForwarder.add(5809, "10.1.72.14", 22);
+        getInserter().setDefaultCommand(defaultIntake());
     }
 
     public Command intakeCoral()
@@ -317,7 +318,7 @@ public class RalphContainer implements NFRRobotContainer
         vision.setLastKnownRobotPose(drive.getPose());
         for (var poseEstimate : vision.getPoseEstimates())
         {
-            drive.addVisionMeasurement(poseEstimate.pose(), poseEstimate.timestamp());
+            drive.addVisionMeasurement(poseEstimate.pose(), poseEstimate.timestamp(), VecBuilder.fill(0.1, 0.1, 0.001));
         }
         dashboard.updatePose(drive.getPose());
         dashboard.setInnerElevatorPosition(superstructure.getInnerElevator().getPosition());
@@ -429,7 +430,7 @@ public class RalphContainer implements NFRRobotContainer
 
     public Pose2d applyOffset(Pose2d pose)
     {
-        return applyOffset(pose, Inches.of(5), Inches.of(-9.5));
+        return applyOffset(pose, Inches.of(2.5), Inches.of(-9.5));
     }
 
     public Command driveToLeftReef()
@@ -440,5 +441,23 @@ public class RalphContainer implements NFRRobotContainer
     public Command driveToRightReef()
     {
         return Commands.defer(() -> drive.closeDriveToPose(applyOffset(getNearestReefSide().right())), Set.of(drive));
+    }
+
+    public Command goToClosestCoralStation()
+    {
+        if (getDistanceToPose(FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.LEFT)).in(
+                Meters) > getDistanceToPose(FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.RIGHT))
+                        .in(Meters))
+        {
+            return drive.closeDriveToPose(FieldConstants.CoralStations.RIGHT);
+        } else
+        {
+            return drive.closeDriveToPose(FieldConstants.CoralStations.LEFT);
+        }
+    }
+
+    public Command goToProcessor()
+    {
+        return drive.closeDriveToPose(FieldConstants.ProcessorStations.PROCESSOR_STATION);
     }
 }

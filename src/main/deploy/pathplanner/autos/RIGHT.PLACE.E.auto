@@ -26,6 +26,12 @@
         {
           "type": "named",
           "data": {
+            "name": "DriveToCloseLeft"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Outtake"
           }
         },
