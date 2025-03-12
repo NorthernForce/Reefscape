@@ -3,8 +3,6 @@ package frc.robot.ralph;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import edu.wpi.first.wpilibj2.command.Commands;
-
 public class RalphAutos
 {
     public static void addAutoRoutines(RalphContainer container)

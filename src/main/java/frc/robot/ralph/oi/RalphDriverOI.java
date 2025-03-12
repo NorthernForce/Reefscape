@@ -91,6 +91,11 @@ public class RalphDriverOI implements RalphOI
                         processJoystickInput(manipulatorController::getLeftY)));
     }
 
+    static void bindAlgaeRemover(CommandXboxController manipulatorController, RalphContainer container)
+    {
+        manipulatorController.leftTrigger().whileTrue(container.getAlgaeRemover().removeAlgae());
+    }
+
     @Override
     public void bindOI(RalphContainer container)
     {

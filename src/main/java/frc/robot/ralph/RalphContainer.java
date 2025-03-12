@@ -153,7 +153,7 @@ public class RalphContainer implements NFRRobotContainer
         }, RalphConstants.AlgaeRemoverConstants.REMOVING_SPEED, RalphConstants.AlgaeRemoverConstants.RETURNING_SPEED);
 
         inserter.setDefaultCommand(defaultIntake());
-        algaeremover.setDefaultCommand(Commands.run(() -> algaeremover.returnArm()));
+        algaeremover.setDefaultCommand(algaeremover.returnArm());
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
         RalphAutos.addNamedCommands(this);
         RalphAutos.addAutoRoutines(this);
@@ -169,6 +169,11 @@ public class RalphContainer implements NFRRobotContainer
         PortForwarder.add(5808, "10.1.72.14", 1188);
         PortForwarder.add(5809, "10.1.72.14", 22);
         getInserter().setDefaultCommand(defaultIntake());
+    }
+
+    public AlgaeRemover getAlgaeRemover()
+    {
+        return algaeremover;
     }
 
     public Command intakeCoral()

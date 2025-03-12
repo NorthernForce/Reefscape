@@ -53,21 +53,21 @@ public class RalphConstants
         public static final AprilTagFieldLayout APRILTAG_LAYOUT = AprilTagFieldLayout
                 .loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
-        private static final String FR_CAMERA_NAME = "front_right_camera";
-        private static final String BL_CAMERA_NAME = "back_left_camera";
-        private static final String BR_CAMERA_NAME = "back_right_camera";
-        private static final String FL_CAMERA_NAME = "front_left_camera";
+        public static final String FR_CAMERA_NAME = "front_right_camera";
+        public static final String BL_CAMERA_NAME = "back_left_camera";
+        public static final String BR_CAMERA_NAME = "back_right_camera";
+        public static final String FL_CAMERA_NAME = "front_left_camera";
 
         private static final Transform3d FR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 3.0),
                 Inches.of(-(15 - 7.75)), Inches.of(8.5), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
 
-        private static final Transform3d BL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(-13.5), Inches.of(7),
+        public static final Transform3d BL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(-13.5), Inches.of(7),
                 Inches.of(8.5), new Rotation3d(Degrees.of(0.0), Degrees.of(15.0), Degrees.of(135.0)));
 
-        private static final Transform3d BR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(-13.5), Inches.of(-7.0),
+        public static final Transform3d BR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(-13.5), Inches.of(-7.0),
                 Inches.of(8.5), new Rotation3d(Degrees.of(0.0), Degrees.of(15.0), Degrees.of(225.0)));
 
-        private static final Transform3d FL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 3.0), Inches.of(15 - 7.75),
+        public static final Transform3d FL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 3.0), Inches.of(15 - 7.75),
                 Inches.of(8.5), new Rotation3d(Degrees.of(0.0), Degrees.of(0.0), Degrees.of(0.0)));
 
         public static String[] cameraNames()

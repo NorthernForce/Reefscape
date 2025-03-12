@@ -1,24 +1,21 @@
 package frc.robot.subsystems.algaeremover;
 
-import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.algaeremover.sensor.AlgaeRemoverSensorIO;
 import frc.robot.subsystems.algaeremover.sensor.AlgaeRemoverSensorIOInputsAutoLogged;
-import frc.robot.subsystems.algaeremover.sensor.AlgaeRemoverSensorIO.AlgaeRemoverSensorIOInputs;
 
 public class AlgaeRemover extends SubsystemBase
 {
-    private AlgaeRemoverIO io;
-    private AlgaeRemoverSensorIO sensorIO;
-    private AlgaeRemoverSensorIOInputsAutoLogged sensorInputs = new AlgaeRemoverSensorIOInputsAutoLogged();
-    private AlgaeRemoverIOInputsAutoLogged inputs = new AlgaeRemoverIOInputsAutoLogged();
-    private double returningSpeed = 0.5;
-    private double removingSpeed = 0.5;
+    private final AlgaeRemoverIO io;
+    private final AlgaeRemoverSensorIO sensorIO;
+    private final AlgaeRemoverSensorIOInputsAutoLogged sensorInputs = new AlgaeRemoverSensorIOInputsAutoLogged();
+    private final AlgaeRemoverIOInputsAutoLogged inputs = new AlgaeRemoverIOInputsAutoLogged();
+    private final double returningSpeed;
+    private final double removingSpeed;
 
     public AlgaeRemover(AlgaeRemoverIO algaeRemoverIO, AlgaeRemoverSensorIO algaeSensorIO, double removingSpeed,
             double returningSpeed)
@@ -31,33 +28,13 @@ public class AlgaeRemover extends SubsystemBase
         this.returningSpeed = returningSpeed;
     }
 
-    public void removeAlgae()
-    {
-        io.removeAlgae(removingSpeed);
-    }
-
-    public void returnArm()
-    {
-        io.returnArm(returningSpeed);
-    }
-
     @AutoLogOutput
     public boolean hasReachedTop()
     {
         return sensorInputs.reachedTop;
     }
 
-    public void algaeRemoved(boolean algaeRemoved)
-    {
-        io.algaeRemoved(algaeRemoved);
-    }
-
-    public boolean getAlgaeRemoved()
-    {
-        return io.getAlgaeRemoved();
-    }
-
-    public void stopMotor()
+    public void stop()
     {
         io.stopMotor();
     }
@@ -66,12 +43,14 @@ public class AlgaeRemover extends SubsystemBase
     public void periodic()
     {
         sensorIO.updateInputs(sensorInputs);
+        Logger.processInputs(getName() + "Sensor", sensorInputs);
         io.updateInputs(inputs);
+        Logger.processInputs(getName(), inputs);
     }
 
-    public class removeAlgaeCommand extends Command
+    public class RemoveAlgaeCommand extends Command
     {
-        public removeAlgaeCommand()
+        public RemoveAlgaeCommand()
         {
             addRequirements(AlgaeRemover.this);
         }
@@ -79,33 +58,21 @@ public class AlgaeRemover extends SubsystemBase
         @Override
         public void initialize()
         {
-            io.removeAlgae(removingSpeed);
-        }
-
-        @Override
-        public void execute()
-        {
-            io.removeAlgae(removingSpeed);
+            io.set(removingSpeed);
         }
 
         @Override
         public void end(boolean interrupted)
         {
-            io.stopMotor();
+            stop();
         }
     }
 
-    public class returnArmCommand extends Command
+    public class ReturnArmCommand extends Command
     {
-        public returnArmCommand()
+        public ReturnArmCommand()
         {
             addRequirements(AlgaeRemover.this);
-        }
-
-        @Override
-        public void initialize()
-        {
-            io.returnArm(returningSpeed);
         }
 
         @Override
@@ -113,7 +80,7 @@ public class AlgaeRemover extends SubsystemBase
         {
             if (!hasReachedTop())
             {
-                io.returnArm(returningSpeed);
+                io.set(-returningSpeed);
             }
         }
 
@@ -126,17 +93,17 @@ public class AlgaeRemover extends SubsystemBase
         @Override
         public void end(boolean interrupted)
         {
-            io.stopMotor();
+            stop();
         }
     }
 
-    public Command getRemoveAlgaeCommand(double speed)
+    public Command removeAlgae()
     {
-        return new removeAlgaeCommand();
+        return new RemoveAlgaeCommand();
     }
 
-    public Command returnArmCommand(double speed)
+    public Command returnArm()
     {
-        return new returnArmCommand();
+        return new ReturnArmCommand();
     }
 }
