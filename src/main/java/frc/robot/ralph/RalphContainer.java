@@ -8,12 +8,15 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
+
 import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.units.measure.Angle;
@@ -298,6 +301,17 @@ public class RalphContainer implements NFRRobotContainer
     public Dashboard getDashboard()
     {
         return dashboard;
+    }
+
+    public Command getDriveSimple()
+    {
+        return drive.resetOrientation(Rotation2d.k180deg).andThen(drive.backup(Seconds.of(3), -0.5));
+    }
+
+    public Command getDrivePlace()
+    {
+        return drive.resetOrientation(Rotation2d.k180deg)
+                .andThen(drive.backup(Seconds.of(3), -0.5).alongWith(goToL4()).andThen(outtakeCoral()));
     }
 
     public Viewer getViewer()

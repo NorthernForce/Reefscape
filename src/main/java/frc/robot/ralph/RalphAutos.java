@@ -7,9 +7,11 @@ public class RalphAutos
 {
     public static void addAutoRoutines(RalphContainer container)
     {
+        container.getDashboard().addAutoRoutine("Simple Leave", container.getDriveSimple());
+        container.getDashboard().addDefaultAutoRoutine("Simple Leave and PLACE", container.getDrivePlace());
         container.getDashboard().addAutoRoutine("LEFT.LEAVE", new PathPlannerAuto("LEFT.LEAVE"));
         container.getDashboard().addAutoRoutine("LEFT.PLACE.I", new PathPlannerAuto("LEFT.PLACE.I"));
-        container.getDashboard().addDefaultAutoRoutine("CENTER.LEAVE", new PathPlannerAuto("CENTER.LEAVE"));
+        container.getDashboard().addAutoRoutine("CENTER.LEAVE", new PathPlannerAuto("CENTER.LEAVE"));
         container.getDashboard().addAutoRoutine("CENTER.PLACE.G", new PathPlannerAuto("CENTER.PLACE.G"));
         container.getDashboard().addAutoRoutine("RIGHT.LEAVE", new PathPlannerAuto("RIGHT.LEAVE"));
         container.getDashboard().addAutoRoutine("RIGHT.PLACE.E", new PathPlannerAuto("RIGHT.PLACE.E"));
