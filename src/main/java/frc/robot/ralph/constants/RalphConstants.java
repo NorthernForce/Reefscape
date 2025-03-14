@@ -57,6 +57,7 @@ public class RalphConstants
         public static final String BL_CAMERA_NAME = "back_left_camera";
         public static final String BR_CAMERA_NAME = "back_right_camera";
         public static final String FL_CAMERA_NAME = "front_left_camera";
+        public static final String CTR_CAMERA_NAME = "center_camera";
 
         private static final Transform3d FR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 3.0),
                 Inches.of(-(15 - 7.75)), Inches.of(8.5), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
@@ -70,16 +71,18 @@ public class RalphConstants
         public static final Transform3d FL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 3.0), Inches.of(15 - 7.75),
                 Inches.of(8.5), new Rotation3d(Degrees.of(0.0), Degrees.of(0.0), Degrees.of(0.0)));
 
+        public static final Transform3d CTR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 1.625), Inches.of(0), Inches.of(8.4), new Rotation3d(Degrees.of(0.0), Degrees.of(0.0), Degrees.of(0.0)));
+
         public static String[] cameraNames()
         {
             return new String[]
-            { FL_CAMERA_NAME, FR_CAMERA_NAME };
+            { FL_CAMERA_NAME, FR_CAMERA_NAME, CTR_CAMERA_NAME };
         }
 
         public static Transform3d[] cameraTransforms()
         {
             return new Transform3d[]
-            { FL_ROBOT_TO_CAMERA, FR_ROBOT_TO_CAMERA };
+            { FL_ROBOT_TO_CAMERA, FR_ROBOT_TO_CAMERA, CTR_ROBOT_TO_CAMERA };
         }
 
         public static final double MAX_Y_COORDINATE = 350; // TODO: Set this to the actual value
