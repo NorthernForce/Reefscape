@@ -5,25 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "CENTER.PLACE.G.1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "GoToL4Goal"
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "race",
           "data": {
             "commands": [
@@ -40,6 +21,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToL4Goal"
           }
         },
         {
