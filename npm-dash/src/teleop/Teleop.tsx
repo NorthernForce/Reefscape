@@ -14,7 +14,7 @@ function Teleop() {
     let [time] = useEntry("/FWC/MatchTime", 0);
     let ip = new URLSearchParams(window.location.search).get("ip") || "10.1.72.2"
     let ipBase = ip.split('.').slice(0, 3).join('.');
-    let visionCameraIp = `${ipBase}.15`;
+    let visionCameraIp = `${ipBase}.36`;
 
     return <>
         <div className="teleop-container">
@@ -23,7 +23,7 @@ function Teleop() {
                 <TimeDisplay time={time} />
             </div>
             <Canvas className="camera-feed">
-                <CanvasMjpgStream origin={[0,0]} crosshairColor="white" srcs={[`http://${visionCameraIp}:1183/stream.mjpg`]} />
+                <CanvasMjpgStream origin={[0,0]} crosshairColor="white" srcs={[`http://${visionCameraIp}:1181/stream.mjpg`]} />
             </Canvas>
             <div></div>
         </div>
