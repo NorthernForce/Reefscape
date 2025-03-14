@@ -59,4 +59,6 @@ public interface NFRRobotContainer
      * @return the selected autonomous command
      */
     public Command getAutonomousCommand();
+
+    public Command getBackupAuto();
 }

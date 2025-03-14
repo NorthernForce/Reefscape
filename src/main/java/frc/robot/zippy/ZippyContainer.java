@@ -3,6 +3,7 @@ package frc.robot.zippy;
 import java.util.Map;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.function.Supplier;
 
@@ -150,6 +151,11 @@ public class ZippyContainer implements NFRRobotContainer
     public void testInit()
     {
         dashboard.setSettingsStage();
+    }
+
+    public Command getBackupAuto()
+    {
+        return drive.backup(Seconds.of(1), 0.5);
     }
 
 }
