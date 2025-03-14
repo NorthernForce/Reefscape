@@ -34,6 +34,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
@@ -215,6 +216,14 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     }
 
     public Command closeDriveToPose(Pose2d pose)
+    {
+        CloseDriveToPoseRequest request = new CloseDriveToPoseRequest(pose, 4, 0, 0, 5, 0, 0,
+                () -> poseEstimator.getEstimatedPosition());
+        Logger.recordOutput("TargetPose", pose);
+        return applyRequest(() -> request).until(() -> request.isFinished());
+    }
+
+    public Command closeDriveToPoseWithRealsense(Pose2d pose, Supplier<Distance> realsenseDistanceSupplier)
     {
         CloseDriveToPoseRequest request = new CloseDriveToPoseRequest(pose, 4, 0, 0, 5, 0, 0,
                 () -> poseEstimator.getEstimatedPosition());
