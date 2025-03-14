@@ -43,9 +43,14 @@ public class RalphDriverOI implements RalphOI
 
         driverController.y().whileTrue(container.goToProcessor());
 
-        driverController.leftBumper().whileTrue(container.driveToLeftReef());
+        driverController.leftBumper().and(() -> !driverController.rightBumper().getAsBoolean())
+                .whileTrue(container.driveToLeftReef());
 
-        driverController.rightBumper().whileTrue(container.driveToRightReef());
+        driverController.rightBumper().and(() -> !driverController.leftBumper().getAsBoolean())
+                .whileTrue(container.driveToRightReef());
+
+        driverController.leftBumper().and(driverController.rightBumper()).whileTrue(
+                container.driveToCenterAlgae().onlyWhile(() -> driverController.rightBumper().getAsBoolean()));
 
         SmartDashboard.putData("DriveToReef", container.driveToLeftReef());
     }
@@ -94,6 +99,7 @@ public class RalphDriverOI implements RalphOI
     static void bindAlgaeRemover(CommandXboxController manipulatorController, RalphContainer container)
     {
         manipulatorController.leftTrigger().whileTrue(container.getAlgaeRemover().removeAlgae());
+        manipulatorController.x().whileTrue(container.getAlgaeRemover().returnArm());
     }
 
     @Override

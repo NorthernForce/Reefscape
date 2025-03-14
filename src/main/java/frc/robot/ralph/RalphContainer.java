@@ -466,6 +466,19 @@ public class RalphContainer implements NFRRobotContainer
         return Commands.defer(() -> drive.closeDriveToPose(applyOffset(getNearestReefSide().right())), Set.of(drive));
     }
 
+    public Command driveToCenterReef()
+    {
+        return Commands.defer(() -> drive.closeDriveToPose(applyOffset(getNearestReefSide().center())), Set.of(drive));
+    }
+
+    public Command driveToCenterAlgae()
+    {
+        return Commands.defer(
+                () -> drive
+                        .closeDriveToPose(applyOffset(getNearestReefSide().center(), Inches.of(2.5), Inches.of(-12))),
+                Set.of(drive));
+    }
+
     public Command goToClosestCoralStation()
     {
         if (getDistanceToPose(FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.LEFT)).in(
