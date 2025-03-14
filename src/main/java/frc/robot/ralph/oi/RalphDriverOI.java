@@ -106,6 +106,7 @@ public class RalphDriverOI implements RalphOI
         bindInserter(driverController, manipulatorController, container);
         bindClimber(driverController, container);
         bindSuperstructure(driverController, manipulatorController, container);
+        bindAlgaeRemover(manipulatorController, container);
 
     }
 }

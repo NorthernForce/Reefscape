@@ -290,7 +290,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command goBackward(double speed)
     {
         ChassisSpeeds speeds = new ChassisSpeeds();
-        speeds.vyMetersPerSecond = -speed;
+        speeds.vxMetersPerSecond = -speed;
         return driveWithRobotRelativeDutyCycle(() -> speeds);
     }
 
@@ -348,6 +348,12 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         {
             resetRotation(orientation);
         });
+    }
+
+    @AutoLogOutput
+    public Pose2d getStatePose()
+    {
+        return getState().Pose;
     }
 
     @Override

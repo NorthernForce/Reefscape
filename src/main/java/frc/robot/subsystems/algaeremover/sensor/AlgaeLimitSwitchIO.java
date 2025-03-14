@@ -14,7 +14,7 @@ public class AlgaeLimitSwitchIO implements AlgaeRemoverSensorIO
     @Override
     public void updateInputs(AlgaeRemoverSensorIOInputs inputs)
     {
-        inputs.reachedTop = switchInput.get();
+        inputs.reachedTop = !switchInput.get();
     }
 
 }

@@ -56,15 +56,15 @@ public class AlgaeRemover extends SubsystemBase
         }
 
         @Override
-        public void initialize()
+        public void execute()
         {
+            System.out.println("Here");
             io.set(removingSpeed);
         }
 
         @Override
         public void end(boolean interrupted)
         {
-            stop();
         }
     }
 
@@ -81,6 +81,9 @@ public class AlgaeRemover extends SubsystemBase
             if (!hasReachedTop())
             {
                 io.set(-returningSpeed);
+            } else
+            {
+                io.set(0);
             }
         }
 
@@ -93,7 +96,6 @@ public class AlgaeRemover extends SubsystemBase
         @Override
         public void end(boolean interrupted)
         {
-            stop();
         }
     }
 

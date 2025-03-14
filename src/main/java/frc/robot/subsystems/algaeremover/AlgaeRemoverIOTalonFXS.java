@@ -5,6 +5,8 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorArrangementValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -30,6 +32,8 @@ public class AlgaeRemoverIOTalonFXS implements AlgaeRemoverIO
         config.MotorOutput.Inverted = inverted ? InvertedValue.Clockwise_Positive
                 : InvertedValue.CounterClockwise_Positive;
         config.ExternalFeedback.SensorToMechanismRatio = gearRatio;
+        config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         talonFXS.getConfigurator().apply(config);
         motorVoltage = talonFXS.getMotorVoltage();
         motorCurrent = talonFXS.getStatorCurrent();
