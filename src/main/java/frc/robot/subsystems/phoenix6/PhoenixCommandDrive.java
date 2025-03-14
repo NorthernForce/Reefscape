@@ -103,18 +103,27 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public void resetPose(Pose2d pose)
     {
         super.resetPose(pose);
-        poseEstimator.resetPose(pose);
+        synchronized (poseEstimator)
+        {
+            poseEstimator.resetPose(pose);
+        }
     }
 
     @Override
     public void addVisionMeasurement(Pose2d visionMeasurement, double timestamp)
     {
+        synchronized (poseEstimator)
+        {
         poseEstimator.addVisionMeasurement(visionMeasurement, timestamp);
+        }
     }
 
     public void addVisionMeasurement(Pose2d visionMeasurement, double timestamp, Vector<N3> stdDevs)
     {
-        poseEstimator.addVisionMeasurement(visionMeasurement, timestamp, stdDevs);
+        synchronized (poseEstimator)
+        {
+            poseEstimator.addVisionMeasurement(visionMeasurement, timestamp, stdDevs);
+        }
     }
 
     public Rotation2d getHeading()
@@ -227,7 +236,9 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     public void updateOdometry()
     {
+        synchronized(poseEstimator) {
         poseEstimator.update(getState().RawHeading, getState().ModulePositions);
+        }
     }
 
     /**
