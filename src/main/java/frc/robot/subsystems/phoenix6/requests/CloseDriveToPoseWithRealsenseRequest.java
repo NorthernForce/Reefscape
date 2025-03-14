@@ -27,8 +27,8 @@ public class CloseDriveToPoseWithRealsenseRequest implements SwerveRequest
     private final Supplier<Optional<Distance>> realsenseDistanceSupplier;
     private final PIDController realsensePID;
 
-    public CloseDriveToPoseWithRealsenseRequest(Pose2d pose, double tP, double tI, double tD, double rP, double rI, double rD,
-            Supplier<Pose2d> poseGetter, Supplier<Optional<Distance>> realsenseDistanceSupplier)
+    public CloseDriveToPoseWithRealsenseRequest(Pose2d pose, double tP, double tI, double tD, double rP, double rI,
+            double rD, Supplier<Pose2d> poseGetter, Supplier<Optional<Distance>> realsenseDistanceSupplier)
     {
         this.xPID = new PIDController(tP, tI, tD);
         this.yPID = new PIDController(tP, tI, tD);
@@ -58,7 +58,8 @@ public class CloseDriveToPoseWithRealsenseRequest implements SwerveRequest
         {
             var distance = realsenseDistance.get();
             double rD = realsensePID.calculate(distance.in(Meters));
-            var robotRelative = ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelative, parameters.currentPose.getRotation());
+            var robotRelative = ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelative,
+                    parameters.currentPose.getRotation());
             robotRelative.vyMetersPerSecond = rD;
             fieldRelative = ChassisSpeeds.fromRobotRelativeSpeeds(robotRelative, parameters.currentPose.getRotation());
         }
