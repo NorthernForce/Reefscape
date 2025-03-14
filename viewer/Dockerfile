@@ -39,5 +39,7 @@ RUN python3 -m venv .env --system-site-packages \
     && pip install --upgrade pip setuptools wheel \
     && pip install numpy opencv-python robotpy-cscore pynetworktables
 
-# run.py must be mounted to /run/viewer/run.py
-CMD . .env/bin/activate && python3 ./run.py
+EXPOSE 1181
+EXPOSE 1182
+
+CMD . .env/bin/activate && cd src && python3 run.py

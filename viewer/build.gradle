@@ -2,6 +2,10 @@ plugins {
     id "org.hidetake.ssh" version "2.11.2"
 }
 
+ssh.settings {
+    knownHosts = allowAnyHosts
+}
+
 remotes {
     orangepi {
         host = findProperty("devAddr") ?: "10.1.72.14"
@@ -11,28 +15,19 @@ remotes {
     }
 }
 
-task viewBuild {
+task viewFilesOnly {
     group = "Vision Deployment"
-    description = "builds + starts docker container (requires internet access)"
+    description = "deploy files only (quicker)"
     doLast {
-        println "this build requires both your computer and pi to be connected to internet!"
-        ssh.run {
+        ssh.runInOrder {
             session(remotes.orangepi) {
                 def dirName = project.projectDir.getName()
                 put from: project.projectDir, into: "/home/pi"
-                println "running docker build (will disconnect from static)"
-                executeScript """
-                    sudo nmcli conn down static-end1 && sleep 5
-                    cd ~/viewer
-                    sudo docker build . -t viewer --network=host
-                    sudo docker run \
-                        --name=viewer-sys \
-                        --restart=always \
-                        --network=host \
-                        --device /dev/bus/usb \
-                        -v .:/run/viewer/:ro \
-                        viewer
-                    sudo nmcli conn up static-end1""", pty: true
+                try {
+                    execute "sudo docker restart viewer-sys"
+                } catch (Exception e) {
+                    println "couldn't restart container (might not exist)"
+                }
             }
         }
     }
@@ -40,14 +35,20 @@ task viewBuild {
 
 task viewDeploy {
     group = "Vision Deployment"
-    description = "deploy viewer system code (only for non-docker code)"
+    description = "deploy viewer system code (builds container)"
     doLast {
-        ssh.run {
+        ssh.runInOrder {
             session(remotes.orangepi) {
                 def dirName = project.projectDir.getName()
                 put from: project.projectDir, into: "/home/pi"
+                executeScript "chmod +x ~/viewer/deploy.sh"
                 println "vision code uploaded to ~/$dirName, reloading docker."
-                executeScript "cd ~/viewer && sudo docker restart viewer-sys"
+                try {
+                    execute "/home/pi/viewer/deploy.sh"
+                } catch (Exception e) {
+                    println "== errors during docker deploy! consider running manually and restart static networking"
+                    e.printStackTrace()
+                }
             }
         }
     }
