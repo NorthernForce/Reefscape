@@ -36,7 +36,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "DriveToCloseLeft"
+                  "name": "DriveToCloseRight"
                 }
               }
             ]
@@ -124,7 +124,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LEFT.I.K.L.4"
+                  "pathName": "LEFT.J.K.L.4"
                 }
               },
               {
@@ -149,7 +149,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LEFT.I.K.L.5"
+                  "pathName": "LEFT.J.K.L.5"
                 }
               },
               {

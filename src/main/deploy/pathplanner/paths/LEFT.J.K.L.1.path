@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 5.394467213114754,
-        "y": 5.589395491803279
+        "x": 4.9868852459016395,
+        "y": 5.5414446721311466
       },
       "prevControl": {
-        "x": 5.646209016393442,
-        "y": 6.080891393442624
+        "x": 5.2386270491803275,
+        "y": 6.0329405737704915
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": -119.99999999999999
   },
   "reversed": false,
-  "folder": "LEFT.I.K.L",
+  "folder": "LEFT.J.K.L",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

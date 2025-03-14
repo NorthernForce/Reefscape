@@ -15,7 +15,7 @@ public class RalphAutos
         container.getDashboard().addAutoRoutine("CENTER.PLACE.G", new PathPlannerAuto("CENTER.PLACE.G"));
         container.getDashboard().addAutoRoutine("RIGHT.LEAVE", new PathPlannerAuto("RIGHT.LEAVE"));
         container.getDashboard().addAutoRoutine("RIGHT.PLACE.E", new PathPlannerAuto("RIGHT.PLACE.E"));
-        container.getDashboard().addAutoRoutine("LEFT.I.K.L", new PathPlannerAuto("LEFT.I.K.L"));
+        container.getDashboard().addAutoRoutine("LEFT.J.K.L", new PathPlannerAuto("LEFT.J.K.L"));
         container.getDashboard().addAutoRoutine("RIGHT.E.D.C", new PathPlannerAuto("RIGHT.E.D.C"));
     }
 
