@@ -489,7 +489,7 @@ public class RalphContainer implements NFRRobotContainer
     {
         return Commands.defer(
                 () -> drive
-                        .closeDriveToPose(applyOffset(getNearestReefSide().center(), Inches.of(2.5), Inches.of(-12))),
+                        .closeDriveToPose(applyOffset(getNearestReefSide().center(), Inches.of(2.5), Inches.of(-8))),
                 Set.of(drive));
     }
 
