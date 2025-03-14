@@ -227,8 +227,8 @@ public class RalphConstants
     public static class AutoConstants
     {
         // TODO: tuning
-        public static final PIDController xPID = new PIDController(10, 0, 0);
-        public static final PIDController yPID = new PIDController(10, 0, 0);
+        public static final PIDController xPID = new PIDController(8, 0, 0);
+        public static final PIDController yPID = new PIDController(8, 0, 0);
         public static final PIDController rPID = new PIDController(7.5, 0, 0);
     }
 
