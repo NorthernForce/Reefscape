@@ -488,8 +488,7 @@ public class RalphContainer implements NFRRobotContainer
     public Command driveToCenterAlgae()
     {
         return Commands.defer(
-                () -> drive
-                        .closeDriveToPose(applyOffset(getNearestReefSide().center(), Inches.of(2.5), Inches.of(-8))),
+                () -> drive.closeDriveToPose(applyOffset(getNearestReefSide().center(), Inches.of(2.5), Inches.of(1))),
                 Set.of(drive));
     }
 
