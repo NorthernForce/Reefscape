@@ -101,7 +101,6 @@ public class DashboardIOFWC implements DashboardIO
     {
         if (autoChooser.get() instanceof PathPlannerAuto)
         {
-            System.out.println("Wrong");
             var auto = (PathPlannerAuto) autoChooser.get();
             var pose = FieldConstants.convertPoseByAlliance(auto.getStartingPose());
             autoPosePublisher.set(new double[]
