@@ -19,7 +19,7 @@ public class RalphProgrammerOI implements RalphOI
         CommandXboxController manipulatorController = new CommandXboxController(1);
 
         RalphDriverOI.bindDrive(driverController, container);
-        RalphDriverOI.bindRollers(driverController, manipulatorController, container);
+        RalphDriverOI.bindInserter(driverController, manipulatorController, container);
         RalphDriverOI.bindClimber(driverController, container);
         RalphDriverOI.bindSuperstructure(driverController, manipulatorController, container);
 

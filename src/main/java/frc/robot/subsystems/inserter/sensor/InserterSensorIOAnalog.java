@@ -1,4 +1,4 @@
-package frc.robot.subsystems.rollers.sensor;
+package frc.robot.subsystems.inserter.sensor;
 
 import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Inches;
@@ -10,21 +10,21 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotController;
 
 /**
- * The IO for the rollers analog sensor.
+ * The IO for the inserter analog sensor.
  */
-public class RollersSensorIOAnalog implements RollersSensorIO
+public class InserterSensorIOAnalog implements InserterSensorIO
 {
     private final AnalogInput m_analogInput;
     private final Distance m_distToObject;
 
     /**
-     * Constructs a new RollersSensorIOAnalog.
+     * Constructs a new InserterSensorAnalog.
      * 
      * @param channel      the channel for the analog sensor (on the roborio ANALOG
      *                     ports)
      * @param distToObject the distance to the object to mark as having a piece
      */
-    public RollersSensorIOAnalog(int channel, Distance distToObject)
+    public InserterSensorIOAnalog(int channel, Distance distToObject)
     {
         m_analogInput = new AnalogInput(channel);
         m_distToObject = distToObject;
@@ -41,7 +41,7 @@ public class RollersSensorIOAnalog implements RollersSensorIO
     }
 
     @Override
-    public void updateInputs(RollersSensorIOInputs inputs)
+    public void updateInputs(InserterSensorIOInputs inputs)
     {
         Logger.recordOutput("Distance" + m_analogInput.getChannel(), getDistance().in(Inches));
         inputs.hasPiece = getDistance().lte(m_distToObject);
