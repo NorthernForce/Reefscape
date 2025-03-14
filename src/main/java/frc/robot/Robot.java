@@ -130,9 +130,8 @@ public class Robot extends LoggedRobot
         container.autonomousInit();
         if (DriverStation.getAlliance().isPresent())
         {
-        autoSelected = container.getAutonomousCommand();
-        }
-        else
+            autoSelected = container.getAutonomousCommand();
+        } else
         {
             autoSelected = container.getBackupAuto();
         }

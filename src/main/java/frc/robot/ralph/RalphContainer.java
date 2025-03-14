@@ -509,7 +509,7 @@ public class RalphContainer implements NFRRobotContainer
     {
         return drive.closeDriveToPose(FieldConstants.ProcessorStations.PROCESSOR_STATION);
     }
-    
+
     public Command getBackupAuto()
     {
         return drive.backup(Seconds.of(1), 0.5);
