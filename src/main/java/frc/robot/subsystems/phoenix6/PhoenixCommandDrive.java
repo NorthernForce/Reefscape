@@ -217,7 +217,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command closeDriveToPose(Pose2d pose)
     {
         CloseDriveToPoseRequest request = new CloseDriveToPoseRequest(pose, 4, 0, 0, 5, 0, 0,
-                MetersPerSecond.of(1), Inches.of(1.375), Degrees.of(1.5),
+                MetersPerSecond.of(1.75), Inches.of(1.375), Degrees.of(1.5),
                 () -> poseEstimator.getEstimatedPosition());
         Logger.recordOutput("TargetPose", pose);
         return applyRequest(() -> request).until(() -> request.isFinished());
