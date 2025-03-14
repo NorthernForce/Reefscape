@@ -29,8 +29,7 @@ public class CloseDriveToPoseRequest implements SwerveRequest
     private final LinearVelocity maxVelocity;
 
     public CloseDriveToPoseRequest(Pose2d pose, double tP, double tI, double tD, double rP, double rI, double rD,
-            LinearVelocity maxVelocity, Distance tolerance, Angle angleTolerance,
-            Supplier<Pose2d> poseGetter)
+            LinearVelocity maxVelocity, Distance tolerance, Angle angleTolerance, Supplier<Pose2d> poseGetter)
     {
         this.xPID = new PIDController(tP, tI, tD);
         this.yPID = new PIDController(tP, tI, tD);
@@ -54,8 +53,10 @@ public class CloseDriveToPoseRequest implements SwerveRequest
     {
         double vx = xPID.calculate(poseGetter.get().getX());
         double vy = yPID.calculate(poseGetter.get().getY());
-        facingAngle.withVelocityX(MathUtil.clamp(vx, -maxVelocity.in(MetersPerSecond), maxVelocity.in(MetersPerSecond)));
-        facingAngle.withVelocityY(MathUtil.clamp(vy, -maxVelocity.in(MetersPerSecond), maxVelocity.in(MetersPerSecond)));
+        facingAngle
+                .withVelocityX(MathUtil.clamp(vx, -maxVelocity.in(MetersPerSecond), maxVelocity.in(MetersPerSecond)));
+        facingAngle
+                .withVelocityY(MathUtil.clamp(vy, -maxVelocity.in(MetersPerSecond), maxVelocity.in(MetersPerSecond)));
         return facingAngle.apply(parameters, modulesToApply);
     }
 
