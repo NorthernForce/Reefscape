@@ -24,9 +24,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "DriveToCloseLeft"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DriveToCloseLeft"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.0
+                }
+              }
+            ]
           }
         },
         {
