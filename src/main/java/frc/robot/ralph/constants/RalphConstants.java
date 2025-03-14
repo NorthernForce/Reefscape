@@ -71,7 +71,8 @@ public class RalphConstants
         public static final Transform3d FL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 3.0), Inches.of(15 - 7.75),
                 Inches.of(8.5), new Rotation3d(Degrees.of(0.0), Degrees.of(0.0), Degrees.of(0.0)));
 
-        public static final Transform3d CTR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 1.625), Inches.of(0), Inches.of(8.4), new Rotation3d(Degrees.of(0.0), Degrees.of(0.0), Degrees.of(0.0)));
+        public static final Transform3d CTR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 1.625), Inches.of(0),
+                Inches.of(8.4), new Rotation3d(Degrees.of(0.0), Degrees.of(0.0), Degrees.of(0.0)));
 
         public static String[] cameraNames()
         {
