@@ -114,7 +114,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     {
         synchronized (poseEstimator)
         {
-        poseEstimator.addVisionMeasurement(visionMeasurement, timestamp);
+            poseEstimator.addVisionMeasurement(visionMeasurement, timestamp);
         }
     }
 
@@ -236,8 +236,9 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     public void updateOdometry()
     {
-        synchronized(poseEstimator) {
-        poseEstimator.update(getState().RawHeading, getState().ModulePositions);
+        synchronized (poseEstimator)
+        {
+            poseEstimator.update(getState().RawHeading, getState().ModulePositions);
         }
     }
 
