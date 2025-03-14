@@ -38,6 +38,7 @@ import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.RobotController;
@@ -64,6 +65,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     private String motorAlertString = "";
     private String encoderAlertString = "";
     private final SwerveDrivePoseEstimator poseEstimator;
+    private final Notifier notifier = new Notifier(this::updateOdometry);
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -94,6 +96,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         configureAutoBuilder(linearPIDConstants, angularPIDConstants);
         poseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getState().RawHeading, getState().ModulePositions,
                 new Pose2d());
+        notifier.startPeriodic(0.02);
     }
 
     @Override
@@ -220,6 +223,11 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
                 () -> poseEstimator.getEstimatedPosition());
         Logger.recordOutput("TargetPose", pose);
         return applyRequest(() -> request).until(() -> request.isFinished());
+    }
+
+    public void updateOdometry()
+    {
+        poseEstimator.update(getState().RawHeading, getState().ModulePositions);
     }
 
     /**
@@ -468,7 +476,6 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         {
             encoderDisconnectedAlert.set(false);
         }
-        poseEstimator.update(getState().RawHeading, getState().ModulePositions);
     }
 
     /**
