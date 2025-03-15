@@ -85,10 +85,13 @@ public class RalphDriverOI implements RalphOI
 
         manipulatorController.start().whileTrue(container.homeElevator());
 
-        manipulatorController.povLeft().and(container.getInserter()::hasCoral).onTrue(container.goToL1().withTimeout(2));
+        manipulatorController.povLeft().and(container.getInserter()::hasCoral)
+                .onTrue(container.goToL1().withTimeout(2));
         manipulatorController.povUp().and(container.getInserter()::hasCoral).onTrue(container.goToL2().withTimeout(2));
-        manipulatorController.povRight().and(container.getInserter()::hasCoral).onTrue(container.goToL3().withTimeout(2));
-        manipulatorController.povDown().and(container.getInserter()::hasCoral).onTrue(container.goToL4().withTimeout(2));
+        manipulatorController.povRight().and(container.getInserter()::hasCoral)
+                .onTrue(container.goToL3().withTimeout(2));
+        manipulatorController.povDown().and(container.getInserter()::hasCoral)
+                .onTrue(container.goToL4().withTimeout(2));
 
         container.getSuperstructure()
                 .setDefaultCommand(container.getSuperstructure().getManualControlCommand(
