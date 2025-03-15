@@ -466,7 +466,7 @@ public class RalphContainer implements NFRRobotContainer
 
     public Pose2d applyOffset(Pose2d pose)
     {
-        return applyOffset(pose, Inches.of(0.75), Inches.of(-7));
+        return applyOffset(pose, Inches.of(2), Inches.of(-7));
     }
 
     public Command driveToLeftReef()
