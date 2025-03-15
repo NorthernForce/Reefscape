@@ -102,7 +102,15 @@ public class DashboardIOFWC implements DashboardIO
         if (autoChooser.get() instanceof PathPlannerAuto)
         {
             var auto = (PathPlannerAuto) autoChooser.get();
-            var pose = FieldConstants.convertPoseByAlliance(auto.getStartingPose());
+            Pose2d pose;
+            if (auto.getStartingPose() != null)
+            {
+                pose = FieldConstants.convertPoseByAlliance(auto.getStartingPose());
+            }
+            else
+            {
+                pose = new Pose2d();
+            }
             autoPosePublisher.set(new double[]
             { pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getRotation().getRadians() });
             if (previousAuto != autoChooser.get() || previousAlliance != FieldConstants.getAlliance())

@@ -340,7 +340,8 @@ public class RalphContainer implements NFRRobotContainer
     @Override
     public void autonomousInit()
     {
-        drive.resetPose(dashboard.getRoutine().getStartingPose());
+        if (dashboard.getRoutine().getStartingPose() != null)
+            drive.resetPose(dashboard.getRoutine().getStartingPose());
     }
 
     @Override
