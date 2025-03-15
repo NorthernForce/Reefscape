@@ -106,8 +106,7 @@ public class DashboardIOFWC implements DashboardIO
             if (auto.getStartingPose() != null)
             {
                 pose = FieldConstants.convertPoseByAlliance(auto.getStartingPose());
-            }
-            else
+            } else
             {
                 pose = new Pose2d();
             }
