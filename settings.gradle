@@ -31,3 +31,4 @@ props.setProperty("org.gradle.internal.native.headers.unresolved.dependencies.ig
 
 include 'npm-dash'
 include 'dashboard'
+include 'viewer'
