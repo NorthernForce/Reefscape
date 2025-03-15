@@ -25,8 +25,8 @@ public class CloseDriveToPoseRequest implements SwerveRequest
     {
         this.xPID = new PIDController(tP, tI, tD);
         this.yPID = new PIDController(tP, tI, tD);
-        xPID.setTolerance(0.05);
-        yPID.setTolerance(0.05);
+        xPID.setTolerance(0.03);
+        yPID.setTolerance(0.03);
         xPID.setSetpoint(pose.getX());
         yPID.setSetpoint(pose.getY());
         this.facingAngle = new FieldCentricFacingAngle();
