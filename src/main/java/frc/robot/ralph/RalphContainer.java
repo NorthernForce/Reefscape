@@ -517,7 +517,9 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command driveToTrough()
     {
-        Pose2d[] troughs = new Pose2d[]{ReefPositions.AB_TROUGH, ReefPositions.CD_TROUGH, ReefPositions.EF_TROUGH, ReefPositions.GH_TROUGH, ReefPositions.IJ_TROUGH, ReefPositions.KL_TROUGH};
+        Pose2d[] troughs = new Pose2d[]
+        { ReefPositions.AB_TROUGH, ReefPositions.CD_TROUGH, ReefPositions.EF_TROUGH, ReefPositions.GH_TROUGH,
+                ReefPositions.IJ_TROUGH, ReefPositions.KL_TROUGH };
         Pose2d closestTrough = troughs[0];
         for (Pose2d trough : troughs)
         {
