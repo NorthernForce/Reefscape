@@ -22,7 +22,7 @@ public class FieldConstants
      */
     public static enum ReefLocations
     {
-        A, B, C, D, E, F, G, H, I, J, K, L, AB_ALGAE, CD_ALGAE, EF_ALGAE, GH_ALGAE, IJ_ALGAE, KL_ALGAE,
+        A, B, C, D, E, F, G, H, I, J, K, L, AB_ALGAE, CD_ALGAE, EF_ALGAE, GH_ALGAE, IJ_ALGAE, KL_ALGAE, AB_TROUGH, CD_TROUGH, EF_TROUGH, GH_TROUGH, IJ_TROUGH, KL_TROUGH,
         LEFT_CORAL_STATION, RIGHT_CORAL_STATION, PROCESSOR_STATION
     }
 
@@ -74,6 +74,12 @@ public class FieldConstants
         public static final Pose2d K = new Pose2d(3.95, 5.29, ReefRotations.KL_ROTATION);
         public static final Pose2d KL_ALGAE = new Pose2d(3.82, 5.19, ReefRotations.KL_ROTATION);
         public static final Pose2d L = new Pose2d(3.65, 5.12, ReefRotations.KL_ROTATION);
+        public static final Pose2d AB_TROUGH = new Pose2d(3.531, 5.203, ReefRotations.AB_ROTATION.plus(Rotation2d.kCW_90deg));
+        public static final Pose2d CD_TROUGH = new Pose2d(5.056, 5.451, ReefRotations.CD_ROTATION.plus(Rotation2d.kCCW_90deg));
+        public static final Pose2d EF_TROUGH = new Pose2d(6.063, 4.200, ReefRotations.EF_ROTATION.plus(Rotation2d.kCW_90deg));
+        public static final Pose2d GH_TROUGH = new Pose2d(5.367, 2.796, ReefRotations.GH_ROTATION.plus(Rotation2d.kCW_90deg));
+        public static final Pose2d IJ_TROUGH = new Pose2d(3.912, 2.954, ReefRotations.IJ_ROTATION.plus(Rotation2d.kCW_90deg));
+        public static final Pose2d KL_TROUGH = new Pose2d(2.939, 3.820, ReefRotations.KL_ROTATION.plus(Rotation2d.kCW_90deg));
         public static final ReefSide AB_SIDE = new ReefSide(A, B, AB_ALGAE);
         public static final ReefSide CD_SIDE = new ReefSide(C, D, CD_ALGAE);
         public static final ReefSide EF_SIDE = new ReefSide(E, F, EF_ALGAE);
@@ -103,6 +109,12 @@ public class FieldConstants
         REEF_POSITIONS.put(ReefLocations.GH_ALGAE, ReefPositions.GH_ALGAE);
         REEF_POSITIONS.put(ReefLocations.IJ_ALGAE, ReefPositions.IJ_ALGAE);
         REEF_POSITIONS.put(ReefLocations.KL_ALGAE, ReefPositions.KL_ALGAE);
+        REEF_POSITIONS.put(ReefLocations.AB_TROUGH, ReefPositions.AB_TROUGH);
+        REEF_POSITIONS.put(ReefLocations.CD_TROUGH, ReefPositions.CD_TROUGH);
+        REEF_POSITIONS.put(ReefLocations.EF_TROUGH, ReefPositions.EF_TROUGH);
+        REEF_POSITIONS.put(ReefLocations.GH_TROUGH, ReefPositions.GH_TROUGH);
+        REEF_POSITIONS.put(ReefLocations.IJ_TROUGH, ReefPositions.IJ_TROUGH);
+        REEF_POSITIONS.put(ReefLocations.KL_TROUGH, ReefPositions.KL_TROUGH);
         REEF_POSITIONS.put(ReefLocations.LEFT_CORAL_STATION, CoralStations.LEFT);
         REEF_POSITIONS.put(ReefLocations.RIGHT_CORAL_STATION, CoralStations.RIGHT);
         REEF_POSITIONS.put(ReefLocations.PROCESSOR_STATION, ProcessorStations.PROCESSOR_STATION);
