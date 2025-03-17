@@ -55,7 +55,7 @@ public class Dashboard extends SubsystemBase
      * @param name    Auto routine name (Descriptive for drivers please)
      * @param command Auto routine command
      */
-    public void addAutoRoutine(String name, PathPlannerAuto command)
+    public void addAutoRoutine(String name, Command command)
     {
         m_io.addRoutine(name, command, false);
     }
@@ -66,7 +66,7 @@ public class Dashboard extends SubsystemBase
      * @param name    Auto routine name (Descriptive for drivers please)
      * @param command Auto routine command
      */
-    public void addDefaultAutoRoutine(String name, PathPlannerAuto command)
+    public void addDefaultAutoRoutine(String name, Command command)
     {
         m_io.addRoutine(name, command, true);
     }

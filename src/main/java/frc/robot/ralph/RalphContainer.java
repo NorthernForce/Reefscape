@@ -8,12 +8,15 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
+
 import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.units.measure.Angle;
@@ -29,6 +32,11 @@ import frc.robot.ralph.constants.RalphTunerConstants;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 import frc.robot.ralph.oi.RalphDriverOI;
 import frc.robot.ralph.oi.RalphProgrammerOI;
+import frc.robot.subsystems.algaeremover.AlgaeRemover;
+import frc.robot.subsystems.algaeremover.AlgaeRemoverIO;
+import frc.robot.subsystems.algaeremover.AlgaeRemoverIOTalonFXS;
+import frc.robot.subsystems.algaeremover.sensor.AlgaeLimitSwitchIO;
+import frc.robot.subsystems.algaeremover.sensor.AlgaeRemoverSensorIO;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOTalonFX;
@@ -67,6 +75,7 @@ public class RalphContainer implements NFRRobotContainer
     private final Climber climber;
     private final Dashboard dashboard;
     private final Viewer viewer;
+    private final AlgaeRemover algaeremover;
 
     /**
      * Create a new RalphContainer
@@ -113,6 +122,10 @@ public class RalphContainer implements NFRRobotContainer
                             RalphConstants.InserterConstants.ROLLER_MOTOR_INVERTED),
                     new InserterSensorIOBeamBreak(RalphConstants.InserterConstants.SensorConstants.CORAL_PIN),
                     RalphConstants.InserterConstants.INTAKE_SPEED, RalphConstants.InserterConstants.OUTTAKE_SPEED);
+            algaeremover = new AlgaeRemover(
+                    new AlgaeRemoverIOTalonFXS(18, false, RalphConstants.AlgaeRemoverConstants.GEAR_RATIO),
+                    new AlgaeLimitSwitchIO(3), RalphConstants.AlgaeRemoverConstants.REMOVING_SPEED,
+                    RalphConstants.AlgaeRemoverConstants.RETURNING_SPEED);
             break;
         case REPLAY:
         default:
@@ -140,24 +153,35 @@ public class RalphContainer implements NFRRobotContainer
             }, new InserterSensorIO()
             {
             }, RalphConstants.InserterConstants.INTAKE_SPEED, RalphConstants.InserterConstants.OUTTAKE_SPEED);
+            algaeremover = new AlgaeRemover(new AlgaeRemoverIO()
+            {
+            }, new AlgaeRemoverSensorIO()
+            {
+            }, RalphConstants.AlgaeRemoverConstants.REMOVING_SPEED,
+                    RalphConstants.AlgaeRemoverConstants.RETURNING_SPEED);
             break;
         }
+
         inserter.setDefaultCommand(defaultIntake());
+        algaeremover.setDefaultCommand(algaeremover.returnArm());
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
         RalphAutos.addNamedCommands(this);
         RalphAutos.addAutoRoutines(this);
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
-        PortForwarder.add(5800, "10.1.72.11", 5800);
-        PortForwarder.add(5801, "10.1.72.11", 1181);
-        PortForwarder.add(5802, "10.1.72.12", 5800);
-        PortForwarder.add(5803, "10.1.72.12", 1181);
-        PortForwarder.add(5804, "10.1.72.13", 5800);
-        PortForwarder.add(5805, "10.1.72.13", 1181);
-        PortForwarder.add(5806, "10.1.72.14", 5800);
-        PortForwarder.add(5807, "10.1.72.14", 1181);
-        PortForwarder.add(5808, "10.1.72.14", 1188);
-        PortForwarder.add(5809, "10.1.72.14", 22);
+        PortForwarder.add(5801, "10.1.72.11", 5800);
+        PortForwarder.add(5802, "10.1.72.11", 1181);
+        PortForwarder.add(5803, "10.1.72.13", 5800);
+        PortForwarder.add(5804, "10.1.72.13", 1181);
+        PortForwarder.add(5805, "10.1.72.14", 5800);
+        PortForwarder.add(5806, "10.1.72.14", 1181);
+        PortForwarder.add(5807, "10.1.72.36", 1181);
+        PortForwarder.add(5808, "10.1.72.14", 22);
         getInserter().setDefaultCommand(defaultIntake());
+    }
+
+    public AlgaeRemover getAlgaeRemover()
+    {
+        return algaeremover;
     }
 
     public Command intakeCoral()
@@ -277,6 +301,17 @@ public class RalphContainer implements NFRRobotContainer
         return dashboard;
     }
 
+    public Command getDriveSimple()
+    {
+        return drive.resetOrientation(Rotation2d.k180deg).andThen(drive.backup(Seconds.of(3), -0.5));
+    }
+
+    public Command getDrivePlace()
+    {
+        return drive.resetOrientation(Rotation2d.k180deg)
+                .andThen(drive.backup(Seconds.of(3), -0.5).alongWith(goToL4()).andThen(outtakeCoral()));
+    }
+
     public Viewer getViewer()
     {
         return viewer;
@@ -303,7 +338,8 @@ public class RalphContainer implements NFRRobotContainer
     @Override
     public void autonomousInit()
     {
-        drive.resetPose(dashboard.getRoutine().getStartingPose());
+        if (dashboard.getRoutine().getStartingPose() != null)
+            drive.resetPose(dashboard.getRoutine().getStartingPose());
     }
 
     @Override
@@ -430,7 +466,7 @@ public class RalphContainer implements NFRRobotContainer
 
     public Pose2d applyOffset(Pose2d pose)
     {
-        return applyOffset(pose, Inches.of(2.5), Inches.of(-9.5));
+        return applyOffset(pose, Inches.of(0.8), Inches.of(-9));
     }
 
     public Command driveToLeftReef()
@@ -441,6 +477,18 @@ public class RalphContainer implements NFRRobotContainer
     public Command driveToRightReef()
     {
         return Commands.defer(() -> drive.closeDriveToPose(applyOffset(getNearestReefSide().right())), Set.of(drive));
+    }
+
+    public Command driveToCenterReef()
+    {
+        return Commands.defer(() -> drive.closeDriveToPose(applyOffset(getNearestReefSide().center())), Set.of(drive));
+    }
+
+    public Command driveToCenterAlgae()
+    {
+        return Commands.defer(
+                () -> drive.closeDriveToPose(applyOffset(getNearestReefSide().center(), Inches.of(2.5), Inches.of(1))),
+                Set.of(drive));
     }
 
     public Command goToClosestCoralStation()
@@ -459,5 +507,10 @@ public class RalphContainer implements NFRRobotContainer
     public Command goToProcessor()
     {
         return drive.closeDriveToPose(FieldConstants.ProcessorStations.PROCESSOR_STATION);
+    }
+
+    public Command getBackupAuto()
+    {
+        return drive.backup(Seconds.of(1), 0.5);
     }
 }

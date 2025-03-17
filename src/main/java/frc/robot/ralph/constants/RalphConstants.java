@@ -53,36 +53,37 @@ public class RalphConstants
         public static final AprilTagFieldLayout APRILTAG_LAYOUT = AprilTagFieldLayout
                 .loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
-        private static final String FR_CAMERA_NAME = "front_right_camera";
-        private static final String BL_CAMERA_NAME = "back_left_camera";
-        private static final String BR_CAMERA_NAME = "back_right_camera";
-        private static final String FL_CAMERA_NAME = "front_left_camera";
+        public static final String FR_CAMERA_NAME = "front_right_camera";
+        public static final String BL_CAMERA_NAME = "back_left_camera";
+        public static final String BR_CAMERA_NAME = "back_right_camera";
+        public static final String FL_CAMERA_NAME = "front_left_camera";
+        public static final String CTR_CAMERA_NAME = "center_camera";
 
         private static final Transform3d FR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 3.0),
                 Inches.of(-(15 - 7.75)), Inches.of(8.5), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
 
-        private static final Transform3d BL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(-13.5), Inches.of(7),
+        public static final Transform3d BL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(-13.5), Inches.of(7),
                 Inches.of(8.5), new Rotation3d(Degrees.of(0.0), Degrees.of(15.0), Degrees.of(135.0)));
 
-        private static final Transform3d BR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(-13.5), Inches.of(-7.0),
+        public static final Transform3d BR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(-13.5), Inches.of(-7.0),
                 Inches.of(8.5), new Rotation3d(Degrees.of(0.0), Degrees.of(15.0), Degrees.of(225.0)));
 
-        private static final Transform3d FL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 3.0), Inches.of(15 - 7.75),
-                Inches.of(8.5), new Rotation3d(Degrees.of(0.0), Degrees.of(0.0), Degrees.of(0.0)));
+        public static final Transform3d FL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 3.0), Inches.of(15 - 7.75),
+                Inches.of(8.5), new Rotation3d(Degrees.of(0), Degrees.of(-21.9), Degrees.of(53.4)));
+
+        public static final Transform3d CTR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 2.5), Inches.of(0),
+                Inches.of(9.5), new Rotation3d(Degrees.of(0), Degrees.of(-30.0), Degrees.of(0.0)));
 
         public static String[] cameraNames()
         {
             return new String[]
-            { /* FR_CAMERA_NAME, */ FR_CAMERA_NAME };
+            { FL_CAMERA_NAME, FR_CAMERA_NAME, CTR_CAMERA_NAME };
         }
 
         public static Transform3d[] cameraTransforms()
         {
             return new Transform3d[]
-            // { FR_ROBOT_TO_CAMERA };
-            { FR_ROBOT_TO_CAMERA/* , FR_ROBOT_TO_CAMERA */ };
-            // { BL_ROBOT_TO_CAMERA,
-            // BR_ROBOT_TO_CAMERA };
+            { FL_ROBOT_TO_CAMERA, FR_ROBOT_TO_CAMERA, CTR_ROBOT_TO_CAMERA };
         }
 
         public static final double MAX_Y_COORDINATE = 350; // TODO: Set this to the actual value
@@ -230,8 +231,15 @@ public class RalphConstants
     public static class AutoConstants
     {
         // TODO: tuning
-        public static final PIDController xPID = new PIDController(10, 0, 0);
-        public static final PIDController yPID = new PIDController(10, 0, 0);
+        public static final PIDController xPID = new PIDController(8, 0, 0);
+        public static final PIDController yPID = new PIDController(8, 0, 0);
         public static final PIDController rPID = new PIDController(7.5, 0, 0);
+    }
+
+    public static class AlgaeRemoverConstants
+    {
+        public static final double REMOVING_SPEED = 0.5;
+        public static final double RETURNING_SPEED = 0.1;
+        public static final double GEAR_RATIO = 10.0;
     }
 }

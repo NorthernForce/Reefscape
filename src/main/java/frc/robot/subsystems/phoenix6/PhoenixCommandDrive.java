@@ -38,6 +38,7 @@ import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.RobotController;
@@ -64,6 +65,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     private String motorAlertString = "";
     private String encoderAlertString = "";
     private final SwerveDrivePoseEstimator poseEstimator;
+    private final Notifier notifier = new Notifier(this::updateOdometry);
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -94,24 +96,34 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         configureAutoBuilder(linearPIDConstants, angularPIDConstants);
         poseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getState().RawHeading, getState().ModulePositions,
                 new Pose2d());
+        notifier.startPeriodic(0.02);
     }
 
     @Override
     public void resetPose(Pose2d pose)
     {
         super.resetPose(pose);
-        poseEstimator.resetPose(pose);
+        synchronized (poseEstimator)
+        {
+            poseEstimator.resetPose(pose);
+        }
     }
 
     @Override
     public void addVisionMeasurement(Pose2d visionMeasurement, double timestamp)
     {
-        poseEstimator.addVisionMeasurement(visionMeasurement, timestamp);
+        synchronized (poseEstimator)
+        {
+            poseEstimator.addVisionMeasurement(visionMeasurement, timestamp);
+        }
     }
 
     public void addVisionMeasurement(Pose2d visionMeasurement, double timestamp, Vector<N3> stdDevs)
     {
-        poseEstimator.addVisionMeasurement(visionMeasurement, timestamp, stdDevs);
+        synchronized (poseEstimator)
+        {
+            poseEstimator.addVisionMeasurement(visionMeasurement, timestamp, stdDevs);
+        }
     }
 
     public Rotation2d getHeading()
@@ -222,6 +234,14 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         return applyRequest(() -> request).until(() -> request.isFinished());
     }
 
+    public void updateOdometry()
+    {
+        synchronized (poseEstimator)
+        {
+            poseEstimator.update(getState().RawHeading, getState().ModulePositions);
+        }
+    }
+
     /**
      * Get a command that drives the robot by joystick input
      * 
@@ -290,7 +310,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command goBackward(double speed)
     {
         ChassisSpeeds speeds = new ChassisSpeeds();
-        speeds.vyMetersPerSecond = -speed;
+        speeds.vxMetersPerSecond = -speed;
         return driveWithRobotRelativeDutyCycle(() -> speeds);
     }
 
@@ -348,6 +368,12 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         {
             resetRotation(orientation);
         });
+    }
+
+    @AutoLogOutput
+    public Pose2d getStatePose()
+    {
+        return getState().Pose;
     }
 
     @Override
@@ -462,7 +488,6 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         {
             encoderDisconnectedAlert.set(false);
         }
-        poseEstimator.update(getState().RawHeading, getState().ModulePositions);
     }
 
     /**

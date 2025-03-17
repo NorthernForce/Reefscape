@@ -63,7 +63,7 @@ public class ClimberIOTalonFX implements ClimberIO
         }
 
         m_motor.getConfigurator().apply(config);
-        m_position = m_encoder.getAbsolutePosition();
+        m_position = m_motor.getPosition();
         m_present = () -> m_motor.isConnected();
         m_temperature = m_motor.getDeviceTemp();
         m_current = m_motor.getSupplyCurrent();

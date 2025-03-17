@@ -35,7 +35,7 @@ public interface DashboardIO
      * @param command       the command to run
      * @param defaultOption whether or not this is the default option
      */
-    public default void addRoutine(String name, PathPlannerAuto command, boolean defaultOption)
+    public default void addRoutine(String name, Command command, boolean defaultOption)
     {
     }
 

@@ -30,7 +30,7 @@ import frc.robot.FieldConstants;
 public class DashboardIOFWC implements DashboardIO
 {
     private final NetworkTable table;
-    private final LoggedDashboardChooser<PathPlannerAuto> autoChooser;
+    private final LoggedDashboardChooser<Command> autoChooser;
     private final DoublePublisher stagePublisher;
     private final DoubleArrayPublisher autoPosePublisher;
     private final DoubleArrayPublisher autoPathPublisher;
@@ -42,7 +42,7 @@ public class DashboardIOFWC implements DashboardIO
     private final DoublePublisher outerElevatorPosition;
     private final BooleanPublisher hasCoralPublisher;
     private final BooleanPublisher hasAlgaePublisher;
-    private PathPlannerAuto previousAuto;
+    private Command previousAuto;
     private Alliance previousAlliance;
 
     /**
@@ -55,7 +55,7 @@ public class DashboardIOFWC implements DashboardIO
     public DashboardIOFWC()
     {
         WebServer.start(5800, Utils.isSimulation() ? "./npm-dash/dist" : "/home/lvuser/deploy/npm-dash");
-        autoChooser = new LoggedDashboardChooser<PathPlannerAuto>("AutoChooser");
+        autoChooser = new LoggedDashboardChooser<Command>("AutoChooser");
         table = NetworkTableInstance.getDefault().getTable("/FWC");
         stagePublisher = table.getDoubleTopic("selectedTab").publish();
         table.getBooleanTopic("connected").publish().set(true);
@@ -72,7 +72,7 @@ public class DashboardIOFWC implements DashboardIO
     }
 
     @Override
-    public void addRoutine(String name, PathPlannerAuto command, boolean defaultOption)
+    public void addRoutine(String name, Command command, boolean defaultOption)
     {
         if (defaultOption)
         {
@@ -99,32 +99,43 @@ public class DashboardIOFWC implements DashboardIO
     @Override
     public void updateInputs(DashboardIOInputs inputs)
     {
-        var pose = FieldConstants.convertPoseByAlliance(autoChooser.get().getStartingPose());
-        autoPosePublisher.set(new double[]
-        { pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getRotation().getRadians() });
-        if (previousAuto != autoChooser.get() || previousAlliance != FieldConstants.getAlliance())
+        if (autoChooser.get() instanceof PathPlannerAuto)
         {
-            try
+            var auto = (PathPlannerAuto) autoChooser.get();
+            Pose2d pose;
+            if (auto.getStartingPose() != null)
             {
-                var paths = PathPlannerAuto.getPathGroupFromAutoFile(autoChooser.get().getName());
-                ArrayList<Translation2d> pathPoints = new ArrayList<>();
-                for (PathPlannerPath path : paths)
+                pose = FieldConstants.convertPoseByAlliance(auto.getStartingPose());
+            } else
+            {
+                pose = new Pose2d();
+            }
+            autoPosePublisher.set(new double[]
+            { pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getRotation().getRadians() });
+            if (previousAuto != autoChooser.get() || previousAlliance != FieldConstants.getAlliance())
+            {
+                try
                 {
-                    for (PathPoint pathPoint : path.getAllPathPoints())
+                    var paths = PathPlannerAuto.getPathGroupFromAutoFile(autoChooser.get().getName());
+                    ArrayList<Translation2d> pathPoints = new ArrayList<>();
+                    for (PathPlannerPath path : paths)
                     {
-                        pathPoints.add(FieldConstants.convertTranslationByAlliance(pathPoint.position));
+                        for (PathPoint pathPoint : path.getAllPathPoints())
+                        {
+                            pathPoints.add(FieldConstants.convertTranslationByAlliance(pathPoint.position));
+                        }
                     }
-                }
-                double[] points = new double[pathPoints.size() * 2];
-                for (int i = 0; i < pathPoints.size(); i++)
+                    double[] points = new double[pathPoints.size() * 2];
+                    for (int i = 0; i < pathPoints.size(); i++)
+                    {
+                        points[i * 2] = pathPoints.get(i).getX();
+                        points[i * 2 + 1] = pathPoints.get(i).getY();
+                    }
+                    autoPathPublisher.set(points);
+                } catch (Exception e)
                 {
-                    points[i * 2] = pathPoints.get(i).getX();
-                    points[i * 2 + 1] = pathPoints.get(i).getY();
+                    e.printStackTrace();
                 }
-                autoPathPublisher.set(points);
-            } catch (Exception e)
-            {
-                e.printStackTrace();
             }
         }
         previousAuto = autoChooser.get();
@@ -147,7 +158,8 @@ public class DashboardIOFWC implements DashboardIO
     @Override
     public PathPlannerAuto getSelectedRoutine()
     {
-        return autoChooser.get();
+        return autoChooser.get() instanceof PathPlannerAuto ? (PathPlannerAuto) autoChooser.get()
+                : new PathPlannerAuto(autoChooser.get());
     }
 
     @Override

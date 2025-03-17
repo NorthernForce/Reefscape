@@ -2,6 +2,14 @@ body {
   margin: 0;
   padding: 0;
 }
+#app {
+    height: 100vh;
+}
+.main-container {
+    height:100%;
+    overflow: hidden;
+    background-color: white;
+}
 .header {
   display: flex;
   justify-content: space-between;

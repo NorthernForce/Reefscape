@@ -25,11 +25,10 @@ function App(props: { targetIp: string }) {
     }
     let [connected] = useEntry('/FWC/connected', false);
     let [hasCoral] = useEntry('/FWC/HasCoral', false);
-    let [hasAlgae] = useEntry('/FWC/HasAlgae', false);
-    let color = hasCoral ? "yellow" : (hasAlgae ? "turquoise" : "white");
+    let color = hasCoral ? "yellow" : "";
     return (
         <>
-            <div style={{ backgroundColor: color, overflow: "hidden" }}>
+            <div className="main-container" style={{ backgroundColor: color }}>
                 <div className="header">
                     <Tabs id="header-tabs" value={tabsLocked ? tabEntry : selected} onChange={handleTabChange}>
                         <Tab label="Teleop" />
