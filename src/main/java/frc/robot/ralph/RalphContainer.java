@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
-import frc.robot.FieldConstants.ReefPositions;
 import frc.robot.FieldConstants.ReefSide;
 import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.ralph.constants.RalphTunerConstants;
@@ -513,19 +512,5 @@ public class RalphContainer implements NFRRobotContainer
     public Command getBackupAuto()
     {
         return drive.backup(Seconds.of(1), 0.5);
-    }
-
-    public Command driveToTrough()
-    {
-        Pose2d[] troughs = new Pose2d[]{ReefPositions.AB_TROUGH, ReefPositions.CD_TROUGH, ReefPositions.EF_TROUGH, ReefPositions.GH_TROUGH, ReefPositions.IJ_TROUGH, ReefPositions.KL_TROUGH};
-        Pose2d closestTrough = troughs[0];
-        for (Pose2d trough : troughs)
-        {
-            if (getDistanceToPose(closestTrough).in(Meters) > getDistanceToPose(trough).in(Meters))
-            {
-                closestTrough = trough;
-            }
-        }
-        return drive.closeDriveToPose(closestTrough);
     }
 }
