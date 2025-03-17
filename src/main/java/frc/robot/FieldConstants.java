@@ -8,6 +8,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import static edu.wpi.first.units.Units.*;
 
 import java.util.HashMap;
@@ -56,7 +58,7 @@ public class FieldConstants
      */
     public static class ReefPositions
     {
-
+        public static final Translation2d REEF_CENTER = new Translation2d(4.489323, 4.0259);
         public static final Pose2d A = new Pose2d(3.15, 4.18, ReefRotations.AB_ROTATION);
         public static final Pose2d AB_ALGAE = new Pose2d(3.15, 4.02, ReefRotations.AB_ROTATION);
         public static final Pose2d B = new Pose2d(3.15, 3.85, ReefRotations.AB_ROTATION);
@@ -77,16 +79,11 @@ public class FieldConstants
         public static final Pose2d L = new Pose2d(3.65, 5.12, ReefRotations.KL_ROTATION);
         public static final Pose2d AB_TROUGH = new Pose2d(3.531, 5.203,
                 ReefRotations.AB_ROTATION.plus(Rotation2d.kCW_90deg));
-        public static final Pose2d CD_TROUGH = new Pose2d(5.056, 5.451,
-                ReefRotations.CD_ROTATION.plus(Rotation2d.kCCW_90deg));
-        public static final Pose2d EF_TROUGH = new Pose2d(6.063, 4.200,
-                ReefRotations.EF_ROTATION.plus(Rotation2d.kCW_90deg));
-        public static final Pose2d GH_TROUGH = new Pose2d(5.367, 2.796,
-                ReefRotations.GH_ROTATION.plus(Rotation2d.kCW_90deg));
-        public static final Pose2d IJ_TROUGH = new Pose2d(3.912, 2.954,
-                ReefRotations.IJ_ROTATION.plus(Rotation2d.kCW_90deg));
-        public static final Pose2d KL_TROUGH = new Pose2d(2.939, 3.820,
-                ReefRotations.KL_ROTATION.plus(Rotation2d.kCW_90deg));
+        public static final Pose2d CD_TROUGH = AB_TROUGH.rotateAround(REEF_CENTER, Rotation2d.fromDegrees(60));
+        public static final Pose2d EF_TROUGH = AB_TROUGH.rotateAround(REEF_CENTER, Rotation2d.fromDegrees(120));
+        public static final Pose2d GH_TROUGH = AB_TROUGH.rotateAround(REEF_CENTER, Rotation2d.fromDegrees(180));
+        public static final Pose2d IJ_TROUGH = AB_TROUGH.rotateAround(REEF_CENTER, Rotation2d.fromDegrees(240));
+        public static final Pose2d KL_TROUGH = AB_TROUGH.rotateAround(REEF_CENTER, Rotation2d.fromDegrees(300));
         public static final ReefSide AB_SIDE = new ReefSide(A, B, AB_ALGAE);
         public static final ReefSide CD_SIDE = new ReefSide(C, D, CD_ALGAE);
         public static final ReefSide EF_SIDE = new ReefSide(E, F, EF_ALGAE);
@@ -177,6 +174,12 @@ public class FieldConstants
     public static Pose2d convertPoseByAlliance(Pose2d pose)
     {
         return convertPoseByAlliance(pose, getAlliance());
+    }
+
+    public static Pose2d applyOffset(Pose2d pose, Distance x, Distance y)
+    {
+        Translation2d translation = new Translation2d(x, y).rotateBy(pose.getRotation());
+        return new Pose2d(pose.getTranslation().plus(translation), pose.getRotation());
     }
 
     public static Translation2d convertTranslationByAlliance(Translation2d pose, Alliance alliance)

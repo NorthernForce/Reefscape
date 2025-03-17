@@ -461,8 +461,7 @@ public class RalphContainer implements NFRRobotContainer
 
     public Pose2d applyOffset(Pose2d pose, Distance x, Distance y)
     {
-        Translation2d translation = new Translation2d(x, y).rotateBy(pose.getRotation());
-        return new Pose2d(pose.getTranslation().plus(translation), pose.getRotation());
+        return FieldConstants.applyOffset(pose, x, y);
     }
 
     public Pose2d applyOffset(Pose2d pose)
@@ -515,7 +514,7 @@ public class RalphContainer implements NFRRobotContainer
         return drive.backup(Seconds.of(1), 0.5);
     }
 
-    public Command driveToTrough()
+    public Pose2d getClosestTrough()
     {
         Pose2d[] troughs = new Pose2d[]
         { ReefPositions.AB_TROUGH, ReefPositions.CD_TROUGH, ReefPositions.EF_TROUGH, ReefPositions.GH_TROUGH,
@@ -528,6 +527,11 @@ public class RalphContainer implements NFRRobotContainer
                 closestTrough = trough;
             }
         }
-        return drive.closeDriveToPose(closestTrough);
+        return closestTrough;
+    }
+
+    public Command driveToTrough()
+    {
+        return Commands.defer(() -> drive.closeDriveToPose(getClosestTrough()), Set.of(this.drive));
     }
 }
