@@ -423,40 +423,16 @@ public class RalphContainer implements NFRRobotContainer
 
     public ReefSide getNearestReefSide()
     {
-        ReefSide abSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.AB_SIDE, alliance);
-        ReefSide cdSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.CD_SIDE, alliance);
-        ReefSide efSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.EF_SIDE, alliance);
-        ReefSide ghSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.GH_SIDE, alliance);
-        ReefSide ijSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.IJ_SIDE, alliance);
-        ReefSide klSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.KL_SIDE, alliance);
-        ReefSide nearestSide = abSide;
-        Distance nearestDistance = getDistanceToPose(abSide.center());
-        if (getDistanceToPose(cdSide.center()).lt(nearestDistance))
+        ReefSide closest = FieldConstants.ReefPositions.REEF_SIDES[0];
+        for (ReefSide side : FieldConstants.ReefPositions.REEF_SIDES)
         {
-            nearestSide = cdSide;
-            nearestDistance = getDistanceToPose(cdSide.center());
+            if (getDistanceToPose(side.center()).in(Meters) < getDistanceToPose(closest.center()).in(Meters))
+            {
+                closest = side;
+            }
         }
-        if (getDistanceToPose(efSide.center()).lt(nearestDistance))
-        {
-            nearestSide = efSide;
-            nearestDistance = getDistanceToPose(efSide.center());
-        }
-        if (getDistanceToPose(ghSide.center()).lt(nearestDistance))
-        {
-            nearestSide = ghSide;
-            nearestDistance = getDistanceToPose(ghSide.center());
-        }
-        if (getDistanceToPose(ijSide.center()).lt(nearestDistance))
-        {
-            nearestSide = ijSide;
-            nearestDistance = getDistanceToPose(ijSide.center());
-        }
-        if (getDistanceToPose(klSide.center()).lt(nearestDistance))
-        {
-            nearestSide = klSide;
-            nearestDistance = getDistanceToPose(klSide.center());
-        }
-        return nearestSide;
+
+        return closest;
     }
 
     public Pose2d applyOffset(Pose2d pose, Distance x, Distance y)

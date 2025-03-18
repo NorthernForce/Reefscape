@@ -29,7 +29,7 @@ public class FieldConstants
         PROCESSOR_STATION
     }
 
-    public static record ReefSide(Pose2d left, Pose2d right, Pose2d center) {
+    public static record ReefSide(Pose2d left, Pose2d right, Pose2d center, Pose2d trough) {
     }
 
     public static class ReefRotations
@@ -84,12 +84,15 @@ public class FieldConstants
         public static final Pose2d GH_TROUGH = AB_TROUGH.rotateAround(REEF_CENTER, Rotation2d.fromDegrees(180));
         public static final Pose2d IJ_TROUGH = AB_TROUGH.rotateAround(REEF_CENTER, Rotation2d.fromDegrees(240));
         public static final Pose2d KL_TROUGH = AB_TROUGH.rotateAround(REEF_CENTER, Rotation2d.fromDegrees(300));
-        public static final ReefSide AB_SIDE = new ReefSide(A, B, AB_ALGAE);
-        public static final ReefSide CD_SIDE = new ReefSide(C, D, CD_ALGAE);
-        public static final ReefSide EF_SIDE = new ReefSide(E, F, EF_ALGAE);
-        public static final ReefSide GH_SIDE = new ReefSide(G, H, GH_ALGAE);
-        public static final ReefSide IJ_SIDE = new ReefSide(I, J, IJ_ALGAE);
-        public static final ReefSide KL_SIDE = new ReefSide(K, L, KL_ALGAE);
+        public static final ReefSide AB_SIDE = new ReefSide(A, B, AB_ALGAE, AB_TROUGH);
+        public static final ReefSide CD_SIDE = new ReefSide(C, D, CD_ALGAE, CD_TROUGH);
+        public static final ReefSide EF_SIDE = new ReefSide(E, F, EF_ALGAE, EF_TROUGH);
+        public static final ReefSide GH_SIDE = new ReefSide(G, H, GH_ALGAE, GH_TROUGH);
+        public static final ReefSide IJ_SIDE = new ReefSide(I, J, IJ_ALGAE, IJ_TROUGH);
+        public static final ReefSide KL_SIDE = new ReefSide(K, L, KL_ALGAE, KL_TROUGH);
+
+        public static final ReefSide[] REEF_SIDES =
+        { AB_SIDE, CD_SIDE, EF_SIDE, GH_SIDE, IJ_SIDE, KL_SIDE };
     }
 
     public static final HashMap<ReefLocations, Pose2d> REEF_POSITIONS = new HashMap<>();
@@ -206,7 +209,7 @@ public class FieldConstants
         } else
         {
             return new ReefSide(convertPoseByAlliance(side.left), convertPoseByAlliance(side.right),
-                    convertPoseByAlliance(side.center));
+                    convertPoseByAlliance(side.center), convertPoseByAlliance(side.trough));
         }
     }
 
