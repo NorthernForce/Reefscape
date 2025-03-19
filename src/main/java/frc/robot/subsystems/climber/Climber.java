@@ -6,6 +6,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.subsystems.climber.commands.ClimbToPositionCommand;
+
 import static edu.wpi.first.units.Units.*;
 
 /**
@@ -82,36 +84,13 @@ public class Climber extends SubsystemBase
         return run(() -> climbRetract());
     }
 
-    public class ClimbToPosition extends Command
-    {
-        private final Angle position;
-
-        public ClimbToPosition(Angle position)
-        {
-            addRequirements(Climber.this);
-            this.position = position;
-        }
-
-        @Override
-        public void initialize()
-        {
-            runTo(position);
-        }
-
-        @Override
-        public boolean isFinished()
-        {
-            return isAtAngle(position);
-        }
-    }
-
     /**
      * climb to perfect position
      */
 
     public Command climbToPosition(Angle position)
     {
-        return new ClimbToPosition(position);
+        return new ClimbToPositionCommand(Climber.this, position);
     }
 
     /**

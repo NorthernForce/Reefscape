@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.algaeremover.sensor.AlgaeRemoverSensorIO;
 import frc.robot.subsystems.algaeremover.sensor.AlgaeRemoverSensorIOInputsAutoLogged;
+import frc.robot.subsystems.algaeremover.commands.*;
 
 public class AlgaeRemover extends SubsystemBase
 {
@@ -39,6 +40,11 @@ public class AlgaeRemover extends SubsystemBase
         io.stopMotor();
     }
 
+    public void set(double speed)
+    {
+        io.set(speed);
+    }
+
     @Override
     public void periodic()
     {
@@ -48,64 +54,13 @@ public class AlgaeRemover extends SubsystemBase
         Logger.processInputs(getName(), inputs);
     }
 
-    public class RemoveAlgaeCommand extends Command
-    {
-        public RemoveAlgaeCommand()
-        {
-            addRequirements(AlgaeRemover.this);
-        }
-
-        @Override
-        public void execute()
-        {
-            System.out.println("Here");
-            io.set(removingSpeed);
-        }
-
-        @Override
-        public void end(boolean interrupted)
-        {
-        }
-    }
-
-    public class ReturnArmCommand extends Command
-    {
-        public ReturnArmCommand()
-        {
-            addRequirements(AlgaeRemover.this);
-        }
-
-        @Override
-        public void execute()
-        {
-            if (!hasReachedTop())
-            {
-                io.set(-returningSpeed);
-            } else
-            {
-                io.set(0);
-            }
-        }
-
-        @Override
-        public boolean isFinished()
-        {
-            return hasReachedTop();
-        }
-
-        @Override
-        public void end(boolean interrupted)
-        {
-        }
-    }
-
     public Command removeAlgae()
     {
-        return new RemoveAlgaeCommand();
+        return new RemoveAlgaeCommand(AlgaeRemover.this, removingSpeed);
     }
 
     public Command returnArm()
     {
-        return new ReturnArmCommand();
+        return new ReturnArmCommand(AlgaeRemover.this, returningSpeed);
     }
 }

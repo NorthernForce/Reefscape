@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.inserter.sensor.InserterSensorIO;
 import frc.robot.subsystems.inserter.sensor.InserterSensorIOInputsAutoLogged;
+import frc.robot.subsystems.inserter.commands.CoralOuttakeCommand;
+import frc.robot.subsystems.inserter.commands.CoralIntakeCommand;
 
 /**
  * The inserter subsystem is responsible for controlling the rollers for
@@ -93,32 +95,6 @@ public class Inserter extends SubsystemBase
         return !sensorInputs.hasPiece;
     }
 
-    public class CoralIntakeCommand extends Command
-    {
-        public CoralIntakeCommand()
-        {
-            addRequirements(Inserter.this);
-        }
-
-        @Override
-        public void initialize()
-        {
-            intake();
-        }
-
-        @Override
-        public boolean isFinished()
-        {
-            return hasCoral();
-        }
-
-        @Override
-        public void end(boolean interrupted)
-        {
-            stop();
-        }
-    }
-
     /**
      * Returns a command that intakes a coral.
      * 
@@ -128,38 +104,12 @@ public class Inserter extends SubsystemBase
 
     public Command intakeCoral()
     {
-        return new CoralIntakeCommand();
-    }
-
-    public class CoralOuttakeCommand extends Command
-    {
-        public CoralOuttakeCommand()
-        {
-            addRequirements(Inserter.this);
-        }
-
-        @Override
-        public void initialize()
-        {
-            outtake();
-        }
-
-        @Override
-        public boolean isFinished()
-        {
-            return !hasCoral();
-        }
-
-        @Override
-        public void end(boolean interrupted)
-        {
-            stop();
-        }
+        return new CoralIntakeCommand(Inserter.this);
     }
 
     public Command outtakeCoral()
     {
-        return new CoralOuttakeCommand();
+        return new CoralOuttakeCommand(Inserter.this);
     }
 
     /**
