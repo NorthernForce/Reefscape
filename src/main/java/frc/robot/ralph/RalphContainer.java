@@ -98,15 +98,13 @@ public class RalphContainer implements NFRRobotContainer
         {
         case SIM:
         case REAL:
-            superstructure = new Superstructure(new Elevator("InnerElevator",
-                    new ElevatorIOTalonFX(15, RalphConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
-                    {
-                    }, new ElevatorSensorIOLimitSwitch(0), Inches.of(0.5)),
+            superstructure = new Superstructure(
+                    new Elevator("InnerElevator",
+                            new ElevatorIOTalonFX(15, RalphConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS),
+                            new ElevatorSensorIOLimitSwitch(0), Inches.of(0.5)),
                     new Elevator("OuterElevator",
                             new ElevatorIOTalonFX(14, RalphConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
-                            new BrakeIO()
-                            {
-                            }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
+                            new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
                     RalphConstants.InnerElevatorConstants.HIGH_POSITION,
                     RalphConstants.OuterElevatorConstants.HIGH_POSITION);
             climber = new Climber(
@@ -131,14 +129,12 @@ public class RalphContainer implements NFRRobotContainer
         default:
             superstructure = new Superstructure(new Elevator("InnerElevator", new ElevatorIO()
             {
-            }, new BrakeIO()
-            {
             }, new ElevatorSensorIO()
             {
-            }, Inches.of(0.5)), new Elevator("OuterElevator",
-                    new ElevatorIOTalonFX(15, RalphConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
-                    {
-                    }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
+            }, Inches.of(0.5)),
+                    new Elevator("OuterElevator",
+                            new ElevatorIOTalonFX(15, RalphConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS),
+                            new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
                     RalphConstants.InnerElevatorConstants.HIGH_POSITION,
                     RalphConstants.OuterElevatorConstants.HIGH_POSITION);
             climber = new Climber(new ClimberIO()

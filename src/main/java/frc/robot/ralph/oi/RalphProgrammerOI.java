@@ -22,6 +22,7 @@ public class RalphProgrammerOI implements RalphOI
         RalphDriverOI.bindInserter(driverController, manipulatorController, container);
         RalphDriverOI.bindClimber(driverController, container);
         RalphDriverOI.bindSuperstructure(driverController, manipulatorController, container);
+        RalphDriverOI.bindAlgaeRemover(manipulatorController, container);
 
         manipulatorController.leftStick().whileTrue(
                 Commands.sequence(container.getSuperstructure().getOuterElevator().getSysIdQuasistaicForward(),

@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.subsystems.superstructure.elevator.brake.BrakeIO;
-import frc.robot.subsystems.superstructure.elevator.brake.BrakeIOInputsAutoLogged;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIO;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIOInputsAutoLogged;
 
@@ -26,8 +24,6 @@ public class Elevator extends SubsystemBase
 
     private final ElevatorIO m_motor;
     private final ElevatorIOInputsAutoLogged m_inputs = new ElevatorIOInputsAutoLogged();
-    private final BrakeIOInputsAutoLogged m_brakeInputs = new BrakeIOInputsAutoLogged();
-    private final BrakeIO m_brake;
     private final ElevatorSensorIO m_sensor;
     private final ElevatorSensorIOInputsAutoLogged m_sensorInputs = new ElevatorSensorIOInputsAutoLogged();
     private final Distance m_errorTolerance;
@@ -42,11 +38,10 @@ public class Elevator extends SubsystemBase
      * @param brake  the brake for the elevator
      * @param sensor the sensor for the elevator
      */
-    public Elevator(String name, ElevatorIO motor, BrakeIO brake, ElevatorSensorIO sensor, Distance errorTolerance)
+    public Elevator(String name, ElevatorIO motor, ElevatorSensorIO sensor, Distance errorTolerance)
     {
         super(name);
         m_motor = motor;
-        m_brake = brake;
         m_sensor = sensor;
         m_errorTolerance = errorTolerance;
         targetState = Meters.of(0);
@@ -61,14 +56,12 @@ public class Elevator extends SubsystemBase
      */
     public void setTargetPosition(Distance position)
     {
-        m_brake.setBrake(false);
         targetState = position;
         m_motor.setTargetPosition(position);
     }
 
     public void stop()
     {
-        m_brake.setBrake(true);
         m_motor.stop();
     }
 
@@ -183,9 +176,7 @@ public class Elevator extends SubsystemBase
     public void periodic()
     {
         m_motor.updateInputs(m_inputs);
-        m_brake.updateInputs(m_brakeInputs);
         Logger.processInputs(getName() + "/Motor", m_inputs);
-        Logger.processInputs(getName() + "/Brake", m_brakeInputs);
         m_sensor.updateInputs(m_sensorInputs);
         Logger.processInputs(getName() + "/Sensor", m_sensorInputs);
         if (m_sensorInputs.isAtBottom)
@@ -230,7 +221,7 @@ public class Elevator extends SubsystemBase
     private SysIdRoutine getSysIdRoutine()
     {
         return new SysIdRoutine(
-                new SysIdRoutine.Config(null, Volts.of(4), Seconds.of(4),
+                new SysIdRoutine.Config(null, Volts.of(4), Seconds.of(2),
                         state -> Logger.recordOutput(getName() + "/SysIdState", state.toString())),
                 new SysIdRoutine.Mechanism(volts -> m_motor.setVoltage(volts), null, this));
     }
