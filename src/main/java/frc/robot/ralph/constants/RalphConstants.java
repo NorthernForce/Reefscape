@@ -59,7 +59,7 @@ public class RalphConstants
         public static final String FL_CAMERA_NAME = "front_left_camera";
         public static final String CTR_CAMERA_NAME = "center_camera";
 
-        private static final Transform3d FR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 3.0),
+        public static final Transform3d FR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 3.0),
                 Inches.of(-(15 - 7.75)), Inches.of(8.5), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
 
         public static final Transform3d BL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(-13.5), Inches.of(7),
@@ -89,6 +89,14 @@ public class RalphConstants
         public static final double MAX_Y_COORDINATE = 350; // TODO: Set this to the actual value
 
         public static final double CAMERA_WIDTH = 800;
+
+        public static final Distance MAX_Z_VARIANCE = Meters.of(0.2);
+
+        public static final double MAX_AMBIGUITY = 0.5;
+
+        public static final Angle ANGULAR_TOLERANCE = Degrees.of(8.0);
+
+        public static final Distance CLOSE_DISTANCE = Meters.of(0.5);
     }
 
     public static class InnerElevatorConstants

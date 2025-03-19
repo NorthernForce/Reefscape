@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Preferences;
@@ -40,21 +41,29 @@ public class ZippyConstants
         public static final AprilTagFieldLayout APRILTAG_LAYOUT = AprilTagFieldLayout
                 .loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
-        private static final String FL_CAMERA_NAME = "front_left_camera";
-        private static final String FR_CAMERA_NAME = "front_right_camera";
-        private static final String BL_CAMERA_NAME = "back_left_camera";
-        private static final String BR_CAMERA_NAME = "back_right_camera";
+        public static final String FL_CAMERA_NAME = "front_left_camera";
+        public static final String FR_CAMERA_NAME = "front_right_camera";
+        public static final String BL_CAMERA_NAME = "back_left_camera";
+        public static final String BR_CAMERA_NAME = "back_right_camera";
 
-        private static final Transform3d FL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(13.731), Inches.of(13.731),
+        public static final Transform3d FL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(13.731), Inches.of(13.731),
                 Inches.of(11.248), new Rotation3d(Degrees.of(0.0), Degrees.of(10.0), Degrees.of(45.0)));
-        private static final Transform3d FR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(13.731), Inches.of(-13.731),
+        public static final Transform3d FR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(13.731), Inches.of(-13.731),
                 Inches.of(11.248), new Rotation3d(Degrees.of(0.0), Degrees.of(10.0), Degrees.of(315.0)));
-        private static final Transform3d BL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(-13.731), Inches.of(13.731),
+        public static final Transform3d BL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(-13.731), Inches.of(13.731),
                 Inches.of(11.248), new Rotation3d(Degrees.of(0.0), Degrees.of(10.0), Degrees.of(135)));
-        private static final Transform3d BR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(-13.731), Inches.of(-13.731),
+        public static final Transform3d BR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(-13.731), Inches.of(-13.731),
                 Inches.of(11.248), new Rotation3d(Degrees.of(0.0), Degrees.of(10.0), Degrees.of(225)));
 
         public static final double MAX_Y_COORDINATE = 350; // TODO: Set this to the actual value
+
+        public static final Distance MAX_Z_VARIANCE = Meters.of(0.2);
+
+        public static final double MAX_AMBIGUITY = 0.5;
+
+        public static final Angle ANGULAR_TOLERANCE = Degrees.of(8.0);
+
+        public static final Distance CLOSE_DISTANCE = Meters.of(0.5);
 
         public static String[] cameraNames()
         {

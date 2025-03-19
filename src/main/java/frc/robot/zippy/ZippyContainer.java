@@ -26,6 +26,7 @@ import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOSwing;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
+import frc.robot.subsystems.photonvision.AprilTagCamera;
 import frc.robot.subsystems.photonvision.PhotonVision;
 import frc.robot.zippy.constants.ZippyConstants;
 import frc.robot.zippy.constants.ZippyTunerConstants;
@@ -53,10 +54,21 @@ public class ZippyContainer implements NFRRobotContainer
                 ZippyConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, ZippyTunerConstants.FrontLeft,
                 ZippyTunerConstants.FrontRight, ZippyTunerConstants.BackLeft, ZippyTunerConstants.BackRight);
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(alliance));
-        vision = new PhotonVision(ZippyConstants.VisionConstants.cameraNames(),
-                ZippyConstants.VisionConstants.cameraTransforms(), ZippyConstants.VisionConstants.APRILTAG_LAYOUT,
-                ZippyConstants.VisionConstants.MAX_Y_COORDINATE, ZippyConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
-                ZippyConstants.DrivetrainConstants.MAX_LINEAR_SPEED, ZippyConstants.VisionConstants.CAMERA_WIDTH);
+        AprilTagCamera frontLeft = new AprilTagCamera(ZippyConstants.VisionConstants.FL_CAMERA_NAME,
+                FieldConstants.getReefApriltags(), ZippyConstants.VisionConstants.FL_ROBOT_TO_CAMERA,
+                ZippyConstants.VisionConstants.MAX_Z_VARIANCE, ZippyConstants.VisionConstants.MAX_AMBIGUITY);
+        AprilTagCamera frontRight = new AprilTagCamera(ZippyConstants.VisionConstants.FR_CAMERA_NAME,
+                FieldConstants.getReefApriltags(), ZippyConstants.VisionConstants.FR_ROBOT_TO_CAMERA,
+                ZippyConstants.VisionConstants.MAX_Z_VARIANCE, ZippyConstants.VisionConstants.MAX_AMBIGUITY);
+        AprilTagCamera backLeft = new AprilTagCamera(ZippyConstants.VisionConstants.BL_CAMERA_NAME,
+                FieldConstants.getReefApriltags(), ZippyConstants.VisionConstants.BL_ROBOT_TO_CAMERA,
+                ZippyConstants.VisionConstants.MAX_Z_VARIANCE, ZippyConstants.VisionConstants.MAX_AMBIGUITY);
+        AprilTagCamera backRight = new AprilTagCamera(ZippyConstants.VisionConstants.BR_CAMERA_NAME,
+                FieldConstants.getReefApriltags(), ZippyConstants.VisionConstants.BR_ROBOT_TO_CAMERA,
+                ZippyConstants.VisionConstants.MAX_Z_VARIANCE, ZippyConstants.VisionConstants.MAX_AMBIGUITY);
+        vision = new PhotonVision(new AprilTagCamera[]
+        { frontLeft, frontRight, backLeft, backRight }, ZippyConstants.DrivetrainConstants.MAX_LINEAR_SPEED,
+                ZippyConstants.VisionConstants.ANGULAR_TOLERANCE, ZippyConstants.VisionConstants.CLOSE_DISTANCE);
         LoggedPowerDistribution.getInstance(40, ModuleType.kRev);
 
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
@@ -94,10 +106,10 @@ public class ZippyContainer implements NFRRobotContainer
         }
         field.setRobotPose(drive.getPose());
         dashboard.updatePose(drive.getPose());
-        vision.setLastKnownRobotPose(drive.getPose());
-        for (var poseEstimate : vision.getPoseEstimates())
+        var poseEstimates = vision.updatePoseEstimates(Seconds.of(Utils.getCurrentTimeSeconds()), drive.getPose());
+        for (var poseEstimate : poseEstimates)
         {
-            drive.addVisionMeasurement(poseEstimate.pose(), Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
+            drive.addVisionMeasurement(poseEstimate.pose().toPose2d(), poseEstimate.timestamp().in(Seconds));
         }
     }
 

@@ -12,6 +12,8 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import org.northernforce.util.NFRRobotContainer;
 
+import com.ctre.phoenix6.Utils;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.math.VecBuilder;
@@ -49,6 +51,7 @@ import frc.robot.subsystems.inserter.InserterIOTalonFXS;
 import frc.robot.subsystems.inserter.sensor.InserterSensorIO;
 import frc.robot.subsystems.inserter.sensor.InserterSensorIOBeamBreak;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
+import frc.robot.subsystems.photonvision.AprilTagCamera;
 import frc.robot.subsystems.photonvision.PhotonVision;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
@@ -90,10 +93,22 @@ public class RalphContainer implements NFRRobotContainer
                 RalphTunerConstants.FrontRight, RalphTunerConstants.BackLeft, RalphTunerConstants.BackRight);
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
 
-        vision = new PhotonVision(RalphConstants.VisionConstants.cameraNames(),
-                RalphConstants.VisionConstants.cameraTransforms(), RalphConstants.VisionConstants.APRILTAG_LAYOUT,
-                RalphConstants.VisionConstants.MAX_Y_COORDINATE, RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
-                RalphConstants.DrivetrainConstants.MAX_LINEAR_SPEED, RalphConstants.VisionConstants.CAMERA_WIDTH);
+        AprilTagCamera frontLeft = new AprilTagCamera(RalphConstants.VisionConstants.FL_CAMERA_NAME,
+                FieldConstants.getReefApriltags(), RalphConstants.VisionConstants.FL_ROBOT_TO_CAMERA,
+                RalphConstants.VisionConstants.MAX_Z_VARIANCE, RalphConstants.VisionConstants.MAX_AMBIGUITY);
+
+        AprilTagCamera frontRight = new AprilTagCamera(RalphConstants.VisionConstants.FR_CAMERA_NAME,
+                FieldConstants.getReefApriltags(), RalphConstants.VisionConstants.FR_ROBOT_TO_CAMERA,
+                RalphConstants.VisionConstants.MAX_Z_VARIANCE, RalphConstants.VisionConstants.MAX_AMBIGUITY);
+
+        AprilTagCamera centerCamera = new AprilTagCamera(RalphConstants.VisionConstants.CTR_CAMERA_NAME,
+                FieldConstants.getReefApriltags(), RalphConstants.VisionConstants.CTR_ROBOT_TO_CAMERA,
+                RalphConstants.VisionConstants.MAX_Z_VARIANCE, RalphConstants.VisionConstants.MAX_AMBIGUITY);
+
+        vision = new PhotonVision(new AprilTagCamera[]
+        { frontLeft, frontRight, centerCamera }, RalphConstants.DrivetrainConstants.MAX_LINEAR_SPEED,
+                RalphConstants.VisionConstants.ANGULAR_TOLERANCE, RalphConstants.VisionConstants.CLOSE_DISTANCE);
+
         switch (Constants.getMode())
         {
         case SIM:
@@ -345,16 +360,16 @@ public class RalphContainer implements NFRRobotContainer
     @Override
     public void periodic()
     {
-        vision.updateWithHeading(drive.getHeading());
         if (alliance != allianceSupplier.get())
         {
             alliance = allianceSupplier.get();
             drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
         }
-        vision.setLastKnownRobotPose(drive.getPose());
-        for (var poseEstimate : vision.getPoseEstimates())
+        var poseEstimates = vision.updatePoseEstimates(Seconds.of(Utils.getCurrentTimeSeconds()), drive.getPose());
+        for (var poseEstimate : poseEstimates)
         {
-            drive.addVisionMeasurement(poseEstimate.pose(), poseEstimate.timestamp(), VecBuilder.fill(0.1, 0.1, 0.001));
+            drive.addVisionMeasurement(poseEstimate.pose().toPose2d(), poseEstimate.timestamp().in(Seconds),
+                    VecBuilder.fill(0.9, 0.9, 99999));
         }
         dashboard.updatePose(drive.getPose());
         dashboard.setInnerElevatorPosition(superstructure.getInnerElevator().getPosition());

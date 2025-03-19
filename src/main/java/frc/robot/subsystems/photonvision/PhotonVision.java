@@ -2,26 +2,18 @@ package frc.robot.subsystems.photonvision;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.littletonrobotics.junction.AutoLogOutput;
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.TargetCorner;
-
-import com.ctre.phoenix6.Utils;
-
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.photonvision.AprilTagCamera.CameraPoseEstimate;
+import frc.robot.subsystems.photonvision.AprilTagCamera.RejectedPoseEstimate;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -32,26 +24,13 @@ import static edu.wpi.first.units.Units.*;
  */
 public class PhotonVision extends SubsystemBase
 {
-    public static enum RejectionReason
-    {
-        OUT_OF_BOUNDS, TARGET_OUTSIDE_USABLE_AREA, ROBOT_ANGLE_TOO_LARGE, DISTANCE_TOO_FAR
-    }
-
-    public static record RejectedPoseEstimate(RejectionReason reason, PoseEstimate pose) {
-    }
-
-    private final PhotonCamera[] cameras;
-    private final PhotonPoseEstimator[] poseEstimators;
-    private final ArrayList<PoseEstimate> poseEstimates;
+    private final AprilTagCamera[] cameras;
+    private final ArrayList<CameraPoseEstimate> poseEstimates;
     private final ArrayList<RejectedPoseEstimate> rejectedEstimates;
-    private final double maxYCoordinate;
-    private Pose2d lastKnownRobotPose;
-    private double lastKnownVisionPoseTimestamp;
-    private final AngularVelocity maxAngularVelocity;
+    private final Angle angularTolerance;
     private final LinearVelocity maxLinearVelocity;
-    private final AprilTagFieldLayout layout;
-    private final double cameraWidth;
-    private final Alert[] alerts;
+    private final Distance closeDistance;
+    private Time lastAcceptedPoseTimestamp;
 
     /**
      * Constructs a new PhotonVision subsystem with the given camera names, poses,
@@ -61,197 +40,104 @@ public class PhotonVision extends SubsystemBase
      * @param cameraPoses The poses of the cameras relative to the robot.
      * @param layout      The apriltag field layout to use.
      */
-    public PhotonVision(String[] cameraNames, Transform3d[] cameraPoses, AprilTagFieldLayout layout,
-            double maxYCoordinate, AngularVelocity maxAngularVelocity, LinearVelocity maxLinearVelocity,
-            double cameraWidth)
+    public PhotonVision(AprilTagCamera[] cameras, LinearVelocity maxLinearVelocity, Angle angularTolerance,
+            Distance closeDistance)
     {
-        cameras = new PhotonCamera[cameraNames.length];
-        poseEstimators = new PhotonPoseEstimator[cameraNames.length];
-        alerts = new Alert[cameraNames.length];
-        for (int i = 0; i < cameraNames.length; i++)
-        {
-            cameras[i] = new PhotonCamera(cameraNames[i]);
-            poseEstimators[i] = new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-                    cameraPoses[i]);
-            poseEstimators[i].setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_LAST_POSE);
-            alerts[i] = new Alert("PhotonVision Camera " + cameraNames[i] + " disconnected", AlertType.kError);
-        }
+        this.cameras = cameras;
         poseEstimates = new ArrayList<>();
         rejectedEstimates = new ArrayList<>();
-        this.maxYCoordinate = maxYCoordinate;
-        this.maxAngularVelocity = maxAngularVelocity;
+        this.angularTolerance = angularTolerance;
         this.maxLinearVelocity = maxLinearVelocity;
-        this.layout = layout;
-        this.cameraWidth = cameraWidth;
+        lastAcceptedPoseTimestamp = null;
+        this.closeDistance = closeDistance;
     }
 
-    private double getYCoordinate(List<TargetCorner> corners)
+    private static boolean isTooFarFromLastPose(CameraPoseEstimate estimate, Pose2d referencePose, Time timestamp,
+            Time lastAcceptedPoseTimestamp, LinearVelocity maxLinearVelocity)
     {
-        var y = (corners.get(0).y + corners.get(1).y + corners.get(2).y + corners.get(3).y) / 4;
-        y -= cameraWidth / 2;
-        return y;
+        Distance distance = Meters
+                .of(estimate.pose().toPose2d().getTranslation().getDistance(referencePose.getTranslation()));
+        Time time = timestamp.minus(lastAcceptedPoseTimestamp);
+        LinearVelocity velocity = distance.div(time);
+        return velocity.gt(maxLinearVelocity.times(2));
     }
 
-    public void setLastKnownRobotPose(Pose2d pose)
+    private static boolean isTooFarHeadingFromLastPose(CameraPoseEstimate estimate, Pose2d referencePose,
+            Angle angularTolerance)
     {
-        for (PhotonPoseEstimator estimator : poseEstimators)
+        Rotation2d rotation = estimate.pose().toPose2d().getRotation();
+        Rotation2d referenceRotation = referencePose.getRotation();
+        Angle angularDistance = rotation.minus(referenceRotation).getMeasure();
+        return angularDistance.abs(Degrees) > angularTolerance.in(Degrees);
+    }
+
+    public CameraPoseEstimate[] updatePoseEstimates(Time timestamp, Pose2d referencePose)
+    {
+        ArrayList<CameraPoseEstimate> estimates = new ArrayList<>();
+        for (AprilTagCamera camera : cameras)
         {
-            estimator.setLastPose(pose);
-        }
-        lastKnownRobotPose = pose;
-    }
-
-    @SuppressWarnings("unused")
-    private boolean testYCoordinate(PhotonPipelineResult result)
-    {
-        for (var target : result.getTargets())
-        {
-            if (Math.abs(getYCoordinate(target.getDetectedCorners())) > maxYCoordinate)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @SuppressWarnings("unused")
-    private boolean testRobotRotation(EstimatedRobotPose pose)
-    {
-        if (lastKnownRobotPose == null)
-        {
-            return true;
-        }
-        double maxDegreesDifference = maxAngularVelocity.in(DegreesPerSecond) * 0.02 * 5;
-        double difference = pose.estimatedPose.toPose2d().getRotation().getDegrees()
-                - lastKnownRobotPose.getRotation().getDegrees();
-        return Math.abs(difference) < maxDegreesDifference;
-    }
-
-    @SuppressWarnings("unused")
-    private boolean testRobotDistance(EstimatedRobotPose pose)
-    {
-        if (lastKnownRobotPose == null)
-        {
-            return true;
-        }
-        double maxDistanceDifference = maxLinearVelocity.in(MetersPerSecond) * 0.02 * 3;
-        double difference = pose.estimatedPose.toPose2d().getTranslation()
-                .getDistance(lastKnownRobotPose.getTranslation());
-        return Math.abs(difference) < maxDistanceDifference;
-    }
-
-    @SuppressWarnings("unused")
-    private boolean testEstimateTime(EstimatedRobotPose pose)
-    {
-        return Math.abs(pose.timestampSeconds - lastKnownVisionPoseTimestamp) < 1;
-    }
-
-    private boolean testWithinField(EstimatedRobotPose pose)
-    {
-        return pose.estimatedPose.toPose2d().getTranslation().getX() > 0
-                && pose.estimatedPose.toPose2d().getTranslation().getX() < layout.getFieldLength()
-                && pose.estimatedPose.toPose2d().getTranslation().getY() > 0
-                && pose.estimatedPose.toPose2d().getTranslation().getY() < layout.getFieldWidth();
-    }
-
-    @Override
-    public void periodic()
-    {
-        for (int i = 0; i < cameras.length; i++)
-        {
-            alerts[i].set(!cameras[i].isConnected());
+            estimates.addAll(Set.of(camera.updatePoseEstimates(timestamp, referencePose)));
         }
         poseEstimates.clear();
         rejectedEstimates.clear();
-        for (int i = 0; i < cameras.length; i++)
+        for (CameraPoseEstimate estimate : estimates)
         {
-            for (var result : cameras[i].getAllUnreadResults())
+            if (lastAcceptedPoseTimestamp != null)
             {
-                var opt = poseEstimators[i].update(result);
-                if (opt.isEmpty())
+                if (isTooFarFromLastPose(estimate, referencePose, timestamp, lastAcceptedPoseTimestamp,
+                        maxLinearVelocity))
                 {
-                    continue;
-                }
-                boolean valid = true;
-                RejectionReason reason = null;
-                // if (!testYCoordinate(result))
-                // {
-                // valid = false;
-                // reason = RejectionReason.TARGET_OUTSIDE_USABLE_AREA;
-                // }
-                // if (!testRobotRotation(opt.get()))
-                // {
-                // valid = false;
-                // reason = RejectionReason.ROBOT_ANGLE_TOO_LARGE;
-                // }
-                // if (!testRobotDistance(opt.get()))
-                // {
-                // valid = false;
-                // reason = RejectionReason.DISTANCE_TOO_FAR;
-                // }
-                if (!testWithinField(opt.get()))
+                    rejectedEstimates.add(new RejectedPoseEstimate(estimate, "Too far from last pose"));
+                    estimates.remove(estimate);
+                } else if (isTooFarHeadingFromLastPose(estimate, referencePose, angularTolerance))
                 {
-                    valid = false;
-                    reason = RejectionReason.OUT_OF_BOUNDS;
-                }
-                if (valid)
-                {
-                    poseEstimates.add(new PoseEstimate(opt.get().estimatedPose.toPose2d(), opt.get().timestampSeconds));
-                    lastKnownVisionPoseTimestamp = Math.max(opt.get().timestampSeconds, lastKnownVisionPoseTimestamp);
-                } else
-                {
-                    rejectedEstimates.add(new RejectedPoseEstimate(reason,
-                            new PoseEstimate(opt.get().estimatedPose.toPose2d(), opt.get().timestampSeconds)));
+                    rejectedEstimates.add(new RejectedPoseEstimate(estimate, "Too far heading from last pose"));
+                    estimates.remove(estimate);
                 }
             }
         }
-    }
-
-    public void updateWithHeading(Rotation2d newHeading)
-    {
-        for (var poseEstimator : poseEstimators)
+        if (estimates.size() > 2)
         {
-            poseEstimator.addHeadingData(Utils.getCurrentTimeSeconds(), newHeading);
-        }
-    }
-
-    /**
-     * Returns the latest pose estimates from the PhotonVision cameras.
-     * 
-     * @return The latest pose estimates.
-     */
-    @AutoLogOutput
-    public PoseEstimate[] getPoseEstimates()
-    {
-        PoseEstimate[] poses = new PoseEstimate[poseEstimates.size()];
-        return poseEstimates.toArray(poses);
-    }
-
-    @AutoLogOutput
-    public RejectedPoseEstimate[] getRejectedPoseEstimates()
-    {
-        RejectedPoseEstimate[] poses = new RejectedPoseEstimate[rejectedEstimates.size()];
-        return rejectedEstimates.toArray(poses);
-    }
-
-    @AutoLogOutput
-    public boolean[] getConnectedStatus()
-    {
-        boolean[] connected = new boolean[cameras.length];
-        for (int i = 0; i < cameras.length; i++)
+            // Filter out estimates that are too far from the others
+            for (CameraPoseEstimate estimate : estimates)
+            {
+                List<CameraPoseEstimate> closeEstimates = new ArrayList<>();
+                for (CameraPoseEstimate other : estimates)
+                {
+                    if (estimate.pose().toPose2d().getTranslation()
+                            .getDistance(other.pose().toPose2d().getTranslation()) <= closeDistance.in(Meters))
+                    {
+                        closeEstimates.add(other);
+                    }
+                }
+                if (closeEstimates.size() > 1)
+                {
+                    poseEstimates.add(estimate);
+                } else
+                {
+                    rejectedEstimates.add(new RejectedPoseEstimate(estimate, "Not enough close estimates"));
+                }
+            }
+        } else
         {
-            connected[i] = cameras[i].isConnected();
+            poseEstimates.addAll(estimates);
         }
-        return connected;
+        if (!poseEstimates.isEmpty())
+        {
+            lastAcceptedPoseTimestamp = timestamp;
+        }
+        return getPoseEstimates();
     }
 
-    /**
-     * A record that represents a pose estimate from a PhotonVision camera. This
-     * record contains the pose estimate and the timestamp of the estimate.
-     * 
-     * @param pose      The pose estimate.
-     * @param timestamp The timestamp of the estimate.
-     */
-    public static record PoseEstimate(Pose2d pose, double timestamp) {
+    @AutoLogOutput
+    public CameraPoseEstimate[] getPoseEstimates()
+    {
+        return poseEstimates.toArray(new CameraPoseEstimate[0]);
+    }
+
+    @AutoLogOutput
+    public RejectedPoseEstimate[] getRejectedEstimates()
+    {
+        return rejectedEstimates.toArray(new RejectedPoseEstimate[0]);
     }
 }

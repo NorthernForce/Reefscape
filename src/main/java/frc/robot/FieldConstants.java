@@ -1,5 +1,8 @@
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -10,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import static edu.wpi.first.units.Units.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FieldConstants
@@ -214,5 +218,34 @@ public class FieldConstants
             return Math.abs(degrees - CoralRotations.BLUE_LEFT.getDegrees()) <= 10
                     || Math.abs(degrees - CoralRotations.BLUE_RIGHT.getDegrees()) <= 10;
         }
+    }
+
+    private static AprilTagFieldLayout reefApriltags = null;
+
+    private static AprilTagFieldLayout loadReefTagsOnly()
+    {
+        AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+        ArrayList<AprilTag> tags = new ArrayList<>();
+        layout.getTags().forEach(tag ->
+        {
+            if (tag.ID >= 6 && tag.ID <= 11)
+            {
+                tags.add(tag);
+            }
+            if (tag.ID >= 17 && tag.ID <= 22)
+            {
+                tags.add(tag);
+            }
+        });
+        return new AprilTagFieldLayout(tags, layout.getFieldLength(), layout.getFieldWidth());
+    }
+
+    public static AprilTagFieldLayout getReefApriltags()
+    {
+        if (reefApriltags == null)
+        {
+            reefApriltags = loadReefTagsOnly();
+        }
+        return reefApriltags;
     }
 }
