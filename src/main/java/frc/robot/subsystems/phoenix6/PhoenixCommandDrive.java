@@ -47,6 +47,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.subsystems.phoenix6.requests.CloseDriveToPoseRequest;
 
 import static edu.wpi.first.units.Units.*;
@@ -229,7 +230,8 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command closeDriveToPose(Pose2d pose)
     {
         CloseDriveToPoseRequest request = new CloseDriveToPoseRequest(pose, 4, 0, 0, 5, 0, 0,
-                () -> poseEstimator.getEstimatedPosition());
+                RalphConstants.DrivetrainConstants.MAX_LINEAR_SPEED,
+                RalphConstants.DrivetrainConstants.MAX_ACCELERATION, () -> poseEstimator.getEstimatedPosition());
         Logger.recordOutput("TargetPose", pose);
         return applyRequest(() -> request).until(() -> request.isFinished());
     }

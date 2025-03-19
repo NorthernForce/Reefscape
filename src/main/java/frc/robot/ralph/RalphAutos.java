@@ -3,6 +3,9 @@ package frc.robot.ralph;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.ralph.constants.RalphConstants;
+
 public class RalphAutos
 {
     public static void addAutoRoutines(RalphContainer container)
@@ -26,7 +29,8 @@ public class RalphAutos
         NamedCommands.registerCommand("GoToL2Goal", container.goToL2());
         NamedCommands.registerCommand("GoToL1Goal", container.goToL1());
         NamedCommands.registerCommand("GoToIntake", container.goToIntake());
-        NamedCommands.registerCommand("Intake", container.intakeCoral());
+        NamedCommands.registerCommand("Intake", Commands.race(container.intakeCoral(),
+                Commands.waitSeconds(RalphConstants.AutoConstants.INTAKE_WAIT_TIME)));
         NamedCommands.registerCommand("Outtake", container.outtakeCoral());
         NamedCommands.registerCommand("DriveToCloseLeft", container.driveToLeftReef());
         NamedCommands.registerCommand("DriveToCloseRight", container.driveToRightReef());
