@@ -16,6 +16,7 @@ import frc.robot.subsystems.superstructure.elevator.brake.BrakeIO;
 import frc.robot.subsystems.superstructure.elevator.brake.BrakeIOInputsAutoLogged;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIO;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIOInputsAutoLogged;
+import frc.robot.subsystems.superstructure.elevator.commands.*;
 
 /**
  * Elevator is a class to control the elevator.
@@ -72,35 +73,6 @@ public class Elevator extends SubsystemBase
         m_motor.stop();
     }
 
-    public class ElevatorMoveToPositionCommand extends Command
-    {
-        private Distance position;
-
-        public ElevatorMoveToPositionCommand(Distance position)
-        {
-            addRequirements(Elevator.this);
-            this.position = position;
-        }
-
-        @Override
-        public void initialize()
-        {
-            setTargetPosition(position);
-        }
-
-        @Override
-        public boolean isFinished()
-        {
-            return isAtTargetPosition();
-        }
-
-        @Override
-        public void end(boolean interrupted)
-        {
-            stop();
-        }
-    }
-
     /**
      * Gets the command to move the elevator
      * 
@@ -109,7 +81,7 @@ public class Elevator extends SubsystemBase
      */
     public Command getMoveToPositionCommand(Distance position)
     {
-        return new ElevatorMoveToPositionCommand(position);
+        return new ElevatorMoveToPositionCommand(Elevator.this, position);
     }
 
     public Command getMoveByJoystick(DoubleSupplier joystick)
@@ -120,46 +92,9 @@ public class Elevator extends SubsystemBase
         });
     }
 
-    public class ElevatorHomingCommand extends Command
-    {
-        private double speed;
-
-        public ElevatorHomingCommand(double speed)
-        {
-            addRequirements(Elevator.this);
-            this.speed = speed;
-        }
-
-        @Override
-        public void initialize()
-        {
-            m_motor.setLowerLimitEnable(false);
-        }
-
-        @Override
-        public void execute()
-        {
-            m_motor.setSpeed(-speed, true);
-        }
-
-        @Override
-        public boolean isFinished()
-        {
-            return m_sensorInputs.isAtBottom;
-        }
-
-        @Override
-        public void end(boolean isFinished)
-        {
-            m_motor.stop();
-            m_motor.resetPosition();
-            m_motor.setLowerLimitEnable(true);
-        }
-    }
-
     public Command getHomingCommand(double homingSpeed)
     {
-        return new ElevatorHomingCommand(homingSpeed);
+        return new ElevatorHomingCommand(Elevator.this, homingSpeed);
     }
 
     /**
@@ -253,5 +188,15 @@ public class Elevator extends SubsystemBase
     public Command getSysIdDynamicReverse()
     {
         return m_sysIdRoutine.dynamic(Direction.kReverse);
+    }
+
+    public ElevatorIO getElevatorIO()
+    {
+        return m_motor;
+    }
+
+    public ElevatorSensorIOInputsAutoLogged getInputs()
+    {
+        return m_sensorInputs;
     }
 }
