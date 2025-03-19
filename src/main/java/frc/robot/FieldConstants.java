@@ -215,4 +215,9 @@ public class FieldConstants
                     || Math.abs(degrees - CoralRotations.BLUE_RIGHT.getDegrees()) <= 10;
         }
     }
+
+    public static Distance calculateDistanceBetweenPoses(Pose2d a, Pose2d b)
+    {
+        return Meters.of(a.getTranslation().getDistance(b.getTranslation()));
+    }
 }

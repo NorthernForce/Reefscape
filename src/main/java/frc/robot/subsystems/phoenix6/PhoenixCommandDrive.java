@@ -34,6 +34,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
@@ -47,6 +48,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.FieldConstants;
 import frc.robot.subsystems.phoenix6.requests.CloseDriveToPoseRequest;
 
 import static edu.wpi.first.units.Units.*;
@@ -57,6 +59,10 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 {
     private final LinearVelocity maxSpeed;
     private final AngularVelocity maxAngularSpeed;
+    private final LinearAcceleration maxAcceleration;
+    private final AngularAcceleration maxAngularAcceleration;
+    private final LinearVelocity transitionVelocity;
+    private final Distance transitionDistance;
     private final SwerveRequest.ApplyRobotSpeeds applyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
     private final Alert motorDisconnectedAlert;
     private final Alert encoderDisconnectedAlert;
@@ -81,13 +87,19 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      * @param moduleConstants     the module constants
      */
     public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
-            AngularVelocity maxAngularSpeed, PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
+            AngularVelocity maxAngularSpeed, LinearAcceleration maxAcceleration,
+            AngularAcceleration maxAngularAcceleration, LinearVelocity transitionVelocity, Distance transitionDistance,
+            PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
             SwerveModuleConstants<?, ?, ?>... moduleConstants)
     {
         super(drivetrainConstants, moduleConstants);
         CommandScheduler.getInstance().registerSubsystem(this);
         this.maxSpeed = maxSpeed;
         this.maxAngularSpeed = maxAngularSpeed;
+        this.maxAcceleration = maxAcceleration;
+        this.maxAngularAcceleration = maxAngularAcceleration;
+        this.transitionVelocity = transitionVelocity;
+        this.transitionDistance = transitionDistance;
         motorDisconnectedAlert = new Alert("", Alert.AlertType.kWarning);
         encoderDisconnectedAlert = new Alert("", Alert.AlertType.kWarning);
         disconnectedMotorArray = new ArrayList<>();
@@ -151,10 +163,13 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     }
 
     public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
-            AngularVelocity maxAngularSpeed, PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
-            Angle[] moduleOffsets, SwerveModuleConstants<?, ?, ?>... moduleConstants)
+            AngularVelocity maxAngularSpeed, LinearAcceleration maxAcceleration,
+            AngularAcceleration maxAngularAcceleration, LinearVelocity transitionVelocity, Distance transitionDistance,
+            PIDConstants linearPIDConstants, PIDConstants angularPIDConstants, Angle[] moduleOffsets,
+            SwerveModuleConstants<?, ?, ?>... moduleConstants)
     {
-        this(drivetrainConstants, maxSpeed, maxAngularSpeed, linearPIDConstants, angularPIDConstants,
+        this(drivetrainConstants, maxSpeed, maxAngularSpeed, maxAcceleration, maxAngularAcceleration,
+                transitionVelocity, transitionDistance, linearPIDConstants, angularPIDConstants,
                 new SwerveModuleConstants[]
                 { moduleConstants[0].withEncoderOffset(moduleOffsets[0]),
                         moduleConstants[1].withEncoderOffset(moduleOffsets[1]),
@@ -232,6 +247,18 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
                 () -> poseEstimator.getEstimatedPosition());
         Logger.recordOutput("TargetPose", pose);
         return applyRequest(() -> request).until(() -> request.isFinished());
+    }
+
+    public Command pathfindToPose(Pose2d pose, LinearVelocity endVelocity)
+    {
+        return pathfindToPose(pose, maxSpeed, maxAcceleration, maxAngularSpeed, maxAngularAcceleration, endVelocity);
+    }
+
+    public Command smartDriveToPose(Pose2d pose)
+    {
+        return pathfindToPose(pose, transitionVelocity)
+                .until(() -> FieldConstants.calculateDistanceBetweenPoses(getPose(), pose).lte(transitionDistance))
+                .andThen(closeDriveToPose(pose));
     }
 
     public void updateOdometry()
@@ -324,12 +351,12 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      * @param maxAngularAcceleration the maximum angular acceleration
      * @return a command that moves the robot to a specific position
      */
-    public Command driveToPose(Pose2d pose, LinearVelocity maxVelocity, LinearAcceleration maxAcceleration,
-            AngularVelocity maxAngularVelocity, AngularAcceleration maxAngularAcceleration)
+    public Command pathfindToPose(Pose2d pose, LinearVelocity maxVelocity, LinearAcceleration maxAcceleration,
+            AngularVelocity maxAngularVelocity, AngularAcceleration maxAngularAcceleration, LinearVelocity endVelocity)
     {
         PathConstraints constraints = new PathConstraints(maxVelocity, maxAcceleration, maxAngularVelocity,
                 maxAngularAcceleration);
-        return AutoBuilder.pathfindToPose(pose, constraints, 0.0);
+        return AutoBuilder.pathfindToPose(pose, constraints, endVelocity);
     }
 
     /**

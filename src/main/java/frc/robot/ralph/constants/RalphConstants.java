@@ -30,6 +30,8 @@ public class RalphConstants
         public static final LinearVelocity MAX_LINEAR_SPEED = MetersPerSecond.of(4.0);
         public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(3.0);
         public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
+        public static final LinearVelocity TRANSITION_SPEED = MetersPerSecond.of(0.5);
+        public static final Distance TRANSITION_DISTANCE = Meters.of(1);
         public static final Distance SAFE_DISTANCE = Inches.of(10);
         public static final Angle[] SWERVE_MODULE_OFFSETS =
         { Rotations.of(Preferences.getDouble("kSwerveOffsetFrontLeft", RalphTunerConstants.FrontLeft.EncoderOffset)),
