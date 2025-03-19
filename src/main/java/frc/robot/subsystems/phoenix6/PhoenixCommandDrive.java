@@ -44,6 +44,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -233,7 +234,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
                 RalphConstants.DrivetrainConstants.MAX_LINEAR_SPEED,
                 RalphConstants.DrivetrainConstants.MAX_ACCELERATION, () -> poseEstimator.getEstimatedPosition());
         Logger.recordOutput("TargetPose", pose);
-        return applyRequest(() -> request).until(() -> request.isFinished());
+        return Commands.runOnce(request::reset).andThen(applyRequest(() -> request).until(() -> request.isFinished()));
     }
 
     public void updateOdometry()

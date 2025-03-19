@@ -25,6 +25,7 @@ public class CloseDriveToPoseRequest implements SwerveRequest
     private final Supplier<Pose2d> poseGetter;
     private final ProfiledPIDController xPID;
     private final ProfiledPIDController yPID;
+    private final LinearVelocity maxVelocity;
 
     public CloseDriveToPoseRequest(Pose2d pose, double tP, double tI, double tD, double rP, double rI, double rD,
             LinearVelocity maxVelocity, LinearAcceleration maxAcceleration, Supplier<Pose2d> poseGetter)
@@ -46,16 +47,28 @@ public class CloseDriveToPoseRequest implements SwerveRequest
         this.poseGetter = poseGetter;
         facingAngle.withTargetDirection(pose.getRotation());
         facingAngle.withDriveRequestType(DriveRequestType.Velocity);
+        facingAngle.withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
+        this.maxVelocity = maxVelocity;
+    }
+
+    public void reset()
+    {
+        xPID.reset(poseGetter.get().getX());
+        yPID.reset(poseGetter.get().getY());
+        facingAngle.HeadingController.reset();
     }
 
     @Override
     public StatusCode apply(SwerveControlParameters parameters, SwerveModule<?, ?, ?>... modulesToApply)
     {
-        double vx = xPID.calculate(poseGetter.get().getX());
-        double vy = yPID.calculate(poseGetter.get().getY());
-        facingAngle.withVelocityX(MathUtil.clamp(vx, -1, 1));
-        facingAngle.withVelocityY(MathUtil.clamp(vy, -1, 1));
-        facingAngle.withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
+        double x = xPID.calculate(poseGetter.get().getX());
+        double vx = xPID.getSetpoint().velocity + x;
+        double y = yPID.calculate(poseGetter.get().getY());
+        double vy = yPID.getSetpoint().velocity + y;
+        facingAngle
+                .withVelocityX(MathUtil.clamp(vx, -maxVelocity.in(MetersPerSecond), maxVelocity.in(MetersPerSecond)));
+        facingAngle
+                .withVelocityY(MathUtil.clamp(vy, -maxVelocity.in(MetersPerSecond), maxVelocity.in(MetersPerSecond)));
         return facingAngle.apply(parameters, modulesToApply);
     }
 
