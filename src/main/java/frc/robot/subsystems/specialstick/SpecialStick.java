@@ -1,23 +1,23 @@
-package frc.robot.subsystems.algaeremover;
+package frc.robot.subsystems.specialstick;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.algaeremover.sensor.AlgaeRemoverSensorIO;
-import frc.robot.subsystems.algaeremover.sensor.AlgaeRemoverSensorIOInputsAutoLogged;
+import frc.robot.subsystems.specialstick.sensor.AlgaeRemoverSensorIOInputsAutoLogged;
+import frc.robot.subsystems.specialstick.sensor.AlgaeRemoverSensorIO;
 
-public class AlgaeRemover extends SubsystemBase
+public class SpecialStick extends SubsystemBase
 {
-    private final AlgaeRemoverIO io;
+    private final SpecialStickIO io;
     private final AlgaeRemoverSensorIO sensorIO;
     private final AlgaeRemoverSensorIOInputsAutoLogged sensorInputs = new AlgaeRemoverSensorIOInputsAutoLogged();
-    private final AlgaeRemoverIOInputsAutoLogged inputs = new AlgaeRemoverIOInputsAutoLogged();
+    private final SpecialStickIOInputsAutoLogged inputs = new SpecialStickIOInputsAutoLogged();
     private final double returningSpeed;
     private final double removingSpeed;
 
-    public AlgaeRemover(AlgaeRemoverIO algaeRemoverIO, AlgaeRemoverSensorIO algaeSensorIO, double removingSpeed,
+    public SpecialStick(SpecialStickIO algaeRemoverIO, AlgaeRemoverSensorIO algaeSensorIO, double removingSpeed,
             double returningSpeed)
     {
         io = algaeRemoverIO;
@@ -52,7 +52,7 @@ public class AlgaeRemover extends SubsystemBase
     {
         public RemoveAlgaeCommand()
         {
-            addRequirements(AlgaeRemover.this);
+            addRequirements(SpecialStick.this);
         }
 
         @Override
@@ -72,7 +72,7 @@ public class AlgaeRemover extends SubsystemBase
     {
         public ReturnArmCommand()
         {
-            addRequirements(AlgaeRemover.this);
+            addRequirements(SpecialStick.this);
         }
 
         @Override
@@ -99,12 +99,12 @@ public class AlgaeRemover extends SubsystemBase
         }
     }
 
-    public Command removeAlgae()
+    public Command deploySpecialStick()
     {
         return new RemoveAlgaeCommand();
     }
 
-    public Command returnArm()
+    public Command pullOutSpecialStick()
     {
         return new ReturnArmCommand();
     }

@@ -32,11 +32,6 @@ import frc.robot.ralph.constants.RalphTunerConstants;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 import frc.robot.ralph.oi.RalphDriverOI;
 import frc.robot.ralph.oi.RalphProgrammerOI;
-import frc.robot.subsystems.algaeremover.AlgaeRemover;
-import frc.robot.subsystems.algaeremover.AlgaeRemoverIO;
-import frc.robot.subsystems.algaeremover.AlgaeRemoverIOTalonFXS;
-import frc.robot.subsystems.algaeremover.sensor.AlgaeLimitSwitchIO;
-import frc.robot.subsystems.algaeremover.sensor.AlgaeRemoverSensorIO;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOTalonFX;
@@ -50,6 +45,11 @@ import frc.robot.subsystems.inserter.sensor.InserterSensorIO;
 import frc.robot.subsystems.inserter.sensor.InserterSensorIOBeamBreak;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 import frc.robot.subsystems.photonvision.PhotonVision;
+import frc.robot.subsystems.specialstick.SpecialStick;
+import frc.robot.subsystems.specialstick.SpecialStickIOTalonFXS;
+import frc.robot.subsystems.specialstick.SpecialStickIO;
+import frc.robot.subsystems.specialstick.sensor.AlgaeLimitSwitchIO;
+import frc.robot.subsystems.specialstick.sensor.AlgaeRemoverSensorIO;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIO;
@@ -75,7 +75,7 @@ public class RalphContainer implements NFRRobotContainer
     private final Climber climber;
     private final Dashboard dashboard;
     private final Viewer viewer;
-    private final AlgaeRemover algaeremover;
+    private final SpecialStick algaeremover;
 
     /**
      * Create a new RalphContainer
@@ -122,8 +122,8 @@ public class RalphContainer implements NFRRobotContainer
                             RalphConstants.InserterConstants.ROLLER_MOTOR_INVERTED),
                     new InserterSensorIOBeamBreak(RalphConstants.InserterConstants.SensorConstants.CORAL_PIN),
                     RalphConstants.InserterConstants.INTAKE_SPEED, RalphConstants.InserterConstants.OUTTAKE_SPEED);
-            algaeremover = new AlgaeRemover(
-                    new AlgaeRemoverIOTalonFXS(18, false, RalphConstants.AlgaeRemoverConstants.GEAR_RATIO),
+            algaeremover = new SpecialStick(
+                    new SpecialStickIOTalonFXS(18, false, RalphConstants.AlgaeRemoverConstants.GEAR_RATIO),
                     new AlgaeLimitSwitchIO(3), RalphConstants.AlgaeRemoverConstants.REMOVING_SPEED,
                     RalphConstants.AlgaeRemoverConstants.RETURNING_SPEED);
             break;
@@ -153,7 +153,7 @@ public class RalphContainer implements NFRRobotContainer
             }, new InserterSensorIO()
             {
             }, RalphConstants.InserterConstants.INTAKE_SPEED, RalphConstants.InserterConstants.OUTTAKE_SPEED);
-            algaeremover = new AlgaeRemover(new AlgaeRemoverIO()
+            algaeremover = new SpecialStick(new SpecialStickIO()
             {
             }, new AlgaeRemoverSensorIO()
             {
@@ -163,7 +163,7 @@ public class RalphContainer implements NFRRobotContainer
         }
 
         inserter.setDefaultCommand(defaultIntake());
-        algaeremover.setDefaultCommand(algaeremover.returnArm());
+        algaeremover.setDefaultCommand(algaeremover.pullOutSpecialStick());
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
         RalphAutos.addNamedCommands(this);
         RalphAutos.addAutoRoutines(this);
@@ -179,7 +179,7 @@ public class RalphContainer implements NFRRobotContainer
         getInserter().setDefaultCommand(defaultIntake());
     }
 
-    public AlgaeRemover getAlgaeRemover()
+    public SpecialStick getAlgaeRemover()
     {
         return algaeremover;
     }
