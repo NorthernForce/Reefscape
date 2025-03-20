@@ -1,4 +1,4 @@
-package frc.robot.subsystems.algaeremover;
+package frc.robot.subsystems.specialstick;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
@@ -14,10 +14,10 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
-public interface AlgaeRemoverIO
+public interface SpecialStickIO
 {
     @AutoLog
-    public static class AlgaeRemoverIOInputs
+    public static class SpecialStickIOInputs
     {
         public boolean isPresent = false;
         public Current current = Amps.of(0);
@@ -35,7 +35,7 @@ public interface AlgaeRemoverIO
     {
     }
 
-    public default void updateInputs(AlgaeRemoverIOInputs inputs)
+    public default void updateInputs(SpecialStickIOInputs inputs)
     {
     }
 }

@@ -1,4 +1,4 @@
-package frc.robot.subsystems.algaeremover.sensor;
+package frc.robot.subsystems.specialstick.sensor;
 
 import org.littletonrobotics.junction.AutoLog;
 

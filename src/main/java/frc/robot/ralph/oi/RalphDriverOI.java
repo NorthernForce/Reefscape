@@ -101,8 +101,8 @@ public class RalphDriverOI implements RalphOI
 
     static void bindAlgaeRemover(CommandXboxController manipulatorController, RalphContainer container)
     {
-        manipulatorController.leftTrigger().whileTrue(container.getAlgaeRemover().removeAlgae());
-        manipulatorController.x().whileTrue(container.getAlgaeRemover().returnArm());
+        manipulatorController.leftTrigger().whileTrue(container.getAlgaeRemover().pullOutSpecialStick());
+        manipulatorController.x().whileTrue(container.getAlgaeRemover().deploySpecialStick());
     }
 
     @Override
