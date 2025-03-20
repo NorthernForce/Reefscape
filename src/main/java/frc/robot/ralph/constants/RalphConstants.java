@@ -27,7 +27,7 @@ public class RalphConstants
 
         public static final LinearVelocity MAX_SPEED = MetersPerSecond.of(3.0);
         public static final AngularVelocity MAX_ANGULAR_SPEED = RotationsPerSecond.of(0.7);
-        public static final LinearVelocity MAX_LINEAR_SPEED = MetersPerSecond.of(4.0);
+        public static final LinearVelocity MAX_LINEAR_SPEED = MetersPerSecond.of(4.73);
         public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(3.0);
         public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
         public static final Distance SAFE_DISTANCE = Inches.of(10);
@@ -94,7 +94,7 @@ public class RalphConstants
     public static class InnerElevatorConstants
     {
         // outer ratios
-        public static final double GEAR_BOX_RATIO = 25.0;
+        public static final double GEAR_BOX_RATIO = 16.0;
         public static final double SPROCKET_TEETH = 16.0;
         public static final Distance SPROCKET_PITCH = Inches.of(0.25);
         public static final Distance SPROCKET_CIRCUMFERENCE = SPROCKET_PITCH.times(SPROCKET_TEETH);
@@ -107,8 +107,8 @@ public class RalphConstants
         public static final double kI = 0.0;
         public static final double kD = 0;
         public static final double kG = 0.01869;
-        public static final double CRUISE_VELOCITY = 0;
-        public static final double ACCELERATION = 0;
+        public static final double CRUISE_VELOCITY = 500;
+        public static final double ACCELERATION = 50;
         public static final double JERK = 0;
         public static final Distance UPPER_LIMIT = Inches.of(24.3);
 
@@ -125,7 +125,7 @@ public class RalphConstants
     public static class OuterElevatorConstants
     {
         // outer ratios
-        public static final double GEAR_BOX_RATIO = 25.0;
+        public static final double GEAR_BOX_RATIO = 20.0;
         public static final double SPROCKET_TEETH = 22.0;
         public static final Distance SPROCKET_PITCH = Inches.of(0.25);
         public static final Distance SPROCKET_CIRCUMFERENCE = SPROCKET_PITCH.times(SPROCKET_TEETH);
@@ -137,9 +137,9 @@ public class RalphConstants
         public static final double kP = 10;
         public static final double kI = 0;
         public static final double kD = 0;
-        public static final double kG = 0.175212;
-        public static final double CRUISE_VELOCITY = 0;
-        public static final double ACCELERATION = 0;
+        public static final double kG = 0.26;
+        public static final double CRUISE_VELOCITY = 500;
+        public static final double ACCELERATION = 50;
         public static final double JERK = 0;
         public static final Distance UPPER_LIMIT = Inches.of(26.5);
 
