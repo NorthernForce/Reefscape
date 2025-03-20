@@ -20,6 +20,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.units.measure.Angle;
@@ -32,6 +33,7 @@ import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.ReefSide;
 import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.ralph.constants.RalphTunerConstants;
+import frc.robot.ralph.constants.RalphConstants.OuterElevatorConstants;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 import frc.robot.ralph.oi.RalphDriverOI;
 import frc.robot.ralph.oi.RalphProgrammerOI;
@@ -79,6 +81,8 @@ public class RalphContainer implements NFRRobotContainer
     private final Dashboard dashboard;
     private final Viewer viewer;
     private final AlgaeRemover algaeremover;
+    private static Supplier<Pose3d> innerElevatorPose;
+    private static Supplier<Pose3d> outerElevatorPose;
     private static final Pose3d[] finalComponentPoses = new Pose3d[]
     { new Pose3d(), new Pose3d(), new Pose3d(), new Pose3d() };
 
@@ -184,6 +188,10 @@ public class RalphContainer implements NFRRobotContainer
         getInserter().setDefaultCommand(defaultIntake());
         Logger.recordOutput("RobotPose", new Pose2d());
         Logger.recordOutput("FinalComponentPoses", finalComponentPoses);
+        innerElevatorPose = () -> new Pose3d(Inches.of(0), Inches.of(0),
+                superstructure.getInnerElevator().getPosition(), Rotation3d.kZero);
+        outerElevatorPose = () -> new Pose3d(Inches.of(0), Inches.of(0),
+                superstructure.getOuterElevator().getPosition(), Rotation3d.kZero);
     }
 
     public AlgaeRemover getAlgaeRemover()
@@ -367,6 +375,8 @@ public class RalphContainer implements NFRRobotContainer
         dashboard.setInnerElevatorPosition(superstructure.getInnerElevator().getPosition());
         dashboard.setOuterElevatorPosition(superstructure.getOuterElevator().getPosition());
         dashboard.setHasCoral(inserter.hasCoral());
+        setIndexPose(RalphConstants.AdvantageScopeConstants.INNER_ELEVATOR_INDEX, innerElevatorPose.get());
+        setIndexPose(RalphConstants.AdvantageScopeConstants.OUTER_ELEVATOR_INDEX, outerElevatorPose.get());
     }
 
     @Override
