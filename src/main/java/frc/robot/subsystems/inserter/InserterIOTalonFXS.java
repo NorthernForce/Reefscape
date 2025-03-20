@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
@@ -29,6 +30,7 @@ public class InserterIOTalonFXS implements InserterIO
     private final StatusSignal<Voltage> motorVoltage;
     private final StatusSignal<AngularVelocity> motorVelocity;
     private final StatusSignal<Angle> motorPosition;
+    private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
 
     /**
      * Constructs a new InserterIOTalonFXS.
@@ -68,7 +70,7 @@ public class InserterIOTalonFXS implements InserterIO
     @Override
     public void set(double speed)
     {
-        motor.set(speed);
+        motor.setControl(dutyCycle.withOutput(speed));
     }
 
     /**
