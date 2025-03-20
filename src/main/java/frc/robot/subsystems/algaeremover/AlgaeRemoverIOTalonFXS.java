@@ -3,6 +3,7 @@ package frc.robot.subsystems.algaeremover;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
@@ -24,6 +25,7 @@ public class AlgaeRemoverIOTalonFXS implements AlgaeRemoverIO
     private final StatusSignal<AngularVelocity> velocity;
     private final StatusSignal<Temperature> temperature;
     private final StatusSignal<Boolean> hallSensorFault;
+    private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
 
     public AlgaeRemoverIOTalonFXS(int motorID, boolean inverted, double gearRatio)
     {
@@ -46,7 +48,7 @@ public class AlgaeRemoverIOTalonFXS implements AlgaeRemoverIO
     @Override
     public void set(double speed)
     {
-        talonFXS.set(speed);
+        talonFXS.setControl(dutyCycle.withOutput(speed));
     }
 
     @Override

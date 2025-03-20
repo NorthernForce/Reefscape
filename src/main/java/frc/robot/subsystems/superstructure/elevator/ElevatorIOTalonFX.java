@@ -37,8 +37,8 @@ public class ElevatorIOTalonFX implements ElevatorIO
     private final StatusSignal<AngularVelocity> m_rotorVelocity;
     private final Supplier<Boolean> m_isPresent;
     private final MotionMagicExpoVoltage m_motionMagicVoltage;
-    private final DutyCycleOut m_duty = new DutyCycleOut(0);
-    private final VoltageOut m_voltageOut = new VoltageOut(0);
+    private final DutyCycleOut m_duty = new DutyCycleOut(0).withEnableFOC(true);
+    private final VoltageOut m_voltageOut = new VoltageOut(0).withEnableFOC(true);
     private final double kG;
 
     /**
@@ -139,7 +139,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
         m_voltage = m_motor.getMotorVoltage();
         m_isPresent = () -> m_motor.isConnected();
 
-        m_motionMagicVoltage = new MotionMagicExpoVoltage(0);
+        m_motionMagicVoltage = new MotionMagicExpoVoltage(0).withEnableFOC(true);
     }
 
     /**

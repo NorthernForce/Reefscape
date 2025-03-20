@@ -8,6 +8,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -31,6 +32,7 @@ public class ClimberIOTalonFX implements ClimberIO
     private StatusSignal<Temperature> m_temperature;
     private StatusSignal<Current> m_current;
     private CANcoder m_encoder;
+    private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
 
     /**
      * Constructor for the ClimberIOTalonFX class.
@@ -78,7 +80,7 @@ public class ClimberIOTalonFX implements ClimberIO
     @Override
     public void run(double speed)
     {
-        m_motor.set(speed);
+        m_motor.setControl(dutyCycle.withOutput(speed));
     }
 
     /**
@@ -110,7 +112,7 @@ public class ClimberIOTalonFX implements ClimberIO
     @Override
     public void runTo(Angle position)
     {
-        m_motor.setControl(new MotionMagicExpoVoltage(position));
+        m_motor.setControl(new MotionMagicExpoVoltage(position).withEnableFOC(true));
     }
 
 }

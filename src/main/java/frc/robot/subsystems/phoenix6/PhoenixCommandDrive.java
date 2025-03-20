@@ -446,6 +446,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public void periodic()
     {
         disconnectedMotorArray.clear();
+        disconnectedEncoderArray.clear();
         for (SwerveModule<TalonFX, TalonFX, ?> module : getModules())
         {
             if (!module.getDriveMotor().isConnected())
