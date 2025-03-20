@@ -10,12 +10,15 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Seconds;
 
+import org.littletonrobotics.junction.Logger;
 import org.northernforce.util.NFRRobotContainer;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
@@ -76,6 +79,8 @@ public class RalphContainer implements NFRRobotContainer
     private final Dashboard dashboard;
     private final Viewer viewer;
     private final AlgaeRemover algaeremover;
+    private static final Pose3d[] finalComponentPoses = new Pose3d[]
+    { new Pose3d(), new Pose3d(), new Pose3d(), new Pose3d() };
 
     /**
      * Create a new RalphContainer
@@ -177,6 +182,8 @@ public class RalphContainer implements NFRRobotContainer
         PortForwarder.add(5807, "10.1.72.36", 1181);
         PortForwarder.add(5808, "10.1.72.14", 22);
         getInserter().setDefaultCommand(defaultIntake());
+        Logger.recordOutput("RobotPose", new Pose2d());
+        Logger.recordOutput("FinalComponentPoses", finalComponentPoses);
     }
 
     public AlgaeRemover getAlgaeRemover()
@@ -512,5 +519,11 @@ public class RalphContainer implements NFRRobotContainer
     public Command getBackupAuto()
     {
         return drive.backup(Seconds.of(1), 0.5);
+    }
+
+    public static void setIndexPose(int index, Pose3d pose)
+    {
+        finalComponentPoses[index] = pose;
+        Logger.recordOutput("FinalComponentPoses", finalComponentPoses);
     }
 }
