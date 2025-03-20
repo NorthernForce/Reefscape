@@ -187,7 +187,8 @@ public class RalphContainer implements NFRRobotContainer
         Logger.recordOutput("RobotPose", new Pose2d());
         Logger.recordOutput("FinalComponentPoses", finalComponentPoses);
         innerElevatorPose = () -> new Pose3d(Inches.of(0), Inches.of(0),
-                superstructure.getInnerElevator().getPosition(), Rotation3d.kZero);
+                superstructure.getInnerElevator().getPosition().plus(superstructure.getOuterElevator().getPosition()),
+                Rotation3d.kZero);
         outerElevatorPose = () -> new Pose3d(Inches.of(0), Inches.of(0),
                 superstructure.getOuterElevator().getPosition(), Rotation3d.kZero);
     }
