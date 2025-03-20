@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.ReefSide;
+import frc.robot.ralph.commands.IntakeWhileWaitingCommand;
 import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.ralph.constants.RalphTunerConstants;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
@@ -390,29 +391,9 @@ public class RalphContainer implements NFRRobotContainer
         dashboard.setSettingsStage();
     }
 
-    public class IntakeWhileWaitingCommand extends Command
-    {
-        public IntakeWhileWaitingCommand()
-        {
-            addRequirements(inserter);
-        }
-
-        @Override
-        public void execute()
-        {
-            if (!inserter.hasCoral() && superstructure.isAtGoal(SuperstructureGoal.CORAL_STATION))
-            {
-                inserter.intake();
-            } else
-            {
-                inserter.stop();
-            }
-        }
-    }
-
     public Command defaultIntake()
     {
-        return new IntakeWhileWaitingCommand();
+        return new IntakeWhileWaitingCommand(RalphContainer.this);
     }
 
     public Distance getDistanceToPose(Pose2d pose)
