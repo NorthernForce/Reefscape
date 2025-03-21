@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
+import frc.robot.FieldConstants.ReefPositions;
 import frc.robot.FieldConstants.ReefSide;
 import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.ralph.constants.RalphTunerConstants;
@@ -422,46 +423,21 @@ public class RalphContainer implements NFRRobotContainer
 
     public ReefSide getNearestReefSide()
     {
-        ReefSide abSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.AB_SIDE, alliance);
-        ReefSide cdSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.CD_SIDE, alliance);
-        ReefSide efSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.EF_SIDE, alliance);
-        ReefSide ghSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.GH_SIDE, alliance);
-        ReefSide ijSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.IJ_SIDE, alliance);
-        ReefSide klSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.KL_SIDE, alliance);
-        ReefSide nearestSide = abSide;
-        Distance nearestDistance = getDistanceToPose(abSide.center());
-        if (getDistanceToPose(cdSide.center()).lt(nearestDistance))
+        ReefSide closest = FieldConstants.ReefPositions.REEF_SIDES[0];
+        for (ReefSide side : FieldConstants.ReefPositions.REEF_SIDES)
         {
-            nearestSide = cdSide;
-            nearestDistance = getDistanceToPose(cdSide.center());
+            if (getDistanceToPose(side.center()).in(Meters) < getDistanceToPose(closest.center()).in(Meters))
+            {
+                closest = side;
+            }
         }
-        if (getDistanceToPose(efSide.center()).lt(nearestDistance))
-        {
-            nearestSide = efSide;
-            nearestDistance = getDistanceToPose(efSide.center());
-        }
-        if (getDistanceToPose(ghSide.center()).lt(nearestDistance))
-        {
-            nearestSide = ghSide;
-            nearestDistance = getDistanceToPose(ghSide.center());
-        }
-        if (getDistanceToPose(ijSide.center()).lt(nearestDistance))
-        {
-            nearestSide = ijSide;
-            nearestDistance = getDistanceToPose(ijSide.center());
-        }
-        if (getDistanceToPose(klSide.center()).lt(nearestDistance))
-        {
-            nearestSide = klSide;
-            nearestDistance = getDistanceToPose(klSide.center());
-        }
-        return nearestSide;
+
+        return closest;
     }
 
     public Pose2d applyOffset(Pose2d pose, Distance x, Distance y)
     {
-        Translation2d translation = new Translation2d(x, y).rotateBy(pose.getRotation());
-        return new Pose2d(pose.getTranslation().plus(translation), pose.getRotation());
+        return FieldConstants.applyOffset(pose, x, y);
     }
 
     public Pose2d applyOffset(Pose2d pose)
@@ -512,5 +488,26 @@ public class RalphContainer implements NFRRobotContainer
     public Command getBackupAuto()
     {
         return drive.backup(Seconds.of(1), 0.5);
+    }
+
+    public Pose2d getClosestTrough()
+    {
+        Pose2d[] troughs = new Pose2d[]
+        { ReefPositions.AB_TROUGH, ReefPositions.CD_TROUGH, ReefPositions.EF_TROUGH, ReefPositions.GH_TROUGH,
+                ReefPositions.IJ_TROUGH, ReefPositions.KL_TROUGH };
+        Pose2d closestTrough = troughs[0];
+        for (Pose2d trough : troughs)
+        {
+            if (getDistanceToPose(closestTrough).in(Meters) > getDistanceToPose(trough).in(Meters))
+            {
+                closestTrough = trough;
+            }
+        }
+        return closestTrough;
+    }
+
+    public Command driveToTrough()
+    {
+        return Commands.defer(() -> drive.closeDriveToPose(getClosestTrough()), Set.of(this.drive));
     }
 }
