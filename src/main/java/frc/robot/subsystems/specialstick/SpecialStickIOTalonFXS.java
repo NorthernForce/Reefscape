@@ -1,8 +1,9 @@
-package frc.robot.subsystems.algaeremover;
+package frc.robot.subsystems.specialstick;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
@@ -14,7 +15,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
-public class AlgaeRemoverIOTalonFXS implements AlgaeRemoverIO
+public class SpecialStickIOTalonFXS implements SpecialStickIO
 {
     private final TalonFXS talonFXS;
 
@@ -24,8 +25,9 @@ public class AlgaeRemoverIOTalonFXS implements AlgaeRemoverIO
     private final StatusSignal<AngularVelocity> velocity;
     private final StatusSignal<Temperature> temperature;
     private final StatusSignal<Boolean> hallSensorFault;
+    private final DutyCycleOut dutyCycle = new DutyCycleOut(0).withEnableFOC(true);
 
-    public AlgaeRemoverIOTalonFXS(int motorID, boolean inverted, double gearRatio)
+    public SpecialStickIOTalonFXS(int motorID, boolean inverted, double gearRatio)
     {
         talonFXS = new TalonFXS(motorID);
         TalonFXSConfiguration config = new TalonFXSConfiguration();
@@ -46,7 +48,7 @@ public class AlgaeRemoverIOTalonFXS implements AlgaeRemoverIO
     @Override
     public void set(double speed)
     {
-        talonFXS.set(speed);
+        talonFXS.setControl(dutyCycle.withOutput(speed));
     }
 
     @Override
@@ -56,7 +58,7 @@ public class AlgaeRemoverIOTalonFXS implements AlgaeRemoverIO
     }
 
     @Override
-    public void updateInputs(AlgaeRemoverIOInputs inputs)
+    public void updateInputs(SpecialStickIOInputs inputs)
     {
         BaseStatusSignal.refreshAll(motorVoltage, motorCurrent, position, velocity, temperature, hallSensorFault);
         inputs.isPresent = talonFXS.isConnected() && !hallSensorFault.getValue();
