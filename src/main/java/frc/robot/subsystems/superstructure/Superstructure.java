@@ -208,6 +208,7 @@ public class Superstructure extends SubsystemBase
         return new ManualControlCommand(innerElevatorSpeed, outerElevatorSpeed);
     }
 
+    @AutoLogOutput
     public SuperstructureGoal getGoal()
     {
         return m_goal;
