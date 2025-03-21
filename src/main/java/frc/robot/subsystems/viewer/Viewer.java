@@ -1,5 +1,10 @@
 package frc.robot.subsystems.viewer;
 
+import static edu.wpi.first.units.Units.Meters;
+
+import java.util.Optional;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Distance;
@@ -12,6 +17,9 @@ public class Viewer extends SubsystemBase
     private final ViewerIO io;
     private final ViewerIOInputsAutoLogged inputs;
     private final Alert viewerMissingAlert;
+
+    public static record ViewerTarget(Distance xDistance, Distance yDistance) {
+    }
 
     public Viewer(ViewerIO io)
     {
@@ -28,23 +36,50 @@ public class Viewer extends SubsystemBase
         viewerMissingAlert.set(!inputs.connected);
     }
 
-    public Distance getCenterDistance()
-    {
-        return inputs.centerDistance;
-    }
-
-    public Distance getPostDistance()
-    {
-        return inputs.postDistance;
-    }
-
-    public Distance getPostOffset()
-    {
-        return inputs.postOffset;
-    }
-
+    @AutoLogOutput
     public boolean isPresent()
     {
         return inputs.connected;
+    }
+
+    @AutoLogOutput
+    public ViewerTarget[] getTargets()
+    {
+        if (inputs.connected)
+        {
+            double[] postDistances = inputs.postDistanceMeters;
+            double[] postOffsets = inputs.postOffsetMeters;
+            if (postDistances.length == postOffsets.length)
+            {
+                ViewerTarget[] targets = new ViewerTarget[postDistances.length];
+                for (int i = 0; i < postDistances.length; i++)
+                {
+                    targets[i] = new ViewerTarget(Meters.of(postDistances[i]), Meters.of(postOffsets[i]));
+                }
+                return targets;
+            }
+        }
+        return new ViewerTarget[0];
+    }
+
+    public Optional<ViewerTarget> getBestTarget()
+    {
+        var targets = getTargets();
+        if (inputs.connected && targets.length > 0)
+        {
+            ViewerTarget bestTarget = targets[0];
+            for (var target : targets)
+            {
+                if (target.yDistance().lte(bestTarget.yDistance()))
+                {
+                    bestTarget = target;
+                }
+            }
+            if (bestTarget.xDistance().lte(Meters.of(0.5)))
+            {
+                return Optional.of(bestTarget);
+            }
+        }
+        return Optional.empty();
     }
 }
