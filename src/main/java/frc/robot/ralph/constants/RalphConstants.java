@@ -22,6 +22,14 @@ import edu.wpi.first.math.util.Units;
 
 public class RalphConstants
 {
+    public static class AdvantageScopeConstants
+    {
+        public static final int OUTER_ELEVATOR_INDEX = 0;
+        public static final int INNER_ELEVATOR_INDEX = 1;
+        public static final int CLIMBER_INDEX = 2;
+        public static final int ALGAE_EXTRACTOR_INDEX = 3;
+    }
+
     public static class DrivetrainConstants
     {
 
