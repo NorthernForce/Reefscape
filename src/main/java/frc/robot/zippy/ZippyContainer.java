@@ -1,6 +1,5 @@
 package frc.robot.zippy;
 
-import java.util.Map;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Seconds;
@@ -10,8 +9,6 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.northernforce.util.NFRRobotContainer;
 
-import choreo.auto.AutoFactory;
-import choreo.auto.AutoRoutine;
 import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.units.measure.Angle;
@@ -39,9 +36,7 @@ public class ZippyContainer implements NFRRobotContainer
     private Alliance alliance = allianceSupplier.get();
     private final PhotonVision vision;
     private final Dashboard dashboard;
-    private AutoFactory factory = null;
     private Field2d field = null;
-    private AutoRoutine hi = null;
 
     public ZippyContainer()
     {
@@ -111,12 +106,6 @@ public class ZippyContainer implements NFRRobotContainer
     public void autonomousPeriodic()
     {
         System.out.println("running auto...");
-        hi.poll();
-    }
-
-    public Map<String, Supplier<AutoRoutine>> getAutonomousCommands()
-    {
-        return Map.of("nothing", () -> factory.newRoutine("nothing"));
     }
 
     @Override
