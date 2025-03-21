@@ -67,12 +67,13 @@ public class CloseDriveToPoseRequest implements SwerveRequest
         {
             double viewerVx = viewerXPID.calculate(target.get().xDistance().in(Meters));
             double viewerVy = viewerYPID.calculate(target.get().yDistance().in(Meters));
-            targetSpeeds = targetSpeeds.plus(new ChassisSpeeds(viewerVx, viewerVy, 0));
+            targetSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(viewerVx, viewerVy, 0,
+                    parameters.currentPose.getRotation());
         }
-        facingAngle
-                .withVelocityX(MathUtil.clamp(vx, -maxVelocity.in(MetersPerSecond), maxVelocity.in(MetersPerSecond)));
-        facingAngle
-                .withVelocityY(MathUtil.clamp(vy, -maxVelocity.in(MetersPerSecond), maxVelocity.in(MetersPerSecond)));
+        facingAngle.withVelocityX(MathUtil.clamp(targetSpeeds.vxMetersPerSecond, -maxVelocity.in(MetersPerSecond),
+                maxVelocity.in(MetersPerSecond)));
+        facingAngle.withVelocityY(MathUtil.clamp(targetSpeeds.vyMetersPerSecond, -maxVelocity.in(MetersPerSecond),
+                maxVelocity.in(MetersPerSecond)));
         facingAngle.withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
         return facingAngle.apply(parameters, modulesToApply);
     }
