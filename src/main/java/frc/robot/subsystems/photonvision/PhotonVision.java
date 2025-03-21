@@ -154,6 +154,19 @@ public class PhotonVision extends SubsystemBase
                 && pose.estimatedPose.toPose2d().getTranslation().getY() < layout.getFieldWidth();
     }
 
+    private boolean testTags(EstimatedRobotPose pose)
+    {
+        for (var target : pose.targetsUsed)
+        {
+            if (target.getFiducialId() == 4 || target.getFiducialId() == 5
+                    || target.getFiducialId() == 15 || target.getFiducialId() == 14)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public void periodic()
     {
@@ -174,25 +187,15 @@ public class PhotonVision extends SubsystemBase
                 }
                 boolean valid = true;
                 RejectionReason reason = null;
-                // if (!testYCoordinate(result))
-                // {
-                // valid = false;
-                // reason = RejectionReason.TARGET_OUTSIDE_USABLE_AREA;
-                // }
-                // if (!testRobotRotation(opt.get()))
-                // {
-                // valid = false;
-                // reason = RejectionReason.ROBOT_ANGLE_TOO_LARGE;
-                // }
-                // if (!testRobotDistance(opt.get()))
-                // {
-                // valid = false;
-                // reason = RejectionReason.DISTANCE_TOO_FAR;
-                // }
                 if (!testWithinField(opt.get()))
                 {
                     valid = false;
                     reason = RejectionReason.OUT_OF_BOUNDS;
+                }
+                if (!testTags(opt.get()))
+                {
+                    valid = false;
+                    reason = RejectionReason.TARGET_OUTSIDE_USABLE_AREA;
                 }
                 if (valid)
                 {
