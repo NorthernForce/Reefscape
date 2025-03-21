@@ -1,6 +1,7 @@
 package frc.robot.subsystems.phoenix6;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -48,6 +49,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.phoenix6.requests.CloseDriveToPoseRequest;
+import frc.robot.subsystems.viewer.Viewer.ViewerTarget;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -226,10 +228,10 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         });
     }
 
-    public Command closeDriveToPose(Pose2d pose)
+    public Command closeDriveToPose(Pose2d pose, Supplier<Optional<ViewerTarget>> viewerTargetSupplier)
     {
-        CloseDriveToPoseRequest request = new CloseDriveToPoseRequest(pose, 4, 0, 0, 5, 0, 0,
-                () -> poseEstimator.getEstimatedPosition());
+        CloseDriveToPoseRequest request = new CloseDriveToPoseRequest(pose, 4, 0, 0, 5, 0, 0, MetersPerSecond.of(2),
+                () -> poseEstimator.getEstimatedPosition(), viewerTargetSupplier);
         Logger.recordOutput("TargetPose", pose);
         return applyRequest(() -> request).until(() -> request.isFinished());
     }
