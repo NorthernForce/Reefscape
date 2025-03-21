@@ -43,6 +43,9 @@ import frc.robot.subsystems.inserter.InserterIO;
 import frc.robot.subsystems.inserter.InserterIOTalonFXS;
 import frc.robot.subsystems.inserter.sensor.InserterSensorIO;
 import frc.robot.subsystems.inserter.sensor.InserterSensorIOBeamBreak;
+import frc.robot.subsystems.led.LEDSubsystem;
+import frc.robot.subsystems.led.LEDIOCANdle;
+import frc.robot.subsystems.led.LEDIOSim;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 import frc.robot.subsystems.photonvision.PhotonVision;
 import frc.robot.subsystems.specialstick.SpecialStick;
@@ -76,6 +79,7 @@ public class RalphContainer implements NFRRobotContainer
     private final Dashboard dashboard;
     private final Viewer viewer;
     private final SpecialStick algaeremover;
+    private final LEDSubsystem led;
 
     /**
      * Create a new RalphContainer
@@ -126,6 +130,7 @@ public class RalphContainer implements NFRRobotContainer
                     new SpecialStickIOTalonFXS(18, false, RalphConstants.AlgaeRemoverConstants.GEAR_RATIO),
                     new AlgaeLimitSwitchIO(3), RalphConstants.AlgaeRemoverConstants.REMOVING_SPEED,
                     RalphConstants.AlgaeRemoverConstants.RETURNING_SPEED);
+            led = new LEDSubsystem(new LEDIOCANdle());
             break;
         case REPLAY:
         default:
@@ -159,6 +164,7 @@ public class RalphContainer implements NFRRobotContainer
             {
             }, RalphConstants.AlgaeRemoverConstants.REMOVING_SPEED,
                     RalphConstants.AlgaeRemoverConstants.RETURNING_SPEED);
+            led = new LEDSubsystem(new LEDIOSim());
             break;
         }
 
@@ -360,6 +366,12 @@ public class RalphContainer implements NFRRobotContainer
         dashboard.setInnerElevatorPosition(superstructure.getInnerElevator().getPosition());
         dashboard.setOuterElevatorPosition(superstructure.getOuterElevator().getPosition());
         dashboard.setHasCoral(inserter.hasCoral());
+
+        // update led states
+        led.setHasCoral(inserter.hasCoral());
+        led.setReefReady(superstructure.isAtGoal());
+        led.setFault(vision.getConnectedStatus().length > 0 && !vision.getConnectedStatus()[0]); //camera disconnected checker
+        led.setAutoSelected(dashboard.getSelectedRoutine() != null);
     }
 
     @Override
