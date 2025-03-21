@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Seconds;
 
@@ -57,6 +58,7 @@ import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIO;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.superstructure.elevator.SimElevatorIOTalonFX;
 import frc.robot.subsystems.superstructure.elevator.brake.BrakeIO;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIO;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIOLimitSwitch;
@@ -104,6 +106,36 @@ public class RalphContainer implements NFRRobotContainer
         switch (Constants.getMode())
         {
         case SIM:
+            superstructure = new Superstructure(new Elevator("InnerElevator", new SimElevatorIOTalonFX(15,
+                    RalphConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS, Pounds.of(8)), new BrakeIO()
+                    {
+                    }, new ElevatorSensorIOLimitSwitch(0), Inches.of(0.5)),
+                    new Elevator(
+                            "OuterElevator", new SimElevatorIOTalonFX(14,
+                                    RalphConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS, Pounds.of(20)),
+                            new BrakeIO()
+                            {
+                            }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
+                    RalphConstants.InnerElevatorConstants.HIGH_POSITION,
+                    RalphConstants.OuterElevatorConstants.HIGH_POSITION);
+            climber = new Climber(
+                    new ClimberIOTalonFX(RalphConstants.ClimberConstants.ID, RalphConstants.ClimberConstants.INVERTED,
+                            RalphConstants.ClimberConstants.ENCODER_ID, RalphConstants.ClimberConstants.LOWER_LIMIT,
+                            RalphConstants.ClimberConstants.UPPER_LIMIT),
+                    RalphConstants.ClimberConstants.SWEET_ANGLE, RalphConstants.ClimberConstants.LOWER_LIMIT,
+                    RalphConstants.ClimberConstants.UPPER_LIMIT, RalphConstants.ClimberConstants.CLIMB_SPEED);
+
+            viewer = new Viewer(new ViewerIOXavier());
+            inserter = new Inserter(
+                    new InserterIOTalonFXS(RalphConstants.InserterConstants.ROLLER_MOTOR_ID,
+                            RalphConstants.InserterConstants.ROLLER_MOTOR_INVERTED),
+                    new InserterSensorIOBeamBreak(RalphConstants.InserterConstants.SensorConstants.CORAL_PIN),
+                    RalphConstants.InserterConstants.INTAKE_SPEED, RalphConstants.InserterConstants.OUTTAKE_SPEED);
+            algaeremover = new SpecialStick(
+                    new SpecialStickIOTalonFXS(18, false, RalphConstants.AlgaeRemoverConstants.GEAR_RATIO),
+                    new AlgaeLimitSwitchIO(3), RalphConstants.AlgaeRemoverConstants.REMOVING_SPEED,
+                    RalphConstants.AlgaeRemoverConstants.RETURNING_SPEED);
+            break;
         case REAL:
             superstructure = new Superstructure(new Elevator("InnerElevator",
                     new ElevatorIOTalonFX(15, RalphConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()

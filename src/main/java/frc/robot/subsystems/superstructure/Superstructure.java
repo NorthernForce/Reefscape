@@ -209,6 +209,7 @@ public class Superstructure extends SubsystemBase
 
     }
 
+    @AutoLogOutput
     public SuperstructureGoal getGoal()
     {
         return m_goal;
