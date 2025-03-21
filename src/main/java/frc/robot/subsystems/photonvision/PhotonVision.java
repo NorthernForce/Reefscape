@@ -158,8 +158,8 @@ public class PhotonVision extends SubsystemBase
     {
         for (var target : pose.targetsUsed)
         {
-            if (target.getFiducialId() == 4 || target.getFiducialId() == 5
-                    || target.getFiducialId() == 15 || target.getFiducialId() == 14)
+            if (target.getFiducialId() == 4 || target.getFiducialId() == 5 || target.getFiducialId() == 15
+                    || target.getFiducialId() == 14)
             {
                 return false;
             }
