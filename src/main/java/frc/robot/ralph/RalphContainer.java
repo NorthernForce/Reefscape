@@ -469,44 +469,42 @@ public class RalphContainer implements NFRRobotContainer
         return applyOffset(pose, Inches.of(0.8), Inches.of(-9));
     }
 
+    public Command driveToPose(Supplier<Pose2d> pose)
+    {
+        return Commands.defer(() -> drive.closeDriveToPose(pose.get(), viewer::getBestTarget), Set.of(drive));
+    }
+
     public Command driveToLeftReef()
     {
-        return Commands.defer(() -> drive.closeDriveToPose(applyOffset(getNearestReefSide().left())), Set.of(drive));
+        return driveToPose(() -> applyOffset(getNearestReefSide().left()));
     }
 
     public Command driveToRightReef()
     {
-        return Commands.defer(() -> drive.closeDriveToPose(applyOffset(getNearestReefSide().right())), Set.of(drive));
+        return driveToPose(() -> applyOffset(getNearestReefSide().right()));
     }
 
     public Command driveToCenterReef()
     {
-        return Commands.defer(() -> drive.closeDriveToPose(applyOffset(getNearestReefSide().center())), Set.of(drive));
+        return driveToPose(() -> applyOffset(getNearestReefSide().center()));
     }
 
     public Command driveToCenterAlgae()
     {
-        return Commands.defer(
-                () -> drive.closeDriveToPose(applyOffset(getNearestReefSide().center(), Inches.of(2.5), Inches.of(1))),
-                Set.of(drive));
+        return driveToPose(() -> applyOffset(getNearestReefSide().center(), Inches.of(0), Inches.of(1)));
     }
 
     public Command goToClosestCoralStation()
     {
-        if (getDistanceToPose(FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.LEFT)).in(
-                Meters) > getDistanceToPose(FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.RIGHT))
-                        .in(Meters))
-        {
-            return drive.closeDriveToPose(FieldConstants.CoralStations.RIGHT);
-        } else
-        {
-            return drive.closeDriveToPose(FieldConstants.CoralStations.LEFT);
-        }
+        return Commands.either(driveToPose(() -> FieldConstants.CoralStations.RIGHT),
+                driveToPose(() -> FieldConstants.CoralStations.LEFT),
+                () -> getDistanceToPose(FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.LEFT)).gt(
+                        getDistanceToPose(FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.RIGHT))));
     }
 
     public Command goToProcessor()
     {
-        return drive.closeDriveToPose(FieldConstants.ProcessorStations.PROCESSOR_STATION);
+        return driveToPose(() -> FieldConstants.ProcessorStations.PROCESSOR_STATION);
     }
 
     public Command getBackupAuto()
