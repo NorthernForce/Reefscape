@@ -69,6 +69,7 @@ public class DashboardIOFWC implements DashboardIO
         outerElevatorPosition = table.getDoubleTopic("OuterElevator/Position").publish();
         hasCoralPublisher = table.getBooleanTopic("HasCoral").publish();
         hasAlgaePublisher = table.getBooleanTopic("HasAlgae").publish();
+
     }
 
     @Override
