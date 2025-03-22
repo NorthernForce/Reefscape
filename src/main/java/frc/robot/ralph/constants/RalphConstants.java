@@ -102,7 +102,7 @@ public class RalphConstants
     public static class InnerElevatorConstants
     {
         // outer ratios
-        public static final double GEAR_BOX_RATIO = 16.0;
+        public static final double GEAR_BOX_RATIO = 12.0;
         public static final double SPROCKET_TEETH = 16.0;
         public static final Distance SPROCKET_PITCH = Inches.of(0.25);
         public static final Distance SPROCKET_CIRCUMFERENCE = SPROCKET_PITCH.times(SPROCKET_TEETH);
@@ -133,7 +133,7 @@ public class RalphConstants
     public static class OuterElevatorConstants
     {
         // outer ratios
-        public static final double GEAR_BOX_RATIO = 20.0;
+        public static final double GEAR_BOX_RATIO = 16.0;
         public static final double SPROCKET_TEETH = 22.0;
         public static final Distance SPROCKET_PITCH = Inches.of(0.25);
         public static final Distance SPROCKET_CIRCUMFERENCE = SPROCKET_PITCH.times(SPROCKET_TEETH);
@@ -202,12 +202,12 @@ public class RalphConstants
 
     public static class PathplannerConstants
     {
-        public static final PIDConstants linearPIDConstants = new PIDConstants(5.0, 0.0, 0.0);
-        public static final PIDConstants angularPIDConstants = new PIDConstants(4.0, 0.0, 0.0);
-        public static final LinearVelocity MAX_VELOCITY = FeetPerSecond.of(4);
-        public static final LinearAcceleration MAX_ACCELERATION = FeetPerSecondPerSecond.of(2);
-        public static final AngularVelocity MAX_ANGULAR_VELOCITY = RotationsPerSecond.of(0.7);
-        public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
+        public static PIDConstants linearPIDConstants = new PIDConstants(5.0, 0.0, 0.0);
+        public static PIDConstants angularPIDConstants = new PIDConstants(4.0, 0.0, 0.0);
+        public static LinearVelocity MAX_VELOCITY = FeetPerSecond.of(4);
+        public static LinearAcceleration MAX_ACCELERATION = FeetPerSecondPerSecond.of(2);
+        public static AngularVelocity MAX_ANGULAR_VELOCITY = RotationsPerSecond.of(0.7);
+        public static AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
     }
 
     public static class ClimberConstants

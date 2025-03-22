@@ -5,6 +5,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
@@ -14,9 +15,14 @@ import static edu.wpi.first.units.Units.Seconds;
 import org.littletonrobotics.junction.Logger;
 import org.northernforce.util.NFRRobotContainer;
 
+import com.pathplanner.lib.config.PIDConstants;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,6 +31,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -85,6 +93,8 @@ public class RalphContainer implements NFRRobotContainer
     private static final Pose3d[] finalComponentPoses = new Pose3d[]
     { new Pose3d(), new Pose3d(), new Pose3d(), new Pose3d() };
     private final SpecialStick algaeremover;
+    private final Supplier<PIDConstants> linearPIDSupplier;
+    private final Supplier<PIDConstants> angularPIDSupplier;
 
     /**
      * Create a new RalphContainer
@@ -200,7 +210,6 @@ public class RalphContainer implements NFRRobotContainer
                     RalphConstants.AlgaeRemoverConstants.RETURNING_SPEED);
             break;
         }
-
         inserter.setDefaultCommand(defaultIntake());
         algaeremover.setDefaultCommand(algaeremover.pullOutSpecialStick());
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
@@ -223,6 +232,20 @@ public class RalphContainer implements NFRRobotContainer
                 Rotation3d.kZero);
         outerElevatorPose = () -> new Pose3d(Inches.of(0), Inches.of(0),
                 superstructure.getOuterElevator().getPosition(), Rotation3d.kZero);
+        SmartDashboard.putNumber("Linear kP", RalphConstants.PathplannerConstants.linearPIDConstants.kP);
+        SmartDashboard.putNumber("Linear kI", RalphConstants.PathplannerConstants.linearPIDConstants.kI);
+        SmartDashboard.putNumber("Linear kD", RalphConstants.PathplannerConstants.linearPIDConstants.kD);
+        SmartDashboard.putNumber("Rotation kP", RalphConstants.PathplannerConstants.angularPIDConstants.kP);
+        SmartDashboard.putNumber("Rotation kI", RalphConstants.PathplannerConstants.angularPIDConstants.kI);
+        SmartDashboard.putNumber("Rotation kD", RalphConstants.PathplannerConstants.angularPIDConstants.kD);
+        linearPIDSupplier = () -> new PIDConstants(
+                SmartDashboard.getNumber("Linear kP", RalphConstants.PathplannerConstants.linearPIDConstants.kP),
+                SmartDashboard.getNumber("Linear kI", RalphConstants.PathplannerConstants.linearPIDConstants.kI),
+                SmartDashboard.getNumber("Linear kD", RalphConstants.PathplannerConstants.linearPIDConstants.kD));
+        angularPIDSupplier = () -> new PIDConstants(
+                SmartDashboard.getNumber("Rotation kP", RalphConstants.PathplannerConstants.angularPIDConstants.kP),
+                SmartDashboard.getNumber("Rotation kI", RalphConstants.PathplannerConstants.angularPIDConstants.kI),
+                SmartDashboard.getNumber("Rotation kD", RalphConstants.PathplannerConstants.angularPIDConstants.kD));
     }
 
     public SpecialStick getAlgaeRemover()
@@ -408,6 +431,8 @@ public class RalphContainer implements NFRRobotContainer
         dashboard.setHasCoral(inserter.hasCoral());
         setIndexPose(RalphConstants.AdvantageScopeConstants.INNER_ELEVATOR_INDEX, innerElevatorPose.get());
         setIndexPose(RalphConstants.AdvantageScopeConstants.OUTER_ELEVATOR_INDEX, outerElevatorPose.get());
+        RalphConstants.PathplannerConstants.linearPIDConstants = linearPIDSupplier.get();
+        RalphConstants.PathplannerConstants.angularPIDConstants = angularPIDSupplier.get();
     }
 
     @Override
