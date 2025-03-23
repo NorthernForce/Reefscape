@@ -23,13 +23,13 @@ public class RalphAutos
 
     public static void addNamedCommands(RalphContainer container)
     {
-        NamedCommands.registerCommand("GoToL4Goal", Commands.waitSeconds(1).andThen(container.goToL4()));
-        NamedCommands.registerCommand("GoToL3Goal", Commands.waitSeconds(1).andThen(container.goToL3()));
-        NamedCommands.registerCommand("GoToL2Goal", Commands.waitSeconds(1).andThen(container.goToL2()));
-        NamedCommands.registerCommand("GoToL1Goal", Commands.waitSeconds(1).andThen(container.goToL1()));
-        NamedCommands.registerCommand("GoToIntake", container.goToIntake());
+        NamedCommands.registerCommand("GoToL4Goal", container.goToL4());
+        NamedCommands.registerCommand("GoToL3Goal", container.goToL3());
+        NamedCommands.registerCommand("GoToL2Goal", container.goToL2());
+        NamedCommands.registerCommand("GoToL1Goal", container.goToL1());
+        NamedCommands.registerCommand("GoToIntake", container.goToIntakeForAuto());
         NamedCommands.registerCommand("Intake", container.intakeCoral());
-        NamedCommands.registerCommand("Outtake", container.outtakeCoral());
+        NamedCommands.registerCommand("Outtake", container.outtakeCoral().withTimeout(0.5));
         NamedCommands.registerCommand("DriveToCloseLeft", container.driveToLeftReef());
         NamedCommands.registerCommand("DriveToCloseRight", container.driveToRightReef());
     }

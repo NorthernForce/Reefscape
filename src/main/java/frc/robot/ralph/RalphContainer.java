@@ -32,7 +32,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
-import frc.robot.FieldConstants.ReefPositions;
 import frc.robot.FieldConstants.ReefSide;
 import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.ralph.constants.RalphTunerConstants;
@@ -301,6 +300,11 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command goToIntake()
     {
+        return superstructure.goToGoal(SuperstructureGoal.CORAL_STATION).andThen(homeElevator());
+    }
+
+    public Command goToIntakeForAuto()
+    {
         return superstructure.goToGoal(SuperstructureGoal.CORAL_STATION);
     }
 
@@ -514,7 +518,7 @@ public class RalphContainer implements NFRRobotContainer
 
     public Pose2d applyOffset(Pose2d pose)
     {
-        return applyOffset(pose, Inches.of(1.5), Inches.of(-11));
+        return applyOffset(pose, Inches.of(1.5), Inches.of(-9));
     }
 
     public Command driveToPose(Supplier<Pose2d> pose)
