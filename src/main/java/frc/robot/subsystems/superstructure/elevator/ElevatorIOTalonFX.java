@@ -28,18 +28,18 @@ import edu.wpi.first.wpilibj.RobotController;
 
 public class ElevatorIOTalonFX implements ElevatorIO
 {
-    private final TalonFX m_motor;
-    private final StatusSignal<Angle> m_position;
-    private final StatusSignal<Temperature> m_temperature;
-    private final StatusSignal<Voltage> m_voltage;
-    private final StatusSignal<Current> m_current;
-    private final StatusSignal<AngularVelocity> m_velocity;
-    private final StatusSignal<AngularVelocity> m_rotorVelocity;
-    private final Supplier<Boolean> m_isPresent;
-    private final MotionMagicExpoVoltage m_motionMagicVoltage;
-    private final DutyCycleOut m_duty = new DutyCycleOut(0);
-    private final VoltageOut m_voltageOut = new VoltageOut(0);
-    private final double kG;
+    protected final TalonFX m_motor;
+    protected final StatusSignal<Angle> m_position;
+    protected final StatusSignal<Temperature> m_temperature;
+    protected final StatusSignal<Voltage> m_voltage;
+    protected final StatusSignal<Current> m_current;
+    protected final StatusSignal<AngularVelocity> m_velocity;
+    protected final StatusSignal<AngularVelocity> m_rotorVelocity;
+    protected final Supplier<Boolean> m_isPresent;
+    protected final MotionMagicExpoVoltage m_motionMagicVoltage;
+    protected final DutyCycleOut m_duty = new DutyCycleOut(0).withEnableFOC(true);
+    protected final VoltageOut m_voltageOut = new VoltageOut(0).withEnableFOC(true);
+    protected final double kG;
 
     /**
      * Constants for the elevator
@@ -125,7 +125,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
         talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = upperLimit.in(Inches);
         talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.125;
+        talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
         talonFXConfigs.CurrentLimits.StatorCurrentLimit = 40;
         talonFXConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
 
@@ -139,7 +139,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
         m_voltage = m_motor.getMotorVoltage();
         m_isPresent = () -> m_motor.isConnected();
 
-        m_motionMagicVoltage = new MotionMagicExpoVoltage(0);
+        m_motionMagicVoltage = new MotionMagicExpoVoltage(0).withEnableFOC(true);
     }
 
     /**

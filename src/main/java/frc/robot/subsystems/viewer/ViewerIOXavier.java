@@ -1,20 +1,13 @@
 package frc.robot.subsystems.viewer;
 
-import static edu.wpi.first.units.Units.Meters;
-
-import edu.wpi.first.networktables.BooleanSubscriber;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.FloatSubscriber;
+import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class ViewerIOXavier implements ViewerIO
 {
     private final NetworkTable table;
-    private final BooleanSubscriber hasPostInImageSubscriber;
-    private final DoubleSubscriber postOffsetSubscriber;
-    private final DoubleSubscriber postDistanceSubscriber;
-    private final FloatSubscriber centerDistanceSubscriber;
+    private final DoubleArraySubscriber postsSubscriber;
 
     /**
      * Constructs a new ViewerIOXavier.
@@ -22,10 +15,8 @@ public class ViewerIOXavier implements ViewerIO
     public ViewerIOXavier()
     {
         table = NetworkTableInstance.getDefault().getTable("Viewer");
-        hasPostInImageSubscriber = table.getBooleanTopic("HasPost").subscribe(false);
-        postOffsetSubscriber = table.getDoubleTopic("PostOffset").subscribe(0.0);
-        postDistanceSubscriber = table.getDoubleTopic("PostDistance").subscribe(0.0);
-        centerDistanceSubscriber = table.getFloatTopic("CenterDist").subscribe(0.0f);
+        postsSubscriber = table.getDoubleArrayTopic("Posts").subscribe(new double[]
+        {});
     }
 
     /**
@@ -43,9 +34,13 @@ public class ViewerIOXavier implements ViewerIO
                 break;
             }
         }
-        inputs.hasPostInImage = hasPostInImageSubscriber.get();
-        inputs.postOffset = Meters.of(postOffsetSubscriber.get());
-        inputs.postDistance = Meters.of(postDistanceSubscriber.get());
-        inputs.centerDistance = Meters.of(centerDistanceSubscriber.get());
+        var posts = postsSubscriber.get();
+        inputs.postDistanceMeters = new double[posts.length / 2];
+        inputs.postOffsetMeters = new double[posts.length / 2];
+        for (int i = 0; i < posts.length / 2; i++)
+        {
+            inputs.postDistanceMeters[i] = posts[i * 2];
+            inputs.postOffsetMeters[i] = posts[i * 2 + 1];
+        }
     }
 }

@@ -5,24 +5,40 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Feet;
+import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Seconds;
 
+import org.littletonrobotics.junction.Logger;
 import org.northernforce.util.NFRRobotContainer;
 
-import com.ctre.phoenix6.Utils;
+import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
+import frc.robot.FieldConstants.ReefSide;
 import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.ralph.constants.RalphTunerConstants;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
@@ -34,21 +50,26 @@ import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.dashboard.Dashboard;
 import frc.robot.subsystems.dashboard.DashboardIOFWC;
 import frc.robot.subsystems.dashboard.reefscape.ReefDisplayIOSwing;
+import frc.robot.subsystems.inserter.Inserter;
+import frc.robot.subsystems.inserter.InserterIO;
+import frc.robot.subsystems.inserter.InserterIOTalonFXS;
+import frc.robot.subsystems.inserter.sensor.InserterSensorIO;
+import frc.robot.subsystems.inserter.sensor.InserterSensorIOBeamBreak;
 import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 import frc.robot.subsystems.photonvision.PhotonVision;
+import frc.robot.subsystems.specialstick.SpecialStick;
+import frc.robot.subsystems.specialstick.SpecialStickIOTalonFXS;
+import frc.robot.subsystems.specialstick.SpecialStickIO;
+import frc.robot.subsystems.specialstick.sensor.AlgaeLimitSwitchIO;
+import frc.robot.subsystems.specialstick.sensor.AlgaeRemoverSensorIO;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIO;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.superstructure.elevator.SimElevatorIOTalonFX;
 import frc.robot.subsystems.superstructure.elevator.brake.BrakeIO;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIO;
 import frc.robot.subsystems.superstructure.elevator.sensor.ElevatorSensorIOLimitSwitch;
-import frc.robot.subsystems.rollers.Rollers;
-import frc.robot.subsystems.rollers.RollersIO;
-import frc.robot.subsystems.rollers.RollersIOTalonFXS;
-import frc.robot.subsystems.rollers.sensor.RollersSensorIO;
-import frc.robot.subsystems.rollers.sensor.RollersSensorIOAnalog;
-import frc.robot.subsystems.rollers.sensor.RollersSensorIOBeamBreak;
 import frc.robot.subsystems.viewer.Viewer;
 import frc.robot.subsystems.viewer.ViewerIO;
 import frc.robot.subsystems.viewer.ViewerIOXavier;
@@ -59,7 +80,7 @@ import frc.robot.subsystems.viewer.ViewerIOXavier;
 public class RalphContainer implements NFRRobotContainer
 {
     private final PhoenixCommandDrive drive;
-    private final Rollers rollers;
+    private final Inserter inserter;
     private final Superstructure superstructure;
     private final PhotonVision vision;
     private final Supplier<Alliance> allianceSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Red);
@@ -67,21 +88,23 @@ public class RalphContainer implements NFRRobotContainer
     private final Climber climber;
     private final Dashboard dashboard;
     private final Viewer viewer;
-
-    private final Supplier<Boolean> useBeamBreak = () -> SmartDashboard.getBoolean("Use Beam Break", true);
+    private static Supplier<Pose3d> innerElevatorPose;
+    private static Supplier<Pose3d> outerElevatorPose;
+    private static final Pose3d[] finalComponentPoses = new Pose3d[]
+    { new Pose3d(), new Pose3d(), new Pose3d(), new Pose3d() };
+    private final SpecialStick algaeremover;
+    private final Supplier<PIDConstants> linearPIDSupplier;
+    private final Supplier<PIDConstants> angularPIDSupplier;
 
     /**
      * Create a new RalphContainer
      */
     public RalphContainer()
     {
-
         drive = new PhoenixCommandDrive(RalphTunerConstants.DrivetrainConstants,
                 RalphConstants.DrivetrainConstants.MAX_SPEED, RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
                 RalphConstants.PathplannerConstants.linearPIDConstants,
                 RalphConstants.PathplannerConstants.angularPIDConstants,
-                RalphConstants.DrivetrainConstants.SAFE_DISTANCE, RalphConstants.AutoConstants.xPID,
-                RalphConstants.AutoConstants.yPID, RalphConstants.AutoConstants.rPID,
                 RalphConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, RalphTunerConstants.FrontLeft,
                 RalphTunerConstants.FrontRight, RalphTunerConstants.BackLeft, RalphTunerConstants.BackRight);
         drive.setOperatorPerspectiveForward(FieldConstants.getFieldRotation(allianceSupplier.get()));
@@ -93,6 +116,36 @@ public class RalphContainer implements NFRRobotContainer
         switch (Constants.getMode())
         {
         case SIM:
+            superstructure = new Superstructure(new Elevator("InnerElevator", new SimElevatorIOTalonFX(15,
+                    RalphConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS, Pounds.of(8)), new BrakeIO()
+                    {
+                    }, new ElevatorSensorIOLimitSwitch(0), Inches.of(0.5)),
+                    new Elevator(
+                            "OuterElevator", new SimElevatorIOTalonFX(14,
+                                    RalphConstants.OuterElevatorConstants.ELEVATOR_CONSTANTS, Pounds.of(20)),
+                            new BrakeIO()
+                            {
+                            }, new ElevatorSensorIOLimitSwitch(1), Inches.of(0.5)),
+                    RalphConstants.InnerElevatorConstants.HIGH_POSITION,
+                    RalphConstants.OuterElevatorConstants.HIGH_POSITION);
+            climber = new Climber(
+                    new ClimberIOTalonFX(RalphConstants.ClimberConstants.ID, RalphConstants.ClimberConstants.INVERTED,
+                            RalphConstants.ClimberConstants.ENCODER_ID, RalphConstants.ClimberConstants.LOWER_LIMIT,
+                            RalphConstants.ClimberConstants.UPPER_LIMIT),
+                    RalphConstants.ClimberConstants.SWEET_ANGLE, RalphConstants.ClimberConstants.LOWER_LIMIT,
+                    RalphConstants.ClimberConstants.UPPER_LIMIT, RalphConstants.ClimberConstants.CLIMB_SPEED);
+
+            viewer = new Viewer(new ViewerIOXavier());
+            inserter = new Inserter(
+                    new InserterIOTalonFXS(RalphConstants.InserterConstants.ROLLER_MOTOR_ID,
+                            RalphConstants.InserterConstants.ROLLER_MOTOR_INVERTED),
+                    new InserterSensorIOBeamBreak(RalphConstants.InserterConstants.SensorConstants.CORAL_PIN),
+                    RalphConstants.InserterConstants.INTAKE_SPEED, RalphConstants.InserterConstants.OUTTAKE_SPEED);
+            algaeremover = new SpecialStick(
+                    new SpecialStickIOTalonFXS(18, false, RalphConstants.AlgaeRemoverConstants.GEAR_RATIO),
+                    new AlgaeLimitSwitchIO(3), RalphConstants.AlgaeRemoverConstants.REMOVING_SPEED,
+                    RalphConstants.AlgaeRemoverConstants.RETURNING_SPEED);
+            break;
         case REAL:
             superstructure = new Superstructure(new Elevator("InnerElevator",
                     new ElevatorIOTalonFX(15, RalphConstants.InnerElevatorConstants.ELEVATOR_CONSTANTS), new BrakeIO()
@@ -113,14 +166,15 @@ public class RalphContainer implements NFRRobotContainer
                     RalphConstants.ClimberConstants.UPPER_LIMIT, RalphConstants.ClimberConstants.CLIMB_SPEED);
 
             viewer = new Viewer(new ViewerIOXavier());
-            rollers = new Rollers(
-                    new RollersIOTalonFXS(RalphConstants.RollersConstants.ROLLER_MOTOR_LEFT_ID,
-                            RalphConstants.RollersConstants.ROLLER_MOTOR_RIGHT_ID,
-                            RalphConstants.RollersConstants.ROLLER_MOTORS_INVERTED),
-                    new RollersSensorIOAnalog(RalphConstants.RollersConstants.SensorConstants.ANALOG_ALGAE,
-                            RalphConstants.RollersConstants.SensorConstants.ALGAE_MAX_DISTANCE),
-                    new RollersSensorIOBeamBreak(RalphConstants.RollersConstants.SensorConstants.ANALOG_CORAL),
-                    RalphConstants.RollersConstants.INTAKE_SPEED, RalphConstants.RollersConstants.OUTTAKE_SPEED);
+            inserter = new Inserter(
+                    new InserterIOTalonFXS(RalphConstants.InserterConstants.ROLLER_MOTOR_ID,
+                            RalphConstants.InserterConstants.ROLLER_MOTOR_INVERTED),
+                    new InserterSensorIOBeamBreak(RalphConstants.InserterConstants.SensorConstants.CORAL_PIN),
+                    RalphConstants.InserterConstants.INTAKE_SPEED, RalphConstants.InserterConstants.OUTTAKE_SPEED);
+            algaeremover = new SpecialStick(
+                    new SpecialStickIOTalonFXS(18, false, RalphConstants.AlgaeRemoverConstants.GEAR_RATIO),
+                    new AlgaeLimitSwitchIO(3), RalphConstants.AlgaeRemoverConstants.REMOVING_SPEED,
+                    RalphConstants.AlgaeRemoverConstants.RETURNING_SPEED);
             break;
         case REPLAY:
         default:
@@ -143,59 +197,121 @@ public class RalphContainer implements NFRRobotContainer
             viewer = new Viewer(new ViewerIO()
             {
             });
-            rollers = new Rollers(new RollersIO()
+            inserter = new Inserter(new InserterIO()
             {
-            }, new RollersSensorIO()
+            }, new InserterSensorIO()
             {
-            }, new RollersSensorIO()
+            }, RalphConstants.InserterConstants.INTAKE_SPEED, RalphConstants.InserterConstants.OUTTAKE_SPEED);
+            algaeremover = new SpecialStick(new SpecialStickIO()
             {
-            }, RalphConstants.RollersConstants.INTAKE_SPEED, RalphConstants.RollersConstants.OUTTAKE_SPEED);
+            }, new AlgaeRemoverSensorIO()
+            {
+            }, RalphConstants.AlgaeRemoverConstants.REMOVING_SPEED,
+                    RalphConstants.AlgaeRemoverConstants.RETURNING_SPEED);
             break;
         }
+        inserter.setDefaultCommand(defaultIntake());
+        algaeremover.setDefaultCommand(algaeremover.pullOutSpecialStick());
         dashboard = new Dashboard(new ReefDisplayIOSwing("ReefscapeDisplay"), new DashboardIOFWC());
+        RalphAutos.addNamedCommands(this);
         RalphAutos.addAutoRoutines(this);
         dashboard.setResetEncodersCommand(drive.runOnce(this::resetDriveEncoders).ignoringDisable(true));
-        SmartDashboard.putData("Go do thing", getGoToReefPoseCommand());
+        PortForwarder.add(5801, "10.1.72.11", 5800);
+        PortForwarder.add(5802, "10.1.72.11", 1181);
+        PortForwarder.add(5803, "10.1.72.13", 5800);
+        PortForwarder.add(5804, "10.1.72.13", 1181);
+        PortForwarder.add(5805, "10.1.72.14", 5800);
+        PortForwarder.add(5806, "10.1.72.14", 1181);
+        PortForwarder.add(5807, "10.1.72.36", 1181);
+        PortForwarder.add(5808, "10.1.72.14", 22);
+        getInserter().setDefaultCommand(defaultIntake());
+        Logger.recordOutput("RobotPose", new Pose2d());
+        Logger.recordOutput("FinalComponentPoses", finalComponentPoses);
+        innerElevatorPose = () -> new Pose3d(Inches.of(0), Inches.of(0),
+                superstructure.getInnerElevator().getPosition().plus(superstructure.getOuterElevator().getPosition()),
+                Rotation3d.kZero);
+        outerElevatorPose = () -> new Pose3d(Inches.of(0), Inches.of(0),
+                superstructure.getOuterElevator().getPosition(), Rotation3d.kZero);
+        SmartDashboard.putNumber("Linear kP", RalphConstants.PathplannerConstants.linearPIDConstants.kP);
+        SmartDashboard.putNumber("Linear kI", RalphConstants.PathplannerConstants.linearPIDConstants.kI);
+        SmartDashboard.putNumber("Linear kD", RalphConstants.PathplannerConstants.linearPIDConstants.kD);
+        SmartDashboard.putNumber("Rotation kP", RalphConstants.PathplannerConstants.angularPIDConstants.kP);
+        SmartDashboard.putNumber("Rotation kI", RalphConstants.PathplannerConstants.angularPIDConstants.kI);
+        SmartDashboard.putNumber("Rotation kD", RalphConstants.PathplannerConstants.angularPIDConstants.kD);
+        linearPIDSupplier = () -> new PIDConstants(
+                SmartDashboard.getNumber("Linear kP", RalphConstants.PathplannerConstants.linearPIDConstants.kP),
+                SmartDashboard.getNumber("Linear kI", RalphConstants.PathplannerConstants.linearPIDConstants.kI),
+                SmartDashboard.getNumber("Linear kD", RalphConstants.PathplannerConstants.linearPIDConstants.kD));
+        angularPIDSupplier = () -> new PIDConstants(
+                SmartDashboard.getNumber("Rotation kP", RalphConstants.PathplannerConstants.angularPIDConstants.kP),
+                SmartDashboard.getNumber("Rotation kI", RalphConstants.PathplannerConstants.angularPIDConstants.kI),
+                SmartDashboard.getNumber("Rotation kD", RalphConstants.PathplannerConstants.angularPIDConstants.kD));
     }
 
-    public Command getGoToReefPoseCommand()
+    public SpecialStick getAlgaeRemover()
     {
-        return Commands.defer(() -> getDrive()
-                .driveToPose(FieldConstants.getReefBackupPosition(getDashboard().getTargetPose(), Feet.of(1)),
-                        RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                .alongWith(getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForReef()))
-                .andThen(() -> getDrive().driveToPose(getDashboard().getTargetPose(),
-                        RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)),
-                Set.of());
+        return algaeremover;
     }
 
-    public Command getGoToStationCommand()
+    public Command intakeCoral()
     {
-        return Commands.defer(() -> getDrive()
-                .driveToPose(getDashboard().getStationTargetPose(), RalphConstants.PathplannerConstants.MAX_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ACCELERATION,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_VELOCITY,
-                        RalphConstants.PathplannerConstants.MAX_ANGULAR_ACCELERATION)
-                .alongWith(getSuperstructure().getGoToGoalCommand(getDashboard().getSuperstructureGoalForStation())),
-                Set.of());
+        return inserter.intakeCoral();
     }
 
-    public Command getCoralIntakeCommand()
+    public Command outtakeCoral()
     {
-        return // superstructure.getGoToGoalCommand(SuperstructureGoal.CORAL_STATION)
-               // .andThen(rollers.getCoralIntakeCommand());
-        rollers.getCoralIntakeCommand(useBeamBreak.get());
+        return inserter.outtakeCoral();
     }
 
-    public Command getCoralOuttakeCommand()
+    public Command goToL4()
     {
-        return rollers.getOuttakeCoralCommand().andThen(drive.backup(Seconds.of(3), 0.3));
+        return superstructure.goToGoal(SuperstructureGoal.L4);
+    }
+
+    public Command goToL3()
+    {
+        return superstructure.goToGoal(SuperstructureGoal.L3);
+    }
+
+    public Command goToL2()
+    {
+        return superstructure.goToGoal(SuperstructureGoal.L2);
+    }
+
+    public Command goToL1()
+    {
+        return superstructure.goToGoal(SuperstructureGoal.L1);
+    }
+
+    public Command holdAtL4()
+    {
+        return superstructure.holdAtGoal(SuperstructureGoal.L4);
+    }
+
+    public Command holdAtL3()
+    {
+        return superstructure.holdAtGoal(SuperstructureGoal.L3);
+    }
+
+    public Command holdAtL2()
+    {
+        return superstructure.holdAtGoal(SuperstructureGoal.L2);
+    }
+
+    public Command holdAtL1()
+    {
+        return superstructure.holdAtGoal(SuperstructureGoal.L1);
+    }
+
+    public Command goToIntake()
+    {
+        return superstructure.goToGoal(SuperstructureGoal.CORAL_STATION);
+    }
+
+    public Command homeElevator()
+    {
+        return superstructure.getHomingCommand(RalphConstants.InnerElevatorConstants.HOMING_SPEED,
+                RalphConstants.OuterElevatorConstants.HOMING_SPEED);
     }
 
     public Command driveByJoystick(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier)
@@ -214,14 +330,14 @@ public class RalphContainer implements NFRRobotContainer
     }
 
     /**
-     * Get the rollers subsystem from the container
+     * Get the inserter subsystem from the container
      * 
-     * @return the rollers subsystem
+     * @return the inserter subsystem
      */
 
-    public Rollers getRollers()
+    public Inserter getInserter()
     {
-        return rollers;
+        return inserter;
     }
 
     /**
@@ -254,6 +370,17 @@ public class RalphContainer implements NFRRobotContainer
         return dashboard;
     }
 
+    public Command getDriveSimple()
+    {
+        return drive.resetOrientation(Rotation2d.k180deg).andThen(drive.backup(Seconds.of(3), -0.5));
+    }
+
+    public Command getDrivePlace()
+    {
+        return drive.resetOrientation(Rotation2d.k180deg)
+                .andThen(drive.backup(Seconds.of(3), -0.5).alongWith(goToL4()).andThen(outtakeCoral()));
+    }
+
     public Viewer getViewer()
     {
         return viewer;
@@ -274,18 +401,20 @@ public class RalphContainer implements NFRRobotContainer
     @Override
     public Command getAutonomousCommand()
     {
-        return dashboard.getRoutine().command();
+        return dashboard.getRoutine();
     }
 
     @Override
     public void autonomousInit()
     {
-        drive.resetPose(dashboard.getRoutine().startPose().get());
+        if (dashboard.getRoutine().getStartingPose() != null)
+            drive.resetPose(dashboard.getRoutine().getStartingPose());
     }
 
     @Override
     public void periodic()
     {
+        vision.updateWithHeading(drive.getHeading());
         if (alliance != allianceSupplier.get())
         {
             alliance = allianceSupplier.get();
@@ -294,15 +423,21 @@ public class RalphContainer implements NFRRobotContainer
         vision.setLastKnownRobotPose(drive.getPose());
         for (var poseEstimate : vision.getPoseEstimates())
         {
-            drive.addVisionMeasurement(poseEstimate.pose(), Utils.fpgaToCurrentTime(poseEstimate.timestamp()));
+            drive.addVisionMeasurement(poseEstimate.pose(), poseEstimate.timestamp(), VecBuilder.fill(0.1, 0.1, 0.001));
         }
         dashboard.updatePose(drive.getPose());
         dashboard.setInnerElevatorPosition(superstructure.getInnerElevator().getPosition());
         dashboard.setOuterElevatorPosition(superstructure.getOuterElevator().getPosition());
-        dashboard.setHasCoral(rollers.hasCoral());
-        dashboard.setHasAlgae(rollers.hasAlgae());
+        dashboard.setHasCoral(inserter.hasCoral());
+        setIndexPose(RalphConstants.AdvantageScopeConstants.INNER_ELEVATOR_INDEX, innerElevatorPose.get());
+        setIndexPose(RalphConstants.AdvantageScopeConstants.OUTER_ELEVATOR_INDEX, outerElevatorPose.get());
+        RalphConstants.PathplannerConstants.linearPIDConstants = linearPIDSupplier.get();
+        RalphConstants.PathplannerConstants.angularPIDConstants = angularPIDSupplier.get();
+        drive.setLinearPID(RalphConstants.PathplannerConstants.linearPIDConstants);
+        drive.setAngularPID(RalphConstants.PathplannerConstants.linearPIDConstants);
     }
 
+    @Override
     public void teleopInit()
     {
         dashboard.setTeleopStage();
@@ -330,21 +465,131 @@ public class RalphContainer implements NFRRobotContainer
         dashboard.setSettingsStage();
     }
 
-    public boolean isInAlgaeState()
+    public class IntakeWhileWaitingCommand extends Command
     {
-        return superstructure.getGoal() == SuperstructureGoal.HIGHER_ALGAE
-                || superstructure.getGoal() == SuperstructureGoal.LOWER_ALGAE
-                || superstructure.getGoal() == SuperstructureGoal.PROCESSOR_STATION
-                || superstructure.getGoal() == SuperstructureGoal.STOW_ALGAE;
+        public IntakeWhileWaitingCommand()
+        {
+            addRequirements(inserter);
+        }
+
+        @Override
+        public void execute()
+        {
+            if (!inserter.hasCoral() && superstructure.isAtGoal(SuperstructureGoal.CORAL_STATION))
+            {
+                inserter.intake();
+            } else
+            {
+                inserter.stop();
+            }
+        }
     }
 
-    public Command getOuttakeCommand()
+    public Command defaultIntake()
     {
-        return isInAlgaeState() ? rollers.getOuttakeCommand() : getCoralOuttakeCommand();
+        return new IntakeWhileWaitingCommand();
     }
 
-    public Command getOuttakeCommand(double speed)
+    public Distance getDistanceToPose(Pose2d pose)
     {
-        return isInAlgaeState() ? rollers.getOuttakeCommand(speed) : getCoralOuttakeCommand();
+        return Meters.of(drive.getPose().getTranslation().getDistance(pose.getTranslation()));
+    }
+
+    public ReefSide getNearestReefSide()
+    {
+        ReefSide abSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.AB_SIDE, alliance);
+        ReefSide cdSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.CD_SIDE, alliance);
+        ReefSide efSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.EF_SIDE, alliance);
+        ReefSide ghSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.GH_SIDE, alliance);
+        ReefSide ijSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.IJ_SIDE, alliance);
+        ReefSide klSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.KL_SIDE, alliance);
+        ReefSide nearestSide = abSide;
+        Distance nearestDistance = getDistanceToPose(abSide.center());
+        if (getDistanceToPose(cdSide.center()).lt(nearestDistance))
+        {
+            nearestSide = cdSide;
+            nearestDistance = getDistanceToPose(cdSide.center());
+        }
+        if (getDistanceToPose(efSide.center()).lt(nearestDistance))
+        {
+            nearestSide = efSide;
+            nearestDistance = getDistanceToPose(efSide.center());
+        }
+        if (getDistanceToPose(ghSide.center()).lt(nearestDistance))
+        {
+            nearestSide = ghSide;
+            nearestDistance = getDistanceToPose(ghSide.center());
+        }
+        if (getDistanceToPose(ijSide.center()).lt(nearestDistance))
+        {
+            nearestSide = ijSide;
+            nearestDistance = getDistanceToPose(ijSide.center());
+        }
+        if (getDistanceToPose(klSide.center()).lt(nearestDistance))
+        {
+            nearestSide = klSide;
+            nearestDistance = getDistanceToPose(klSide.center());
+        }
+        return nearestSide;
+    }
+
+    public Pose2d applyOffset(Pose2d pose, Distance x, Distance y)
+    {
+        Translation2d translation = new Translation2d(x, y).rotateBy(pose.getRotation());
+        return new Pose2d(pose.getTranslation().plus(translation), pose.getRotation());
+    }
+
+    public Pose2d applyOffset(Pose2d pose)
+    {
+        return applyOffset(pose, Inches.of(1.5), Inches.of(-9));
+    }
+
+    public Command driveToPose(Supplier<Pose2d> pose)
+    {
+        return Commands.defer(() -> drive.closeDriveToPose(pose.get(), viewer::getBestTarget), Set.of(drive));
+    }
+
+    public Command driveToLeftReef()
+    {
+        return driveToPose(() -> applyOffset(getNearestReefSide().left()));
+    }
+
+    public Command driveToRightReef()
+    {
+        return driveToPose(() -> applyOffset(getNearestReefSide().right()));
+    }
+
+    public Command driveToCenterReef()
+    {
+        return driveToPose(() -> applyOffset(getNearestReefSide().center()));
+    }
+
+    public Command driveToCenterAlgae()
+    {
+        return driveToPose(() -> applyOffset(getNearestReefSide().center(), Inches.of(0), Inches.of(1)));
+    }
+
+    public Command goToClosestCoralStation()
+    {
+        return Commands.either(driveToPose(() -> FieldConstants.CoralStations.RIGHT),
+                driveToPose(() -> FieldConstants.CoralStations.LEFT),
+                () -> getDistanceToPose(FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.LEFT)).gt(
+                        getDistanceToPose(FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.RIGHT))));
+    }
+
+    public Command goToProcessor()
+    {
+        return driveToPose(() -> FieldConstants.ProcessorStations.PROCESSOR_STATION);
+    }
+
+    public Command getBackupAuto()
+    {
+        return drive.backup(Seconds.of(1), 0.5);
+    }
+
+    public static void setIndexPose(int index, Pose3d pose)
+    {
+        finalComponentPoses[index] = pose;
+        Logger.recordOutput("FinalComponentPoses", finalComponentPoses);
     }
 }

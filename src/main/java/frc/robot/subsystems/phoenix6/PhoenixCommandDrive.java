@@ -1,11 +1,13 @@
 package frc.robot.subsystems.phoenix6;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -20,36 +22,35 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 
-import choreo.auto.AutoFactory;
-import choreo.trajectory.SwerveSample;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest.ApplyFieldSpeeds;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.subsystems.phoenix6.requests.CloseDriveToPoseRequest;
+import frc.robot.subsystems.viewer.Viewer.ViewerTarget;
+
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -65,16 +66,15 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     private ArrayList<Integer> disconnectedEncoderArray;
     private String motorAlertString = "";
     private String encoderAlertString = "";
+    private final SwerveDrivePoseEstimator poseEstimator;
+    private final Notifier notifier = new Notifier(this::updateOdometry);
+    private PIDConstants linearPIDConstants;
+    private PIDConstants angularPIDConstants;
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
-
-    private final PIDController xPid;
-    private final PIDController yPid;
-    private final PIDController rPid;
-    private final AutoFactory factory;
 
     /**
      * Create a new PhoenixCommandDrive
@@ -86,7 +86,6 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      */
     public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
             AngularVelocity maxAngularSpeed, PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
-            PIDController xPid, PIDController yPid, PIDController rPid,
             SwerveModuleConstants<?, ?, ?>... moduleConstants)
     {
         super(drivetrainConstants, moduleConstants);
@@ -97,22 +96,45 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         encoderDisconnectedAlert = new Alert("", Alert.AlertType.kWarning);
         disconnectedMotorArray = new ArrayList<>();
         disconnectedEncoderArray = new ArrayList<>();
-        this.xPid = xPid;
-        this.yPid = yPid;
-        this.rPid = rPid;
-        rPid.enableContinuousInput(-Math.PI, Math.PI);
-        ApplyFieldSpeeds pathControl = new ApplyFieldSpeeds().withDriveRequestType(DriveRequestType.Velocity);
-        factory = new AutoFactory(this::getPose, this::resetPose, (SwerveSample sample) ->
-        {
-            var pose = getPose();
-            var speeds = new ChassisSpeeds(sample.vx + xPid.calculate(pose.getX(), sample.x),
-                    sample.vy + yPid.calculate(pose.getY(), sample.y),
-                    sample.omega + rPid.calculate(pose.getRotation().getRadians(), sample.heading));
-            setControl(pathControl.withSpeeds(speeds).withWheelForceFeedforwardsX(sample.moduleForcesX())
-                    .withWheelForceFeedforwardsY(sample.moduleForcesY()));
-        }, true, this);
         // Configure the Pathplanner AutoBuilder for easier pathfinding
         configureAutoBuilder(linearPIDConstants, angularPIDConstants);
+        this.linearPIDConstants = linearPIDConstants;
+        this.angularPIDConstants = angularPIDConstants;
+        poseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getState().RawHeading, getState().ModulePositions,
+                new Pose2d());
+        notifier.startPeriodic(0.02);
+    }
+
+    @Override
+    public void resetPose(Pose2d pose)
+    {
+        super.resetPose(pose);
+        synchronized (poseEstimator)
+        {
+            poseEstimator.resetPose(pose);
+        }
+    }
+
+    @Override
+    public void addVisionMeasurement(Pose2d visionMeasurement, double timestamp)
+    {
+        synchronized (poseEstimator)
+        {
+            poseEstimator.addVisionMeasurement(visionMeasurement, timestamp);
+        }
+    }
+
+    public void addVisionMeasurement(Pose2d visionMeasurement, double timestamp, Vector<N3> stdDevs)
+    {
+        synchronized (poseEstimator)
+        {
+            poseEstimator.addVisionMeasurement(visionMeasurement, timestamp, stdDevs);
+        }
+    }
+
+    public Rotation2d getHeading()
+    {
+        return getState().Pose.getRotation();
     }
 
     private void configureAutoBuilder(PIDConstants linear, PIDConstants angular)
@@ -120,7 +142,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         try
         {
             RobotConfig config = RobotConfig.fromGUISettings();
-            AutoBuilder.configure(() -> getState().Pose, this::resetPose, () -> getState().Speeds,
+            AutoBuilder.configure(this::getPose, this::resetPose, () -> getState().Speeds,
                     (speeds, feedforwards) -> setControl(applyRobotSpeeds.withSpeeds(speeds)
                             .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
                             .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
@@ -136,10 +158,9 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     public PhoenixCommandDrive(SwerveDrivetrainConstants drivetrainConstants, LinearVelocity maxSpeed,
             AngularVelocity maxAngularSpeed, PIDConstants linearPIDConstants, PIDConstants angularPIDConstants,
-            Distance safeDriveDistance, PIDController xPid, PIDController yPid, PIDController rPid,
             Angle[] moduleOffsets, SwerveModuleConstants<?, ?, ?>... moduleConstants)
     {
-        this(drivetrainConstants, maxSpeed, maxAngularSpeed, linearPIDConstants, angularPIDConstants, xPid, yPid, rPid,
+        this(drivetrainConstants, maxSpeed, maxAngularSpeed, linearPIDConstants, angularPIDConstants,
                 new SwerveModuleConstants[]
                 { moduleConstants[0].withEncoderOffset(moduleOffsets[0]),
                         moduleConstants[1].withEncoderOffset(moduleOffsets[1]),
@@ -211,6 +232,22 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         });
     }
 
+    public Command closeDriveToPose(Pose2d pose, Supplier<Optional<ViewerTarget>> viewerTargetSupplier)
+    {
+        CloseDriveToPoseRequest request = new CloseDriveToPoseRequest(pose, linearPIDConstants.kP, linearPIDConstants.kI, linearPIDConstants.kD, angularPIDConstants.kP, angularPIDConstants.kI, angularPIDConstants.kD, MetersPerSecond.of(2),
+                () -> poseEstimator.getEstimatedPosition(), viewerTargetSupplier);
+        Logger.recordOutput("TargetPose", pose);
+        return applyRequest(() -> request).until(() -> request.isFinished());
+    }
+
+    public void updateOdometry()
+    {
+        synchronized (poseEstimator)
+        {
+            poseEstimator.update(getState().RawHeading, getState().ModulePositions);
+        }
+    }
+
     /**
      * Get a command that drives the robot by joystick input
      * 
@@ -279,7 +316,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command goBackward(double speed)
     {
         ChassisSpeeds speeds = new ChassisSpeeds();
-        speeds.vyMetersPerSecond = -speed;
+        speeds.vxMetersPerSecond = -speed;
         return driveWithRobotRelativeDutyCycle(() -> speeds);
     }
 
@@ -332,10 +369,17 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
      */
     public Command resetOrientation(Rotation2d orientation)
     {
+        poseEstimator.resetRotation(orientation);
         return runOnce(() ->
         {
             resetRotation(orientation);
         });
+    }
+
+    @AutoLogOutput
+    public Pose2d getStatePose()
+    {
+        return getState().Pose;
     }
 
     @Override
@@ -352,7 +396,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     @AutoLogOutput
     public Pose2d getPose()
     {
-        return getState().Pose;
+        return poseEstimator.getEstimatedPosition();
     }
 
     /**
@@ -408,6 +452,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public void periodic()
     {
         disconnectedMotorArray.clear();
+        disconnectedEncoderArray.clear();
         for (SwerveModule<TalonFX, TalonFX, ?> module : getModules())
         {
             if (!module.getDriveMotor().isConnected())
@@ -600,51 +645,6 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     }
 
     /**
-     * Follow a choreo path
-     * 
-     * @param pathName the name of the path
-     * @return a command that follows the path
-     */
-    public Command followChoreoPath(String pathName)
-    {
-        return Commands.sequence(Commands.runOnce(() ->
-        {
-            xPid.reset();
-            yPid.reset();
-            rPid.reset();
-        }), factory.trajectoryCmd(pathName));
-    }
-
-    /**
-     * Get the waypoints of a choreo path
-     * 
-     * @param pathName the name of the path
-     * @return the waypoints of the path
-     */
-    public Translation2d[] getChoreoWaypoints(String pathName)
-    {
-        var trajectory = factory.newRoutine("routine").trajectory(pathName).getRawTrajectory();
-        Translation2d[] waypoints = new Translation2d[trajectory.getPoses().length];
-        for (int i = 0; i < trajectory.getPoses().length; i++)
-        {
-            waypoints[i] = trajectory.getPoses()[i].getTranslation();
-        }
-        return waypoints;
-    }
-
-    /**
-     * Get the initial pose of a choreo path
-     * 
-     * @param pathName the name of the path
-     * @return the initial pose of the path
-     */
-    public Pose2d getInitialChoreoPose(String pathName)
-    {
-        var trajectory = factory.newRoutine("routine").trajectory(pathName);
-        return trajectory.getInitialPose().orElse(new Pose2d(-1, -1, new Rotation2d()));
-    }
-
-    /**
      * Backs up the robot
      * 
      * @param time  the time to back up
@@ -654,5 +654,34 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command backup(Time time, double speed)
     {
         return goBackward(speed).withTimeout(time);
+    }
+
+    /**
+     * Get the current speed of the robot
+     * 
+     * @return the current speed of the robot (a LinearVelocity)
+     */
+    public LinearVelocity getSpeed()
+    {
+        var speeds = getState().Speeds;
+        return MetersPerSecond.of(Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond));
+    }
+
+    public void setLinearPID(PIDConstants pid)
+    {
+        if (linearPIDConstants.kP != pid.kP || linearPIDConstants.kI != pid.kI || linearPIDConstants.kD != pid.kD)
+        {
+            linearPIDConstants = pid;
+            configureAutoBuilder(linearPIDConstants, angularPIDConstants);
+        }
+    }
+    
+    public void setAngularPID(PIDConstants pid)
+    {
+        if (angularPIDConstants.kP != pid.kP || angularPIDConstants.kI != pid.kI || angularPIDConstants.kD != pid.kD)
+        {
+            angularPIDConstants = pid;
+            configureAutoBuilder(linearPIDConstants, angularPIDConstants);
+        }
     }
 }
