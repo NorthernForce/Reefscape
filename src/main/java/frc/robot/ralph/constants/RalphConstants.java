@@ -242,6 +242,8 @@ public class RalphConstants
         public static final PIDController xPID = new PIDController(8, 0, 0);
         public static final PIDController yPID = new PIDController(8, 0, 0);
         public static final PIDController rPID = new PIDController(7.5, 0, 0);
+
+        public static final double INTAKE_WAIT_TIME = 1.5;
     }
 
     public static class AlgaeRemoverConstants
