@@ -523,7 +523,7 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command driveToPose(Supplier<Pose2d> pose)
     {
-        return Commands.defer(() -> drive.closeDriveToPose(pose.get(), viewer::getBestTarget), Set.of(drive));
+        return Commands.defer(() -> drive.closeDriveToPose(pose.get(), viewer::getTarget), Set.of(drive));
     }
 
     public Command driveToLeftReef()
