@@ -234,8 +234,10 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
 
     public Command closeDriveToPose(Pose2d pose, Supplier<Optional<ViewerTarget>> viewerTargetSupplier)
     {
-        CloseDriveToPoseRequest request = new CloseDriveToPoseRequest(pose, linearPIDConstants.kP, linearPIDConstants.kI, linearPIDConstants.kD, angularPIDConstants.kP, angularPIDConstants.kI, angularPIDConstants.kD, MetersPerSecond.of(2),
-                () -> poseEstimator.getEstimatedPosition(), viewerTargetSupplier);
+        CloseDriveToPoseRequest request = new CloseDriveToPoseRequest(pose, linearPIDConstants.kP,
+                linearPIDConstants.kI, linearPIDConstants.kD, angularPIDConstants.kP, angularPIDConstants.kI,
+                angularPIDConstants.kD, MetersPerSecond.of(2), () -> poseEstimator.getEstimatedPosition(),
+                viewerTargetSupplier);
         Logger.recordOutput("TargetPose", pose);
         return applyRequest(() -> request).until(() -> request.isFinished());
     }
@@ -675,7 +677,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
             configureAutoBuilder(linearPIDConstants, angularPIDConstants);
         }
     }
-    
+
     public void setAngularPID(PIDConstants pid)
     {
         if (angularPIDConstants.kP != pid.kP || angularPIDConstants.kI != pid.kI || angularPIDConstants.kD != pid.kD)
