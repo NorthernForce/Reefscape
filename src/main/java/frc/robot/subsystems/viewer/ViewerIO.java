@@ -8,8 +8,9 @@ public interface ViewerIO
     public static class ViewerIOInputs
     {
         public boolean connected = false;
-        public double[] postOffsetMeters = new double[0];
-        public double[] postDistanceMeters = new double[0];
+        public boolean postDetected = false;
+        public double postXOffset = Float.NaN;
+        public double postZOffset = Float.NaN;
     }
 
     /**

@@ -30,6 +30,7 @@ public class CloseDriveToPoseRequest implements SwerveRequest
     private final PIDController viewerYPID;
     private final LinearVelocity maxVelocity;
     private final Supplier<Optional<ViewerTarget>> viewerTargetSupplier;
+    private final Pose2d targetPose;
 
     public CloseDriveToPoseRequest(Pose2d pose, double tP, double tI, double tD, double rP, double rI, double rD,
             LinearVelocity maxVelocity, Supplier<Pose2d> poseGetter,
@@ -54,6 +55,7 @@ public class CloseDriveToPoseRequest implements SwerveRequest
         facingAngle.withDriveRequestType(DriveRequestType.Velocity);
         this.maxVelocity = maxVelocity;
         this.viewerTargetSupplier = viewerTargetSupplier;
+        this.targetPose = pose;
     }
 
     @Override
@@ -63,11 +65,12 @@ public class CloseDriveToPoseRequest implements SwerveRequest
         double vy = yPID.calculate(poseGetter.get().getY());
         ChassisSpeeds targetSpeeds = new ChassisSpeeds(vx, vy, 0);
         Optional<ViewerTarget> target = viewerTargetSupplier.get();
-        if (target.isPresent())
+        if (target.isPresent() && poseGetter.get().getTranslation().getDistance(targetPose.getTranslation()) < 0.4)
         {
-            double viewerVx = viewerXPID.calculate(target.get().xDistance().in(Meters));
-            double viewerVy = viewerYPID.calculate(target.get().yDistance().in(Meters));
-            targetSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(viewerVx, viewerVy, 0,
+            double viewerVy = viewerYPID.calculate(target.get().xDistance().in(Meters));
+            ChassisSpeeds robotRel = ChassisSpeeds.fromFieldRelativeSpeeds(targetSpeeds, parameters.currentPose.getRotation());
+            robotRel.vyMetersPerSecond = viewerVy;
+            targetSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(robotRel,
                     parameters.currentPose.getRotation());
         }
         facingAngle.withVelocityX(MathUtil.clamp(targetSpeeds.vxMetersPerSecond, -maxVelocity.in(MetersPerSecond),

@@ -10,7 +10,7 @@ import cv2
 w, h, fps = 640, 480, 30
 pipe = rs.pipeline()
 
-meter_scale = .65 # i have trust in this goated number
+meter_scale = .57 # i have trust in this goated number
 colorizer = rs.colorizer()
 colorizer.set_option(rs.option.visual_preset, 1)
 colorizer.set_option(rs.option.min_distance, 0)
@@ -30,12 +30,12 @@ color_intr = profile.get_stream(rs.stream.color).as_video_stream_profile().get_i
 depth_intr = profile.get_stream(rs.stream.depth).as_video_stream_profile().get_intrinsics()
 
 NetworkTables.setNetworkIdentity("skynet")
-NetworkTables.startClientTeam(172)
+NetworkTables.initialize("10.1.72.2")
 viewer_nt = NetworkTables.getTable("Viewer")
 cs_video = CameraServer.putVideo("Video", w, h)
 cs_depth = CameraServer.putVideo("Depth", w//4, h//4)
 
-dist_thresh = 84 # in px
+dist_thresh = 96 # cein
 time_thresh = .200 # 200 ms MAX (needs more tuning)
 
 def find(parent, line):
@@ -64,12 +64,12 @@ while True:
     dist_img = cv2.medianBlur(dist_img_pre, 17)
     
     ht, thresh_img = cv2.threshold(dist_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    lt = ht * .9
+    lt = ht * .75
     edges = cv2.Canny(dist_img, lt, ht)
 
     new_lines = cv2.HoughLinesP(edges, 1, np.pi/180, 50, None, 200, 500)
     new_lines = new_lines if new_lines is not None else []
-    new_lines = list(filter(lambda x: abs(atan2(x[2]-x[0], x[3]-x[1])) < pi/20, map(lambda l: tuple(l[0]), new_lines)))
+    new_lines = list(filter(lambda x: abs(atan2(x[2]-x[0], x[3]-x[1])) < pi/22, map(lambda l: tuple(l[0]), new_lines)))
     prev_lines = list(filter(lambda pl: start_time-pl[0] < time_thresh, prev_lines))
     lines = [*new_lines, *map(lambda pl: tuple(pl[1]), prev_lines)]
     prev_lines.extend(map(lambda l: (start_time, l), new_lines))
@@ -100,6 +100,7 @@ while True:
     offsets = list(map(lambda l: abs((l[2]+l[0])/2 - w/2), avg_lines))
 
     dbg_img = color_img.copy()
+    dbg_img = cv2.cvtColor(dist_img, cv2.COLOR_GRAY2BGR)
     dbg_img = cv2.bitwise_or(dbg_img, cv2.merge([np.zeros_like(edges), np.zeros_like(edges), edges]))
 
     for x1, y1, x2, y2 in lines:

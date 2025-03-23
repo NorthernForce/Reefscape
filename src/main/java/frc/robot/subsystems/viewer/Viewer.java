@@ -18,7 +18,8 @@ public class Viewer extends SubsystemBase
     private final ViewerIOInputsAutoLogged inputs;
     private final Alert viewerMissingAlert;
 
-    public static record ViewerTarget(Distance xDistance, Distance yDistance) {
+    public static record ViewerTarget(Distance xDistance, Distance zDistance) {
+
     }
 
     public Viewer(ViewerIO io)
@@ -43,42 +44,12 @@ public class Viewer extends SubsystemBase
     }
 
     @AutoLogOutput
-    public ViewerTarget[] getTargets()
+    public Optional<ViewerTarget> getTarget()
     {
-        if (inputs.connected)
+        if (inputs.connected && inputs.postDetected)
         {
-            double[] postDistances = inputs.postDistanceMeters;
-            double[] postOffsets = inputs.postOffsetMeters;
-            if (postDistances.length == postOffsets.length)
-            {
-                ViewerTarget[] targets = new ViewerTarget[postDistances.length];
-                for (int i = 0; i < postDistances.length; i++)
-                {
-                    targets[i] = new ViewerTarget(Meters.of(postDistances[i]), Meters.of(postOffsets[i]));
-                }
-                return targets;
-            }
-        }
-        return new ViewerTarget[0];
-    }
-
-    public Optional<ViewerTarget> getBestTarget()
-    {
-        var targets = getTargets();
-        if (inputs.connected && targets.length > 0)
-        {
-            ViewerTarget bestTarget = targets[0];
-            for (var target : targets)
-            {
-                if (target.yDistance().lte(bestTarget.yDistance()))
-                {
-                    bestTarget = target;
-                }
-            }
-            if (bestTarget.xDistance().lte(Meters.of(0.5)))
-            {
-                return Optional.of(bestTarget);
-            }
+            return Optional.of(new ViewerTarget(Distance.ofBaseUnits(inputs.postXOffset, Meters),
+                    Distance.ofBaseUnits(inputs.postZOffset, Meters)));
         }
         return Optional.empty();
     }
