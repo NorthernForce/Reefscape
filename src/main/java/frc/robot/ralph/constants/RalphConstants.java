@@ -33,7 +33,7 @@ public class RalphConstants
     public static class DrivetrainConstants
     {
 
-        public static final LinearVelocity MAX_SPEED = MetersPerSecond.of(3.0);
+        public static final LinearVelocity MAX_SPEED = MetersPerSecond.of(4.0);
         public static final AngularVelocity MAX_ANGULAR_SPEED = RotationsPerSecond.of(0.7);
         public static final LinearVelocity MAX_LINEAR_SPEED = MetersPerSecond.of(4.73);
         public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(3.0);
@@ -77,21 +77,21 @@ public class RalphConstants
                 Inches.of(8.5), new Rotation3d(Degrees.of(0.0), Degrees.of(15.0), Degrees.of(225.0)));
 
         public static final Transform3d FL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 3.0), Inches.of(15 - 7.75),
-                Inches.of(8.5), new Rotation3d(Degrees.of(0), Degrees.of(-21.9), Degrees.of(53.4)));
+                Inches.of(8.5), new Rotation3d(Degrees.of(0), Degrees.of(-22.1), Degrees.of(53.4)));
 
         public static final Transform3d CTR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 2.5), Inches.of(0),
-                Inches.of(9.5), new Rotation3d(Degrees.of(0), Degrees.of(-30.0), Degrees.of(0.0)));
+                Inches.of(9.5), new Rotation3d(Degrees.of(0), Degrees.of(-22.4), Degrees.of(0.0)));
 
         public static String[] cameraNames()
         {
             return new String[]
-            { FL_CAMERA_NAME, FR_CAMERA_NAME, CTR_CAMERA_NAME };
+            { FR_CAMERA_NAME, FL_CAMERA_NAME, CTR_CAMERA_NAME };
         }
 
         public static Transform3d[] cameraTransforms()
         {
             return new Transform3d[]
-            { FL_ROBOT_TO_CAMERA, FR_ROBOT_TO_CAMERA, CTR_ROBOT_TO_CAMERA };
+            { FR_ROBOT_TO_CAMERA, FL_ROBOT_TO_CAMERA, CTR_ROBOT_TO_CAMERA };
         }
 
         public static final double MAX_Y_COORDINATE = 350; // TODO: Set this to the actual value
@@ -202,12 +202,12 @@ public class RalphConstants
 
     public static class PathplannerConstants
     {
-        public static PIDConstants linearPIDConstants = new PIDConstants(5.0, 0.0, 0.0);
-        public static PIDConstants angularPIDConstants = new PIDConstants(4.0, 0.0, 0.0);
-        public static LinearVelocity MAX_VELOCITY = FeetPerSecond.of(4);
-        public static LinearAcceleration MAX_ACCELERATION = FeetPerSecondPerSecond.of(2);
-        public static AngularVelocity MAX_ANGULAR_VELOCITY = RotationsPerSecond.of(0.7);
-        public static AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
+        public static PIDConstants linearPIDConstants = new PIDConstants(3.5, 0.0, 0.0);
+        public static PIDConstants angularPIDConstants = new PIDConstants(5.0, 0.0, 0.0);
+        public static final LinearVelocity MAX_VELOCITY = FeetPerSecond.of(4);
+        public static final LinearAcceleration MAX_ACCELERATION = FeetPerSecondPerSecond.of(2);
+        public static final AngularVelocity MAX_ANGULAR_VELOCITY = RotationsPerSecond.of(0.7);
+        public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RotationsPerSecondPerSecond.of(0.7);
     }
 
     public static class ClimberConstants
@@ -247,7 +247,7 @@ public class RalphConstants
     public static class AlgaeRemoverConstants
     {
         public static final double REMOVING_SPEED = 0.5;
-        public static final double RETURNING_SPEED = 0.1;
+        public static final double RETURNING_SPEED = 0.2;
         public static final double GEAR_RATIO = 10.0;
     }
 }

@@ -7,8 +7,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 public class ViewerIOXavier implements ViewerIO
 {
     private final NetworkTable table;
-    private final DoubleArraySubscriber postOffsetSubscriber;
-    private final DoubleArraySubscriber postDistanceSubscriber;
+    private final DoubleArraySubscriber postsSubscriber;
 
     /**
      * Constructs a new ViewerIOXavier.
@@ -16,9 +15,7 @@ public class ViewerIOXavier implements ViewerIO
     public ViewerIOXavier()
     {
         table = NetworkTableInstance.getDefault().getTable("Viewer");
-        postOffsetSubscriber = table.getDoubleArrayTopic("PostOffsets").subscribe(new double[]
-        {});
-        postDistanceSubscriber = table.getDoubleArrayTopic("PostDistances").subscribe(new double[]
+        postsSubscriber = table.getDoubleArrayTopic("Posts").subscribe(new double[]
         {});
     }
 
@@ -37,7 +34,13 @@ public class ViewerIOXavier implements ViewerIO
                 break;
             }
         }
-        inputs.postOffsetMeters = postOffsetSubscriber.get();
-        inputs.postDistanceMeters = postDistanceSubscriber.get();
+        var posts = postsSubscriber.get();
+        inputs.postDistanceMeters = new double[posts.length / 2];
+        inputs.postOffsetMeters = new double[posts.length / 2];
+        for (int i = 0; i < posts.length / 2; i++)
+        {
+            inputs.postDistanceMeters[i] = posts[i * 2];
+            inputs.postOffsetMeters[i] = posts[i * 2 + 1];
+        }
     }
 }
