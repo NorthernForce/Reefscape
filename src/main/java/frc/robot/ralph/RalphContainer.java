@@ -5,7 +5,6 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
@@ -19,25 +18,21 @@ import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
+import frc.robot.FieldConstants.ReefPositions;
 import frc.robot.FieldConstants.ReefSide;
 import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.ralph.constants.RalphTunerConstants;
@@ -260,7 +255,8 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command outtakeCoral()
     {
-        return inserter.outtakeCoral();
+        return Commands.either(inserter.outtakeCoralSlow(), inserter.outtakeCoral(),
+                () -> superstructure.isAtGoal(SuperstructureGoal.L1));
     }
 
     public Command goToL4()
@@ -497,46 +493,23 @@ public class RalphContainer implements NFRRobotContainer
 
     public ReefSide getNearestReefSide()
     {
-        ReefSide abSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.AB_SIDE, alliance);
-        ReefSide cdSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.CD_SIDE, alliance);
-        ReefSide efSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.EF_SIDE, alliance);
-        ReefSide ghSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.GH_SIDE, alliance);
-        ReefSide ijSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.IJ_SIDE, alliance);
-        ReefSide klSide = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.KL_SIDE, alliance);
-        ReefSide nearestSide = abSide;
-        Distance nearestDistance = getDistanceToPose(abSide.center());
-        if (getDistanceToPose(cdSide.center()).lt(nearestDistance))
+        ReefSide closest = FieldConstants.convertReefSideByAlliance(FieldConstants.ReefPositions.REEF_SIDES[0],
+                alliance);
+        for (ReefSide side : FieldConstants.ReefPositions.REEF_SIDES)
         {
-            nearestSide = cdSide;
-            nearestDistance = getDistanceToPose(cdSide.center());
+            side = FieldConstants.convertReefSideByAlliance(side, alliance);
+            if (getDistanceToPose(side.center()).in(Meters) < getDistanceToPose(closest.center()).in(Meters))
+            {
+                closest = side;
+            }
         }
-        if (getDistanceToPose(efSide.center()).lt(nearestDistance))
-        {
-            nearestSide = efSide;
-            nearestDistance = getDistanceToPose(efSide.center());
-        }
-        if (getDistanceToPose(ghSide.center()).lt(nearestDistance))
-        {
-            nearestSide = ghSide;
-            nearestDistance = getDistanceToPose(ghSide.center());
-        }
-        if (getDistanceToPose(ijSide.center()).lt(nearestDistance))
-        {
-            nearestSide = ijSide;
-            nearestDistance = getDistanceToPose(ijSide.center());
-        }
-        if (getDistanceToPose(klSide.center()).lt(nearestDistance))
-        {
-            nearestSide = klSide;
-            nearestDistance = getDistanceToPose(klSide.center());
-        }
-        return nearestSide;
+
+        return closest;
     }
 
     public Pose2d applyOffset(Pose2d pose, Distance x, Distance y)
     {
-        Translation2d translation = new Translation2d(x, y).rotateBy(pose.getRotation());
-        return new Pose2d(pose.getTranslation().plus(translation), pose.getRotation());
+        return FieldConstants.applyOffset(pose, x, y);
     }
 
     public Pose2d applyOffset(Pose2d pose)
@@ -591,5 +564,11 @@ public class RalphContainer implements NFRRobotContainer
     {
         finalComponentPoses[index] = pose;
         Logger.recordOutput("FinalComponentPoses", finalComponentPoses);
+    }
+
+    public Command driveToTrough()
+    {
+        return Commands.defer(() -> drive.closeDriveToPose(getNearestReefSide().trough(), viewer::getBestTarget),
+                Set.of(this.drive));
     }
 }

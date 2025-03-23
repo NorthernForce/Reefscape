@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.subsystems.inserter.sensor.InserterSensorIO;
 import frc.robot.subsystems.inserter.sensor.InserterSensorIOInputsAutoLogged;
 
@@ -72,6 +73,11 @@ public class Inserter extends SubsystemBase
         io.set(outtakeSpeed);
     }
 
+    public void outtake(double speed)
+    {
+        io.set(speed);
+    }
+
     /**
      * Stops motors.
      */
@@ -131,6 +137,32 @@ public class Inserter extends SubsystemBase
         return new CoralIntakeCommand();
     }
 
+    public class CoralOuttakeSlowCommand extends Command
+    {
+        public CoralOuttakeSlowCommand()
+        {
+            addRequirements(Inserter.this);
+        }
+
+        @Override
+        public void initialize()
+        {
+            outtake(RalphConstants.InserterConstants.SLOW_OUTTAKE_SPEED);
+        }
+
+        @Override
+        public boolean isFinished()
+        {
+            return !hasCoral();
+        }
+
+        @Override
+        public void end(boolean interrupted)
+        {
+            stop();
+        }
+    }
+
     public class CoralOuttakeCommand extends Command
     {
         public CoralOuttakeCommand()
@@ -160,6 +192,11 @@ public class Inserter extends SubsystemBase
     public Command outtakeCoral()
     {
         return new CoralOuttakeCommand();
+    }
+
+    public Command outtakeCoralSlow()
+    {
+        return new CoralOuttakeSlowCommand();
     }
 
     /**

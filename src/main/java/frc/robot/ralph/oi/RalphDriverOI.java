@@ -52,6 +52,8 @@ public class RalphDriverOI implements RalphOI
         driverController.leftBumper().and(driverController.rightBumper()).whileTrue(
                 container.driveToCenterAlgae().onlyWhile(() -> driverController.rightBumper().getAsBoolean()));
 
+        driverController.leftTrigger().whileTrue(container.driveToTrough());
+
         SmartDashboard.putData("DriveToReef", container.driveToLeftReef());
     }
 
