@@ -41,8 +41,6 @@ public class RalphDriverOI implements RalphOI
 
         driverController.x().whileTrue(container.goToClosestCoralStation());
 
-        driverController.y().whileTrue(container.goToProcessor());
-
         driverController.leftBumper().and(() -> !driverController.rightBumper().getAsBoolean())
                 .whileTrue(container.driveToLeftReef());
 
@@ -81,11 +79,18 @@ public class RalphDriverOI implements RalphOI
             RalphContainer container)
     {
 
+        driverController.y().onTrue(container.goToIntake().withTimeout(2));
+
         manipulatorController.a().onTrue(container.goToIntake().withTimeout(2));
 
         driverController.start().whileTrue(container.homeElevator());
 
         manipulatorController.start().whileTrue(container.homeElevator());
+
+        driverController.povLeft().and(container.getInserter()::hasCoral).onTrue(container.goToL1().withTimeout(2));
+        driverController.povUp().and(container.getInserter()::hasCoral).onTrue(container.goToL2().withTimeout(2));
+        driverController.povRight().and(container.getInserter()::hasCoral).onTrue(container.goToL3().withTimeout(2));
+        driverController.povDown().and(container.getInserter()::hasCoral).onTrue(container.goToL4().withTimeout(2));
 
         manipulatorController.povLeft().and(container.getInserter()::hasCoral)
                 .onTrue(container.goToL1().withTimeout(2));

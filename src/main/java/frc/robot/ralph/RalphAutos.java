@@ -28,7 +28,7 @@ public class RalphAutos
         NamedCommands.registerCommand("GoToL2Goal", container.goToL2());
         NamedCommands.registerCommand("GoToL1Goal", container.goToL1());
         NamedCommands.registerCommand("GoToIntake", container.goToIntakeForAuto());
-        NamedCommands.registerCommand("Intake", container.intakeCoral());
+        NamedCommands.registerCommand("Intake", container.intakeCoral(0.375));
         NamedCommands.registerCommand("Outtake", container.outtakeCoral().withTimeout(0.5));
         NamedCommands.registerCommand("DriveToCloseLeft", container.driveToLeftReef());
         NamedCommands.registerCommand("DriveToCloseRight", container.driveToRightReef());

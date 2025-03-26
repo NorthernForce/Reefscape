@@ -43,7 +43,6 @@ public class Viewer extends SubsystemBase
         return inputs.connected;
     }
 
-    @AutoLogOutput
     public Optional<ViewerTarget> getTarget()
     {
         if (inputs.connected && inputs.postDetected)

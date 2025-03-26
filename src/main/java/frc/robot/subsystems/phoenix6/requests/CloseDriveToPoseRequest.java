@@ -39,11 +39,12 @@ public class CloseDriveToPoseRequest implements SwerveRequest
         this.xPID = new PIDController(tP, tI, tD);
         this.yPID = new PIDController(tP, tI, tD);
         this.viewerXPID = new PIDController(tP, tI, tD);
-        this.viewerYPID = new PIDController(tP, tI, tD);
+        this.viewerYPID = new PIDController(2, tI, tD);
         xPID.setTolerance(0.02);
         yPID.setTolerance(0.02);
         viewerXPID.setTolerance(0.02);
         viewerYPID.setTolerance(0.02);
+        viewerYPID.setSetpoint(-0.05);
         xPID.setSetpoint(pose.getX());
         yPID.setSetpoint(pose.getY());
         this.facingAngle = new FieldCentricFacingAngle();
@@ -65,14 +66,17 @@ public class CloseDriveToPoseRequest implements SwerveRequest
         double vy = yPID.calculate(poseGetter.get().getY());
         ChassisSpeeds targetSpeeds = new ChassisSpeeds(vx, vy, 0);
         Optional<ViewerTarget> target = viewerTargetSupplier.get();
-        if (target.isPresent() && poseGetter.get().getTranslation().getDistance(targetPose.getTranslation()) < 0.4)
-        {
-            double viewerVy = viewerYPID.calculate(target.get().xDistance().in(Meters));
-            ChassisSpeeds robotRel = ChassisSpeeds.fromFieldRelativeSpeeds(targetSpeeds, parameters.currentPose.getRotation());
-            robotRel.vyMetersPerSecond = viewerVy;
-            targetSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(robotRel,
-                    parameters.currentPose.getRotation());
-        }
+        // if (target.isPresent() &&
+        // poseGetter.get().getTranslation().getDistance(targetPose.getTranslation()) <
+        // 0.3)
+        // {
+        // double viewerVy = viewerYPID.calculate(target.get().xDistance().in(Meters));
+        // ChassisSpeeds robotRel = ChassisSpeeds.fromFieldRelativeSpeeds(targetSpeeds,
+        // parameters.currentPose.getRotation());
+        // robotRel.vyMetersPerSecond = viewerVy;
+        // targetSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(robotRel,
+        // parameters.currentPose.getRotation());
+        // }
         facingAngle.withVelocityX(MathUtil.clamp(targetSpeeds.vxMetersPerSecond, -maxVelocity.in(MetersPerSecond),
                 maxVelocity.in(MetersPerSecond)));
         facingAngle.withVelocityY(MathUtil.clamp(targetSpeeds.vyMetersPerSecond, -maxVelocity.in(MetersPerSecond),
@@ -84,6 +88,7 @@ public class CloseDriveToPoseRequest implements SwerveRequest
     public boolean isFinished()
     {
         return xPID.atSetpoint() && yPID.atSetpoint() && facingAngle.HeadingController.atSetpoint();
+        // && (viewerTargetSupplier.get().isEmpty() || viewerYPID.atSetpoint());
     }
 
 }

@@ -40,6 +40,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
     protected final DutyCycleOut m_duty = new DutyCycleOut(0).withEnableFOC(true);
     protected final VoltageOut m_voltageOut = new VoltageOut(0).withEnableFOC(true);
     protected final double kG;
+    protected Distance lastKnownPosition = Meters.of(0);
 
     /**
      * Constants for the elevator
@@ -167,7 +168,8 @@ public class ElevatorIOTalonFX implements ElevatorIO
     @Override
     public void setSpeed(double speed, boolean overrideLowerLimit)
     {
-        m_motor.setControl(m_duty.withOutput(speed + kG / RobotController.getInputVoltage()));
+        m_motor.setControl(m_duty
+                .withOutput(speed + (lastKnownPosition.in(Inches) < 0.5 ? 0 : kG) / RobotController.getInputVoltage()));
     }
 
     /**
@@ -205,6 +207,7 @@ public class ElevatorIOTalonFX implements ElevatorIO
         inputs.velocity = InchesPerSecond.of(m_velocity.getValue().in(RotationsPerSecond));
         inputs.rotorVelocity = m_rotorVelocity.getValue();
         inputs.voltage = m_voltage.getValue();
+        lastKnownPosition = inputs.position;
     }
 
     @Override

@@ -59,7 +59,9 @@ while True:
     color = frames.get_color_frame()
 
     color_img = cv2.cvtColor(np.asanyarray(color.get_data()), cv2.COLOR_RGB2BGR)
+    color_img = cv2.rotate(color_img, cv2.ROTATE_180)
     dist_img_pre = cv2.cvtColor(np.asanyarray(depth.get_data()), cv2.COLOR_RGB2GRAY)
+    dist_img_pre = cv2.rotate(dist_img_pre, cv2.ROTATE_180)
     depth_map = np.float64(dist_img_pre)/255 * meter_scale
     dist_img = cv2.medianBlur(dist_img_pre, 17)
     
@@ -121,7 +123,8 @@ while True:
         # color intrinsics because depth is mapped to color
         x_dist = z_dist * ((midpx - color_intr.ppx)/color_intr.fx)
         dbg_img = cv2.line(dbg_img, (x1, y1), (x2, y2), (255, 0, 0), 5)
-        dbg_img = cv2.drawMarker(dbg_img, (int(midpx), h//2), (0, 255, 255), cv2.MARKER_CROSS, 10, 3)
+        dbg_img = cv2.line(dbg_img, (int(midpx), int(midpy)), (w//2, int(midpy)), (0, 255, 255), 3)
+        dbg_img = cv2.drawMarker(dbg_img, (int(midpx), int(midpy)), (0, 255, 255), cv2.MARKER_CROSS, 10, 3)
         dbg_img = cv2.putText(dbg_img, f"{x_dist=:.2f} {z_dist=:.2f}", (20, 40), cv2.FONT_HERSHEY_COMPLEX, .5, (0, 0, 255), 1)
     
     end_time = monotonic()

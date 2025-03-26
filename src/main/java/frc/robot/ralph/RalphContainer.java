@@ -252,6 +252,16 @@ public class RalphContainer implements NFRRobotContainer
         return inserter.intakeCoral();
     }
 
+    public Command intakeCoral(double speed)
+    {
+        return inserter.intakeCoral(speed);
+    }
+
+    public Command shuffleCoral()
+    {
+        return inserter.intakeCoralShuffle();
+    }
+
     public Command outtakeCoral()
     {
         return Commands.either(inserter.outtakeCoralSlow(), inserter.outtakeCoral(),
@@ -487,7 +497,7 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command defaultIntake()
     {
-        return new IntakeWhileWaitingCommand();
+        return intakeCoral().andThen(shuffleCoral());
     }
 
     public Distance getDistanceToPose(Pose2d pose)
@@ -518,12 +528,13 @@ public class RalphContainer implements NFRRobotContainer
 
     public Pose2d applyOffset(Pose2d pose)
     {
-        return applyOffset(pose, Inches.of(1.5), Inches.of(-9));
+        return applyOffset(pose, Inches.of(2.5), Inches.of(-9.75));
     }
 
     public Command driveToPose(Supplier<Pose2d> pose)
     {
-        return Commands.defer(() -> drive.closeDriveToPose(pose.get(), viewer::getTarget), Set.of(drive));
+        return Commands.defer(() -> drive.closeDriveToPose(pose.get(), viewer::getTarget), Set.of(drive))
+                .andThen(drive.backup(Seconds.of(0.2), -0.1));
     }
 
     public Command driveToLeftReef()
@@ -548,8 +559,9 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command goToClosestCoralStation()
     {
-        return Commands.either(driveToPose(() -> FieldConstants.CoralStations.RIGHT),
-                driveToPose(() -> FieldConstants.CoralStations.LEFT),
+        return Commands.either(
+                driveToPose(() -> FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.RIGHT)),
+                driveToPose(() -> FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.LEFT)),
                 () -> getDistanceToPose(FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.LEFT)).gt(
                         getDistanceToPose(FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.RIGHT))));
     }
@@ -572,7 +584,7 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command driveToTrough()
     {
-        return Commands.defer(() -> drive.closeDriveToPose(getNearestReefSide().trough(), viewer::getBestTarget),
+        return Commands.defer(() -> drive.closeDriveToPose(getNearestReefSide().trough(), viewer::getTarget),
                 Set.of(this.drive));
     }
 }

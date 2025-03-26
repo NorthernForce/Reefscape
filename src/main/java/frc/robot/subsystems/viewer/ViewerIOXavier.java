@@ -11,6 +11,7 @@ public class ViewerIOXavier implements ViewerIO
     private final DoubleSubscriber xOffsetSubscriber;
     private final DoubleSubscriber zOffsetSubscriber;
     private final DoubleArraySubscriber postsSubscriber;
+    private int i = 0;
 
     /**
      * Constructs a new ViewerIOXavier.
@@ -31,15 +32,19 @@ public class ViewerIOXavier implements ViewerIO
     public void updateInputs(ViewerIOInputs inputs)
     {
         inputs.connected = false;
-        for (var connection : NetworkTableInstance.getDefault().getConnections())
+        if (i % 500 == 0)
         {
-            if (connection.remote_id.startsWith("skynet"))
+            for (var connection : NetworkTableInstance.getDefault().getConnections())
             {
-                inputs.connected = true;
-                break;
+                if (connection.remote_id.startsWith("skynet"))
+                {
+                    inputs.connected = true;
+                    break;
+                }
             }
         }
-        double xOffset = xOffsetSubscriber.get();
+        i++;
+        double xOffset = -xOffsetSubscriber.get();
         double zOffset = zOffsetSubscriber.get();
         inputs.postDetected = xOffset != Float.NaN && zOffset != Float.NaN;
         inputs.postXOffset = xOffset;

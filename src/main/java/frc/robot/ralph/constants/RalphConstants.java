@@ -114,12 +114,11 @@ public class RalphConstants
         public static final double kP = 18;
         public static final double kI = 0.0;
         public static final double kD = 0;
-        public static final double kG = 0.01869;
+        public static final double kG = 0.21;
         public static final double CRUISE_VELOCITY = 500;
         public static final double ACCELERATION = 50;
         public static final double JERK = 0;
-        public static final Distance UPPER_LIMIT = Inches.of(24.3);
-
+        public static final Distance UPPER_LIMIT = Inches.of(25.3);
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD, kG,
                 CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, true, UPPER_LIMIT);
 
@@ -145,7 +144,7 @@ public class RalphConstants
         public static final double kP = 10;
         public static final double kI = 0;
         public static final double kD = 0;
-        public static final double kG = 0.26;
+        public static final double kG = 0.35;
         public static final double CRUISE_VELOCITY = 500;
         public static final double ACCELERATION = 50;
         public static final double JERK = 0;
@@ -202,7 +201,7 @@ public class RalphConstants
 
     public static class PathplannerConstants
     {
-        public static PIDConstants linearPIDConstants = new PIDConstants(3.5, 0.0, 0.0);
+        public static PIDConstants linearPIDConstants = new PIDConstants(2.9, 0.0, 0.0);
         public static PIDConstants angularPIDConstants = new PIDConstants(5.0, 0.0, 0.0);
         public static final LinearVelocity MAX_VELOCITY = FeetPerSecond.of(4);
         public static final LinearAcceleration MAX_ACCELERATION = FeetPerSecondPerSecond.of(2);
@@ -226,6 +225,7 @@ public class RalphConstants
         public static final double INTAKE_SPEED = 0.6;
         public static final double OUTTAKE_SPEED = 0.89;
         public static final double SLOW_OUTTAKE_SPEED = 0.4;
+        public static final double PURGE_SPEED = 0.2;
         public static final int ROLLER_MOTOR_ID = 19;
         public static final boolean ROLLER_MOTOR_INVERTED = false;
 
