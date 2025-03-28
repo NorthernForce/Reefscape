@@ -279,7 +279,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command goRight(double speed)
     {
         ChassisSpeeds speeds = new ChassisSpeeds();
-        speeds.vxMetersPerSecond = speed;
+        speeds.vyMetersPerSecond = -speed;
         return driveWithRobotRelativeDutyCycle(() -> speeds);
     }
 
@@ -292,7 +292,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command goLeft(double speed)
     {
         ChassisSpeeds speeds = new ChassisSpeeds();
-        speeds.vxMetersPerSecond = -speed;
+        speeds.vyMetersPerSecond = speed;
         return driveWithRobotRelativeDutyCycle(() -> speeds);
     }
 
@@ -305,7 +305,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command goForward(double speed)
     {
         ChassisSpeeds speeds = new ChassisSpeeds();
-        speeds.vyMetersPerSecond = speed;
+        speeds.vxMetersPerSecond = speed;
         return driveWithRobotRelativeDutyCycle(() -> speeds);
     }
 

@@ -6,6 +6,8 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveControlParameters;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -44,7 +46,7 @@ public class CloseDriveToPoseRequest implements SwerveRequest
         yPID.setTolerance(0.02);
         viewerXPID.setTolerance(0.02);
         viewerYPID.setTolerance(0.02);
-        viewerYPID.setSetpoint(-0.05);
+        viewerYPID.setSetpoint(0);
         xPID.setSetpoint(pose.getX());
         yPID.setSetpoint(pose.getY());
         this.facingAngle = new FieldCentricFacingAngle();
@@ -70,12 +72,19 @@ public class CloseDriveToPoseRequest implements SwerveRequest
         // poseGetter.get().getTranslation().getDistance(targetPose.getTranslation()) <
         // 0.3)
         // {
-        // double viewerVy = viewerYPID.calculate(target.get().xDistance().in(Meters));
+        // var target_ = target.get();
+        // if (!target_.xDistance().isNaN())
+        // {
+        // double viewerVy = -viewerYPID.calculate(target.get().xDistance());
         // ChassisSpeeds robotRel = ChassisSpeeds.fromFieldRelativeSpeeds(targetSpeeds,
         // parameters.currentPose.getRotation());
         // robotRel.vyMetersPerSecond = viewerVy;
         // targetSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(robotRel,
         // parameters.currentPose.getRotation());
+        // Logger.recordOutput("robotRel_vyMetersPerSecond",
+        // robotRel.vyMetersPerSecond);
+        // System.out.println("PIDing: " + viewerVy);
+        // }
         // }
         facingAngle.withVelocityX(MathUtil.clamp(targetSpeeds.vxMetersPerSecond, -maxVelocity.in(MetersPerSecond),
                 maxVelocity.in(MetersPerSecond)));

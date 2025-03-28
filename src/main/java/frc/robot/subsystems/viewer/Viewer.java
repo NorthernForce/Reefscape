@@ -18,7 +18,7 @@ public class Viewer extends SubsystemBase
     private final ViewerIOInputsAutoLogged inputs;
     private final Alert viewerMissingAlert;
 
-    public static record ViewerTarget(Distance xDistance, Distance zDistance) {
+    public static record ViewerTarget(Double xDistance) {
 
     }
 
@@ -47,8 +47,7 @@ public class Viewer extends SubsystemBase
     {
         if (inputs.connected && inputs.postDetected)
         {
-            return Optional.of(new ViewerTarget(Distance.ofBaseUnits(inputs.postXOffset, Meters),
-                    Distance.ofBaseUnits(inputs.postZOffset, Meters)));
+            return Optional.of(new ViewerTarget(inputs.postXOffset));
         }
         return Optional.empty();
     }

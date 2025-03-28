@@ -60,7 +60,7 @@ public class Robot extends LoggedRobot
     @Override
     public void robotInit()
     {// Record metadata
-     // Threads.setCurrentThreadPriority(true, 99);
+        Threads.setCurrentThreadPriority(true, 20);
         notifier.startPeriodic(0.5);
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
         Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -120,9 +120,10 @@ public class Robot extends LoggedRobot
     @Override
     public void robotPeriodic()
     {
-        CommandScheduler.getInstance().run();
+        // CommandScheduler.getInstance().run();
         container.periodic();
-        competitionCodeAlert.set(isCompetition() && !BuildConstants.GIT_BRANCH.startsWith("event"));
+        // competitionCodeAlert.set(isCompetition() &&
+        // !BuildConstants.GIT_BRANCH.startsWith("event"));
     }
 
     /** This function is called once when autonomous is enabled. */

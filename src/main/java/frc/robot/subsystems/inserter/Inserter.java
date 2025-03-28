@@ -13,6 +13,7 @@ import frc.robot.ralph.constants.RalphConstants;
 import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 import frc.robot.subsystems.inserter.sensor.InserterSensorIO;
 import frc.robot.subsystems.inserter.sensor.InserterSensorIOInputsAutoLogged;
+import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 
 /**
  * The inserter subsystem is responsible for controlling the rollers for
@@ -217,43 +218,25 @@ public class Inserter extends SubsystemBase
         return Commands.sequence(new CoralPurgeCommand(), new CoralReintakeCommand(0.2));
     }
 
-    public class CoralOuttakeSlowCommand extends Command
-    {
-        public CoralOuttakeSlowCommand()
-        {
-            addRequirements(Inserter.this);
-        }
-
-        @Override
-        public void initialize()
-        {
-            outtake(RalphConstants.InserterConstants.SLOW_OUTTAKE_SPEED);
-        }
-
-        @Override
-        public boolean isFinished()
-        {
-            return !hasCoral();
-        }
-
-        @Override
-        public void end(boolean interrupted)
-        {
-            stop();
-        }
-    }
-
     public class CoralOuttakeCommand extends Command
     {
+        double speed = outtakeSpeed;
+
         public CoralOuttakeCommand()
         {
             addRequirements(Inserter.this);
         }
 
+        public CoralOuttakeCommand(double speed)
+        {
+            addRequirements(Inserter.this);
+            this.speed = speed;
+        }
+
         @Override
         public void initialize()
         {
-            outtake();
+            outtake(speed);
         }
 
         @Override
@@ -274,9 +257,9 @@ public class Inserter extends SubsystemBase
         return new CoralOuttakeCommand();
     }
 
-    public Command outtakeCoralSlow()
+    public Command outtakeCoral(double speed)
     {
-        return new CoralOuttakeSlowCommand();
+        return new CoralOuttakeCommand(speed);
     }
 
     /**

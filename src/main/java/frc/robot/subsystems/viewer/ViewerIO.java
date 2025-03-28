@@ -10,7 +10,6 @@ public interface ViewerIO
         public boolean connected = false;
         public boolean postDetected = false;
         public double postXOffset = Float.NaN;
-        public double postZOffset = Float.NaN;
     }
 
     /**

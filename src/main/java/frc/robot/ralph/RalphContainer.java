@@ -264,8 +264,10 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command outtakeCoral()
     {
-        return Commands.either(inserter.outtakeCoralSlow(), inserter.outtakeCoral(),
-                () -> superstructure.isAtGoal(SuperstructureGoal.L1));
+        return Commands.either(
+                inserter.outtakeCoral(0.5).withTimeout(Seconds.of(0.3))
+                        .andThen(drive.goRight(0.3).withTimeout(Seconds.of(0.3))),
+                inserter.outtakeCoral(), () -> superstructure.isAtGoal(SuperstructureGoal.L1));
     }
 
     public Command goToL4()
@@ -435,16 +437,12 @@ public class RalphContainer implements NFRRobotContainer
         {
             drive.addVisionMeasurement(poseEstimate.pose(), poseEstimate.timestamp(), VecBuilder.fill(0.1, 0.1, 0.001));
         }
-        dashboard.updatePose(drive.getPose());
-        dashboard.setInnerElevatorPosition(superstructure.getInnerElevator().getPosition());
-        dashboard.setOuterElevatorPosition(superstructure.getOuterElevator().getPosition());
+        // dashboard.updatePose(drive.getPose());
+        // dashboard.setInnerElevatorPosition(superstructure.getInnerElevator().getPosition());
+        // dashboard.setOuterElevatorPosition(superstructure.getOuterElevator().getPosition());
         dashboard.setHasCoral(inserter.hasCoral());
         setIndexPose(RalphConstants.AdvantageScopeConstants.INNER_ELEVATOR_INDEX, innerElevatorPose.get());
         setIndexPose(RalphConstants.AdvantageScopeConstants.OUTER_ELEVATOR_INDEX, outerElevatorPose.get());
-        RalphConstants.PathplannerConstants.linearPIDConstants = linearPIDSupplier.get();
-        RalphConstants.PathplannerConstants.angularPIDConstants = angularPIDSupplier.get();
-        drive.setLinearPID(RalphConstants.PathplannerConstants.linearPIDConstants);
-        drive.setAngularPID(RalphConstants.PathplannerConstants.linearPIDConstants);
     }
 
     @Override
@@ -503,6 +501,11 @@ public class RalphContainer implements NFRRobotContainer
     public Distance getDistanceToPose(Pose2d pose)
     {
         return Meters.of(drive.getPose().getTranslation().getDistance(pose.getTranslation()));
+    }
+
+    public Distance getManipDistanceToPose(Pose2d pose)
+    {
+        return Meters.of(applyOffset(drive.getPose()).getTranslation().getDistance(pose.getTranslation()));
     }
 
     public ReefSide getNearestReefSide()

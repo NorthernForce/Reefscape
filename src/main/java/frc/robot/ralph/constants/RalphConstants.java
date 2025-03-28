@@ -166,7 +166,7 @@ public class RalphConstants
 
     public static enum SuperstructureGoal implements GenericSuperstructureGoal
     {
-        L1(Inches.of(0), Inches.of(6)), L2(Inches.of(0), Inches.of(11.38)), L3(Inches.of(0), Inches.of(26.3)),
+        L1(Inches.of(0), Inches.of(2)), L2(Inches.of(0), Inches.of(11.38)), L3(Inches.of(0), Inches.of(26.3)),
         L4(InnerElevatorConstants.UPPER_LIMIT, OuterElevatorConstants.UPPER_LIMIT),
         CORAL_STATION(Inches.of(0), Inches.of(0)), START(Inches.of(0), Inches.of(0));
 

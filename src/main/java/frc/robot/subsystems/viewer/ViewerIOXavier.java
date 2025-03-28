@@ -1,6 +1,5 @@
 package frc.robot.subsystems.viewer;
 
-import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -9,8 +8,6 @@ public class ViewerIOXavier implements ViewerIO
 {
     private final NetworkTable table;
     private final DoubleSubscriber xOffsetSubscriber;
-    private final DoubleSubscriber zOffsetSubscriber;
-    private final DoubleArraySubscriber postsSubscriber;
     private int i = 0;
 
     /**
@@ -19,10 +16,7 @@ public class ViewerIOXavier implements ViewerIO
     public ViewerIOXavier()
     {
         table = NetworkTableInstance.getDefault().getTable("Viewer");
-        postsSubscriber = table.getDoubleArrayTopic("Posts").subscribe(new double[]
-        {});
         xOffsetSubscriber = table.getDoubleTopic("CandidateMetersX").subscribe(Double.NaN);
-        zOffsetSubscriber = table.getDoubleTopic("CandidateMetersZ").subscribe(Double.NaN);
     }
 
     /**
@@ -31,9 +25,9 @@ public class ViewerIOXavier implements ViewerIO
     @Override
     public void updateInputs(ViewerIOInputs inputs)
     {
-        inputs.connected = false;
-        if (i % 500 == 0)
+        if (i % 200 == 0)
         {
+            inputs.connected = false;
             for (var connection : NetworkTableInstance.getDefault().getConnections())
             {
                 if (connection.remote_id.startsWith("skynet"))
@@ -45,9 +39,7 @@ public class ViewerIOXavier implements ViewerIO
         }
         i++;
         double xOffset = -xOffsetSubscriber.get();
-        double zOffset = zOffsetSubscriber.get();
-        inputs.postDetected = xOffset != Float.NaN && zOffset != Float.NaN;
+        inputs.postDetected = !Double.isNaN(xOffset);
         inputs.postXOffset = xOffset;
-        inputs.postZOffset = zOffset;
     }
 }
