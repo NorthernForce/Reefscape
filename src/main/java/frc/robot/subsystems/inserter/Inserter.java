@@ -6,10 +6,14 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.ralph.constants.RalphConstants;
+import frc.robot.ralph.constants.RalphConstants.SuperstructureGoal;
 import frc.robot.subsystems.inserter.sensor.InserterSensorIO;
 import frc.robot.subsystems.inserter.sensor.InserterSensorIOInputsAutoLogged;
+import frc.robot.subsystems.phoenix6.PhoenixCommandDrive;
 
 /**
  * The inserter subsystem is responsible for controlling the rollers for
@@ -61,6 +65,11 @@ public class Inserter extends SubsystemBase
         io.set(intakeSpeed);
     }
 
+    public void intake(double speed)
+    {
+        io.set(speed);
+    }
+
     /**
      * Runs motors to outtake piece.
      * 
@@ -70,6 +79,16 @@ public class Inserter extends SubsystemBase
     public void outtake()
     {
         io.set(outtakeSpeed);
+    }
+
+    public void outtake(double speed)
+    {
+        io.set(speed);
+    }
+
+    public void purge()
+    {
+        io.set(-RalphConstants.InserterConstants.PURGE_SPEED);
     }
 
     /**
@@ -95,7 +114,65 @@ public class Inserter extends SubsystemBase
 
     public class CoralIntakeCommand extends Command
     {
+        double speed = 0.0;
+
         public CoralIntakeCommand()
+        {
+            speed = intakeSpeed;
+            addRequirements(Inserter.this);
+        }
+
+        public CoralIntakeCommand(double speed)
+        {
+            this.speed = speed;
+            addRequirements(Inserter.this);
+        }
+
+        @Override
+        public void initialize()
+        {
+            intake(speed);
+        }
+
+        @Override
+        public boolean isFinished()
+        {
+            return hasCoral();
+        }
+
+        @Override
+        public void end(boolean interrupted)
+        {
+            stop();
+        }
+    }
+
+    public class CoralReintakeCommand extends Command
+    {
+        double speed;
+
+        public CoralReintakeCommand(double speed)
+        {
+            this.speed = speed;
+            addRequirements(Inserter.this);
+        }
+
+        @Override
+        public void execute()
+        {
+            if (!hasCoral())
+            {
+                io.set(speed);
+            } else
+            {
+                stop();
+            }
+        }
+    }
+
+    public class CoralPurgeCommand extends Command
+    {
+        public CoralPurgeCommand()
         {
             addRequirements(Inserter.this);
         }
@@ -103,13 +180,13 @@ public class Inserter extends SubsystemBase
         @Override
         public void initialize()
         {
-            intake();
+            purge();
         }
 
         @Override
         public boolean isFinished()
         {
-            return hasCoral();
+            return !hasCoral();
         }
 
         @Override
@@ -131,17 +208,35 @@ public class Inserter extends SubsystemBase
         return new CoralIntakeCommand();
     }
 
+    public Command intakeCoral(double speed)
+    {
+        return new CoralIntakeCommand(speed);
+    }
+
+    public Command intakeCoralShuffle()
+    {
+        return Commands.sequence(new CoralPurgeCommand(), new CoralReintakeCommand(0.2));
+    }
+
     public class CoralOuttakeCommand extends Command
     {
+        double speed = outtakeSpeed;
+
         public CoralOuttakeCommand()
         {
             addRequirements(Inserter.this);
         }
 
+        public CoralOuttakeCommand(double speed)
+        {
+            addRequirements(Inserter.this);
+            this.speed = speed;
+        }
+
         @Override
         public void initialize()
         {
-            outtake();
+            outtake(speed);
         }
 
         @Override
@@ -160,6 +255,11 @@ public class Inserter extends SubsystemBase
     public Command outtakeCoral()
     {
         return new CoralOuttakeCommand();
+    }
+
+    public Command outtakeCoral(double speed)
+    {
+        return new CoralOuttakeCommand(speed);
     }
 
     /**

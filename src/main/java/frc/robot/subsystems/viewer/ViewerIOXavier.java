@@ -1,20 +1,14 @@
 package frc.robot.subsystems.viewer;
 
-import static edu.wpi.first.units.Units.Meters;
-
-import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.FloatSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class ViewerIOXavier implements ViewerIO
 {
     private final NetworkTable table;
-    private final BooleanSubscriber hasPostInImageSubscriber;
-    private final DoubleSubscriber postOffsetSubscriber;
-    private final DoubleSubscriber postDistanceSubscriber;
-    private final FloatSubscriber centerDistanceSubscriber;
+    private final DoubleSubscriber xOffsetSubscriber;
+    private int i = 0;
 
     /**
      * Constructs a new ViewerIOXavier.
@@ -22,10 +16,7 @@ public class ViewerIOXavier implements ViewerIO
     public ViewerIOXavier()
     {
         table = NetworkTableInstance.getDefault().getTable("Viewer");
-        hasPostInImageSubscriber = table.getBooleanTopic("HasPost").subscribe(false);
-        postOffsetSubscriber = table.getDoubleTopic("PostOffset").subscribe(0.0);
-        postDistanceSubscriber = table.getDoubleTopic("PostDistance").subscribe(0.0);
-        centerDistanceSubscriber = table.getFloatTopic("CenterDist").subscribe(0.0f);
+        xOffsetSubscriber = table.getDoubleTopic("CandidateMetersX").subscribe(Double.NaN);
     }
 
     /**
@@ -34,18 +25,21 @@ public class ViewerIOXavier implements ViewerIO
     @Override
     public void updateInputs(ViewerIOInputs inputs)
     {
-        inputs.connected = false;
-        for (var connection : NetworkTableInstance.getDefault().getConnections())
+        if (i % 200 == 0)
         {
-            if (connection.remote_id.startsWith("skynet"))
+            inputs.connected = false;
+            for (var connection : NetworkTableInstance.getDefault().getConnections())
             {
-                inputs.connected = true;
-                break;
+                if (connection.remote_id.startsWith("skynet"))
+                {
+                    inputs.connected = true;
+                    break;
+                }
             }
         }
-        inputs.hasPostInImage = hasPostInImageSubscriber.get();
-        inputs.postOffset = Meters.of(postOffsetSubscriber.get());
-        inputs.postDistance = Meters.of(postDistanceSubscriber.get());
-        inputs.centerDistance = Meters.of(centerDistanceSubscriber.get());
+        i++;
+        double xOffset = -xOffsetSubscriber.get();
+        inputs.postDetected = !Double.isNaN(xOffset);
+        inputs.postXOffset = xOffset;
     }
 }

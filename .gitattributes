@@ -1,1 +1,1 @@
-* text eof=lf
+*.glb binary diff=astextplain eof=lf

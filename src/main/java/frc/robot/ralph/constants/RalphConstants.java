@@ -33,7 +33,7 @@ public class RalphConstants
     public static class DrivetrainConstants
     {
 
-        public static final LinearVelocity MAX_SPEED = MetersPerSecond.of(3.0);
+        public static final LinearVelocity MAX_SPEED = MetersPerSecond.of(4.0);
         public static final AngularVelocity MAX_ANGULAR_SPEED = RotationsPerSecond.of(0.7);
         public static final LinearVelocity MAX_LINEAR_SPEED = MetersPerSecond.of(4.73);
         public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(3.0);
@@ -77,21 +77,21 @@ public class RalphConstants
                 Inches.of(8.5), new Rotation3d(Degrees.of(0.0), Degrees.of(15.0), Degrees.of(225.0)));
 
         public static final Transform3d FL_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 3.0), Inches.of(15 - 7.75),
-                Inches.of(8.5), new Rotation3d(Degrees.of(0), Degrees.of(-21.9), Degrees.of(53.4)));
+                Inches.of(8.5), new Rotation3d(Degrees.of(0), Degrees.of(-22.1), Degrees.of(53.4)));
 
         public static final Transform3d CTR_ROBOT_TO_CAMERA = new Transform3d(Inches.of(15 - 2.5), Inches.of(0),
-                Inches.of(9.5), new Rotation3d(Degrees.of(0), Degrees.of(-30.0), Degrees.of(0.0)));
+                Inches.of(9.5), new Rotation3d(Degrees.of(0), Degrees.of(-22.4), Degrees.of(0.0)));
 
         public static String[] cameraNames()
         {
             return new String[]
-            { FL_CAMERA_NAME, FR_CAMERA_NAME, CTR_CAMERA_NAME };
+            { FR_CAMERA_NAME, FL_CAMERA_NAME, CTR_CAMERA_NAME };
         }
 
         public static Transform3d[] cameraTransforms()
         {
             return new Transform3d[]
-            { FL_ROBOT_TO_CAMERA, FR_ROBOT_TO_CAMERA, CTR_ROBOT_TO_CAMERA };
+            { FR_ROBOT_TO_CAMERA, FL_ROBOT_TO_CAMERA, CTR_ROBOT_TO_CAMERA };
         }
 
         public static final double MAX_Y_COORDINATE = 350; // TODO: Set this to the actual value
@@ -102,7 +102,7 @@ public class RalphConstants
     public static class InnerElevatorConstants
     {
         // outer ratios
-        public static final double GEAR_BOX_RATIO = 16.0;
+        public static final double GEAR_BOX_RATIO = 12.0;
         public static final double SPROCKET_TEETH = 16.0;
         public static final Distance SPROCKET_PITCH = Inches.of(0.25);
         public static final Distance SPROCKET_CIRCUMFERENCE = SPROCKET_PITCH.times(SPROCKET_TEETH);
@@ -114,12 +114,11 @@ public class RalphConstants
         public static final double kP = 18;
         public static final double kI = 0.0;
         public static final double kD = 0;
-        public static final double kG = 0.01869;
+        public static final double kG = 0.21;
         public static final double CRUISE_VELOCITY = 500;
         public static final double ACCELERATION = 50;
         public static final double JERK = 0;
-        public static final Distance UPPER_LIMIT = Inches.of(24.3);
-
+        public static final Distance UPPER_LIMIT = Inches.of(25.3);
         public static final ElevatorConstants ELEVATOR_CONSTANTS = new ElevatorConstants(kS, kV, kA, kP, kI, kD, kG,
                 CRUISE_VELOCITY, ACCELERATION, JERK, SPROCKET_CIRCUMFERENCE, GEAR_BOX_RATIO, true, UPPER_LIMIT);
 
@@ -133,7 +132,7 @@ public class RalphConstants
     public static class OuterElevatorConstants
     {
         // outer ratios
-        public static final double GEAR_BOX_RATIO = 20.0;
+        public static final double GEAR_BOX_RATIO = 16.0;
         public static final double SPROCKET_TEETH = 22.0;
         public static final Distance SPROCKET_PITCH = Inches.of(0.25);
         public static final Distance SPROCKET_CIRCUMFERENCE = SPROCKET_PITCH.times(SPROCKET_TEETH);
@@ -145,7 +144,7 @@ public class RalphConstants
         public static final double kP = 10;
         public static final double kI = 0;
         public static final double kD = 0;
-        public static final double kG = 0.26;
+        public static final double kG = 0.35;
         public static final double CRUISE_VELOCITY = 500;
         public static final double ACCELERATION = 50;
         public static final double JERK = 0;
@@ -167,7 +166,7 @@ public class RalphConstants
 
     public static enum SuperstructureGoal implements GenericSuperstructureGoal
     {
-        L1(Inches.of(0), Inches.of(6)), L2(Inches.of(0), Inches.of(11.38)), L3(Inches.of(0), Inches.of(26.3)),
+        L1(Inches.of(0), Inches.of(2)), L2(Inches.of(0), Inches.of(11.38)), L3(Inches.of(0), Inches.of(26.3)),
         L4(InnerElevatorConstants.UPPER_LIMIT, OuterElevatorConstants.UPPER_LIMIT),
         CORAL_STATION(Inches.of(0), Inches.of(0)), START(Inches.of(0), Inches.of(0));
 
@@ -202,8 +201,8 @@ public class RalphConstants
 
     public static class PathplannerConstants
     {
-        public static final PIDConstants linearPIDConstants = new PIDConstants(5.0, 0.0, 0.0);
-        public static final PIDConstants angularPIDConstants = new PIDConstants(4.0, 0.0, 0.0);
+        public static PIDConstants linearPIDConstants = new PIDConstants(2.9, 0.0, 0.0);
+        public static PIDConstants angularPIDConstants = new PIDConstants(5.0, 0.0, 0.0);
         public static final LinearVelocity MAX_VELOCITY = FeetPerSecond.of(4);
         public static final LinearAcceleration MAX_ACCELERATION = FeetPerSecondPerSecond.of(2);
         public static final AngularVelocity MAX_ANGULAR_VELOCITY = RotationsPerSecond.of(0.7);
@@ -223,8 +222,10 @@ public class RalphConstants
 
     public static class InserterConstants
     {
-        public static final double INTAKE_SPEED = 0.5;
+        public static final double INTAKE_SPEED = 0.6;
         public static final double OUTTAKE_SPEED = 0.89;
+        public static final double SLOW_OUTTAKE_SPEED = 0.4;
+        public static final double PURGE_SPEED = 0.2;
         public static final int ROLLER_MOTOR_ID = 19;
         public static final boolean ROLLER_MOTOR_INVERTED = false;
 
@@ -247,7 +248,7 @@ public class RalphConstants
     public static class AlgaeRemoverConstants
     {
         public static final double REMOVING_SPEED = 0.5;
-        public static final double RETURNING_SPEED = 0.1;
+        public static final double RETURNING_SPEED = 0.2;
         public static final double GEAR_RATIO = 10.0;
     }
 }

@@ -5,38 +5,64 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "deadline",
                 "data": {
-                  "pathName": "LEFT.J.K.L.1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "GoToL4Goal"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.02
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "LEFT.J.K.L.1"
+                      }
+                    }
+                  ]
                 }
               }
             ]
           }
         },
         {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.0
+                  "waitTime": 2.2
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "DriveToCloseRight"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "GoToL4Goal"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -68,9 +94,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Intake"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.275
+                }
+              }
+            ]
           }
         },
         {
@@ -78,34 +117,54 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "sequential",
                 "data": {
-                  "pathName": "LEFT.J.K.L.3"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "LEFT.J.K.L.3"
+                      }
+                    },
+                    {
+                      "type": "race",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "DriveToCloseLeft"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.875
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "GoToL4Goal"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "DriveToCloseLeft"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Intake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "GoToL4Goal"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -137,9 +196,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Intake"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.22
+                }
+              }
+            ]
           }
         },
         {
@@ -153,9 +225,22 @@
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "GoToL4Goal"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Intake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "GoToL4Goal"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -168,7 +253,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.0
+                  "waitTime": 0.85
                 }
               },
               {

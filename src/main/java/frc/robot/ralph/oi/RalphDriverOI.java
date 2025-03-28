@@ -29,7 +29,8 @@ public class RalphDriverOI implements RalphOI
         };
     }
 
-    static void bindDrive(CommandXboxController driverController, RalphContainer container)
+    static void bindDrive(CommandXboxController driverController, CommandXboxController manipulatorController,
+            RalphContainer container)
     {
         container.getDrive()
                 .setDefaultCommand(container.driveByJoystick(processJoystickInput(driverController::getLeftY),
@@ -41,8 +42,6 @@ public class RalphDriverOI implements RalphOI
 
         driverController.x().whileTrue(container.goToClosestCoralStation());
 
-        driverController.y().whileTrue(container.goToProcessor());
-
         driverController.leftBumper().and(() -> !driverController.rightBumper().getAsBoolean())
                 .whileTrue(container.driveToLeftReef());
 
@@ -51,6 +50,11 @@ public class RalphDriverOI implements RalphOI
 
         driverController.leftBumper().and(driverController.rightBumper()).whileTrue(
                 container.driveToCenterAlgae().onlyWhile(() -> driverController.rightBumper().getAsBoolean()));
+
+        driverController.leftTrigger().whileTrue(container.driveToTrough());
+
+        manipulatorController.rightBumper().whileTrue(container.getDrive().goRight(0.2));
+        manipulatorController.leftBumper().whileTrue(container.getDrive().goLeft(0.2));
 
         SmartDashboard.putData("DriveToReef", container.driveToLeftReef());
     }
@@ -79,11 +83,18 @@ public class RalphDriverOI implements RalphOI
             RalphContainer container)
     {
 
+        driverController.y().onTrue(container.goToIntake().withTimeout(2));
+
         manipulatorController.a().onTrue(container.goToIntake().withTimeout(2));
 
         driverController.start().whileTrue(container.homeElevator());
 
         manipulatorController.start().whileTrue(container.homeElevator());
+
+        driverController.povLeft().and(container.getInserter()::hasCoral).onTrue(container.goToL1().withTimeout(2));
+        driverController.povUp().and(container.getInserter()::hasCoral).onTrue(container.goToL2().withTimeout(2));
+        driverController.povRight().and(container.getInserter()::hasCoral).onTrue(container.goToL3().withTimeout(2));
+        driverController.povDown().and(container.getInserter()::hasCoral).onTrue(container.goToL4().withTimeout(2));
 
         manipulatorController.povLeft().and(container.getInserter()::hasCoral)
                 .onTrue(container.goToL1().withTimeout(2));
@@ -110,7 +121,7 @@ public class RalphDriverOI implements RalphOI
         CommandXboxController driverController = new CommandXboxController(0);
         CommandXboxController manipulatorController = new CommandXboxController(1);
 
-        bindDrive(driverController, container);
+        bindDrive(driverController, manipulatorController, container);
         bindInserter(driverController, manipulatorController, container);
         bindClimber(driverController, container);
         bindSuperstructure(driverController, manipulatorController, container);

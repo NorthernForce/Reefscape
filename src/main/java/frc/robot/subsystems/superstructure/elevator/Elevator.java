@@ -34,6 +34,7 @@ public class Elevator extends SubsystemBase
     private Distance targetState;
     private Alert m_motorNotFoundAlert;
     private final SysIdRoutine m_sysIdRoutine;
+    private boolean hasReset = false;
 
     /**
      * Creates a new Elevator
@@ -190,7 +191,14 @@ public class Elevator extends SubsystemBase
         Logger.processInputs(getName() + "/Sensor", m_sensorInputs);
         if (m_sensorInputs.isAtBottom)
         {
-            m_motor.resetPosition();
+            if (!hasReset)
+            {
+                m_motor.resetPosition();
+                hasReset = true;
+            }
+        } else
+        {
+            hasReset = false;
         }
 
         m_motorNotFoundAlert.set(!m_inputs.present);

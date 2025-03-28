@@ -25,7 +25,7 @@ function App(props: { targetIp: string }) {
     }
     let [connected] = useEntry('/FWC/connected', false);
     let [hasCoral] = useEntry('/FWC/HasCoral', false);
-    let color = hasCoral ? "#026afa" : "";
+    let color = hasCoral ? "#03fc45" : "";
     return (
         <>
             <div className="main-container" style={{ backgroundColor: color }}>

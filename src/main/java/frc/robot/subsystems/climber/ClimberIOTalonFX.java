@@ -46,7 +46,7 @@ public class ClimberIOTalonFX implements ClimberIO
 
     public ClimberIOTalonFX(int id, boolean inverted, int encoderID, Angle lowerLimit, Angle upperLimit)
     {
-        m_encoder = new CANcoder(encoderID);
+        // m_encoder = new CANcoder(encoderID);
         m_motor = new TalonFX(id);
         TalonFXConfiguration config = new TalonFXConfiguration();
         CANcoderConfiguration cc = new CANcoderConfiguration();
@@ -54,15 +54,18 @@ public class ClimberIOTalonFX implements ClimberIO
         config.MotorOutput.Inverted = (inverted ? InvertedValue.Clockwise_Positive
                 : InvertedValue.CounterClockwise_Positive);
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        if (m_encoder.isConnected())
-        {
-            config.Feedback.FeedbackRemoteSensorID = m_encoder.getDeviceID();
-            config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-            config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-            config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-            config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = upperLimit.in(Rotations);
-            config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = lowerLimit.in(Rotations);
-        }
+        // if (m_encoder.isConnected())
+        // {
+        // config.Feedback.FeedbackRemoteSensorID = m_encoder.getDeviceID();
+        // config.Feedback.FeedbackSensorSource =
+        // FeedbackSensorSourceValue.RemoteCANcoder;
+        // config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        // config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+        // upperLimit.in(Rotations);
+        // config.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+        // lowerLimit.in(Rotations);
+        // }
 
         m_motor.getConfigurator().apply(config);
         m_position = m_motor.getPosition();

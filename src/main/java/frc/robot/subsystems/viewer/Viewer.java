@@ -1,5 +1,10 @@
 package frc.robot.subsystems.viewer;
 
+import static edu.wpi.first.units.Units.Meters;
+
+import java.util.Optional;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Distance;
@@ -12,6 +17,10 @@ public class Viewer extends SubsystemBase
     private final ViewerIO io;
     private final ViewerIOInputsAutoLogged inputs;
     private final Alert viewerMissingAlert;
+
+    public static record ViewerTarget(Double xDistance) {
+
+    }
 
     public Viewer(ViewerIO io)
     {
@@ -28,23 +37,18 @@ public class Viewer extends SubsystemBase
         viewerMissingAlert.set(!inputs.connected);
     }
 
-    public Distance getCenterDistance()
-    {
-        return inputs.centerDistance;
-    }
-
-    public Distance getPostDistance()
-    {
-        return inputs.postDistance;
-    }
-
-    public Distance getPostOffset()
-    {
-        return inputs.postOffset;
-    }
-
+    @AutoLogOutput
     public boolean isPresent()
     {
         return inputs.connected;
+    }
+
+    public Optional<ViewerTarget> getTarget()
+    {
+        if (inputs.connected && inputs.postDetected)
+        {
+            return Optional.of(new ViewerTarget(inputs.postXOffset));
+        }
+        return Optional.empty();
     }
 }

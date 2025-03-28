@@ -1,6 +1,7 @@
 package frc.robot.subsystems.phoenix6;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -48,6 +49,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.phoenix6.requests.CloseDriveToPoseRequest;
+import frc.robot.subsystems.viewer.Viewer.ViewerTarget;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -66,6 +68,8 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     private String encoderAlertString = "";
     private final SwerveDrivePoseEstimator poseEstimator;
     private final Notifier notifier = new Notifier(this::updateOdometry);
+    private PIDConstants linearPIDConstants;
+    private PIDConstants angularPIDConstants;
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -94,6 +98,8 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         disconnectedEncoderArray = new ArrayList<>();
         // Configure the Pathplanner AutoBuilder for easier pathfinding
         configureAutoBuilder(linearPIDConstants, angularPIDConstants);
+        this.linearPIDConstants = linearPIDConstants;
+        this.angularPIDConstants = angularPIDConstants;
         poseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getState().RawHeading, getState().ModulePositions,
                 new Pose2d());
         notifier.startPeriodic(0.02);
@@ -226,10 +232,12 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
         });
     }
 
-    public Command closeDriveToPose(Pose2d pose)
+    public Command closeDriveToPose(Pose2d pose, Supplier<Optional<ViewerTarget>> viewerTargetSupplier)
     {
-        CloseDriveToPoseRequest request = new CloseDriveToPoseRequest(pose, 4, 0, 0, 5, 0, 0,
-                () -> poseEstimator.getEstimatedPosition());
+        CloseDriveToPoseRequest request = new CloseDriveToPoseRequest(pose, linearPIDConstants.kP,
+                linearPIDConstants.kI, linearPIDConstants.kD, angularPIDConstants.kP, angularPIDConstants.kI,
+                angularPIDConstants.kD, MetersPerSecond.of(2), () -> poseEstimator.getEstimatedPosition(),
+                viewerTargetSupplier);
         Logger.recordOutput("TargetPose", pose);
         return applyRequest(() -> request).until(() -> request.isFinished());
     }
@@ -271,7 +279,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command goRight(double speed)
     {
         ChassisSpeeds speeds = new ChassisSpeeds();
-        speeds.vxMetersPerSecond = speed;
+        speeds.vyMetersPerSecond = -speed;
         return driveWithRobotRelativeDutyCycle(() -> speeds);
     }
 
@@ -284,7 +292,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command goLeft(double speed)
     {
         ChassisSpeeds speeds = new ChassisSpeeds();
-        speeds.vxMetersPerSecond = -speed;
+        speeds.vyMetersPerSecond = speed;
         return driveWithRobotRelativeDutyCycle(() -> speeds);
     }
 
@@ -297,7 +305,7 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     public Command goForward(double speed)
     {
         ChassisSpeeds speeds = new ChassisSpeeds();
-        speeds.vyMetersPerSecond = speed;
+        speeds.vxMetersPerSecond = speed;
         return driveWithRobotRelativeDutyCycle(() -> speeds);
     }
 
@@ -659,5 +667,23 @@ public class PhoenixCommandDrive extends TunerSwerveDrivetrain implements Subsys
     {
         var speeds = getState().Speeds;
         return MetersPerSecond.of(Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond));
+    }
+
+    public void setLinearPID(PIDConstants pid)
+    {
+        if (linearPIDConstants.kP != pid.kP || linearPIDConstants.kI != pid.kI || linearPIDConstants.kD != pid.kD)
+        {
+            linearPIDConstants = pid;
+            configureAutoBuilder(linearPIDConstants, angularPIDConstants);
+        }
+    }
+
+    public void setAngularPID(PIDConstants pid)
+    {
+        if (angularPIDConstants.kP != pid.kP || angularPIDConstants.kI != pid.kI || angularPIDConstants.kD != pid.kD)
+        {
+            angularPIDConstants = pid;
+            configureAutoBuilder(linearPIDConstants, angularPIDConstants);
+        }
     }
 }
