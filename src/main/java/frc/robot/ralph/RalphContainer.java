@@ -93,6 +93,10 @@ public class RalphContainer implements NFRRobotContainer
     {
         drive = new PhoenixCommandDrive(RalphTunerConstants.DrivetrainConstants,
                 RalphConstants.DrivetrainConstants.MAX_SPEED, RalphConstants.DrivetrainConstants.MAX_ANGULAR_SPEED,
+                RalphConstants.DrivetrainConstants.MAX_ACCELERATION,
+                RalphConstants.DrivetrainConstants.MAX_ANGULAR_ACCELERATION,
+                RalphConstants.DrivetrainConstants.TRANSITION_SPEED,
+                RalphConstants.DrivetrainConstants.TRANSITION_DISTANCE,
                 RalphConstants.PathplannerConstants.linearPIDConstants,
                 RalphConstants.PathplannerConstants.angularPIDConstants,
                 RalphConstants.DrivetrainConstants.SWERVE_MODULE_OFFSETS, RalphTunerConstants.FrontLeft,
@@ -519,23 +523,23 @@ public class RalphContainer implements NFRRobotContainer
 
     public Command driveToLeftReef()
     {
-        return Commands.defer(() -> drive.closeDriveToPose(applyOffset(getNearestReefSide().left())), Set.of(drive));
+        return Commands.defer(() -> drive.smartDriveToPose(applyOffset(getNearestReefSide().left())), Set.of(drive));
     }
 
     public Command driveToRightReef()
     {
-        return Commands.defer(() -> drive.closeDriveToPose(applyOffset(getNearestReefSide().right())), Set.of(drive));
+        return Commands.defer(() -> drive.smartDriveToPose(applyOffset(getNearestReefSide().right())), Set.of(drive));
     }
 
     public Command driveToCenterReef()
     {
-        return Commands.defer(() -> drive.closeDriveToPose(applyOffset(getNearestReefSide().center())), Set.of(drive));
+        return Commands.defer(() -> drive.smartDriveToPose(applyOffset(getNearestReefSide().center())), Set.of(drive));
     }
 
     public Command driveToCenterAlgae()
     {
         return Commands.defer(
-                () -> drive.closeDriveToPose(applyOffset(getNearestReefSide().center(), Inches.of(2.5), Inches.of(1))),
+                () -> drive.smartDriveToPose(applyOffset(getNearestReefSide().center(), Inches.of(2.5), Inches.of(1))),
                 Set.of(drive));
     }
 
@@ -545,16 +549,16 @@ public class RalphContainer implements NFRRobotContainer
                 Meters) > getDistanceToPose(FieldConstants.convertPoseByAlliance(FieldConstants.CoralStations.RIGHT))
                         .in(Meters))
         {
-            return drive.closeDriveToPose(FieldConstants.CoralStations.RIGHT);
+            return drive.smartDriveToPose(FieldConstants.CoralStations.RIGHT);
         } else
         {
-            return drive.closeDriveToPose(FieldConstants.CoralStations.LEFT);
+            return drive.smartDriveToPose(FieldConstants.CoralStations.LEFT);
         }
     }
 
     public Command goToProcessor()
     {
-        return drive.closeDriveToPose(FieldConstants.ProcessorStations.PROCESSOR_STATION);
+        return drive.smartDriveToPose(FieldConstants.ProcessorStations.PROCESSOR_STATION);
     }
 
     public Command getBackupAuto()
